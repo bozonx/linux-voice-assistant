@@ -5,6 +5,13 @@ const { remote, ipcRenderer } = require('electron');
 let windowId = null;
 let selectedText = null;
 
+// Функция для отправки текста в main процесс
+const sendTextToMain = (text) => {
+    if (windowId) {
+        ipcRenderer.send('type-text', { text, windowId });
+    }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Application started');
     
@@ -69,18 +76,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const text = getInputText();
         const result = text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
         textarea.value = result;
+        sendTextToMain(result);
         textarea.focus();
     });
 
     document.getElementById('toUppercase').addEventListener('click', () => {
         const text = getInputText();
-        textarea.value = text.toUpperCase();
+        const result = text.toUpperCase();
+        textarea.value = result;
+        sendTextToMain(result);
         textarea.focus();
     });
 
     document.getElementById('toLowercase').addEventListener('click', () => {
         const text = getInputText();
-        textarea.value = text.toLowerCase();
+        const result = text.toLowerCase();
+        textarea.value = result;
+        sendTextToMain(result);
         textarea.focus();
     });
 
@@ -95,6 +107,18 @@ document.addEventListener('DOMContentLoaded', () => {
             )
             .join('');
         textarea.value = result;
+        sendTextToMain(result);
+        textarea.focus();
+    });
+
+    document.getElementById('toPascalCase').addEventListener('click', () => {
+        const text = getInputText();
+        const result = text
+            .split(/[\s-_]+/)
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join('');
+        textarea.value = result;
+        sendTextToMain(result);
         textarea.focus();
     });
 
@@ -105,6 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .map(word => word.toLowerCase())
             .join('_');
         textarea.value = result;
+        sendTextToMain(result);
         textarea.focus();
     });
 
@@ -115,11 +140,23 @@ document.addEventListener('DOMContentLoaded', () => {
             .map(word => word.toLowerCase())
             .join('-');
         textarea.value = result;
+        sendTextToMain(result);
         textarea.focus();
     });
 
     // Кнопка закрытия
     document.getElementById('closeButton').addEventListener('click', () => {
-        window.close();
+        // Сначала активируем исходное окно
+        if (windowId) {
+            exec(`xdotool windowactivate ${windowId}`, (error) => {
+                if (error) {
+                    console.error('Error activating window:', error);
+                }
+                // Закрываем наше окно
+                window.close();
+            });
+        } else {
+            window.close();
+        }
     });
 }); 

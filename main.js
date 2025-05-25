@@ -1,5 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
+const { exec } = require('child_process');
 
 // Получаем аргументы командной строки
 const getCommandLineArgs = () => {
@@ -19,10 +20,12 @@ const getCommandLineArgs = () => {
     return params;
 };
 
+let mainWindow = null;
+
 function createWindow() {
     const params = getCommandLineArgs();
     
-    const mainWindow = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
         webPreferences: {
@@ -44,6 +47,28 @@ function createWindow() {
         mainWindow.webContents.openDevTools();
     }
 }
+
+// Обработчик для выполнения xdotool команды
+ipcMain.on('type-text', (event, { text, windowId }) => {
+    // Сначала активируем окно
+    exec(`xdotool windowactivate ${windowId}`, (error) => {
+        if (error) {
+            console.error('Error activating window:', error);
+            return;
+        }
+        
+        // Затем вводим текст
+        exec(`xdotool type "${text}"`, (error) => {
+            if (error) {
+                console.error('Error typing text:', error);
+            }
+            // Закрываем окно после ввода текста
+            if (mainWindow) {
+                mainWindow.close();
+            }
+        });
+    });
+});
 
 app.whenReady().then(() => {
     createWindow();
