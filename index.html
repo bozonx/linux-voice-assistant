@@ -21,14 +21,115 @@
         h1 {
             color: #333;
             margin-bottom: 20px;
+            text-align: center;
+        }
+        #inputText {
+            width: 100%;
+            min-height: 100px;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 16px;
+            resize: vertical;
+            font-family: inherit;
+        }
+        #inputText:focus {
+            outline: none;
+            border-color: #2196F3;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 10px;
+        }
+        li {
+            margin: 0;
+        }
+        .close-button {
+            width: 100%;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+        .close-button:hover {
+            background-color: #1976D2;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .close-button:active {
+            transform: translateY(0);
+        }
+        #closeButton {
+            background-color: #f44336;
+        }
+        #closeButton:hover {
+            background-color: #d32f2f;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Linux Voice Assistant</h1>
         <div id="app">
-            <!-- Your application content will go here -->
+            <div>
+                <textarea id="inputText" placeholder="Введите текст с которым хотите работать"></textarea>
+            </div>
+            <ul>
+                <li>
+                    <button class="close-button" id="createNote">Создать заметку</button>
+                </li>
+                <li>
+                    <button class="close-button" id="correctText">Корректировка текста</button>
+                </li>
+                <li>
+                    <button class="close-button" id="editText">Редактура текста</button>
+                </li>
+                <li>
+                    <button class="close-button" id="searchText">Поиск выбранного текста в интернете</button>
+                </li>
+                <li>
+                    <button class="close-button" id="askAI">Спросить у ИИ выбранный текст</button>
+                </li>
+                <li>
+                    <button class="close-button" id="translateToRu">Перевести на русский выбранный текст</button>
+                </li>
+                <li>
+                    <button class="close-button" id="translateToEn">Перевести на английский выбранный текст</button>
+                </li>
+                <li>
+                    <button class="close-button" id="translateToEs">Перевести на испанский выбранный текст</button>
+                </li>
+                <li>
+                    <button class="close-button" id="toCapitalize">Преобразовать в capitalize</button>
+                </li>
+                <li>
+                    <button class="close-button" id="toUppercase">Преобразовать в uppercase</button>
+                </li>
+                <li>
+                    <button class="close-button" id="toLowercase">Преобразовать в lowercase</button>
+                </li>
+                <li>
+                    <button class="close-button" id="toCamelCase">Преобразовать в CamelCase</button>
+                </li>
+                <li>
+                    <button class="close-button" id="toSnakeCase">Преобразовать в SnakeCase</button>
+                </li>
+                <li>
+                    <button class="close-button" id="toKebabCase">Преобразовать в kebab-case</button>
+                </li>
+                <li>
+                    <button class="close-button" id="closeButton">Закрыть</button>
+                </li>
+            </ul>
         </div>
     </div>
     <script src="renderer.js"></script>
