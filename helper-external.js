@@ -1,20 +1,17 @@
-const { ipcRenderer } = require("electron");
+const electron = require("electron");
 const { exec } = require("child_process");
 
-export const MODES = {
-  write: "write",
-  select: "select",
-};
+const { ipcRenderer } = electron;
 
 // Функция для отправки текста в main процесс
-export function sendTextToMain(text) {
+function sendTextToMain(text) {
   if (windowId) {
     ipcRenderer.send("type-text-to-window", { text, windowId });
   }
 }
 
 // Функция для открытия URL в браузере
-export function openInBrowser(url) {
+function openInBrowser(url) {
   exec(`xdg-open "${url}"`, (error) => {
     if (error) {
       console.error("Error opening browser:", error);
@@ -23,7 +20,7 @@ export function openInBrowser(url) {
 }
 
 // Функция для перевода текста
-export function translateText(text, sourceLang, targetLang) {
+function translateText(text, sourceLang, targetLang) {
   const argosPath =
     "/home/ivan/.local/opt/argostranslate/argos_env/bin/argos-translate";
   const command = `${argosPath} --from ${sourceLang} --to ${targetLang} "${text}"`;
@@ -43,14 +40,7 @@ export function translateText(text, sourceLang, targetLang) {
   });
 }
 
-// Получаем текст из textarea
-export function getInputText() {
-  const textarea = document.getElementById("inputText");
-
-  return textarea.value;
-}
-
-export function typeIntoWindow(text, windowId, mainWindow) {
+function typeIntoWindow(text, windowId, mainWindow) {
   // Сначала активируем окно
   exec(`xdotool windowactivate ${windowId}`, (error) => {
     if (error) {
