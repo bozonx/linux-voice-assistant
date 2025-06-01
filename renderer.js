@@ -1,11 +1,5 @@
 // This file contains the frontend logic for your application
 const { ipcRenderer } = require("electron");
-const {
-  openInBrowser,
-  translateText,
-  sendTextToMain,
-  getInputText,
-} = require("./helpers");
 
 let windowId = null;
 let selectedText = null;
