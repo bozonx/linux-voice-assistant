@@ -3,6 +3,7 @@ const { ipcRenderer } = require("electron");
 
 let windowId = null;
 let selectedText = null;
+let mode = null;
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("Application started");
@@ -20,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("Received params:", params);
 
     // Если есть выбранный текст, вставляем его в textarea
-    if (selectedText) {
+    if (mode === MODES.select && selectedText) {
       textarea.value = selectedText;
       // Устанавливаем курсор в конец текста
       textarea.selectionStart = textarea.selectionEnd = textarea.value.length;

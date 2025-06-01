@@ -1,4 +1,5 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
+const { typeIntoWindow } = require("./helper-external");
 const { exec } = require("child_process");
 
 const DEBUG = true;
