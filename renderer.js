@@ -29,66 +29,203 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Обработчики для кнопок
-  document.getElementById("createNote").addEventListener("click", () => {
+  document.getElementById("createNoteInsert").addEventListener("click", () => {
     console.log("Создание заметки:", getInputText());
   });
 
-  document.getElementById("correctText").addEventListener("click", () => {
+  document.getElementById("correctTextInsert").addEventListener("click", () => {
     console.log("Корректировка текста:", getInputText());
   });
 
-  document.getElementById("editText").addEventListener("click", () => {
+  document.getElementById("editTextInsert").addEventListener("click", () => {
     console.log("Редактура текста:", getInputText());
   });
 
-  document.getElementById("searchText").addEventListener("click", () => {
-    const searchText = getInputText();
-    if (searchText.trim()) {
-      const searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(
-        searchText
-      )}`;
-      openInBrowser(searchUrl);
-      window.close();
-    }
-  });
+  document
+    .getElementById("searchTextInsert")
+    .addEventListener("click", async () => {
+      const searchText = getInputText();
+      const result = await ipcRenderer.invoke(
+        "call-function",
+        "openInBrowserAndClose",
+        [`https://duckduckgo.com/?q=${encodeURIComponent(searchText)}`]
+      );
 
-  document.getElementById("translateEnToRu").addEventListener("click", () => {
-    const text = getInputText();
-    if (text.trim()) {
-      translateText(text, "en", "ru");
-    }
-  });
+      if (!result.success) {
+        console.error(result.error);
+      }
+    });
 
-  document.getElementById("translateRuToEn").addEventListener("click", () => {
-    const text = getInputText();
-    if (text.trim()) {
-      translateText(text, "ru", "en");
-    }
-  });
+  document
+    .getElementById("translateEnToRuInsert")
+    .addEventListener("click", async () => {
+      const text = getInputText();
+      if (!text.trim()) return;
 
-  document.getElementById("translateRuToEs").addEventListener("click", () => {
-    const text = getInputText();
-    if (text.trim()) {
-      translateText(text, "ru", "es");
-    }
-  });
+      const result = await ipcRenderer.invoke(
+        "call-function",
+        "translateTextAndInsert",
+        [text, "en", "ru", windowId]
+      );
 
-  document.getElementById("translateEsToRu").addEventListener("click", () => {
-    const text = getInputText();
-    if (text.trim()) {
-      translateText(text, "es", "ru");
-    }
-  });
+      if (!result.success) {
+        console.error(result.error);
+      }
+    });
 
-  document.getElementById("toCapitalize").addEventListener("click", () => {
-    const text = getInputText();
-    const result = text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
-    textarea.value = result;
-    sendTextToMain(result);
-    textarea.focus();
-  });
+  document
+    .getElementById("translateEnToRuText")
+    .addEventListener("click", async () => {
+      const text = getInputText();
+      if (!text.trim()) return;
 
-  document.getElementById("toUppercase").addEventListener("click", () => {
+      const result = await ipcRenderer.invoke(
+        "call-function",
+        "translateText",
+        [text, "en", "ru"]
+      );
+
+      if (!result.success) {
+        console.error(result.error);
+      }
+
+      textarea.value = result.result;
+      textarea.focus();
+    });
+
+  document
+    .getElementById("translateRuToEnInsert")
+    .addEventListener("click", async () => {
+      const text = getInputText();
+      if (text.trim()) {
+        const result = await ipcRenderer.invoke(
+          "call-function",
+          "translateTextAndInsert",
+          [text, "ru", "en", windowId]
+        );
+
+        if (!result.success) {
+          console.error(result.error);
+        }
+      }
+    });
+
+  document
+    .getElementById("translateRuToEnText")
+    .addEventListener("click", async () => {
+      const text = getInputText();
+
+      if (!text.trim()) return;
+
+      const result = await ipcRenderer.invoke(
+        "call-function",
+        "translateText",
+        [text, "ru", "en"]
+      );
+
+      if (!result.success) {
+        console.error(result.error);
+      }
+
+      textarea.value = result.result;
+      textarea.focus();
+    });
+
+  document
+    .getElementById("translateRuToEsInsert")
+    .addEventListener("click", async () => {
+      const text = getInputText();
+      if (!text.trim()) return;
+
+      const result = await ipcRenderer.invoke(
+        "call-function",
+        "translateTextAndInsert",
+        [text, "ru", "es", windowId]
+      );
+
+      if (!result.success) {
+        console.error(result.error);
+      }
+    });
+
+  document
+    .getElementById("translateRuToEsText")
+    .addEventListener("click", async () => {
+      const text = getInputText();
+      if (!text.trim()) return;
+
+      const result = await ipcRenderer.invoke(
+        "call-function",
+        "translateText",
+        [text, "ru", "es"]
+      );
+
+      if (!result.success) {
+        console.error(result.error);
+      }
+
+      textarea.value = result.result;
+      textarea.focus();
+    });
+
+  document
+    .getElementById("translateEsToRuInsert")
+    .addEventListener("click", async () => {
+      const text = getInputText();
+      if (!text.trim()) return;
+
+      const result = await ipcRenderer.invoke(
+        "call-function",
+        "translateTextAndInsert",
+        [text, "es", "ru", windowId]
+      );
+
+      if (!result.success) {
+        console.error(result.error);
+      }
+    });
+
+  document
+    .getElementById("translateEsToRuText")
+    .addEventListener("click", async () => {
+      const text = getInputText();
+      if (!text.trim()) return;
+
+      const result = await ipcRenderer.invoke(
+        "call-function",
+        "translateText",
+        [text, "es", "ru"]
+      );
+
+      if (!result.success) {
+        console.error(result.error);
+      }
+
+      textarea.value = result.result;
+      textarea.focus();
+    });
+
+  document
+    .getElementById("toCapitalizeInsert")
+    .addEventListener("click", async () => {
+      const text = getInputText();
+
+      if (!text.trim()) return;
+
+      const resultText = capitalizeFirstLetter(text);
+
+      const result = await ipcRenderer.invoke(
+        "call-function",
+        "typeIntoWindowAndClose",
+        [resultText, windowId]
+      );
+
+      if (!result.success) {
+        console.error(result.error);
+      }
+    });
+
+  document.getElementById("toUppercaseInsert").addEventListener("click", () => {
     const text = getInputText();
     const result = text.toUpperCase();
     textarea.value = result;
@@ -96,7 +233,7 @@ document.addEventListener("DOMContentLoaded", () => {
     textarea.focus();
   });
 
-  document.getElementById("toLowercase").addEventListener("click", () => {
+  document.getElementById("toLowercaseInsert").addEventListener("click", () => {
     const text = getInputText();
     const result = text.toLowerCase();
     textarea.value = result;
@@ -104,7 +241,7 @@ document.addEventListener("DOMContentLoaded", () => {
     textarea.focus();
   });
 
-  document.getElementById("toCamelCase").addEventListener("click", () => {
+  document.getElementById("toCamelCaseInsert").addEventListener("click", () => {
     const text = getInputText();
     const result = text
       .split(/[\s-_]+/)
@@ -119,18 +256,22 @@ document.addEventListener("DOMContentLoaded", () => {
     textarea.focus();
   });
 
-  document.getElementById("toPascalCase").addEventListener("click", () => {
-    const text = getInputText();
-    const result = text
-      .split(/[\s-_]+/)
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join("");
-    textarea.value = result;
-    sendTextToMain(result);
-    textarea.focus();
-  });
+  document
+    .getElementById("toPascalCaseInsert")
+    .addEventListener("click", () => {
+      const text = getInputText();
+      const result = text
+        .split(/[\s-_]+/)
+        .map(
+          (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        )
+        .join("");
+      textarea.value = result;
+      sendTextToMain(result);
+      textarea.focus();
+    });
 
-  document.getElementById("toSnakeCase").addEventListener("click", () => {
+  document.getElementById("toSnakeCaseInsert").addEventListener("click", () => {
     const text = getInputText();
     const result = text
       .split(/[\s-_]+/)
@@ -141,7 +282,7 @@ document.addEventListener("DOMContentLoaded", () => {
     textarea.focus();
   });
 
-  document.getElementById("toKebabCase").addEventListener("click", () => {
+  document.getElementById("toKebabCaseInsert").addEventListener("click", () => {
     const text = getInputText();
     const result = text
       .split(/[\s-_]+/)
@@ -151,4 +292,37 @@ document.addEventListener("DOMContentLoaded", () => {
     sendTextToMain(result);
     textarea.focus();
   });
-}); 
+});
+
+// Функция для выполнения кода в окне и получения результата
+async function executeInWindow(functionCode) {
+  try {
+    if (!windowId) {
+      throw new Error('Window ID is not set');
+    }
+
+    const result = await ipcRenderer.invoke('execute-in-window', {
+      windowId,
+      functionCode
+    });
+
+    if (!result.success) {
+      throw new Error(result.error);
+    }
+
+    return result.result;
+  } catch (error) {
+    console.error('Error executing function in window:', error);
+    throw error;
+  }
+}
+
+// Пример использования:
+// document.getElementById('someButton').addEventListener('click', async () => {
+//   try {
+//     const result = await executeInWindow('someFunction()');
+//     console.log('Function result:', result);
+//   } catch (error) {
+//     console.error('Failed to execute function:', error);
+//   }
+// }); 

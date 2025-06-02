@@ -1,62 +1,103 @@
-const electron = require("electron");
+//const electron = require("electron");
 const { exec } = require("child_process");
+const { config } = require("./config");
 
-const { ipcRenderer } = electron;
+//const { ipcRenderer } = electron;
 
 // Функция для отправки текста в main процесс
-function sendTextToMain(text) {
-  if (windowId) {
-    ipcRenderer.send("type-text-to-window", { text, windowId });
-  }
-}
+// function sendTextToMain(text) {
+//   if (windowId) {
+//     ipcRenderer.send("type-text-to-window", { text, windowId });
+//   }
+// }
+
+// Обработчик для выполнения xdotool команды
+// Вызывается из браузера чтобы выполнить внешнюю команду
+// ipcMain.on("type-text-to-window", (event, { text, windowId }) => {
+//   typeIntoWindow(text, windowId, mainWindow);
+// });
+
+module.exports.functions = {
+  translateText,
+  openInBrowserAndClose,
+  typeIntoWindowAndClose,
+
+  async translateTextAndInsert(
+    mainWindow,
+    text,
+    sourceLang,
+    targetLang,
+    windowId
+  ) {
+    const translatedText = await translateText(
+      mainWindow,
+      text,
+      sourceLang,
+      targetLang
+    );
+
+    await typeIntoWindowAndClose(mainWindow, translatedText, windowId);
+  },
+};
 
 // Функция для открытия URL в браузере
-function openInBrowser(url) {
-  exec(`xdg-open "${url}"`, (error) => {
-    if (error) {
-      console.error("Error opening browser:", error);
-    }
+async function openInBrowserAndClose(mainWindow, url) {
+  return new Promise((resolve, reject) => {
+    exec(`xdg-open "${url}"`, (error) => {
+      if (error) {
+        console.error("Error opening browser:", error);
+        reject(error);
+      }
+      resolve();
+      mainWindow.close();
+    });
   });
 }
 
 // Функция для перевода текста
-function translateText(text, sourceLang, targetLang) {
-  const argosPath =
-    "/home/ivan/.local/opt/argostranslate/argos_env/bin/argos-translate";
+async function translateText(mainWindow, text, sourceLang, targetLang) {
+  const argosPath = config.argostranslateBin;
   const command = `${argosPath} --from ${sourceLang} --to ${targetLang} "${text}"`;
 
-  exec(command, (error, stdout, stderr) => {
-    if (error) {
-      console.error("Translation error:", error);
-      return;
-    }
-    if (stderr) {
-      console.error("Translation stderr:", stderr);
-      return;
-    }
+  return new Promise((resolve, reject) => {
+    exec(command, (error, stdout, stderr) => {
+      if (error) {
+        reject("Translation error:", error);
+        return;
+      }
+      if (stderr) {
+        reject("Translation stderr:", stderr);
+        return;
+      }
 
-    // Отправляем переведенный текст в main процесс
-    sendTextToMain(stdout.trim());
+      resolve(stdout.trim());
+    });
   });
 }
 
-function typeIntoWindow(text, windowId, mainWindow) {
+async function typeIntoWindowAndClose(mainWindow, text, windowId) {
   // Сначала активируем окно
-  exec(`xdotool windowactivate ${windowId}`, (error) => {
-    if (error) {
-      console.error("Error activating window:", error);
-      return;
-    }
-
-    // Затем вводим текст
-    exec(`xdotool type "${text}"`, (error) => {
+  return new Promise((resolve, reject) => {
+    exec(`${config.xdotoolBin} windowactivate ${windowId}`, (error) => {
       if (error) {
-        console.error("Error typing text:", error);
+        console.error("Error activating window:", error);
+        reject(error);
+        return;
       }
-      // Закрываем окно после ввода текста
-      if (mainWindow) {
-        mainWindow.close();
-      }
+
+      // Затем вводим текст
+      exec(`${config.xdotoolBin} type "${text}"`, (error) => {
+        if (error) {
+          console.error("Error typing text:", error);
+          reject(error);
+          return;
+        }
+        // Закрываем окно после ввода текста
+        if (mainWindow) {
+          mainWindow.close();
+        }
+        resolve();
+      });
     });
   });
 }

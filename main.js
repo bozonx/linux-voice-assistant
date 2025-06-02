@@ -1,5 +1,5 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
-const { typeIntoWindow } = require("./helper-external");
+const { functions } = require("./helper-external");
 const { exec } = require("child_process");
 
 const DEBUG = true;
@@ -65,8 +65,13 @@ app.on("window-all-closed", function () {
   if (process.platform !== "darwin") app.quit();
 });
 
-// Обработчик для выполнения xdotool команды
-// Вызывается из браузера чтобы выполнить внешнюю команду
-ipcMain.on("type-text-to-window", (event, { text, windowId }) => {
-  typeIntoWindow(text, windowId, mainWindow);
+ipcMain.handle("call-function", async (event, funcName, args) => {
+  try {
+    const result = await functions[funcName](mainWindow, ...args);
+
+    return { success: true, result };
+  } catch (error) {
+    console.error("Error executing function in window:", error);
+    return { success: false, error: error };
+  }
 });
