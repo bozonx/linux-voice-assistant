@@ -23,8 +23,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // Если есть выбранный текст, вставляем его в textarea
     if (mode === MODES.select && selectedText) {
       textarea.value = selectedText;
+
       // Устанавливаем курсор в конец текста
-      textarea.selectionStart = textarea.selectionEnd = textarea.value.length;
+      //textarea.selectionStart = textarea.selectionEnd = textarea.value.length;
     }
   });
 
@@ -225,73 +226,204 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-  document.getElementById("toUppercaseInsert").addEventListener("click", () => {
-    const text = getInputText();
-    const result = text.toUpperCase();
-    textarea.value = result;
-    sendTextToMain(result);
-    textarea.focus();
-  });
+    document
+      .getElementById("toCapitalizeText")
+      .addEventListener("click", async () => {
+        const text = getInputText();
 
-  document.getElementById("toLowercaseInsert").addEventListener("click", () => {
-    const text = getInputText();
-    const result = text.toLowerCase();
-    textarea.value = result;
-    sendTextToMain(result);
-    textarea.focus();
-  });
+        if (!text.trim()) return;
 
-  document.getElementById("toCamelCaseInsert").addEventListener("click", () => {
-    const text = getInputText();
-    const result = text
-      .split(/[\s-_]+/)
-      .map((word, index) =>
-        index === 0
-          ? word.toLowerCase()
-          : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-      )
-      .join("");
-    textarea.value = result;
-    sendTextToMain(result);
-    textarea.focus();
-  });
+        const resultText = capitalizeFirstLetter(text);
+
+        textarea.value = resultText;
+        textarea.focus();
+      });
+
+    document
+      .getElementById("toUppercaseInsert")
+      .addEventListener("click", async () => {
+        const text = getInputText();
+        if (!text.trim()) return;
+
+        const resultText = toUppercase(text);
+
+        const result = await ipcRenderer.invoke(
+          "call-function",
+          "typeIntoWindowAndClose",
+          [resultText, windowId]
+        );
+
+        if (!result.success) {
+          console.error(result.error);
+        }
+      });
+
+    document
+      .getElementById("toUppercaseText")
+      .addEventListener("click", async () => {
+        const text = getInputText();
+        if (!text.trim()) return;
+
+        const resultText = toUppercase(text);
+
+        textarea.value = resultText;
+        textarea.focus();
+      });
+
+    document
+      .getElementById("toLowercaseInsert")
+      .addEventListener("click", async () => {
+        const text = getInputText();
+        if (!text.trim()) return;
+
+        const resultText = toLowercase(text);
+
+        const result = await ipcRenderer.invoke(
+          "call-function",
+          "typeIntoWindowAndClose",
+          [resultText, windowId]
+        );
+
+        if (!result.success) {
+          console.error(result.error);
+        }
+      });
+
+    document
+      .getElementById("toLowercaseText")
+      .addEventListener("click", async () => {
+        const text = getInputText();
+        if (!text.trim()) return;
+
+        const resultText = toLowercase(text);
+
+        textarea.value = resultText;
+        textarea.focus();
+      });
+
+    document
+      .getElementById("toCamelCaseInsert")
+      .addEventListener("click", async () => {
+        const text = getInputText();
+        if (!text.trim()) return;
+
+        const resultText = toCamelCase(text);
+
+        const result = await ipcRenderer.invoke(
+          "call-function",
+          "typeIntoWindowAndClose",
+          [resultText, windowId]
+        );
+
+        if (!result.success) {
+          console.error(result.error);
+        }
+      });
+
+    document
+      .getElementById("toCamelCaseText")
+      .addEventListener("click", async () => {
+        const text = getInputText();
+        if (!text.trim()) return;
+
+        const resultText = toCamelCase(text);
+
+        textarea.value = resultText;
+        textarea.focus();
+      });
+
+    document
+      .getElementById("toPascalCaseInsert")
+      .addEventListener("click", async () => {
+        const text = getInputText();
+        if (!text.trim()) return;
+
+        const resultText = toPascalCase(text);
+
+        const result = await ipcRenderer.invoke(
+          "call-function",
+          "typeIntoWindowAndClose",
+          [resultText, windowId]
+        );
+
+        if (!result.success) {
+          console.error(result.error);
+        }
+      });
+
+    document
+      .getElementById("toPascalCaseText")
+      .addEventListener("click", async () => {
+        const text = getInputText();
+        if (!text.trim()) return;
+
+        const resultText = toPascalCase(text);
+
+        textarea.value = resultText;
+        textarea.focus();
+      });
 
   document
-    .getElementById("toPascalCaseInsert")
-    .addEventListener("click", () => {
+    .getElementById("toSnakeCaseInsert")
+    .addEventListener("click", async () => {
       const text = getInputText();
-      const result = text
-        .split(/[\s-_]+/)
-        .map(
-          (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-        )
-        .join("");
-      textarea.value = result;
-      sendTextToMain(result);
+      if (!text.trim()) return;
+
+      const resultText = toSnakeCase(text);
+
+      const result = await ipcRenderer.invoke(
+        "call-function",
+        "typeIntoWindowAndClose",
+        [resultText, windowId]
+      );
+
+      if (!result.success) {
+        console.error(result.error);
+      }
+    });
+
+  document
+    .getElementById("toSnakeCaseText")
+    .addEventListener("click", async () => {
+      const text = getInputText();
+      if (!text.trim()) return;
+
+      const resultText = toSnakeCase(text);
+
+      textarea.value = resultText;
       textarea.focus();
     });
 
-  document.getElementById("toSnakeCaseInsert").addEventListener("click", () => {
-    const text = getInputText();
-    const result = text
-      .split(/[\s-_]+/)
-      .map((word) => word.toLowerCase())
-      .join("_");
-    textarea.value = result;
-    sendTextToMain(result);
-    textarea.focus();
-  });
+  document
+    .getElementById("toKebabCaseInsert")
+    .addEventListener("click", async () => {
+      const text = getInputText();
+      if (!text.trim()) return;
 
-  document.getElementById("toKebabCaseInsert").addEventListener("click", () => {
-    const text = getInputText();
-    const result = text
-      .split(/[\s-_]+/)
-      .map((word) => word.toLowerCase())
-      .join("-");
-    textarea.value = result;
-    sendTextToMain(result);
-    textarea.focus();
-  });
+      const resultText = toKebabCase(text);
+
+      const result = await ipcRenderer.invoke(
+        "call-function",
+        "typeIntoWindowAndClose",
+        [resultText, windowId]
+      );
+
+      if (!result.success) {
+        console.error(result.error);
+      }
+    });
+
+  document
+    .getElementById("toKebabCaseText")
+    .addEventListener("click", async () => {
+      const text = getInputText();
+      if (!text.trim()) return;
+
+      const resultText = toKebabCase(text);
+
+      textarea.value = resultText;
+      textarea.focus();
+    });
 });
 
 // Функция для выполнения кода в окне и получения результата

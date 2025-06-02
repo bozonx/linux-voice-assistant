@@ -3,7 +3,7 @@ const MODES = {
   select: "select",
 };
 
-// Получаем текст из textarea
+// получаем текст из textarea
 function getInputText() {
   const textarea = document.getElementById("inputText");
 
@@ -20,4 +20,36 @@ function toUppercase(text) {
 
 function toLowercase(text) {
   return text.toLowerCase();
+}
+
+function toCamelCase(text) {
+  return text
+    .split(/[\s-_]+/)
+    .map((word, index) =>
+      index === 0
+        ? word.toLowerCase()
+        : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    )
+    .join("");
+}
+
+function toPascalCase(text) {
+  return text
+    .split(/[\s-_]+/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join("");
+}
+
+function toSnakeCase(text) {
+  return text
+    .split(/[\s-_]+/)
+    .map((word) => word.toLowerCase())
+    .join("_");
+}
+
+function toKebabCase(text) {
+  return text
+    .split(/[\s-_]+/)
+    .map((word) => word.toLowerCase())
+    .join("-");
 }
