@@ -18,11 +18,6 @@
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-            text-align: center;
-        }
         li {
             margin: 0;
         }
@@ -42,8 +37,8 @@
             resize: vertical;
             font-family: inherit;
             box-sizing: border-box;
-}
         }
+        
         #inputText:focus {
             outline: none;
             border-color: #2196F3;
@@ -55,16 +50,25 @@
             margin: 0;
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 10px;
+            gap: 4px;
+        }
+
+        .big-buttons-toolbar {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 4px;
         }
         
-
         .button {
             width: 100%;
             background-color: #2196F3;
             color: white;
             border: none;
-            padding: 12px 20px;
+            padding: 10px 16px;
             border-radius: 6px;
             cursor: pointer;
             font-size: 14px;
@@ -76,9 +80,7 @@
             transform: translateY(-1px);
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .button:active {
-            transform: translateY(0);
-        }
+
         .text-edit-toolbar {
             display: flex;
             flex-direction: row;
@@ -96,6 +98,17 @@
             padding: 2px 6px;
             border-radius: 2px;
             cursor: pointer;
+            font-size: 14px;
+        }
+        .mini-button:hover {
+            background-color: #1976D2;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            margin-top: 20px;
+            margin-bottom: 6px;
             font-size: 14px;
         }
     </style>
@@ -149,6 +162,9 @@
                     </li>
                 </ul>
             </div>
+
+            <h2 class="section-title">Действия</h2>
+
             <ul class="text-insert-buttons">
                 <li>
                     <button class="button" id="createNoteInsert">Создать быструю заметку</button>
@@ -166,39 +182,48 @@
                     <button class="button" id="searchTextInsert">Поиск выбранного текста в интернете</button>
                 </li>
                 <li>
-                    <button class="button" id="translateEnToRuInsert">Перевести выбранный текст EN ➡️ RU</button>
+                    <button class="button" id="TextIntoWindowInsert">Вставить в окно</button>
                 </li>
-                <li>
-                    <button class="button" id="translateRuToEnInsert">Перевести выбранный текст RU ➡️ EN</button>
-                </li>
-                <li>
-                    <button class="button" id="translateRuToEsInsert">Перевести выбранный текст RU ➡️ ES</button>
-                </li>
-                <li>
-                    <button class="button" id="translateEsToRuInsert">Перевести выбранный текст ES ➡️ RU</button>
-                </li>
-                <li>
-                    <button class="button" id="toCapitalizeInsert">Преобразовать в Capitalize</button>
-                </li>
-                <li>
-                    <button class="button" id="toUppercaseInsert">Преобразовать в UPPERCASE</button>
-                </li>
-                <li>
-                    <button class="button" id="toLowercaseInsert">Преобразовать в lowercase</button>
-                </li>
-                <li>
-                    <button class="button" id="toCamelCaseInsert">Преобразовать в camelCase</button>
-                </li>
-                <li>
-                    <button class="button" id="toPascalCaseInsert">Преобразовать в PascalCase</button>
-                </li>
-                <li>
-                    <button class="button" id="toSnakeCaseInsert">Преобразовать в snake_case</button>
-                </li>
-                <li>
-                    <button class="button" id="toKebabCaseInsert">Преобразовать в kebab-case</button>
-                </li>
+            </ul>
 
+            <h2 class="section-title">Трансформирование и вставка</h2>
+
+            <ul class="big-buttons-toolbar">
+                <li>
+                    <button class="button" id="translateEnToRuInsert">EN ➡️ RU</button>
+                </li>
+                <li>
+                    <button class="button" id="translateRuToEnInsert">RU ➡️ EN</button>
+                </li>
+                <li>
+                    <button class="button" id="translateRuToEsInsert">RU ➡️ ES</button>
+                </li>
+                <li>
+                    <button class="button" id="translateEsToRuInsert">ES ➡️ RU</button>
+                </li>
+            </ul>
+            <ul class="big-buttons-toolbar">
+                <li>
+                    <button class="button" id="toCapitalizeInsert">Capitalize</button>
+                </li>
+                <li>
+                    <button class="button" id="toUppercaseInsert">UPPERCASE</button>
+                </li>
+                <li>
+                    <button class="button" id="toLowercaseInsert">lowercase</button>
+                </li>
+                <li>
+                    <button class="button" id="toCamelCaseInsert">camelCase</button>
+                </li>
+                <li>
+                    <button class="button" id="toPascalCaseInsert">PascalCase</button>
+                </li>
+                <li>
+                    <button class="button" id="toSnakeCaseInsert">snake_case</button>
+                </li>
+                <li>
+                    <button class="button" id="toKebabCaseInsert">kebab-case</button>
+                </li>
             </ul>
         </div>
     </div>

@@ -10,7 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Устанавливаем фокус на textarea
   const textarea = document.getElementById("inputText");
-  textarea.focus();
 
   // Получаем параметры инициализации
   ipcRenderer.on("init-params", (event, params) => {
@@ -20,12 +19,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     console.log("Received params:", params);
 
-    // Если есть выбранный текст, вставляем его в textarea
+    // Режим выбора текста в предыдущем окне
     if (mode === MODES.select && selectedText) {
       textarea.value = selectedText;
+      // Выбираем весь текст в textarea
+      textarea.select();
+      textarea.focus();
 
       // Устанавливаем курсор в конец текста
       //textarea.selectionStart = textarea.selectionEnd = textarea.value.length;
+    }
+    // Режим голосового ввода
+    else {
+      textarea.focus();
     }
   });
 
@@ -204,6 +210,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
       textarea.value = result.result;
       textarea.focus();
+    });
+
+  document
+    .getElementById("TextIntoWindowInsert")
+    .addEventListener("click", async () => {
+      const text = getInputText();
+      if (!text.trim()) return;
+
+      const result = await ipcRenderer.invoke(
+        "call-function",
+        "typeIntoWindowAndClose",
+        [text, windowId]
+      );
+
+      if (!result.success) {
+        console.error(result.error);
+      }
     });
 
   document
