@@ -2,16 +2,22 @@
   "name": "desktop-assistant",
   "version": "0.0.2",
   "description": "Desktop assistant built with Electron",
-  "main": "main.js",
+  "main": "dist/main.js",
   "scripts": {
-    "start": "electron .",
-    "build": "electron-builder"
+    "start": "tsc && electron .",
+    "build": "tsc && electron-builder",
+    "watch": "tsc -w",
+    "dev": "tsc && electron ."
   },
   "author": "Kozyrin Ivan",
   "license": "MIT",
   "devDependencies": {
+    "@types/electron": "^1.4.38",
+    "@types/node": "^22.15.29",
     "electron": "^28.1.0",
-    "electron-builder": "^24.9.1"
+    "electron-builder": "^24.9.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   },
   "dependencies": {
     "electron-store": "^8.1.0",
