@@ -1,21 +1,11 @@
 //const electron = require("electron");
 const { exec } = require("child_process");
 const { config } = require("./config");
+const Vosk = require("./vosk");
 
-//const { ipcRenderer } = electron;
-
-// Функция для отправки текста в main процесс
-// function sendTextToMain(text) {
-//   if (windowId) {
-//     ipcRenderer.send("type-text-to-window", { text, windowId });
-//   }
-// }
-
-// Обработчик для выполнения xdotool команды
-// Вызывается из браузера чтобы выполнить внешнюю команду
-// ipcMain.on("type-text-to-window", (event, { text, windowId }) => {
-//   typeIntoWindow(text, windowId, mainWindow);
-// });
+const voiceRecognition = new Vosk((text) => {
+  console.log(text);
+}, config.voskWsUrl);
 
 module.exports.functions = {
   translateText,

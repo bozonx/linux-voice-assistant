@@ -35,9 +35,26 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Обработчики для кнопок
-  document.getElementById("createNoteInsert").addEventListener("click", () => {
+  document.getElementById("voiceInput").addEventListener("click", () => {
+    const btn = document.getElementById("voiceInput");
+    btn.classList.add("mini-btn-pressed");
+
+    const voiceRecognition = new VoiceRecognition((text) => {
+      textarea.value = text;
+      textarea.focus();
+    }, config.voskWsUrl);
+
+    voiceRecognition.start();
+
+    //btn.classList.remove("mini-btn-pressed");
+  });
+
+  document.getElementById("createNote").addEventListener("click", () => {
     console.log("Создание заметки:", getInputText());
+  });
+
+  document.getElementById("toCalendar").addEventListener("click", () => {
+    console.log("Дело в календарь:", getInputText());
   });
 
   document.getElementById("correctTextInsert").addEventListener("click", () => {
@@ -48,20 +65,18 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("Редактура текста:", getInputText());
   });
 
-  document
-    .getElementById("searchTextInsert")
-    .addEventListener("click", async () => {
-      const searchText = getInputText();
-      const result = await ipcRenderer.invoke(
-        "call-function",
-        "openInBrowserAndClose",
-        [`https://duckduckgo.com/?q=${encodeURIComponent(searchText)}`]
-      );
+  document.getElementById("searchText").addEventListener("click", async () => {
+    const searchText = getInputText();
+    const result = await ipcRenderer.invoke(
+      "call-function",
+      "openInBrowserAndClose",
+      [`https://duckduckgo.com/?q=${encodeURIComponent(searchText)}`]
+    );
 
-      if (!result.success) {
-        console.error(result.error);
-      }
-    });
+    if (!result.success) {
+      console.error(result.error);
+    }
+  });
 
   document
     .getElementById("translateEnToRuInsert")

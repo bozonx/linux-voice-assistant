@@ -105,6 +105,10 @@
             transform: translateY(-1px);
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
+        .mini-btn-pressed {
+            background-color: #19528b;
+            color: white;
+        }
 
         .section-title {
             margin-top: 20px;
@@ -119,6 +123,9 @@
             <div class="text-edit-container">
                 <textarea id="inputText" placeholder="Введите текст с которым хотите работать"></textarea>
                 <ul class="text-edit-toolbar">
+                    <li>
+                        <button class="mini-button mini-btn-pressed" id="voiceInput">Голосовой ввод</button>
+                    </li>
                     <li>
                         <button class="mini-button" id="correctTextText">Коррекция</button>
                     </li>
@@ -167,19 +174,13 @@
 
             <ul class="text-insert-buttons">
                 <li>
-                    <button class="button" id="createNoteInsert">Создать быструю заметку</button>
+                    <button class="button" id="createNote">Создать быструю заметку</button>
                 </li>
                 <li>
-                    <button class="button" id="calendarInsert">Дело в календарь</button>
+                    <button class="button" id=toCalendar">Дело в календарь</button>
                 </li>
                 <li>
-                    <button class="button" id="correctTextInsert">Корректировка текста</button>
-                </li>
-                <li>
-                    <button class="button" id="editTextInsert">Редактура текста</button>
-                </li>
-                <li>
-                    <button class="button" id="searchTextInsert">Поиск выбранного текста в интернете</button>
+                    <button class="button" id="searchText">Поиск выбранного текста в интернете</button>
                 </li>
                 <li>
                     <button class="button" id="TextIntoWindowInsert">Вставить в окно</button>
@@ -187,6 +188,15 @@
             </ul>
 
             <h2 class="section-title">Трансформирование и вставка</h2>
+
+            <ul class="big-buttons-toolbar">
+                <li>
+                    <button class="button" id="correctTextInsert">Коррекция</button>
+                </li>
+                <li>
+                    <button class="button" id="editTextInsert">Редактировать</button>
+                </li>
+            </ul>
 
             <ul class="big-buttons-toolbar">
                 <li>
@@ -202,6 +212,7 @@
                     <button class="button" id="translateEsToRuInsert">ES ➡️ RU</button>
                 </li>
             </ul>
+
             <ul class="big-buttons-toolbar">
                 <li>
                     <button class="button" id="toCapitalizeInsert">Capitalize</button>

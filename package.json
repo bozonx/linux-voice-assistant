@@ -1,13 +1,13 @@
 {
-  "name": "linux-voice-assistant",
-  "version": "1.0.0",
-  "description": "Linux Voice Assistant built with Electron",
+  "name": "desktop-assistant",
+  "version": "0.0.2",
+  "description": "Desktop assistant built with Electron",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "build": "electron-builder"
   },
-  "author": "",
+  "author": "Kozyrin Ivan",
   "license": "MIT",
   "devDependencies": {
     "electron": "^28.1.0",
