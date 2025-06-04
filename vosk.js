@@ -1,6 +1,4 @@
 const websocket = require("ws");
-const fs = require("fs");
-
 const mic = require("mic");
 
 SAMPLE_RATE = 8000;
@@ -10,14 +8,16 @@ class VoiceRecognition {
   micInstance;
   callback;
   parts = [];
+  voskWsUrl;
 
-  constructor(cb) {
+  constructor(cb, voskWsUrl) {
     this.callback = cb;
+    this.voskWsUrl = voskWsUrl;
   }
 
   start() {
     this.parts = [""];
-    this.ws = new websocket("ws://localhost:2700");
+    this.ws = new websocket(this.voskWsUrl);
     this.micInstance = mic({
       rate: String(SAMPLE_RATE),
       channels: "1",
