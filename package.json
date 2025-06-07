@@ -14,6 +14,7 @@
   "devDependencies": {
     "@types/electron": "^1.4.38",
     "@types/node": "^22.15.29",
+    "@types/vue": "^1.0.31",
     "@types/ws": "^8.18.1",
     "electron": "^28.1.0",
     "electron-builder": "^24.9.1",

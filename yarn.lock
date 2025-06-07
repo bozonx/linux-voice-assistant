@@ -251,6 +251,11 @@
   resolved "https://registry.yarnpkg.com/@types/verror/-/verror-1.10.11.tgz#d3d6b418978c8aa202d41e5bb3483227b6ecc1bb"
   integrity sha512-RlDm9K7+o5stv0Co8i8ZRGxDbrTxhJtgjqjFyVh/tXQyl/rYtTKlnTvZ88oSTeYREWurwx20Js4kTuKCsFkUtg==
 
+"@types/vue@^1.0.31":
+  version "1.0.31"
+  resolved "https://registry.npmjs.org/@types/vue/-/vue-1.0.31.tgz"
+  integrity sha512-unhlPKHFYEc+NA7nBz8yYSg7MOhWFJF2M/tzjb0rgVuK4pQzUBGmBp3IhfuhYDo3wr3dgA5sm9GUHmUJz2Hb9w==
+
 "@types/ws@^8.18.1":
   version "8.18.1"
   resolved "https://registry.npmjs.org/@types/ws/-/ws-8.18.1.tgz"
