@@ -7,134 +7,23 @@
       </div>
     </div>
 
-    <div class="text-edit-container">
-      <textarea
-        id="inputText"
-        v-model="inputText"
-        placeholder="Введите текст с которым хотите работать"
-      ></textarea>
-
-      <ul class="text-edit-toolbar">
-        <li>
-          <button
-            class="mini-button"
-            :class="{ 'mini-btn-pressed': isVoiceRecognitionActive }"
-            @click="toggleVoiceRecognition"
-          >
-            Голосовой ввод
-          </button>
-        </li>
-        <li>
-          <button class="mini-button" @click="correctText">Коррекция</button>
-        </li>
-        <li>
-          <button class="mini-button" @click="editText">Редактировать</button>
-        </li>
-        <li>
-          <button class="mini-button" @click="translateText('en', 'ru')">EN ➡️ RU</button>
-        </li>
-        <li>
-          <button class="mini-button" @click="translateText('ru', 'en')">RU ➡️ EN</button>
-        </li>
-        <li>
-          <button class="mini-button" @click="translateText('ru', 'es')">RU ➡️ ES</button>
-        </li>
-        <li>
-          <button class="mini-button" @click="translateText('es', 'ru')">ES ➡️ RU</button>
-        </li>
-      </ul>
-
-      <ul class="text-edit-toolbar">
-        <li>
-          <button class="mini-button" @click="transformText('capitalize')">Capitalize</button>
-        </li>
-        <li>
-          <button class="mini-button" @click="transformText('uppercase')">UPPERCASE</button>
-        </li>
-        <li>
-          <button class="mini-button" @click="transformText('lowercase')">lowercase</button>
-        </li>
-        <li>
-          <button class="mini-button" @click="transformText('camelCase')">camelCase</button>
-        </li>
-        <li>
-          <button class="mini-button" @click="transformText('pascalCase')">PascalCase</button>
-        </li>
-        <li>
-          <button class="mini-button" @click="transformText('snakeCase')">snake_case</button>
-        </li>
-        <li>
-          <button class="mini-button" @click="transformText('kebabCase')">kebab-case</button>
-        </li>
-      </ul>
-    </div>
+    <MainInput
+      v-model="inputText"
+      :is-voice-recognition-active="isVoiceRecognitionActive"
+      @toggle-voice-recognition="toggleVoiceRecognition"
+      @correct-text="correctText"
+      @edit-text="editText"
+      @translate-text="translateText"
+      @transform-text="transformText"
+    />
 
     <h2 class="section-title">Действия</h2>
 
-    <ul class="text-insert-buttons">
-      <li>
-        <button class="button" @click="createNote">Создать быструю заметку</button>
-      </li>
-      <li>
-        <button class="button" @click="addToCalendar">Дело в календарь</button>
-      </li>
-      <li>
-        <button class="button" @click="searchText">Поиск выбранного текста в интернете</button>
-      </li>
-      <li>
-        <button class="button" @click="insertIntoWindow">Вставить в окно</button>
-      </li>
-    </ul>
+    <Actions :text="inputText" />
 
     <h2 class="section-title">Трансформирование и вставка</h2>
 
-    <ul class="big-buttons-toolbar">
-      <li>
-        <button class="button" @click="correctAndInsert">Коррекция</button>
-      </li>
-      <li>
-        <button class="button" @click="editAndInsert">Редактировать</button>
-      </li>
-    </ul>
-
-    <ul class="big-buttons-toolbar">
-      <li>
-        <button class="button" @click="translateAndInsert('en', 'ru')">EN ➡️ RU</button>
-      </li>
-      <li>
-        <button class="button" @click="translateAndInsert('ru', 'en')">RU ➡️ EN</button>
-      </li>
-      <li>
-        <button class="button" @click="translateAndInsert('ru', 'es')">RU ➡️ ES</button>
-      </li>
-      <li>
-        <button class="button" @click="translateAndInsert('es', 'ru')">ES ➡️ RU</button>
-      </li>
-    </ul>
-
-    <ul class="big-buttons-toolbar">
-      <li>
-        <button class="button" @click="transformAndInsert('capitalize')">Capitalize</button>
-      </li>
-      <li>
-        <button class="button" @click="transformAndInsert('uppercase')">UPPERCASE</button>
-      </li>
-      <li>
-        <button class="button" @click="transformAndInsert('lowercase')">lowercase</button>
-      </li>
-      <li>
-        <button class="button" @click="transformAndInsert('camelCase')">camelCase</button>
-      </li>
-      <li>
-        <button class="button" @click="transformAndInsert('pascalCase')">PascalCase</button>
-      </li>
-      <li>
-        <button class="button" @click="transformAndInsert('snakeCase')">snake_case</button>
-      </li>
-      <li>
-        <button class="button" @click="transformAndInsert('kebabCase')">kebab-case</button>
-      </li>
-    </ul>
+    <TransformAndInsertMenu :text="inputText" />
   </div>
 </template>
 
@@ -143,6 +32,9 @@ import { ref, onMounted } from 'vue';
 import { useIpc } from './composables/useIpc';
 import { useTextTransform } from './composables/useTextTransform';
 import { Modes } from './types';
+import MainInput from './components/MainInput.vue';
+import Actions from './components/Actions.vue';
+import TransformAndInsertMenu from './components/TransformAndInsertMenu.vue';
 
 const { windowId, selectedText, mode, callFunction, initParams } = useIpc();
 const {
@@ -233,19 +125,6 @@ const translateText = async (from: string, to: string) => {
   }
 };
 
-const translateAndInsert = async (from: string, to: string) => {
-  if (!inputText.value.trim()) return;
-  const result = await callFunction('translateTextAndInsert', [
-    inputText.value,
-    from,
-    to,
-    windowId.value
-  ]);
-  if (!result.success) {
-    console.error(result.error);
-  }
-};
-
 const transformText = (type: string) => {
   if (!inputText.value.trim()) return;
   switch (type) {
@@ -271,56 +150,6 @@ const transformText = (type: string) => {
       inputText.value = toKebabCase(inputText.value);
       break;
   }
-};
-
-const transformAndInsert = async (type: string) => {
-  if (!inputText.value.trim()) return;
-  let transformedText = inputText.value;
-  
-  switch (type) {
-    case 'capitalize':
-      transformedText = capitalizeFirstLetter(inputText.value);
-      break;
-    case 'uppercase':
-      transformedText = toUppercase(inputText.value);
-      break;
-    case 'lowercase':
-      transformedText = toLowercase(inputText.value);
-      break;
-    case 'camelCase':
-      transformedText = toCamelCase(inputText.value);
-      break;
-    case 'pascalCase':
-      transformedText = toPascalCase(inputText.value);
-      break;
-    case 'snakeCase':
-      transformedText = toSnakeCase(inputText.value);
-      break;
-    case 'kebabCase':
-      transformedText = toKebabCase(inputText.value);
-      break;
-  }
-
-  const result = await callFunction('typeIntoWindowAndClose', [transformedText, windowId.value]);
-  if (!result.success) {
-    console.error(result.error);
-  }
-};
-
-const correctText = () => {
-  console.log('Корректировка текста:', inputText.value);
-};
-
-const editText = () => {
-  console.log('Редактура текста:', inputText.value);
-};
-
-const correctAndInsert = () => {
-  console.log('Корректировка текста:', inputText.value);
-};
-
-const editAndInsert = () => {
-  console.log('Редактура текста:', inputText.value);
 };
 </script>
 
