@@ -2,17 +2,9 @@
 import { BrowserWindow } from "electron";
 import { exec } from "child_process";
 import { config } from "./config";
-// const Vosk = require("./vosk");
+import VoskVoiceRecognition from "./vosk";
 
-// const voiceRecognition = new Vosk((text) => {
-//   console.log(text);
-// }, config.voskWsUrl);
-
-// Интерфейсы для типизации
-interface TranslationResult {
-  text: string;
-  error?: string;
-}
+const vosk = new VoskVoiceRecognition(config.voskWsUrl);
 
 interface ExternalFunctions {
   translateText: (
@@ -37,6 +29,44 @@ interface ExternalFunctions {
     targetLang: string,
     windowId: string
   ) => Promise<void>;
+  startVoiceRecognition: (mainWindow: BrowserWindow) => Promise<void>;
+  stopVoiceRecognition: () => Promise<void>;
+}
+
+// Экспортируем функции
+export const functions: ExternalFunctions = {
+  translateText,
+  openInBrowserAndClose,
+  typeIntoWindowAndClose,
+  startVoiceRecognition,
+  stopVoiceRecognition,
+
+  async translateTextAndInsert(
+    mainWindow: BrowserWindow,
+    text: string,
+    sourceLang: string,
+    targetLang: string,
+    windowId: string
+  ): Promise<void> {
+    const translatedText = await translateText(
+      mainWindow,
+      text,
+      sourceLang,
+      targetLang
+    );
+
+    await typeIntoWindowAndClose(mainWindow, translatedText, windowId);
+  },
+};
+
+async function startVoiceRecognition(mainWindow: BrowserWindow): Promise<void> {
+  vosk.start((text) => {
+    mainWindow?.webContents.send("voice-recognition", text);
+  });
+}
+
+async function stopVoiceRecognition(): Promise<void> {
+  vosk.stop();
 }
 
 // Функция для открытия URL в браузере
@@ -113,27 +143,3 @@ async function typeIntoWindowAndClose(
     });
   });
 }
-
-// Экспортируем функции
-export const functions: ExternalFunctions = {
-  translateText,
-  openInBrowserAndClose,
-  typeIntoWindowAndClose,
-
-  async translateTextAndInsert(
-    mainWindow: BrowserWindow,
-    text: string,
-    sourceLang: string,
-    targetLang: string,
-    windowId: string
-  ): Promise<void> {
-    const translatedText = await translateText(
-      mainWindow,
-      text,
-      sourceLang,
-      targetLang
-    );
-
-    await typeIntoWindowAndClose(mainWindow, translatedText, windowId);
-  },
-};

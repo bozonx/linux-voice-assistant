@@ -5,14 +5,14 @@ let windowId = null;
 let selectedText = null;
 let mode = null;
 
+
 document.addEventListener("DOMContentLoaded", () => {
   console.log("Application started");
 
-  // Устанавливаем фокус на textarea
-  const textarea = document.getElementById("inputText");
+  const mainInput = document.getElementById("inputText");
 
   // Получаем параметры инициализации
-  ipcRenderer.on("init-params", (event, params) => {
+  ipcRenderer.on("init-params", async (event, params) => {
     windowId = params.windowId;
     selectedText = params.selectedText;
     mode = params.mode;
@@ -21,33 +21,61 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Режим выбора текста в предыдущем окне
     if (mode === MODES.select && selectedText) {
-      textarea.value = selectedText;
+      mainInput.value = selectedText;
       // Выбираем весь текст в textarea
-      textarea.select();
-      textarea.focus();
+      mainInput.select();
+      mainInput.focus();
 
       // Устанавливаем курсор в конец текста
       //textarea.selectionStart = textarea.selectionEnd = textarea.value.length;
     }
-    // Режим голосового ввода
-    else {
-      textarea.focus();
+    // Режим голосового ввода - сразу запускаем распознавание голоса
+    else if (mode === MODES.voice) {
+      await ipcRenderer.invoke("call-function", "startVoiceRecognition", []);
+      document.getElementById("voiceInput").classList.add("mini-btn-pressed");
+      document
+        .getElementById("voice-recognition-process")
+        .classList.add("active");
     }
   });
 
-  document.getElementById("voiceInput").addEventListener("click", () => {
-    const btn = document.getElementById("voiceInput");
-    btn.classList.add("mini-btn-pressed");
-
-    const voiceRecognition = new VoiceRecognition((text) => {
-      textarea.value = text;
-      textarea.focus();
-    }, config.voskWsUrl);
-
-    voiceRecognition.start();
-
-    //btn.classList.remove("mini-btn-pressed");
+  ipcRenderer.on("voice-recognition", (event, data) => {
+    mainInput.value = data;
+    mainInput.focus();
   });
+
+  document.getElementById("voiceInput").addEventListener("click", async () => {
+    const btn = document.getElementById("voiceInput");
+
+    if (btn.classList.contains("mini-btn-pressed")) {
+      await ipcRenderer.invoke("call-function", "stopVoiceRecognition", []);
+      btn.classList.remove("mini-btn-pressed");
+      document
+        .getElementById("voice-recognition-process")
+        .classList.remove("active");
+      return;
+    }
+
+    btn.classList.add("mini-btn-pressed");
+    document
+      .getElementById("voice-recognition-process")
+      .classList.add("active");
+
+    await ipcRenderer.invoke("call-function", "startVoiceRecognition", []);
+  });
+
+  document
+    .getElementById("stopVoiceRecognition")
+    .addEventListener("click", async () => {
+      await ipcRenderer.invoke("call-function", "stopVoiceRecognition", []);
+      document
+        .getElementById("voiceInput")
+        .classList.remove("mini-btn-pressed");
+      document
+        .getElementById("voice-recognition-process")
+        .classList.remove("active");
+      mainInput.focus();
+    });
 
   document.getElementById("createNote").addEventListener("click", () => {
     console.log("Создание заметки:", getInputText());
@@ -111,8 +139,8 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error(result.error);
       }
 
-      textarea.value = result.result;
-      textarea.focus();
+      mainInput.value = result.result;
+      mainInput.focus();
     });
 
   document
@@ -149,8 +177,8 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error(result.error);
       }
 
-      textarea.value = result.result;
-      textarea.focus();
+      mainInput.value = result.result;
+      mainInput.focus();
     });
 
   document
@@ -186,8 +214,8 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error(result.error);
       }
 
-      textarea.value = result.result;
-      textarea.focus();
+      mainInput.value = result.result;
+      mainInput.focus();
     });
 
   document
@@ -223,8 +251,8 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error(result.error);
       }
 
-      textarea.value = result.result;
-      textarea.focus();
+      mainInput.value = result.result;
+      mainInput.focus();
     });
 
   document
@@ -273,8 +301,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const resultText = capitalizeFirstLetter(text);
 
-      textarea.value = resultText;
-      textarea.focus();
+      mainInput.value = resultText;
+      mainInput.focus();
     });
 
   document
@@ -304,8 +332,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const resultText = toUppercase(text);
 
-      textarea.value = resultText;
-      textarea.focus();
+      mainInput.value = resultText;
+      mainInput.focus();
     });
 
   document

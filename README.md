@@ -1,11 +1,12 @@
-# Linux Voice Assistant
+# Writer Assistant
 
-A voice assistant application built with Electron for Linux.
+Assistant for linux for writers and programmers.
 
 Set bindings
 
 - Win + q - `run-ui.sh select`
-- Win + w - `run-ui.sh write`
+- Win + w - `run-ui.sh voice`
+- Win + e - `run-ui.sh edit`
 
 ## Setup
 

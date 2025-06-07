@@ -1,6 +1,5 @@
 import { app, BrowserWindow, ipcMain } from "electron";
 import { functions } from "./helper-external";
-import { exec } from "child_process";
 
 const DEBUG: boolean = true;
 

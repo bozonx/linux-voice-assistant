@@ -115,9 +115,30 @@
             margin-bottom: 6px;
             font-size: 14px;
         }
+
+        #voice-recognition-process {
+            display: none;
+        }
+        #voice-recognition-process.active {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
+    <div id="voice-recognition-process"><div>Распознавание голоса...</div><div><button class="mini-button" id="stopVoiceRecognition">Остановить</button></div></div>
     <div class="container">
         <div id="app">
             <div class="text-edit-container">

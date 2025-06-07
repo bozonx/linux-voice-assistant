@@ -1,6 +1,7 @@
 const MODES = {
-  write: "write",
   select: "select",
+  voice: "voice",
+  edit: "edit",
 };
 
 // получаем текст из textarea
