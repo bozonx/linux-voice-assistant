@@ -15,6 +15,9 @@ export default defineConfig({
         vite: {
           build: {
             outDir: "dist-electron/main",
+            rollupOptions: {
+              external: ["electron"],
+            },
           },
         },
       },
@@ -23,6 +26,9 @@ export default defineConfig({
         vite: {
           build: {
             outDir: "dist-electron/preload",
+            rollupOptions: {
+              external: ["electron"],
+            },
           },
         },
       },
@@ -39,5 +45,21 @@ export default defineConfig({
     outDir: "dist",
     assetsDir: "assets",
     emptyOutDir: true,
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, "index.html"),
+      },
+    },
+    minify: "terser",
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
+  },
+  server: {
+    port: 3000,
+    strictPort: true,
   },
 });
