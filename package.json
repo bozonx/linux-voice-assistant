@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc && electron-builder",
     "watch": "tsc -w",
-    "dev": "tsc && electron ."
+    "dev": "tsc && electron ./"
   },
   "author": "Kozyrin Ivan",
   "license": "MIT",
