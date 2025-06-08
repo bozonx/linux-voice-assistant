@@ -4,7 +4,6 @@
   "description": "Desktop assistant built with Electron",
   "main": "dist/main.js",
   "scripts": {
-    "start": "tsc && electron .",
     "build": "tsc && electron-builder",
     "watch": "tsc -w",
     "dev": "tsc && electron ."

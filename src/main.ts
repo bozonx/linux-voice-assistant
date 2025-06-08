@@ -34,7 +34,7 @@ const getCommandLineArgs = (): CommandLineParams => {
 };
 
 // Отключаем предупреждения о безопасности
-process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
+process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "true";
 
 // The built directory structure
 //
@@ -65,11 +65,14 @@ function createWindow() {
     },
   });
 
-  if (process.env.NODE_ENV === "development") {
-    mainWindow.loadURL("http://localhost:3000");
-  } else {
-    mainWindow.loadFile(path.join(__dirname, "../dist/index.html"));
-  }
+  // if (process.env.NODE_ENV === "development") {
+  //   mainWindow.loadURL("http://localhost:3000");
+  // } else {
+  //   mainWindow.loadFile(path.join(__dirname, "../vuedist/index.html"));
+  // }
+
+  mainWindow.loadURL("http://localhost:3000");
+  // mainWindow.loadFile(path.join(__dirname, "./index.html"));
 
   // Отправляем параметры в renderer процесс после загрузки страницы
   mainWindow.webContents.on("did-finish-load", () => {
@@ -113,7 +116,7 @@ ipcMain.handle(
     try {
       const func = functions[funcName as keyof typeof functions];
       type FuncType = typeof func;
-      const result = await(func as Function)(mainWindow, ...args);
+      const result = await (func as Function)(mainWindow, ...args);
       return { success: true, result };
     } catch (error) {
       console.error("Error executing function in window:", error);

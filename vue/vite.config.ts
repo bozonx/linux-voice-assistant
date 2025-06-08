@@ -17,61 +17,6 @@ export default defineConfig({
     AutoImport({
       imports: ["vue", "vue-router"],
     }),
-
-    //   electron([
-    //     {
-    //       // Main process entry file
-    //       entry: "electron/main.ts",
-    //       vite: {
-    //         build: {
-    //           rollupOptions: {
-    //             external: ["electron"],
-    //           },
-    //         },
-    //       },
-    //     },
-    //     {
-    //       entry: "electron/preload.ts",
-    //       vite: {
-    //         build: {
-    //           rollupOptions: {
-    //             external: ["electron"],
-    //           },
-    //         },
-    //       },
-    //     },
-    //     {
-    //       entry: "electron/vosk.ts",
-    //       vite: {
-    //         build: {
-    //           rollupOptions: {
-    //             external: ["electron"],
-    //           },
-    //         },
-    //       },
-    //     },
-    //     {
-    //       entry: "electron/helper-external.ts",
-    //       vite: {
-    //         build: {
-    //           rollupOptions: {
-    //             external: ["electron"],
-    //           },
-    //         },
-    //       },
-    //     },
-    //     {
-    //       entry: "electron/config.ts",
-    //       vite: {
-    //         build: {
-    //           rollupOptions: {
-    //             external: ["electron"],
-    //           },
-    //         },
-    //       },
-    //     },
-    //   ]),
-    //   renderer(),
   ],
   resolve: {
     alias: {
