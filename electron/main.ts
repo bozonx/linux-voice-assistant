@@ -65,14 +65,11 @@ function createWindow() {
     },
   });
 
-  // if (process.env.NODE_ENV === "development") {
-  //   mainWindow.loadURL("http://localhost:3000");
-  // } else {
-  //   mainWindow.loadFile(path.join(__dirname, "../vuedist/index.html"));
-  // }
-
-  mainWindow.loadURL("http://localhost:3000");
-  // mainWindow.loadFile(path.join(__dirname, "./index.html"));
+  if (process.env.NODE_ENV === "production") {
+    mainWindow.loadFile(path.join(__dirname, "../vuedist/index.html"));
+  } else {
+    mainWindow.loadURL("http://localhost:3000");
+  }
 
   // Отправляем параметры в renderer процесс после загрузки страницы
   mainWindow.webContents.on("did-finish-load", () => {
