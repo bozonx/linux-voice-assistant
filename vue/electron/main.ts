@@ -1,5 +1,37 @@
 import { app, BrowserWindow, ipcMain } from "electron";
 import path from "path";
+import { functions } from "./helper-external";
+
+const DEBUG: boolean = true;
+let mainWindow: BrowserWindow | null = null;
+
+// Интерфейс для параметров командной строки
+interface CommandLineParams {
+  windowId?: string;
+  selectedText?: string;
+  mode?: string;
+}
+
+// Получаем аргументы командной строки
+const getCommandLineArgs = (): CommandLineParams => {
+  const args: string[] = process.argv.slice(2);
+  const params: CommandLineParams = {};
+
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === "--window-id" && i + 1 < args.length) {
+      params.windowId = args[i + 1];
+      i++;
+    } else if (args[i] === "--selected-text" && i + 1 < args.length) {
+      params.selectedText = args[i + 1];
+      i++;
+    } else if (args[i] === "--mode" && i + 1 < args.length) {
+      params.mode = args[i + 1];
+      i++;
+    }
+  }
+
+  return params;
+};
 
 // The built directory structure
 //
@@ -17,12 +49,10 @@ process.env.VITE_PUBLIC = app.isPackaged
   ? process.env.DIST
   : path.join(process.env.DIST, "public");
 
-let win: BrowserWindow | null;
-// 🚧 Use ['ENV_NAME'] avoid vite:define plugin - Vite@2.x
-const VITE_DEV_SERVER_URL = process.env["VITE_DEV_SERVER_URL"];
-
 function createWindow() {
-  win = new BrowserWindow({
+  const params: CommandLineParams = getCommandLineArgs();
+
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
@@ -33,17 +63,26 @@ function createWindow() {
   });
 
   if (process.env.NODE_ENV === "development") {
-    win.loadURL("http://localhost:5173");
-    win.webContents.openDevTools();
+    mainWindow.loadURL("http://localhost:5173");
   } else {
-    win.loadFile(path.join(__dirname, "../dist/index.html"));
+    mainWindow.loadFile(path.join(__dirname, "../dist/index.html"));
+  }
+
+  // Отправляем параметры в renderer процесс после загрузки страницы
+  mainWindow.webContents.on("did-finish-load", () => {
+    mainWindow?.webContents.send("init-params", params);
+  });
+
+  // Open DevTools in development mode
+  if (DEBUG) {
+    mainWindow.webContents.openDevTools();
   }
 }
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
-    win = null;
+    mainWindow = null;
   }
 });
 
@@ -57,24 +96,25 @@ app.whenReady().then(() => {
   });
 });
 
-// Обработчики IPC
-ipcMain.handle("call-function", async (event, functionName, args) => {
-  try {
-    // Здесь будет реализация вызова функций
-    return { success: true, result: null };
-  } catch (error) {
-    return { success: false, error: String(error) };
-  }
-});
+// Интерфейс для результата выполнения функции
+interface FunctionResult {
+  success: boolean;
+  result?: any;
+  error?: Error;
+}
 
+// Обработчики IPC
 ipcMain.handle(
-  "execute-in-window",
-  async (event, { windowId, functionCode }) => {
+  "call-function",
+  async (event, funcName: string, args: any[]): Promise<FunctionResult> => {
     try {
-      // Здесь будет реализация выполнения кода в окне
-      return { success: true, result: null };
+      const func = functions[funcName as keyof typeof functions];
+      type FuncType = typeof func;
+      const result = await(func as Function)(mainWindow, ...args);
+      return { success: true, result };
     } catch (error) {
-      return { success: false, error: String(error) };
+      console.error("Error executing function in window:", error);
+      return { success: false, error: error as Error };
     }
   }
 );
