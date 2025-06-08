@@ -2,19 +2,22 @@
   "name": "linux-voice-assistant-ui",
   "version": "1.0.0",
   "private": true,
-  "main": "dist-electron/main/index.js",
+  "main": "dist-electron/main.js",
   "scripts": {
+    "start": "tsc && electron ./electron",
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
-    "electron:dev": "concurrently \"vite\" \"electron .\"",
+    "electron:dev": "concurrently \"vite\" \"tsc && electron .\"",
     "electron:build": "vue-tsc --noEmit && vite build && electron-builder",
     "electron:preview": "electron ."
   },
   "dependencies": {
+    "mic": "^2.1.2",
     "pinia": "^2.1.7",
     "vue": "^3.4.15",
-    "vue-router": "^4.2.5"
+    "vue-router": "^4.2.5",
+    "ws": "^8.18.2"
   },
   "devDependencies": {
     "@types/node": "^20.11.16",
