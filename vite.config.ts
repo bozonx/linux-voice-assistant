@@ -12,25 +12,23 @@ export default defineConfig({
       {
         // Main process entry file
         entry: "electron/main.ts",
-        // vite: {
-        //   build: {
-        //     outDir: "dist-electron/main",
-        //     rollupOptions: {
-        //       external: ["electron"],
-        //     },
-        //   },
-        // },
+        vite: {
+          build: {
+            rollupOptions: {
+              external: ["electron"],
+            },
+          },
+        },
       },
       {
         entry: "electron/preload.ts",
-        // vite: {
-        //   build: {
-        //     outDir: "dist-electron/preload",
-        //     rollupOptions: {
-        //       external: ["electron"],
-        //     },
-        //   },
-        // },
+        vite: {
+          build: {
+            rollupOptions: {
+              external: ["electron"],
+            },
+          },
+        },
       },
     ]),
     renderer(),
