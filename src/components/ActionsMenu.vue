@@ -1,6 +1,5 @@
 <template>
   <div>
-    
     <ul class="text-insert-buttons">
       <li>
         <button class="button" @click="createNote">Создать быструю заметку</button>

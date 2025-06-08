@@ -33,6 +33,9 @@ const getCommandLineArgs = (): CommandLineParams => {
   return params;
 };
 
+// Отключаем предупреждения о безопасности
+process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
+
 // The built directory structure
 //
 // ├─┬─┬ dist

@@ -1,13 +1,23 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import electron from "vite-plugin-electron";
+// import electron from "vite-plugin-electron/simple";
 import renderer from "vite-plugin-electron-renderer";
 import { resolve } from "path";
+import AutoImport from "unplugin-auto-import/vite";
+import Components from "unplugin-vue-components/vite";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
+    Components({
+      /* options */
+    }),
+    AutoImport({
+      imports: ["vue", "vue-router"],
+    }),
+
     electron([
       {
         // Main process entry file
@@ -22,6 +32,36 @@ export default defineConfig({
       },
       {
         entry: "electron/preload.ts",
+        vite: {
+          build: {
+            rollupOptions: {
+              external: ["electron"],
+            },
+          },
+        },
+      },
+      {
+        entry: "electron/vosk.ts",
+        vite: {
+          build: {
+            rollupOptions: {
+              external: ["electron"],
+            },
+          },
+        },
+      },
+      {
+        entry: "electron/helper-external.ts",
+        vite: {
+          build: {
+            rollupOptions: {
+              external: ["electron"],
+            },
+          },
+        },
+      },
+      {
+        entry: "electron/config.ts",
         vite: {
           build: {
             rollupOptions: {
