@@ -58,11 +58,11 @@
 <script setup lang="ts">
 import { useIpcStore } from '../stores/ipc';
 import { useTextTransform } from '../composables/useTextTransform';
-import { useMainInput } from '../composables/useMainInput.ts'
+import { useMainInputStore } from '../stores/mainInput'
 import { useOverlayStore } from '../stores/overlay';
 
 // Используем composable
-const { setMainInputText, getMainInputText } = useMainInput()
+const { setMainInputText, getMainInputText } = useMainInputStore()
 const ipcStore = useIpcStore();
 const overlayStore = useOverlayStore();
 const {

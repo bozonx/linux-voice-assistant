@@ -10,10 +10,10 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useMainInput } from '../composables/useMainInput.js'
+import { useMainInputStore } from '../stores/mainInput'
 
 // Используем composable
-const { mainInputText, setMainInputText } = useMainInput()
+const { mainInputText, setMainInputText } = useMainInputStore()
 
 // Создаем ref для textarea
 const textareaRef = ref<HTMLTextAreaElement | null>(null)

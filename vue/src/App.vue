@@ -6,13 +6,13 @@
 
 <script setup lang="ts">
 import { useIpcStore } from './stores/ipc';
-import { useMainInput } from './composables/useMainInput';
+import { useMainInputStore } from './stores/mainInput';
 import { START_MODES } from './types';
 import { useOverlayStore } from './stores/overlay';
 
 const ipcStore = useIpcStore();
 const overlayStore = useOverlayStore();
-const { setMainInputText } = useMainInput();
+const { setMainInputText } = useMainInputStore();
 const routerViewRef = ref()
 
 onMounted(() => {
