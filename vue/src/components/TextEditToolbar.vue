@@ -4,7 +4,7 @@
       <li>
         <button
           class="mini-button"
-          @click="startVoiceRecognition()"
+          @click="voiceRecognition()"
         >
           Голосовой ввод
         </button>
@@ -59,6 +59,7 @@
 import { useIpc } from '../composables/useIpc';
 import { useTextTransform } from '../composables/useTextTransform';
 import { useTextInput } from '../composables/useTextInput.js'
+import { startVoiceRecognition, startRepunctuation, endOverlay } from '../composables/useOverlay';
 
 // Используем composable
 const { setText, getText } = useTextInput()
@@ -121,7 +122,8 @@ const transformText = (type: string) => {
   }
 };
 
-const startVoiceRecognition = () => {
+const voiceRecognition = () => {
+  startVoiceRecognition();
 };
 </script>
 
