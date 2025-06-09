@@ -1,17 +1,19 @@
 <template>
   <div class="layout">
-    <RouterView />
+    <RouterView ref="routerViewRef" />
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, nextTick } from 'vue'
 import { useIpc } from './composables/useIpc';
 import { useTextInput } from './composables/useTextInput';
 import { START_MODES } from './types';
+import { startVoiceRecognition } from './composables/useOverlay';
 
-const { windowId, selectedText, mode } = useIpc();
+const { windowId, selectedText, mode, callFunction } = useIpc();
 const { setText } = useTextInput();
-
+const routerViewRef = ref()
 
 onMounted(() => {
   // @ts-ignore - electron types
@@ -21,30 +23,21 @@ onMounted(() => {
     selectedText.value = params.selectedText;
     mode.value = params.mode;
 
-
-    // if (mode.value === Modes.SELECT && selectedText.value) {
-    //   inputText.value = selectedText.value;
-    // } else if (mode.value === Modes.VOICE) {
-    //   await startVoiceRecognition();
-    // }
-
     // Режим выбора текста в предыдущем окне
     if (mode.value === START_MODES.SELECT && selectedText.value) {
       setText(selectedText.value);
-      // Выбираем весь текст в textarea
-      // mainInput.select();
-      // mainInput.focus();
-
-      // Устанавливаем курсор в конец текста
-      //textarea.selectionStart = textarea.selectionEnd = textarea.value.length;
+      // Ждем следующего тика для того, чтобы компонент успел обновиться
+      await nextTick()
+      // Получаем доступ к компоненту MainInput через RouterView
+      const mainInput = routerViewRef.value?.$refs?.mainInput
+      if (mainInput) {
+        mainInput.selectAllAndFocus()
+      }
     }
     // Режим голосового ввода - сразу запускаем распознавание голоса
-    else if (mode === START_MODES.VOICE) {
-          // await ipcRenderer.invoke("call-function", "startVoiceRecognition", []);
-          // document.getElementById("voiceInput").classList.add("mini-btn-pressed");
-          // document
-          //   .getElementById("voice-recognition-process")
-          //   .classList.add("active");
+    else if (mode.value === START_MODES.VOICE) {
+      startVoiceRecognition();
+      await callFunction("startVoiceRecognition");
     }
   });
 

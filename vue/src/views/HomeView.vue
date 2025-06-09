@@ -3,7 +3,7 @@
     <ProgressIndicator />
 
     <div>
-      <MainInput/>
+      <MainInput ref="mainInput"/>
 
       <TextEditToolbar/>
     </div>
