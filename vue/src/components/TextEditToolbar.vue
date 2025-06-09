@@ -58,7 +58,7 @@
 <script setup lang="ts">
 import { useIpc } from '../composables/useIpc';
 import { useTextTransform } from '../composables/useTextTransform';
-import { useTextInput } from '../composables/useTextInput.js'
+import { useTextInput } from '../composables/useMainInput.js'
 import { startVoiceRecognition, startRepunctuation, endOverlay } from '../composables/useOverlay';
 
 // Используем composable

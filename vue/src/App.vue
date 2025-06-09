@@ -5,14 +5,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue'
 import { useIpc } from './composables/useIpc';
-import { useTextInput } from './composables/useTextInput';
+import { useMainInput } from './composables/useMainInput';
 import { START_MODES } from './types';
 import { startVoiceRecognition } from './composables/useOverlay';
 
 const { windowId, selectedText, mode, callFunction } = useIpc();
-const { setText } = useTextInput();
+const { setMainInputText } = useMainInput();
 const routerViewRef = ref()
 
 onMounted(() => {
@@ -25,7 +24,7 @@ onMounted(() => {
 
     // Режим выбора текста в предыдущем окне
     if (mode.value === START_MODES.SELECT && selectedText.value) {
-      setText(selectedText.value);
+      setMainInputText(selectedText.value);
       // Ждем следующего тика для того, чтобы компонент успел обновиться
       await nextTick()
       // Получаем доступ к компоненту MainInput через RouterView

@@ -3,17 +3,17 @@
     ref="textareaRef"
     class="main-input"
     placeholder="Enter text..."
-    :value="text"
+    :value="mainInputText"
     @input="handleInput"
   ></textarea>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useTextInput } from '../composables/useTextInput.js'
+import { useMainInput } from '../composables/useMainInput.js'
 
 // Используем composable
-const { text, setText } = useTextInput()
+const { mainInputText, setMainInputText } = useMainInput()
 
 // Создаем ref для textarea
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
@@ -35,7 +35,7 @@ defineExpose({
 const handleInput = (event: Event): void => {
   const target = event.target as HTMLTextAreaElement
   if (target) {
-    setText(target.value)
+    setMainInputText(target.value)
   }
 }
 </script>

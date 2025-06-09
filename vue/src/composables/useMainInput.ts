@@ -1,23 +1,23 @@
 import { ref } from "vue";
 
 // Создаем реактивную переменную для хранения текста
-const text = ref("");
+const mainInputText = ref("");
 
 // Функция для установки текста
-const setText = (newText: string) => {
-  text.value = newText;
+const setMainInputText = (newText: string) => {
+  mainInputText.value = newText;
 };
 
 // Функция для получения текущего текста
-const getText = () => {
-  return text.value;
+const getMainInputText = () => {
+  return mainInputText.value;
 };
 
 // Экспортируем composable
-export function useTextInput() {
+export function useMainInput() {
   return {
-    text,
-    setText,
-    getText,
+    mainInputText,
+    setMainInputText,
+    getMainInputText,
   };
 }
