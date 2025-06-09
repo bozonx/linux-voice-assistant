@@ -59,11 +59,12 @@
 import { useIpcStore } from '../stores/ipc';
 import { useTextTransform } from '../composables/useTextTransform';
 import { useMainInput } from '../composables/useMainInput.ts'
-import { startVoiceRecognition, startRepunctuation, endOverlay } from '../composables/useOverlay.ts';
+import { useOverlayStore } from '../stores/overlay';
 
 // Используем composable
 const { setMainInputText, getMainInputText } = useMainInput()
 const ipcStore = useIpcStore();
+const overlayStore = useOverlayStore();
 const {
   capitalizeFirstLetter,
   toUppercase,
@@ -123,7 +124,7 @@ const transformText = (type: string) => {
 };
 
 const voiceRecognition = () => {
-  startVoiceRecognition();
+  overlayStore.startVoiceRecognition();
 };
 </script>
 

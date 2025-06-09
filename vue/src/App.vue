@@ -8,9 +8,10 @@
 import { useIpcStore } from './stores/ipc';
 import { useMainInput } from './composables/useMainInput';
 import { START_MODES } from './types';
-import { startVoiceRecognition } from './composables/useOverlay';
+import { useOverlayStore } from './stores/overlay';
 
 const ipcStore = useIpcStore();
+const overlayStore = useOverlayStore();
 const { setMainInputText } = useMainInput();
 const routerViewRef = ref()
 
@@ -35,7 +36,7 @@ onMounted(() => {
     }
     // Режим голосового ввода - сразу запускаем распознавание голоса
     else if (ipcStore.mode === START_MODES.VOICE) {
-      startVoiceRecognition();
+      overlayStore.startVoiceRecognition();
       await ipcStore.callFunction("startVoiceRecognition");
     }
   });

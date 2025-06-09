@@ -1,23 +1,25 @@
 <template>
-  <div v-if="overlayStatus === 'TRANSLATING'" class="overlay-process">
+  <div v-if="overlayStore.status === 'TRANSLATING'" class="overlay-process">
     <div>Перевод...</div>
   </div>
-  <div v-if="overlayStatus === 'VOICE_RECOGNITION'" class="overlay-process">
+  <div v-if="overlayStore.status === 'VOICE_RECOGNITION'" class="overlay-process">
     <div>Распознавание голоса...</div>
     <div>
       <button class="dialog-button" @click="onStopRecognition">Остановить</button>
     </div>
   </div>
-  <div v-if="overlayStatus === 'REPUNCTUATION'" class="overlay-process">
+  <div v-if="overlayStore.status === 'REPUNCTUATION'" class="overlay-process">
     <div>Коррекция пунктуации...</div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { endOverlay, overlayStatus } from '../composables/useOverlay.ts';
+import { useOverlayStore } from '../stores/overlay';
+
+const overlayStore = useOverlayStore();
 
 const onStopRecognition = () => {
-  endOverlay();
+  overlayStore.endOverlay();
 };
 </script>
 
