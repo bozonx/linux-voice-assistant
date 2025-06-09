@@ -1,4 +1,4 @@
-export enum Modes {
+export enum START_MODES {
   SELECT = "select",
   VOICE = "voice",
   EDIT = "edit",
@@ -7,7 +7,7 @@ export enum Modes {
 export interface InitParams {
   windowId: string | null;
   selectedText: string | null;
-  mode: Modes;
+  mode: START_MODES;
 }
 
 export interface IpcResult {

@@ -11,7 +11,6 @@ export function useIpc() {
     args: any[]
   ): Promise<IpcResult> => {
     try {
-      // @ts-ignore - electron types
       const result = await window.electron.ipcRenderer.invoke(
         "call-function",
         functionName,
