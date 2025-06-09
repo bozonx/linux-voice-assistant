@@ -1,41 +1,52 @@
 import { defineStore } from "pinia";
+import { ref } from "vue";
 import type { IpcResult, START_MODES } from "../types";
 
-export const useIpcStore = defineStore("ipc", {
-  state: () => ({
-    windowId: null as string | null,
-    selectedText: null as string | null,
-    mode: null as START_MODES | null,
-  }),
+export const useIpcStore = defineStore("ipc", () => {
+  // Состояние
+  const windowId = ref<string | null>(null);
+  const selectedText = ref<string | null>(null);
+  const mode = ref<START_MODES | null>(null);
 
-  actions: {
-    async callFunction(
-      functionName: string,
-      args: any[] = []
-    ): Promise<IpcResult> {
-      try {
-        const result = await window.electron.ipcRenderer.invoke(
-          "call-function",
-          functionName,
-          args
-        );
-        return result;
-      } catch (error) {
-        console.error("Error calling function:", error);
-        return { success: false, error: String(error) };
-      }
-    },
+  // Действия
+  const callFunction = async (
+    functionName: string,
+    args: any[] = []
+  ): Promise<IpcResult> => {
+    try {
+      const result = await window.electron.ipcRenderer.invoke(
+        "call-function",
+        functionName,
+        args
+      );
+      return result;
+    } catch (error) {
+      console.error("Error calling function:", error);
+      return { success: false, error: String(error) };
+    }
+  };
 
-    setWindowId(id: string | null) {
-      this.windowId = id;
-    },
+  const setWindowId = (id: string | null) => {
+    windowId.value = id;
+  };
 
-    setSelectedText(text: string | null) {
-      this.selectedText = text;
-    },
+  const setSelectedText = (text: string | null) => {
+    selectedText.value = text;
+  };
 
-    setMode(mode: START_MODES | null) {
-      this.mode = mode;
-    },
-  },
+  const setMode = (newMode: START_MODES | null) => {
+    mode.value = newMode;
+  };
+
+  return {
+    // Состояние
+    windowId,
+    selectedText,
+    mode,
+    // Действия
+    callFunction,
+    setWindowId,
+    setSelectedText,
+    setMode,
+  };
 });

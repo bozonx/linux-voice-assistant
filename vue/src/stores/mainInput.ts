@@ -1,22 +1,22 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
+// Интерфейс для store'а
+interface MainInputState {
+  mainInputText: string;
+}
+
 export const useMainInputStore = defineStore("mainInput", () => {
   // Состояние
-  const mainInputText = ref("");
+  const mainInputText = ref<string>("");
 
   // Действия
-  const setMainInputText = (newText: string) => {
+  const setMainInputText = (newText: string): void => {
     mainInputText.value = newText;
-  };
-
-  const getMainInputText = () => {
-    return mainInputText.value;
   };
 
   return {
     mainInputText,
     setMainInputText,
-    getMainInputText,
   };
 });

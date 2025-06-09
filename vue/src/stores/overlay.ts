@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { ref } from "vue";
 
 // Константы для статусов overlay
 const OVERLAY_STATUSES = {
@@ -11,26 +12,32 @@ const OVERLAY_STATUSES = {
 // Тип для возможных значений статуса
 type OverlayStatus = (typeof OVERLAY_STATUSES)[keyof typeof OVERLAY_STATUSES];
 
-export const useOverlayStore = defineStore("overlay", {
-  state: () => ({
-    status: OVERLAY_STATUSES.NONE as OverlayStatus,
-  }),
+export const useOverlayStore = defineStore("overlay", () => {
+  // Состояние
+  const status = ref<OverlayStatus>(OVERLAY_STATUSES.NONE);
 
-  actions: {
-    startTranslating() {
-      this.status = OVERLAY_STATUSES.TRANSLATING;
-    },
+  // Действия
+  const startTranslating = () => {
+    status.value = OVERLAY_STATUSES.TRANSLATING;
+  };
 
-    startVoiceRecognition() {
-      this.status = OVERLAY_STATUSES.VOICE_RECOGNITION;
-    },
+  const startVoiceRecognition = () => {
+    status.value = OVERLAY_STATUSES.VOICE_RECOGNITION;
+  };
 
-    startRepunctuation() {
-      this.status = OVERLAY_STATUSES.REPUNCTUATION;
-    },
+  const startRepunctuation = () => {
+    status.value = OVERLAY_STATUSES.REPUNCTUATION;
+  };
 
-    endOverlay() {
-      this.status = OVERLAY_STATUSES.NONE;
-    },
-  },
+  const hideOverlay = () => {
+    status.value = OVERLAY_STATUSES.NONE;
+  };
+
+  return {
+    status,
+    startTranslating,
+    startVoiceRecognition,
+    startRepunctuation,
+    hideOverlay,
+  };
 });
