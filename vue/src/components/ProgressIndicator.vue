@@ -1,32 +1,28 @@
 <template>
-  <div id="voice-recognition-process" :class="{ active: isActive }">
+  <div v-if="overlayStatus === 'TRANSLATING'" class="overlay-process">
+    <div>Перевод...</div>
+  </div>
+  <div v-if="overlayStatus === 'VOICE_RECOGNITION'" class="overlay-process">
     <div>Распознавание голоса...</div>
     <div>
-      <button class="mini-button" @click="onStop">Остановить</button>
+      <button class="dialog-button" @click="onStopRecognition">Остановить</button>
     </div>
+  </div>
+  <div v-if="overlayStatus === 'REPUNCTUATION'" class="overlay-process">
+    <div>Коррекция пунктуации...</div>
   </div>
 </template>
 
 <script setup lang="ts">
-defineProps<{
-  isActive: boolean;
-}>();
+import { endOverlay, overlayStatus } from '../composables/useOverlay';
 
-const emit = defineEmits<{
-  (e: 'stop'): void;
-}>();
-
-const onStop = () => {
-  emit('stop');
+const onStopRecognition = () => {
+  endOverlay();
 };
 </script>
 
 <style scoped>
-#voice-recognition-process {
-  display: none;
-}
-
-#voice-recognition-process.active {
+.overlay-process {
   position: absolute;
   top: 0;
   left: 0;
@@ -42,20 +38,4 @@ const onStop = () => {
   justify-content: center;
   align-items: center;
 }
-
-.mini-button {
-  background-color: #1b72b7;
-  color: white;
-  border: none;
-  padding: 2px 6px;
-  border-radius: 2px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.mini-button:hover {
-  background-color: #1976D2;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-</style> 
+</style>

@@ -2,19 +2,24 @@
   <textarea
     class="main-input"
     placeholder="Enter text..."
+    :value="text"
     @input="handleInput"
   ></textarea>
 </template>
 
 <script setup lang="ts">
+import { useTextInput } from '../composables/useTextInput.js'
+
+// Используем composable
+const { text, setText } = useTextInput()
 
 // Input handler with type safety
 const handleInput = (event: Event): void => {
-  // const target = event.target as HTMLTextAreaElement;
-  // if (target) {
-  //   emit('update:modelValue', target.value);
-  // }
-};
+  const target = event.target as HTMLTextAreaElement
+  if (target) {
+    setText(target.value)
+  }
+}
 </script>
 
 <style scoped>
