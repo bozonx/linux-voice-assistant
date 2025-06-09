@@ -52,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import { useIpc } from '../composables/useIpc';
+import { useIpcStore } from '../stores/ipc';
 import { useTextTransform } from '../composables/useTextTransform';
 
 // Определяем пропсы компонента
@@ -60,7 +60,7 @@ const props = defineProps<{
   text: string;
 }>();
 
-const { windowId, callFunction } = useIpc();
+const ipcStore = useIpcStore();
 const {
   capitalizeFirstLetter,
   toUppercase,
@@ -85,11 +85,11 @@ const editAndInsert = () => {
 const translateAndInsert = async (from: string, to: string) => {
   if (!props.text.trim()) return;
   
-  const result = await callFunction('translateTextAndInsert', [
+  const result = await ipcStore.callFunction('translateTextAndInsert', [
     props.text,
     from,
     to,
-    windowId.value
+    ipcStore.windowId
   ]);
   if (!result.success) {
     console.error(result.error);
@@ -126,7 +126,7 @@ const transformAndInsert = async (type: string) => {
       break;
   }
 
-  const result = await callFunction('typeIntoWindowAndClose', [transformedText, windowId.value]);
+  const result = await ipcStore.callFunction('typeIntoWindowAndClose', [transformedText, ipcStore.windowId]);
   if (!result.success) {
     console.error(result.error);
   }

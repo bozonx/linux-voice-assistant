@@ -18,14 +18,14 @@
 </template>
 
 <script setup lang="ts">
-import { useIpc } from '../composables/useIpc';
+import { useIpcStore } from '../stores/ipc';
 
 // Определяем пропсы компонента
 const props = defineProps<{
   text: string;
 }>();
 
-const { windowId, callFunction } = useIpc();
+const ipcStore = useIpcStore();
 
 // Функция для создания быстрой заметки
 const createNote = () => {
@@ -41,7 +41,7 @@ const addToCalendar = () => {
 const searchText = async () => {
   if (!props.text.trim()) return;
   
-  const result = await callFunction('openInBrowserAndClose', [
+  const result = await ipcStore.callFunction('openInBrowserAndClose', [
     `https://duckduckgo.com/?q=${encodeURIComponent(props.text)}`
   ]);
   if (!result.success) {
@@ -53,7 +53,7 @@ const searchText = async () => {
 const insertIntoWindow = async () => {
   if (!props.text.trim()) return;
   
-  const result = await callFunction('typeIntoWindowAndClose', [props.text, windowId.value]);
+  const result = await ipcStore.callFunction('typeIntoWindowAndClose', [props.text, ipcStore.windowId]);
   if (!result.success) {
     console.error(result.error);
   }

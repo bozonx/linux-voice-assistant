@@ -5,12 +5,12 @@
 </template>
 
 <script setup lang="ts">
-import { useIpc } from './composables/useIpc';
+import { useIpcStore } from './stores/ipc';
 import { useMainInput } from './composables/useMainInput';
 import { START_MODES } from './types';
 import { startVoiceRecognition } from './composables/useOverlay';
 
-const { windowId, selectedText, mode, callFunction } = useIpc();
+const ipcStore = useIpcStore();
 const { setMainInputText } = useMainInput();
 const routerViewRef = ref()
 
@@ -18,13 +18,13 @@ onMounted(() => {
   // @ts-ignore - electron types
   window.electron.ipcRenderer.on('init-params', async (params: any) => {
     console.log("Received params:", params);
-    windowId.value = params.windowId;
-    selectedText.value = params.selectedText;
-    mode.value = params.mode;
+    ipcStore.setWindowId(params.windowId);
+    ipcStore.setSelectedText(params.selectedText);
+    ipcStore.setMode(params.mode);
 
     // Режим выбора текста в предыдущем окне
-    if (mode.value === START_MODES.SELECT && selectedText.value) {
-      setMainInputText(selectedText.value);
+    if (ipcStore.mode === START_MODES.SELECT && ipcStore.selectedText) {
+      setMainInputText(ipcStore.selectedText);
       // Ждем следующего тика для того, чтобы компонент успел обновиться
       await nextTick()
       // Получаем доступ к компоненту MainInput через RouterView
@@ -34,9 +34,9 @@ onMounted(() => {
       }
     }
     // Режим голосового ввода - сразу запускаем распознавание голоса
-    else if (mode.value === START_MODES.VOICE) {
+    else if (ipcStore.mode === START_MODES.VOICE) {
       startVoiceRecognition();
-      await callFunction("startVoiceRecognition");
+      await ipcStore.callFunction("startVoiceRecognition");
     }
   });
 

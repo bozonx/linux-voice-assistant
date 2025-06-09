@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { endOverlay, overlayStatus } from '../composables/useOverlay';
+import { endOverlay, overlayStatus } from '../composables/useOverlay.ts';
 
 const onStopRecognition = () => {
   endOverlay();

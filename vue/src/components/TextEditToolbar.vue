@@ -56,14 +56,14 @@
 </template>
 
 <script setup lang="ts">
-import { useIpc } from '../composables/useIpc';
+import { useIpcStore } from '../stores/ipc';
 import { useTextTransform } from '../composables/useTextTransform';
-import { useTextInput } from '../composables/useMainInput.js'
-import { startVoiceRecognition, startRepunctuation, endOverlay } from '../composables/useOverlay';
+import { useMainInput } from '../composables/useMainInput.ts'
+import { startVoiceRecognition, startRepunctuation, endOverlay } from '../composables/useOverlay.ts';
 
 // Используем composable
-const { setText, getText } = useTextInput()
-const { callFunction } = useIpc();
+const { setMainInputText, getMainInputText } = useMainInput()
+const ipcStore = useIpcStore();
 const {
   capitalizeFirstLetter,
   toUppercase,
@@ -76,20 +76,20 @@ const {
 
 // Функция для корректировки текста
 const correctText = () => {
-  console.log('Корректировка текста:', getText());
+  console.log('Корректировка текста:', getMainInputText());
 };
 
 // Функция для редактирования текста
 const editText = () => {
-  console.log('Редактура текста:', getText());
+  console.log('Редактура текста:', getMainInputText());
 };
 
 // Функция для перевода текста
 const translateText = async (from: string, to: string) => {
-  const result = await callFunction('translateText', [getText(), from, to]);
+  const result = await ipcStore.callFunction('translateText', [getMainInputText(), from, to]);
 
   if (result.success) {
-    setText(result.data as string);
+    setMainInputText(result.data as string);
   } else {
     console.error(result.error);
   }
@@ -99,25 +99,25 @@ const translateText = async (from: string, to: string) => {
 const transformText = (type: string) => {
   switch (type) {
     case 'capitalize':
-      setText(capitalizeFirstLetter(getText()));
+      setMainInputText(capitalizeFirstLetter(getMainInputText()));
       break;
     case 'uppercase':
-      setText(toUppercase(getText()));
+      setMainInputText(toUppercase(getMainInputText()));
       break;
     case 'lowercase':
-      setText(toLowercase(getText()));
+      setMainInputText(toLowercase(getMainInputText()));
       break;
     case 'camelCase':
-      setText(toCamelCase(getText()));
+      setMainInputText(toCamelCase(getMainInputText()));
       break;
     case 'pascalCase':
-      setText(toPascalCase(getText()));
+      setMainInputText(toPascalCase(getMainInputText()));
       break;
     case 'snakeCase':
-      setText(toSnakeCase(getText()));
+      setMainInputText(toSnakeCase(getMainInputText()));
       break;
     case 'kebabCase':
-      setText(toKebabCase(getText()));
+      setMainInputText(toKebabCase(getMainInputText()));
       break;
   }
 };
