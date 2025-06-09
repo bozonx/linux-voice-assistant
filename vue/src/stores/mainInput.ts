@@ -3,20 +3,34 @@ import { ref } from "vue";
 
 // Интерфейс для store'а
 interface MainInputState {
-  mainInputText: string;
+  value: string;
 }
 
 export const useMainInputStore = defineStore("mainInput", () => {
   // Состояние
-  const mainInputText = ref<string>("");
+  const value = ref<string>("");
+  const focusCount = ref<number>(0);
+  const selectAllCount = ref<number>(0);
 
   // Действия
-  const setMainInputText = (newText: string): void => {
-    mainInputText.value = newText;
+  const setValue = (newText: string): void => {
+    value.value = newText;
+  };
+
+  const focus = (): void => {
+    focusCount.value++;
+  };
+
+  const selectAll = (): void => {
+    selectAllCount.value++;
   };
 
   return {
-    mainInputText,
-    setMainInputText,
+    value,
+    focusCount,
+    selectAllCount,
+    setValue,
+    focus,
+    selectAll,
   };
 });

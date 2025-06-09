@@ -3,39 +3,37 @@
     ref="textareaRef"
     class="main-input"
     placeholder="Enter text..."
-    :value="mainInputText"
+    :value="store.value"
     @input="handleInput"
   ></textarea>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import { useMainInputStore } from '../stores/mainInput'
 
-// Используем composable
-const { mainInputText, setMainInputText } = useMainInputStore()
+const store = useMainInputStore()
 
 // Создаем ref для textarea
-const textareaRef = ref<HTMLTextAreaElement | null>(null)
+// const textareaRef = ref<HTMLTextAreaElement | null>(null)
 
-// Метод для выбора всего текста и фокусировки
-const selectAllAndFocus = () => {
-  if (textareaRef.value) {
-    textareaRef.value.select()
-    textareaRef.value.focus()
-  }
-}
+// // Метод для выбора всего текста и фокусировки
+// const selectAllAndFocus = () => {
+//   if (textareaRef.value) {
+//     textareaRef.value.select()
+//     textareaRef.value.focus()
+//   }
+// }
 
 // Экспортируем метод для использования в родительском компоненте
-defineExpose({
-  selectAllAndFocus
-})
+// defineExpose({
+//   selectAllAndFocus
+// })
 
 // Input handler with type safety
 const handleInput = (event: Event): void => {
   const target = event.target as HTMLTextAreaElement
   if (target) {
-    setMainInputText(target.value)
+    store.setValue(target.value)
   }
 }
 </script>
