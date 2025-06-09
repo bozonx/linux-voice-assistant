@@ -11,7 +11,7 @@
         </button>
       </li>
       <li>
-        <button class="mini-button" @click="$emit('correctText')">Коррекция</button>
+        <button class="mini-button p-5" @click="$emit('correctText')">Коррекция</button>
       </li>
       <li>
         <button class="mini-button" @click="$emit('editText')">Редактировать</button>

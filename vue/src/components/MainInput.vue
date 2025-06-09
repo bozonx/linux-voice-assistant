@@ -1,51 +1,24 @@
 <template>
-  <div class="text-edit-container">
-    <textarea
-      id="inputText"
-      :value="modelValue"
-      placeholder="Enter text..."
-      @input="handleInput"
-      :disabled="isVoiceRecognitionActive"
-      :class="{ 'disabled': isVoiceRecognitionActive }"
-    ></textarea>
-  </div>
+  <textarea
+    class="main-input"
+    placeholder="Enter text..."
+    @input="handleInput"
+  ></textarea>
 </template>
 
 <script setup lang="ts">
-import { watch } from 'vue';
-import TextEditToolbar from './TextEditToolbar.vue';
-
-// Props definition
-const props = defineProps<{
-  modelValue: string;
-  isVoiceRecognitionActive: boolean;
-}>();
-
-// Emits definition
-const emit = defineEmits<{
-  (e: 'update:modelValue', value: string): void;
-  (e: 'toggleVoiceRecognition'): void;
-  (e: 'correctText'): void;
-  (e: 'editText'): void;
-  (e: 'translateText', from: string, to: string): void;
-  (e: 'transformText', type: string): void;
-}>();
 
 // Input handler with type safety
 const handleInput = (event: Event): void => {
-  const target = event.target as HTMLTextAreaElement;
-  if (target) {
-    emit('update:modelValue', target.value);
-  }
+  // const target = event.target as HTMLTextAreaElement;
+  // if (target) {
+  //   emit('update:modelValue', target.value);
+  // }
 };
 </script>
 
 <style scoped>
-.text-edit-container {
-  margin-bottom: 16px;
-}
-
-#inputText {
+.main-input {
   width: 100%;
   min-height: 100px;
   padding: 6px;
@@ -56,17 +29,10 @@ const handleInput = (event: Event): void => {
   resize: vertical;
   font-family: inherit;
   box-sizing: border-box;
-  transition: border-color 0.2s ease;
 }
 
-#inputText:focus {
+.main-input:focus {
   outline: none;
   border-color: #2196F3;
-}
-
-#inputText.disabled {
-  background-color: #f5f5f5;
-  cursor: not-allowed;
-  opacity: 0.7;
 }
 </style> 
