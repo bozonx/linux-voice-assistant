@@ -151,7 +151,7 @@ const transformText = (type: string) => {
 };
 
 const voiceRecognition = () => {
-  voiceRecognitionStore.start();
+  voiceRecognitionStore.startRecognizing();
 };
 </script>
 

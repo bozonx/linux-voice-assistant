@@ -9,12 +9,16 @@ import { useIpcStore } from './stores/ipc';
 import { useMainInputStore } from './stores/mainInput';
 import { START_MODES } from './types';
 import { useVoiceRecognitionStore } from './stores/voiceRecognition';
+import { useKeysStore } from './stores/keys';
 
 const ipcStore = useIpcStore();
 const mainInputStore = useMainInputStore();
 const voiceRecognitionStore = useVoiceRecognitionStore();
+const keysStore = useKeysStore();
 
 onMounted(() => {
+  window.addEventListener('keyup', handleKeyUp)
+
   window.electron.ipcRenderer.on('init-params', async (params: any) => {
     console.log("Received params:", params);
     
@@ -32,7 +36,7 @@ onMounted(() => {
     }
     // Режим голосового ввода - сразу запускаем распознавание голоса
     else if (ipcStore.mode === START_MODES.VOICE) {
-      voiceRecognitionStore.start();
+      voiceRecognitionStore.startRecognizing();
     }
 
   });
@@ -41,6 +45,14 @@ onMounted(() => {
     mainInputStore.setValue(data);
   });
 });
+
+onUnmounted(() => {
+  window.removeEventListener('keyup', handleKeyUp);
+});
+
+const handleKeyUp = (event: KeyboardEvent) => {
+  keysStore.setKeyUp(event.code);
+};
 
 
 </script>

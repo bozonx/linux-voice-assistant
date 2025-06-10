@@ -7,6 +7,7 @@
     <div>
       <button class="dialog-button" @click="onStopRecognition">Остановить</button>
     </div>
+    <div>W - закончить распознавание</div>
   </div>
   <div v-if="overlayStore.status === 'REPUNCTUATION'" class="overlay-process">
     <div>Коррекция пунктуации...</div>
@@ -21,7 +22,7 @@ const overlayStore = useOverlayStore();
 const voiceRecognitionStore = useVoiceRecognitionStore();
 
 const onStopRecognition = () => {
-  voiceRecognitionStore.stop();
+  voiceRecognitionStore.stopRecognizing();
 };
 </script>
 

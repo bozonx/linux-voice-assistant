@@ -31,6 +31,7 @@ interface ExternalFunctions {
   ) => Promise<void>;
   startVoiceRecognition: (mainWindow: BrowserWindow) => Promise<void>;
   stopVoiceRecognition: () => Promise<void>;
+  doRepunctuation: (mainWindow: BrowserWindow, text: string) => Promise<string>;
 }
 
 // Экспортируем функции
@@ -40,6 +41,7 @@ export const functions: ExternalFunctions = {
   typeIntoWindowAndClose,
   startVoiceRecognition,
   stopVoiceRecognition,
+  doRepunctuation,
 
   async translateTextAndInsert(
     mainWindow: BrowserWindow,
@@ -67,6 +69,25 @@ async function startVoiceRecognition(mainWindow: BrowserWindow): Promise<void> {
 
 async function stopVoiceRecognition(): Promise<void> {
   vosk.stop();
+}
+
+async function doRepunctuation(
+  mainWindow: BrowserWindow,
+  text: string
+): Promise<string> {
+  const sileroPath = config.sileroPuncBin;
+  const command = `${sileroPath} "${text}"`;
+
+  return new Promise<string>((resolve, reject) => {
+    exec(command, (error, stdout, stderr) => {
+      if (error) {
+        reject(new Error(`Repunctuation error: ${error.message}`));
+        return;
+      }
+
+      resolve(stdout.trim());
+    });
+  });
 }
 
 // Функция для открытия URL в браузере

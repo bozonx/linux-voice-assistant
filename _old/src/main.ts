@@ -84,7 +84,6 @@ ipcMain.handle(
   async (event, funcName: string, args: any[]): Promise<FunctionResult> => {
     try {
       const func = functions[funcName as keyof typeof functions];
-      type FuncType = typeof func;
       const result = await (func as Function)(mainWindow, ...args);
       return { success: true, result };
     } catch (error) {
