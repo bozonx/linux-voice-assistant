@@ -19,7 +19,7 @@ import { useOverlayStore } from '../stores/overlay';
 const overlayStore = useOverlayStore();
 
 const onStopRecognition = () => {
-  overlayStore.endOverlay();
+  overlayStore.hideOverlay();
 };
 </script>
 

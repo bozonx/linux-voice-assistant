@@ -7,6 +7,12 @@
       <li>
         <button class="button" @click="editAndInsert">Редактировать</button>
       </li>
+      <li>
+        <button class="button" @click="formatCode">Формат MD/JS/JSON/CSS/HTML/XML</button>
+      </li>
+      <li>
+        <button class="button" @click="rusStress">Ударение рус</button>
+      </li>
     </ul>
 
     <ul class="big-buttons-toolbar">
@@ -96,6 +102,14 @@ const translateAndInsert = async (from: string, to: string) => {
   }
 
   overlayStore.hideOverlay();
+};
+
+const formatCode = () => {
+  console.log('Форматирование кода:', mainInputStore.value);
+};
+
+const rusStress = () => {
+  console.log('Ударение русский:', mainInputStore.value);
 };
 
 // Функция для трансформации и вставки текста

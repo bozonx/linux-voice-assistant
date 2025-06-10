@@ -10,12 +10,6 @@
         </button>
       </li>
       <li>
-        <button class="mini-button" @click="correctText()">Коррекция</button>
-      </li>
-      <li>
-        <button class="mini-button" @click="editText()">Редактировать</button>
-      </li>
-      <li>
         <button class="mini-button" @click="translateText('en', 'ru')">EN ➡️ RU</button>
       </li>
       <li>
@@ -26,6 +20,21 @@
       </li>
       <li>
         <button class="mini-button" @click="translateText('es', 'ru')">ES ➡️ RU</button>
+      </li>
+    </ul>
+
+    <ul class="text-edit-toolbar">
+      <li>
+        <button class="mini-button" @click="correctText()">Коррекция</button>
+      </li>
+      <li>
+        <button class="mini-button" @click="editText()">Редактировать</button>
+      </li>
+      <li>
+        <button class="mini-button" @click="formatCode()">Формат MD/JS/JSON/CSS/HTML/XML</button>
+      </li>
+      <li>
+        <button class="mini-button" @click="rusStress()">Ударение рус</button>
       </li>
     </ul>
 
@@ -100,6 +109,14 @@ const translateText = async (from: string, to: string) => {
   }
 
   overlayStore.hideOverlay();
+};
+
+const formatCode = () => {
+  console.log('Форматирование кода:', mainInputStore.value);
+};
+
+const rusStress = () => {
+  console.log('Ударение русский:', mainInputStore.value);
 };
 
 // Функция для трансформации текста
