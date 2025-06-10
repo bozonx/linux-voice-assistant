@@ -37,7 +37,6 @@ onMounted(() => {
     }
   });
 
-  // @ts-ignore - electron types
   window.electron.ipcRenderer.on('voice-recognition', (event: any, data: string) => {
     // inputText.value = data;
   });

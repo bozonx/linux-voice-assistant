@@ -87,19 +87,25 @@ const editText = () => {
 
 // Функция для перевода текста
 const translateText = async (from: string, to: string) => {
+  if (!mainInputStore.value.trim()) return;
+  
+  overlayStore.startTranslating();
+
   const result = await ipcStore.callFunction('translateText', [mainInputStore.value, from, to]);
 
   if (result.success) {
-    mainInputStore.setValue(result.data as string);
+    mainInputStore.setValue(result.result as string);
   } else {
     console.error(result.error);
   }
+
+  overlayStore.hideOverlay();
 };
 
 // Функция для трансформации текста
 const transformText = (type: string) => {
   if (!mainInputStore.value.trim()) return;
-  
+
   switch (type) {
     case 'capitalize':
       mainInputStore.setValue(capitalizeFirstLetter(mainInputStore.value));

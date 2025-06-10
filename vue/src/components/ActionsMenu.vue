@@ -19,30 +19,27 @@
 
 <script setup lang="ts">
 import { useIpcStore } from '../stores/ipc';
-
-// Определяем пропсы компонента
-const props = defineProps<{
-  text: string;
-}>();
+import { useMainInputStore } from '../stores/mainInput';
 
 const ipcStore = useIpcStore();
+const mainInputStore = useMainInputStore();
 
 // Функция для создания быстрой заметки
 const createNote = () => {
-  console.log('Создание заметки:', props.text);
+  console.log('Создание заметки:', mainInputStore.value);
 };
 
 // Функция для добавления дела в календарь
 const addToCalendar = () => {
-  console.log('Дело в календарь:', props.text);
+  console.log('Дело в календарь:', mainInputStore.value);
 };
 
 // Функция для поиска текста в интернете
 const searchText = async () => {
-  if (!props.text.trim()) return;
+  if (!mainInputStore.value.trim()) return;
   
   const result = await ipcStore.callFunction('openInBrowserAndClose', [
-    `https://duckduckgo.com/?q=${encodeURIComponent(props.text)}`
+    `https://duckduckgo.com/?q=${encodeURIComponent(mainInputStore.value)}`
   ]);
   if (!result.success) {
     console.error(result.error);
@@ -51,9 +48,9 @@ const searchText = async () => {
 
 // Функция для вставки текста в окно
 const insertIntoWindow = async () => {
-  if (!props.text.trim()) return;
+  if (!mainInputStore.value.trim()) return;
   
-  const result = await ipcStore.callFunction('typeIntoWindowAndClose', [props.text, ipcStore.windowId]);
+  const result = await ipcStore.callFunction('typeIntoWindowAndClose', [mainInputStore.value, ipcStore.windowId]);
   if (!result.success) {
     console.error(result.error);
   }
@@ -61,37 +58,5 @@ const insertIntoWindow = async () => {
 </script>
 
 <style scoped>
-.text-insert-buttons {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 4px;
-}
 
-.button {
-  width: 100%;
-  background-color: #2196F3;
-  color: white;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  text-align: left;
-}
-
-.button:hover {
-  background-color: #1976D2;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.section-title {
-  margin-top: 20px;
-  margin-bottom: 6px;
-  font-size: 14px;
-}
 </style> 

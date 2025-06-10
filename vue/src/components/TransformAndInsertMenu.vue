@@ -54,14 +54,11 @@
 import { useIpcStore } from '../stores/ipc';
 import { useTextTransform } from '../composables/useTextTransform';
 import { useMainInputStore } from '../stores/mainInput';
-
-// Определяем пропсы компонента
-const props = defineProps<{
-  text: string;
-}>();
+import { useOverlayStore } from '../stores/overlay';
 
 const ipcStore = useIpcStore();
 const mainInputStore = useMainInputStore();
+const overlayStore = useOverlayStore();
 const {
   capitalizeFirstLetter,
   toUppercase,
@@ -84,10 +81,12 @@ const editAndInsert = () => {
 
 // Функция для перевода и вставки текста
 const translateAndInsert = async (from: string, to: string) => {
-  if (!props.text.trim()) return;
+  if (!mainInputStore.value.trim()) return;
   
+  overlayStore.startTranslating();
+
   const result = await ipcStore.callFunction('translateTextAndInsert', [
-    props.text,
+    mainInputStore.value,
     from,
     to,
     ipcStore.windowId
@@ -95,6 +94,8 @@ const translateAndInsert = async (from: string, to: string) => {
   if (!result.success) {
     console.error(result.error);
   }
+
+  overlayStore.hideOverlay();
 };
 
 // Функция для трансформации и вставки текста
