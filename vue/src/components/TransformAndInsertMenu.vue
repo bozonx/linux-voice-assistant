@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <ul class="big-buttons-toolbar">
       <li>
         <button class="button" @click="correctAndInsert">Коррекция</button>
@@ -54,6 +53,7 @@
 <script setup lang="ts">
 import { useIpcStore } from '../stores/ipc';
 import { useTextTransform } from '../composables/useTextTransform';
+import { useMainInputStore } from '../stores/mainInput';
 
 // Определяем пропсы компонента
 const props = defineProps<{
@@ -61,6 +61,7 @@ const props = defineProps<{
 }>();
 
 const ipcStore = useIpcStore();
+const mainInputStore = useMainInputStore();
 const {
   capitalizeFirstLetter,
   toUppercase,
@@ -73,12 +74,12 @@ const {
 
 // Функция для корректировки и вставки текста
 const correctAndInsert = () => {
-  console.log('Корректировка текста:', props.text);
+  console.log('Корректировка текста:', mainInputStore.value);
 };
 
 // Функция для редактирования и вставки текста
 const editAndInsert = () => {
-  console.log('Редактура текста:', props.text);
+  console.log('Редактура текста:', mainInputStore.value);
 };
 
 // Функция для перевода и вставки текста
@@ -98,35 +99,36 @@ const translateAndInsert = async (from: string, to: string) => {
 
 // Функция для трансформации и вставки текста
 const transformAndInsert = async (type: string) => {
-  if (!props.text.trim()) return;
+  if (!mainInputStore.value.trim()) return;
   
-  let transformedText = props.text;
+  let transformedText = mainInputStore.value;
   
   switch (type) {
     case 'capitalize':
-      transformedText = capitalizeFirstLetter(props.text);
+      transformedText = capitalizeFirstLetter(mainInputStore.value);
       break;
     case 'uppercase':
-      transformedText = toUppercase(props.text);
+      transformedText = toUppercase(mainInputStore.value);
       break;
     case 'lowercase':
-      transformedText = toLowercase(props.text);
+      transformedText = toLowercase(mainInputStore.value);
       break;
     case 'camelCase':
-      transformedText = toCamelCase(props.text);
+      transformedText = toCamelCase(mainInputStore.value);
       break;
     case 'pascalCase':
-      transformedText = toPascalCase(props.text);
+      transformedText = toPascalCase(mainInputStore.value);
       break;
     case 'snakeCase':
-      transformedText = toSnakeCase(props.text);
+      transformedText = toSnakeCase(mainInputStore.value);
       break;
     case 'kebabCase':
-      transformedText = toKebabCase(props.text);
+      transformedText = toKebabCase(mainInputStore.value);
       break;
   }
 
   const result = await ipcStore.callFunction('typeIntoWindowAndClose', [transformedText, ipcStore.windowId]);
+  
   if (!result.success) {
     console.error(result.error);
   }
@@ -134,38 +136,5 @@ const transformAndInsert = async (type: string) => {
 </script>
 
 <style scoped>
-.big-buttons-toolbar {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin-bottom: 4px;
-}
 
-.button {
-  width: 100%;
-  background-color: #2196F3;
-  color: white;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  text-align: left;
-}
-
-.button:hover {
-  background-color: #1976D2;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.section-title {
-  margin-top: 20px;
-  margin-bottom: 6px;
-  font-size: 14px;
-}
 </style> 

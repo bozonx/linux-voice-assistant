@@ -12,22 +12,19 @@
 import { useMainInputStore } from '../stores/mainInput'
 
 const store = useMainInputStore()
+const textareaRef = ref<HTMLTextAreaElement | null>(null)
 
-// Создаем ref для textarea
-// const textareaRef = ref<HTMLTextAreaElement | null>(null)
+watch(() => store.focusCount, (newValue, oldValue) => {
+  if (newValue > oldValue) {
+    textareaRef.value?.focus()
+  }
+})
 
-// // Метод для выбора всего текста и фокусировки
-// const selectAllAndFocus = () => {
-//   if (textareaRef.value) {
-//     textareaRef.value.select()
-//     textareaRef.value.focus()
-//   }
-// }
-
-// Экспортируем метод для использования в родительском компоненте
-// defineExpose({
-//   selectAllAndFocus
-// })
+watch(() => store.selectAllCount, (newValue, oldValue) => {
+  if (newValue > oldValue) {
+    textareaRef.value?.select()
+  }
+})
 
 // Input handler with type safety
 const handleInput = (event: Event): void => {

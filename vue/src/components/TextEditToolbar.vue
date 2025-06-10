@@ -62,7 +62,7 @@ import { useMainInputStore } from '../stores/mainInput'
 import { useOverlayStore } from '../stores/overlay';
 
 // Используем composable
-const { setMainInputText, getMainInputText } = useMainInputStore()
+const mainInputStore = useMainInputStore()
 const ipcStore = useIpcStore();
 const overlayStore = useOverlayStore();
 const {
@@ -77,20 +77,20 @@ const {
 
 // Функция для корректировки текста
 const correctText = () => {
-  console.log('Корректировка текста:', getMainInputText());
+  console.log('Корректировка текста:', mainInputStore.value);
 };
 
 // Функция для редактирования текста
 const editText = () => {
-  console.log('Редактура текста:', getMainInputText());
+  console.log('Редактура текста:', mainInputStore.value);
 };
 
 // Функция для перевода текста
 const translateText = async (from: string, to: string) => {
-  const result = await ipcStore.callFunction('translateText', [getMainInputText(), from, to]);
+  const result = await ipcStore.callFunction('translateText', [mainInputStore.value, from, to]);
 
   if (result.success) {
-    setMainInputText(result.data as string);
+    mainInputStore.setValue(result.data as string);
   } else {
     console.error(result.error);
   }
@@ -98,27 +98,29 @@ const translateText = async (from: string, to: string) => {
 
 // Функция для трансформации текста
 const transformText = (type: string) => {
+  if (!mainInputStore.value.trim()) return;
+  
   switch (type) {
     case 'capitalize':
-      setMainInputText(capitalizeFirstLetter(getMainInputText()));
+      mainInputStore.setValue(capitalizeFirstLetter(mainInputStore.value));
       break;
     case 'uppercase':
-      setMainInputText(toUppercase(getMainInputText()));
+      mainInputStore.setValue(toUppercase(mainInputStore.value));
       break;
     case 'lowercase':
-      setMainInputText(toLowercase(getMainInputText()));
+      mainInputStore.setValue(toLowercase(mainInputStore.value));
       break;
     case 'camelCase':
-      setMainInputText(toCamelCase(getMainInputText()));
+      mainInputStore.setValue(toCamelCase(mainInputStore.value));
       break;
     case 'pascalCase':
-      setMainInputText(toPascalCase(getMainInputText()));
+      mainInputStore.setValue(toPascalCase(mainInputStore.value));
       break;
     case 'snakeCase':
-      setMainInputText(toSnakeCase(getMainInputText()));
+      mainInputStore.setValue(toSnakeCase(mainInputStore.value));
       break;
     case 'kebabCase':
-      setMainInputText(toKebabCase(getMainInputText()));
+      mainInputStore.setValue(toKebabCase(mainInputStore.value));
       break;
   }
 };
