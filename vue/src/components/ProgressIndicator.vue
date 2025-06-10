@@ -15,11 +15,13 @@
 
 <script setup lang="ts">
 import { useOverlayStore } from '../stores/overlay';
+import { useVoiceRecognitionStore } from '../stores/voiceRecognition';
 
 const overlayStore = useOverlayStore();
+const voiceRecognitionStore = useVoiceRecognitionStore();
 
 const onStopRecognition = () => {
-  overlayStore.hideOverlay();
+  voiceRecognitionStore.stop();
 };
 </script>
 

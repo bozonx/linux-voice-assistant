@@ -69,11 +69,13 @@ import { useIpcStore } from '../stores/ipc';
 import { useTextTransform } from '../composables/useTextTransform';
 import { useMainInputStore } from '../stores/mainInput'
 import { useOverlayStore } from '../stores/overlay';
+import { useVoiceRecognitionStore } from '../stores/voiceRecognition';
 
 // Используем composable
 const mainInputStore = useMainInputStore()
 const ipcStore = useIpcStore();
 const overlayStore = useOverlayStore();
+const voiceRecognitionStore = useVoiceRecognitionStore();
 const {
   capitalizeFirstLetter,
   toUppercase,
@@ -149,7 +151,7 @@ const transformText = (type: string) => {
 };
 
 const voiceRecognition = () => {
-  overlayStore.startVoiceRecognition();
+  voiceRecognitionStore.start();
 };
 </script>
 

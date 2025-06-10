@@ -87,3 +87,9 @@ print(translatedText)
 ```bash
 python install_model.py
 ```
+
+## Vosk
+
+```bash
+docker run -p 2700:2700 alphacep/kaldi-ru:latest
+```
