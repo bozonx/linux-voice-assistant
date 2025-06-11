@@ -15,6 +15,10 @@
     <h2 class="section-title">Трансформирование и вставка</h2>
 
     <TransformAndInsertMenu />
+
+    <div class="havigation">
+      <RouterLink to="/historia">История</RouterLink>
+    </div>
   </div>
 </template>
 

@@ -31,7 +31,10 @@
         <button class="mini-button" @click="editText()">Редактировать</button>
       </li>
       <li>
-        <button class="mini-button" @click="formatCode()">Формат MD/JS/JSON/CSS/HTML/XML</button>
+        <button class="mini-button" @click="formatMd()">Формат MD</button>
+      </li>
+      <li>
+        <button class="mini-button" @click="formatCode()">Формат JS/TS/JSON/CSS/HTML/XML</button>
       </li>
       <li>
         <button class="mini-button" @click="rusStress()">Ударение рус</button>
@@ -70,12 +73,18 @@ import { useTextTransform } from '../composables/useTextTransform';
 import { useMainInputStore } from '../stores/mainInput'
 import { useOverlayStore } from '../stores/overlay';
 import { useVoiceRecognitionStore } from '../stores/voiceRecognition';
+import { useCodeFormatter } from '../composables/useCodeFormatter';
+
+import { useNotification } from "@kyvg/vue3-notification";
+
+const { notify }  = useNotification()
 
 // Используем composable
 const mainInputStore = useMainInputStore()
 const ipcStore = useIpcStore();
 const overlayStore = useOverlayStore();
 const voiceRecognitionStore = useVoiceRecognitionStore();
+const { formatSomeCode } = useCodeFormatter();
 const {
   capitalizeFirstLetter,
   toUppercase,
@@ -113,8 +122,17 @@ const translateText = async (from: string, to: string) => {
   overlayStore.hideOverlay();
 };
 
-const formatCode = () => {
-  console.log('Форматирование кода:', mainInputStore.value);
+const formatMd = () => {
+  console.log('Форматирование MD:', mainInputStore.value);
+};
+
+const formatCode = async () => {
+  notify({
+  title: "Authorization",
+  text: "You have been logged in!",
+});
+
+  mainInputStore.setValue(await formatSomeCode(mainInputStore.value));
 };
 
 const rusStress = () => {

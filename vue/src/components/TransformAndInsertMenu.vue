@@ -8,7 +8,10 @@
         <button class="button" @click="editAndInsert">Редактировать</button>
       </li>
       <li>
-        <button class="button" @click="formatCode">Формат MD/JS/JSON/CSS/HTML/XML</button>
+        <button class="button" @click="formatMd">Формат MD</button>
+      </li>
+      <li>
+        <button class="button" @click="formatCode">Формат JS/TS/JSON/CSS/HTML/XML</button>
       </li>
       <li>
         <button class="button" @click="rusStress">Ударение рус</button>
@@ -102,6 +105,10 @@ const translateAndInsert = async (from: string, to: string) => {
   }
 
   overlayStore.hideOverlay();
+};
+
+const formatMd = () => {
+  console.log('Форматирование MD:', mainInputStore.value);
 };
 
 const formatCode = () => {
