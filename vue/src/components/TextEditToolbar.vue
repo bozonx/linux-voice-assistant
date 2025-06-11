@@ -75,10 +75,6 @@ import { useOverlayStore } from '../stores/overlay';
 import { useVoiceRecognitionStore } from '../stores/voiceRecognition';
 import { useCodeFormatter } from '../composables/useCodeFormatter';
 
-import { useNotification } from "@kyvg/vue3-notification";
-
-const { notify }  = useNotification()
-
 // Используем composable
 const mainInputStore = useMainInputStore()
 const ipcStore = useIpcStore();
@@ -127,11 +123,6 @@ const formatMd = () => {
 };
 
 const formatCode = async () => {
-  notify({
-  title: "Authorization",
-  text: "You have been logged in!",
-});
-
   mainInputStore.setValue(await formatSomeCode(mainInputStore.value));
 };
 

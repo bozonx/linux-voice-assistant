@@ -7,10 +7,6 @@ import prettierPluginHtml from "prettier/plugins/html";
 import prettierPluginXml from "@prettier/plugin-xml";
 import prettierPluginPostcss from "prettier/plugins/postcss";
 import hljs from "highlight.js";
-// import { notify } from "@kyvg/vue3-notification";
-import { useNotification } from "@kyvg/vue3-notification";
-
-const { notify } = useNotification();
 
 export const useCodeFormatter = () => {
   const formatMd = async (text: string) => {
