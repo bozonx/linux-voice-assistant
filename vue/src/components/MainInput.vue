@@ -6,6 +6,7 @@
     :value="store.value"
     @input="handleInput"
     @select="handleSelect"
+    @mouseup="handleMouseUp"
   ></textarea>
 </template>
 
@@ -53,10 +54,23 @@ const handleSelect = (event: Event): void => {
     const end = target.selectionEnd || 0
     const text = target.value.substring(start, end)
     store.setSelection(text, start, end)
-
-    console.log(store.selectedText, store.selectionStart, store.selectionEnd)
   }
 }
+
+// Очистка значений выделения при снятии выделения
+const handleMouseUp = (event: Event): void => {
+  const target = event.target as HTMLTextAreaElement
+  if (target) {
+    const start = target.selectionStart || 0
+    const end = target.selectionEnd || 0
+    
+    // Если начало и конец выделения совпадают, значит выделение снято
+    if (start === end) {
+      store.setSelection('', 0, 0)
+    }
+  }
+}
+
 </script>
 
 <style scoped>
