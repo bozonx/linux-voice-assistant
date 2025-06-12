@@ -80,7 +80,7 @@ const mainInputStore = useMainInputStore()
 const ipcStore = useIpcStore();
 const overlayStore = useOverlayStore();
 const voiceRecognitionStore = useVoiceRecognitionStore();
-const { formatSomeCode } = useCodeFormatter();
+const { formatSomeCode, formatMdAndStyle } = useCodeFormatter();
 const {
   capitalizeFirstLetter,
   toUppercase,
@@ -119,10 +119,10 @@ const translateText = async (from: string, to: string) => {
   overlayStore.hideOverlay();
 };
 
-const formatMd = () => {
+const formatMd = async () => {
   if (!mainInputStore.value.trim()) return;
 
-  console.log('Форматирование MD:', mainInputStore.value);
+  mainInputStore.setValue(await formatMdAndStyle(mainInputStore.value));
 };
 
 const formatCode = async () => {

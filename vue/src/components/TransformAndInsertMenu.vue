@@ -69,7 +69,7 @@ import { useCodeFormatter } from '../composables/useCodeFormatter';
 const ipcStore = useIpcStore();
 const mainInputStore = useMainInputStore();
 const overlayStore = useOverlayStore();
-const { formatSomeCode } = useCodeFormatter();
+const { formatSomeCode, formatMdAndStyle } = useCodeFormatter();
 const {
   capitalizeFirstLetter,
   toUppercase,
@@ -110,8 +110,15 @@ const translateAndInsert = async (from: string, to: string) => {
   overlayStore.hideOverlay();
 };
 
-const formatMd = () => {
-  console.log('Форматирование MD:', mainInputStore.value);
+const formatMd = async () => {
+  if (!mainInputStore.value.trim()) return;
+
+  const value = await formatMdAndStyle(mainInputStore.value);
+  const result = await ipcStore.callFunction('typeIntoWindowAndClose', [value, ipcStore.windowId]);
+
+  if (!result.success) {
+    console.error(result.error);
+  }
 };
 
 const formatCode = async () => {
