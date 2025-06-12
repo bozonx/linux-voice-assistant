@@ -5,6 +5,7 @@
     placeholder="Enter text..."
     :value="store.value"
     @input="handleInput"
+    @select="handleSelect"
   ></textarea>
 </template>
 
@@ -26,11 +27,34 @@ watch(() => store.selectAllCount, (newValue, oldValue) => {
   }
 })
 
+// Следим за изменениями выделения в store
+watch(
+  () => [store.selectionStart, store.selectionEnd],
+  ([start, end]) => {
+    if (textareaRef.value) {
+      textareaRef.value.setSelectionRange(start, end)
+    }
+  }
+)
+
 // Input handler with type safety
 const handleInput = (event: Event): void => {
   const target = event.target as HTMLTextAreaElement
   if (target) {
     store.setValue(target.value)
+  }
+}
+
+// Selection handler
+const handleSelect = (event: Event): void => {
+  const target = event.target as HTMLTextAreaElement
+  if (target) {
+    const start = target.selectionStart || 0
+    const end = target.selectionEnd || 0
+    const text = target.value.substring(start, end)
+    store.setSelection(text, start, end)
+
+    console.log(store.selectedText, store.selectionStart, store.selectionEnd)
   }
 }
 </script>

@@ -122,47 +122,76 @@ const translateText = async (from: string, to: string) => {
 const formatMd = async () => {
   if (!mainInputStore.value.trim()) return;
 
-  mainInputStore.setValue(await formatMdAndStyle(mainInputStore.value));
+  if (mainInputStore.selectedText) {
+    mainInputStore.replaceSelection(await formatMdAndStyle(mainInputStore.selectedText));
+  }
+  else {
+    mainInputStore.setValue(await formatMdAndStyle(mainInputStore.value));
+  }
 };
 
 const formatCode = async () => {
   if (!mainInputStore.value.trim()) return;
 
-  mainInputStore.setValue(await formatSomeCode(mainInputStore.value));
+  if (mainInputStore.selectedText) {
+    mainInputStore.replaceSelection(await formatSomeCode(mainInputStore.selectedText));
+  }
+  else {
+    mainInputStore.setValue(await formatSomeCode(mainInputStore.value));
+  }
 };
 
 const rusStress = () => {
   if (!mainInputStore.value.trim()) return;
 
-  mainInputStore.setValue(makeRusStress(mainInputStore.value));
+  if (mainInputStore.selectedText) {
+    mainInputStore.replaceSelection(makeRusStress(mainInputStore.selectedText));
+  }
+  else {
+    mainInputStore.setValue(makeRusStress(mainInputStore.value));
+  }
 };
 
 // Функция для трансформации текста
 const transformText = (type: string) => {
   if (!mainInputStore.value.trim()) return;
 
+  let text = mainInputStore.value;
+  let result = '';
+
+  if (mainInputStore.selectedText) {
+    text = mainInputStore.selectedText;
+  }
+
   switch (type) {
     case 'capitalize':
-      mainInputStore.setValue(capitalizeFirstLetter(mainInputStore.value));
+      result = capitalizeFirstLetter(text);
       break;
     case 'uppercase':
-      mainInputStore.setValue(toUppercase(mainInputStore.value));
+      result = toUppercase(text);
       break;
     case 'lowercase':
-      mainInputStore.setValue(toLowercase(mainInputStore.value));
+      result = toLowercase(text);
       break;
     case 'camelCase':
-      mainInputStore.setValue(toCamelCase(mainInputStore.value));
+      result = toCamelCase(text);
       break;
     case 'pascalCase':
-      mainInputStore.setValue(toPascalCase(mainInputStore.value));
+      result = toPascalCase(text);
       break;
     case 'snakeCase':
-      mainInputStore.setValue(toSnakeCase(mainInputStore.value));
+      result = toSnakeCase(text);
       break;
     case 'kebabCase':
-      mainInputStore.setValue(toKebabCase(mainInputStore.value));
+      result = toKebabCase(text);
       break;
+  }
+
+  if (mainInputStore.selectedText) {
+    mainInputStore.replaceSelection(result);
+  }
+  else {
+    mainInputStore.setValue(result);
   }
 };
 
