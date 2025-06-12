@@ -77,7 +77,8 @@ const {
   toCamelCase,
   toPascalCase,
   toSnakeCase,
-  toKebabCase
+  toKebabCase,
+  makeRusStress
 } = useTextTransform();
 
 // Функция для корректировки и вставки текста
@@ -124,8 +125,15 @@ const formatCode = async () => {
   }
 };
 
-const rusStress = () => {
-  console.log('Ударение русский:', mainInputStore.value);
+const rusStress = async () => {
+  if (!mainInputStore.value.trim()) return;
+
+  const value = makeRusStress(mainInputStore.value);
+  const result = await ipcStore.callFunction('typeIntoWindowAndClose', [value, ipcStore.windowId]);
+  
+  if (!result.success) {
+    console.error(result.error);
+  }
 };
 
 // Функция для трансформации и вставки текста
