@@ -88,7 +88,8 @@ const {
   toCamelCase,
   toPascalCase,
   toSnakeCase,
-  toKebabCase
+  toKebabCase,
+  makeRusStress
 } = useTextTransform();
 
 // Функция для корректировки текста
@@ -133,7 +134,7 @@ const formatCode = async () => {
 const rusStress = () => {
   if (!mainInputStore.value.trim()) return;
 
-  console.log('Ударение русский:', mainInputStore.value);
+  mainInputStore.setValue(makeRusStress(mainInputStore.value));
 };
 
 // Функция для трансформации текста
