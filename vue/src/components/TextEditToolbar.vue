@@ -119,14 +119,20 @@ const translateText = async (from: string, to: string) => {
 };
 
 const formatMd = () => {
+  if (!mainInputStore.value.trim()) return;
+
   console.log('Форматирование MD:', mainInputStore.value);
 };
 
 const formatCode = async () => {
+  if (!mainInputStore.value.trim()) return;
+
   mainInputStore.setValue(await formatSomeCode(mainInputStore.value));
 };
 
 const rusStress = () => {
+  if (!mainInputStore.value.trim()) return;
+
   console.log('Ударение русский:', mainInputStore.value);
 };
 
