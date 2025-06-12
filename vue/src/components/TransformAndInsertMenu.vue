@@ -8,10 +8,10 @@
         <button class="button" @click="editAndInsert">Редактировать</button>
       </li>
       <li>
-        <button class="button" @click="formatMd">Формат MD</button>
+        <button class="button" @click="formatMd">Beautyfy MD</button>
       </li>
       <li>
-        <button class="button" @click="formatCode">Формат JS/TS/JSON/CSS/HTML/XML</button>
+        <button class="button" @click="formatCode">Формат JS/JSON/CSS/HTML/XML</button>
       </li>
       <li>
         <button class="button" @click="rusStress">Ударение рус</button>

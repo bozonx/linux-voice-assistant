@@ -1,14 +1,68 @@
-import * as prettier from "prettier/standalone";
-import * as markdown from "prettier/plugins/markdown";
 import hljs from "highlight.js";
 import beautify from "js-beautify";
-import { remark } from "remark";
 import { visit } from "unist-util-visit";
 import type { Node } from "unist";
+import remarkStringify from "remark-stringify";
+import remarkParse from "remark-parse";
+import { unified } from "unified";
+import { remarkTruncateLinks } from 'remark-truncate-links'
+import remarkNormalizeHeadings from 'remark-normalize-headings'
 
 // Функция для удаления точек и запятых в конце текста
 const removeEndingPunctuation = (text: string): string => {
   return text.replace(/[.,]$/, "");
+};
+
+// Типы для работы с AST
+type TextNode = {
+  type: "text";
+  value: string;
+};
+
+type EmphasisNode = {
+  type: "emphasis";
+  children: TextNode[];
+};
+
+type ASTNode = TextNode | EmphasisNode;
+
+// Функция для создания текстового узла
+const createTextNode = (value: string): TextNode => ({
+  type: "text",
+  value,
+});
+
+// Функция для создания узла курсива
+const createEmphasisNode = (value: string): EmphasisNode => ({
+  type: "emphasis",
+  children: [createTextNode(value)],
+});
+
+// Функция для обработки текстового узла и преобразования текста в скобках в курсив
+const processTextNode = (text: string): ASTNode[] => {
+  const parts = text.split(/(\([^)]+\))/g);
+
+  return parts.filter(Boolean).map((part) => {
+    if (part.match(/^\([^)]+\)$/)) {
+      return createEmphasisNode(part);
+    }
+    return createTextNode(part);
+  });
+};
+
+// Функция для обработки массива дочерних узлов
+const processChildren = (children: any[]): ASTNode[] => {
+  const newChildren: ASTNode[] = [];
+
+  children.forEach((child) => {
+    if (child.type === "text") {
+      newChildren.push(...processTextNode(child.value));
+    } else {
+      newChildren.push(child);
+    }
+  });
+
+  return newChildren;
 };
 
 const removePunctuationRemarkPlugin = () => {
@@ -38,16 +92,46 @@ const removePunctuationRemarkPlugin = () => {
   };
 };
 
+const bracketsToItalicRemarkPlugin = () => {
+  return (tree: Node) => {
+    // Обрабатываем параграфы
+    visit(tree, "paragraph", (node: any) => {
+      if (node.children) {
+        node.children = processChildren(node.children);
+      }
+    });
+
+    // Обрабатываем заголовки
+    visit(tree, "heading", (node: any) => {
+      if (node.children) {
+        node.children = processChildren(node.children);
+      }
+    });
+
+    // Обрабатываем элементы списка
+    visit(tree, "listItem", (node: any) => {
+      if (node.children && node.children.length > 0) {
+        const paragraph = node.children[0];
+        if (paragraph.type === "paragraph" && paragraph.children) {
+          paragraph.children = processChildren(paragraph.children);
+        }
+      }
+    });
+  };
+};
+
 export const useCodeFormatter = () => {
   const formatMdAndStyle = async (text: string): Promise<string> => {
-    const processed = await remark()
+    const processed = await unified()
+      .use(remarkParse)
+      .use(remarkTruncateLinks)
+      .use(remarkNormalizeHeadings)
       .use(removePunctuationRemarkPlugin)
+      .use(bracketsToItalicRemarkPlugin)
+      .use(remarkStringify, { bullet: "-" })
       .process(text);
 
-    return await prettier.format(processed.toString(), {
-      parser: "markdown",
-      plugins: [markdown],
-    });
+      return processed.toString();
   };
 
   const formatSomeCode = async (text: string): Promise<string> => {

@@ -31,10 +31,10 @@
         <button class="mini-button" @click="editText()">Редактировать</button>
       </li>
       <li>
-        <button class="mini-button" @click="formatMd()">Формат MD</button>
+        <button class="mini-button" @click="formatMd()">Beautyfy MD</button>
       </li>
       <li>
-        <button class="mini-button" @click="formatCode()">Формат JS/TS/JSON/CSS/HTML/XML</button>
+        <button class="mini-button" @click="formatCode()">Формат JS/JSON/CSS/HTML/XML</button>
       </li>
       <li>
         <button class="mini-button" @click="rusStress()">Ударение рус</button>
