@@ -9,12 +9,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@kyvg/vue3-notification": "^3.4.1",
-    "@prettier/plugin-xml": "^3.4.1",
     "@tailwindcss/vite": "^4.1.8",
     "highlight.js": "^11.11.1",
     "js-beautify": "^1.15.4",
     "mic": "^2.1.2",
+    "mini-toastr": "^0.8.2",
     "pinia": "^3.0.3",
     "prettier": "^3.5.3",
     "tailwindcss": "^4.1.8",
@@ -26,7 +25,6 @@
     "@types/js-beautify": "^1.14.3",
     "@types/node": "^20.11.16",
     "@vitejs/plugin-vue": "^5.2.4",
-    "terser": "^5.41.0",
     "typescript": "^5.3.3",
     "unplugin-auto-import": "^19.3.0",
     "unplugin-vue-components": "^28.7.0",

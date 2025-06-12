@@ -64,10 +64,12 @@ import { useIpcStore } from '../stores/ipc';
 import { useTextTransform } from '../composables/useTextTransform';
 import { useMainInputStore } from '../stores/mainInput';
 import { useOverlayStore } from '../stores/overlay';
+import { useCodeFormatter } from '../composables/useCodeFormatter';
 
 const ipcStore = useIpcStore();
 const mainInputStore = useMainInputStore();
 const overlayStore = useOverlayStore();
+const { formatSomeCode } = useCodeFormatter();
 const {
   capitalizeFirstLetter,
   toUppercase,
@@ -111,8 +113,15 @@ const formatMd = () => {
   console.log('Форматирование MD:', mainInputStore.value);
 };
 
-const formatCode = () => {
-  console.log('Форматирование кода:', mainInputStore.value);
+const formatCode = async () => {
+  if (!mainInputStore.value.trim()) return;
+
+  const value = await formatSomeCode(mainInputStore.value);
+  const result = await ipcStore.callFunction('typeIntoWindowAndClose', [value, ipcStore.windowId]);
+  
+  if (!result.success) {
+    console.error(result.error);
+  }
 };
 
 const rusStress = () => {

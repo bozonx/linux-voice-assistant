@@ -94,7 +94,7 @@ const {
 // Функция для корректировки текста
 const correctText = () => {
   console.log('Корректировка текста:', mainInputStore.value);
-};
+}
 
 // Функция для редактирования текста
 const editText = () => {
