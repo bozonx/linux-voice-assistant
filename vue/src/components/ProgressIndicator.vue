@@ -8,12 +8,13 @@
       <button class="dialog-button" @click="onStopRecognition">Остановить</button>
     </div>
     <div>q - выйти</div>
-    <div>w - вставить в окно</div>
-    <div>e - в редактор</div>
-    <div>a - RU ➡️ EN > вставить</div>
-    <div>s - RU ➡️ ES > вставить</div>
+    <div>w - RU ➡️ EN > вставить</div>
+    <div>e - RU ➡️ ES > вставить</div>
+    <div>a - в редактор</div>
+    <div>s - вставить в окно</div>
     <div>d - дело в календарь</div>
     <div>f - быстрая заметка в Obsidian</div>
+    <div>g - поиск в интернете</div>
   </div>
   <div v-if="overlayStore.status === 'REPUNCTUATION'" class="overlay-process">
     <div>Коррекция пунктуации...</div>
