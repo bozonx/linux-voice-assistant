@@ -7,7 +7,13 @@
     <div>
       <button class="dialog-button" @click="onStopRecognition">Остановить</button>
     </div>
-    <div>W - закончить распознавание</div>
+    <div>q - выйти</div>
+    <div>w - вставить в окно</div>
+    <div>e - в редактор</div>
+    <div>a - RU ➡️ EN > вставить</div>
+    <div>s - RU ➡️ ES > вставить</div>
+    <div>d - дело в календарь</div>
+    <div>f - быстрая заметка в Obsidian</div>
   </div>
   <div v-if="overlayStore.status === 'REPUNCTUATION'" class="overlay-process">
     <div>Коррекция пунктуации...</div>

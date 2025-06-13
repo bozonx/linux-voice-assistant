@@ -32,8 +32,6 @@ export const useMainInputStore = defineStore("mainInput", () => {
     selectedText.value = text;
     selectionStart.value = start;
     selectionEnd.value = end;
-
-    console.log(selectedText.value, selectionStart.value, selectionEnd.value);
   };
 
   const replaceSelection = (newText: string): void => {

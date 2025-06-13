@@ -1,6 +1,6 @@
 import { app, BrowserWindow, ipcMain } from "electron";
 import path from "path";
-import { functions } from "./helper-external";
+import { functions } from "./functions";
 
 const DEBUG: boolean = true;
 let mainWindow: BrowserWindow | null = null;

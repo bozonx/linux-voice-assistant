@@ -32,6 +32,7 @@ interface ExternalFunctions {
   startVoiceRecognition: (mainWindow: BrowserWindow) => Promise<void>;
   stopVoiceRecognition: () => Promise<void>;
   doRepunctuation: (mainWindow: BrowserWindow, text: string) => Promise<string>;
+  closeMainWindow: (mainWindow: BrowserWindow) => Promise<void>;
 }
 
 // Экспортируем функции
@@ -42,6 +43,7 @@ export const functions: ExternalFunctions = {
   startVoiceRecognition,
   stopVoiceRecognition,
   doRepunctuation,
+  closeMainWindow,
 
   async translateTextAndInsert(
     mainWindow: BrowserWindow,
@@ -163,4 +165,8 @@ async function typeIntoWindowAndClose(
       });
     });
   });
+}
+
+async function closeMainWindow(mainWindow: BrowserWindow): Promise<void> {
+  mainWindow.close();
 }
