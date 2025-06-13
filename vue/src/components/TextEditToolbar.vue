@@ -4,40 +4,40 @@
       <li>
         <button
           class="mini-button"
-          @click="voiceRecognition()"
+          @click="voiceRecognition"
         >
           Голосовой ввод
         </button>
       </li>
       <li>
-        <button class="mini-button" @click="translateText('en', 'ru')">EN ➡️ RU</button>
+        <button class="mini-button" @click="translateAndEdit('en', 'ru')">EN ➡️ RU</button>
       </li>
       <li>
-        <button class="mini-button" @click="translateText('ru', 'en')">RU ➡️ EN</button>
+        <button class="mini-button" @click="translateAndEdit('ru', 'en')">RU ➡️ EN</button>
       </li>
       <li>
-        <button class="mini-button" @click="translateText('ru', 'es')">RU ➡️ ES</button>
+        <button class="mini-button" @click="translateAndEdit('ru', 'es')">RU ➡️ ES</button>
       </li>
       <li>
-        <button class="mini-button" @click="translateText('es', 'ru')">ES ➡️ RU</button>
+        <button class="mini-button" @click="translateAndEdit('es', 'ru')">ES ➡️ RU</button>
       </li>
     </ul>
 
     <ul class="text-edit-toolbar">
       <li>
-        <button class="mini-button" @click="correctText()">Коррекция</button>
+        <button class="mini-button" @click="correctAndEdit">Коррекция</button>
       </li>
       <li>
-        <button class="mini-button" @click="editText()">Редактировать</button>
+        <button class="mini-button" @click="editAndEdit">Редактировать</button>
       </li>
       <li>
-        <button class="mini-button" @click="formatMd()">Beautyfy MD</button>
+        <button class="mini-button" @click="formatMdAndEdit">Beautyfy MD</button>
       </li>
       <li>
-        <button class="mini-button" @click="formatCode()">Формат JS/JSON/CSS/HTML/XML</button>
+        <button class="mini-button" @click="formatCodeAndEdit">Формат JS/JSON/CSS/HTML/XML</button>
       </li>
       <li>
-        <button class="mini-button" @click="rusStress()">Ударение рус</button>
+        <button class="mini-button" @click="rusStress">Ударение рус</button>
       </li>
     </ul>
 
@@ -68,19 +68,21 @@
 </template>
 
 <script setup lang="ts">
-import { useIpcStore } from '../stores/ipc';
 import { useTextTransform } from '../composables/useTextTransform';
 import { useMainInputStore } from '../stores/mainInput'
-import { useOverlayStore } from '../stores/overlay';
 import { useVoiceRecognitionStore } from '../stores/voiceRecognition';
-import { useCodeFormatter } from '../composables/useCodeFormatter';
+import { useCallFunction } from '../composables/useCallFunction';
 
 // Используем composable
 const mainInputStore = useMainInputStore()
-const ipcStore = useIpcStore();
-const overlayStore = useOverlayStore();
 const voiceRecognitionStore = useVoiceRecognitionStore();
-const { formatSomeCode, formatMdAndStyle } = useCodeFormatter();
+const {
+  translateAndEdit,
+  formatMdAndEdit,
+  correctAndEdit,
+  editAndEdit,
+  formatCodeAndEdit,
+} = useCallFunction();
 const {
   capitalizeFirstLetter,
   toUppercase,
@@ -91,66 +93,6 @@ const {
   toKebabCase,
   makeRusStress
 } = useTextTransform();
-
-// Функция для корректировки текста
-const correctText = () => {
-  console.log('Корректировка текста:', mainInputStore.value);
-}
-
-// Функция для редактирования текста
-const editText = () => {
-  console.log('Редактура текста:', mainInputStore.value);
-};
-
-// Функция для перевода текста
-const translateText = async (from: string, to: string) => {
-  if (!mainInputStore.value.trim()) return;
-
-  let text = mainInputStore.value;
-
-  if (mainInputStore.selectedText) {
-    text = mainInputStore.selectedText;
-  }
-  
-  overlayStore.startTranslating();
-
-  const result = await ipcStore.callFunction('translateText', [text, from, to]);
-
-  if (result.success) {
-    if (mainInputStore.selectedText) {
-      mainInputStore.replaceSelection(result.result as string);
-    }
-    else {
-      mainInputStore.setValue(result.result as string);
-    }
-  } else {
-    console.error(result.error);
-  }
-
-  overlayStore.hideOverlay();
-};
-
-const formatMd = async () => {
-  if (!mainInputStore.value.trim()) return;
-
-  if (mainInputStore.selectedText) {
-    mainInputStore.replaceSelection(await formatMdAndStyle(mainInputStore.selectedText));
-  }
-  else {
-    mainInputStore.setValue(await formatMdAndStyle(mainInputStore.value));
-  }
-};
-
-const formatCode = async () => {
-  if (!mainInputStore.value.trim()) return;
-
-  if (mainInputStore.selectedText) {
-    mainInputStore.replaceSelection(await formatSomeCode(mainInputStore.selectedText));
-  }
-  else {
-    mainInputStore.setValue(await formatSomeCode(mainInputStore.value));
-  }
-};
 
 const rusStress = () => {
   if (!mainInputStore.value.trim()) return;

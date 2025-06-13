@@ -8,10 +8,10 @@
         <button class="button" @click="editAndInsert">Редактировать</button>
       </li>
       <li>
-        <button class="button" @click="formatMd">Beautyfy MD</button>
+        <button class="button" @click="formatMdAndInsert">Beautyfy MD</button>
       </li>
       <li>
-        <button class="button" @click="formatCode">Формат JS/JSON/CSS/HTML/XML</button>
+        <button class="button" @click="formatCodeAndInsert">Формат JS/JSON/CSS/HTML/XML</button>
       </li>
       <li>
         <button class="button" @click="rusStress">Ударение рус</button>
@@ -35,25 +35,25 @@
 
     <ul class="big-buttons-toolbar">
       <li>
-        <button class="button" @click="transformAndInsert('capitalize')">Capitalize</button>
+        <button class="button" @click="transform('capitalize')">Capitalize</button>
       </li>
       <li>
-        <button class="button" @click="transformAndInsert('uppercase')">UPPERCASE</button>
+        <button class="button" @click="transform('uppercase')">UPPERCASE</button>
       </li>
       <li>
-        <button class="button" @click="transformAndInsert('lowercase')">lowercase</button>
+        <button class="button" @click="transform('lowercase')">lowercase</button>
       </li>
       <li>
-        <button class="button" @click="transformAndInsert('camelCase')">camelCase</button>
+        <button class="button" @click="transform('camelCase')">camelCase</button>
       </li>
       <li>
-        <button class="button" @click="transformAndInsert('pascalCase')">PascalCase</button>
+        <button class="button" @click="transform('pascalCase')">PascalCase</button>
       </li>
       <li>
-        <button class="button" @click="transformAndInsert('snakeCase')">snake_case</button>
+        <button class="button" @click="transform('snakeCase')">snake_case</button>
       </li>
       <li>
-        <button class="button" @click="transformAndInsert('kebabCase')">kebab-case</button>
+        <button class="button" @click="transform('kebabCase')">kebab-case</button>
       </li>
     </ul>
   </div>
@@ -63,13 +63,17 @@
 import { useIpcStore } from '../stores/ipc';
 import { useTextTransform } from '../composables/useTextTransform';
 import { useMainInputStore } from '../stores/mainInput';
-import { useOverlayStore } from '../stores/overlay';
-import { useCodeFormatter } from '../composables/useCodeFormatter';
+import { useCallFunction } from '../composables/useCallFunction';
 
 const ipcStore = useIpcStore();
 const mainInputStore = useMainInputStore();
-const overlayStore = useOverlayStore();
-const { formatSomeCode, formatMdAndStyle } = useCodeFormatter();
+const {
+  correctAndInsert,
+  editAndInsert,
+  translateAndInsert,
+  formatMdAndInsert,
+  formatCodeAndInsert,
+} = useCallFunction();
 const {
   capitalizeFirstLetter,
   toUppercase,
@@ -80,57 +84,6 @@ const {
   toKebabCase,
   makeRusStress
 } = useTextTransform();
-
-// Функция для корректировки и вставки текста
-const correctAndInsert = () => {
-  console.log('Корректировка текста:', mainInputStore.value);
-};
-
-// Функция для редактирования и вставки текста
-const editAndInsert = () => {
-  console.log('Редактура текста:', mainInputStore.value);
-};
-
-// Функция для перевода и вставки текста
-const translateAndInsert = async (from: string, to: string) => {
-  if (!mainInputStore.value.trim()) return;
-  
-  overlayStore.startTranslating();
-
-  const result = await ipcStore.callFunction('translateTextAndInsert', [
-    mainInputStore.value,
-    from,
-    to,
-    ipcStore.windowId
-  ]);
-  if (!result.success) {
-    console.error(result.error);
-  }
-
-  overlayStore.hideOverlay();
-};
-
-const formatMd = async () => {
-  if (!mainInputStore.value.trim()) return;
-
-  const value = await formatMdAndStyle(mainInputStore.value);
-  const result = await ipcStore.callFunction('typeIntoWindowAndClose', [value, ipcStore.windowId]);
-
-  if (!result.success) {
-    console.error(result.error);
-  }
-};
-
-const formatCode = async () => {
-  if (!mainInputStore.value.trim()) return;
-
-  const value = await formatSomeCode(mainInputStore.value);
-  const result = await ipcStore.callFunction('typeIntoWindowAndClose', [value, ipcStore.windowId]);
-  
-  if (!result.success) {
-    console.error(result.error);
-  }
-};
 
 const rusStress = async () => {
   if (!mainInputStore.value.trim()) return;
@@ -144,7 +97,7 @@ const rusStress = async () => {
 };
 
 // Функция для трансформации и вставки текста
-const transformAndInsert = async (type: string) => {
+const transform = async (type: string) => {
   if (!mainInputStore.value.trim()) return;
   
   let transformedText = mainInputStore.value;

@@ -12,8 +12,6 @@ const VOICE_RECOGNITION_STATES = {
   REPUNCTUATION: "REPUNCTUATION",
 } as const;
 
-type AfterRepunctionTask = "insert" | "ru>en" | "ru>es" | "calendar" | "note";
-
 export const useVoiceRecognitionStore = defineStore("voiceRecognition", () => {
   // Состояние
   const state = ref<string>(VOICE_RECOGNITION_STATES.INACTIVE);
@@ -49,9 +47,7 @@ export const useVoiceRecognitionStore = defineStore("voiceRecognition", () => {
     }
   };
 
-  const startRepunctuation = async (
-    afterRepunctionTask?: AfterRepunctionTask
-  ) => {
+  const startRepunctuation = async (cb?: () => void) => {
     overlayStore.startRepunctuation();
     state.value = VOICE_RECOGNITION_STATES.REPUNCTUATION;
 
@@ -70,23 +66,8 @@ export const useVoiceRecognitionStore = defineStore("voiceRecognition", () => {
     overlayStore.hideOverlay();
     state.value = VOICE_RECOGNITION_STATES.INACTIVE;
 
-    doAfterRepunction(afterRepunctionTask);
-  };
-
-  const doAfterRepunction = async (
-    afterRepunctionTask?: AfterRepunctionTask
-  ) => {
-    console.log("afterRepunctionTask", afterRepunctionTask);
-    if (afterRepunctionTask === "insert") {
-      insertIntoWindow();
-    } else if (afterRepunctionTask === "ru>en") {
-      translateTextAndInsert("ru", "en");
-    } else if (afterRepunctionTask === "ru>es") {
-      translateTextAndInsert("ru", "es");
-    } else if (afterRepunctionTask === "calendar") {
-      dealToCalendar();
-    } else if (afterRepunctionTask === "note") {
-      fastNote();
+    if (cb) {
+      cb();
     }
   };
 
@@ -101,18 +82,22 @@ export const useVoiceRecognitionStore = defineStore("voiceRecognition", () => {
         } else if (key === "KeyQ") {
           ipcStore.callFunction("closeMainWindow");
         } else if (key === "KeyW") {
-          startRepunctuation("insert");
+          startRepunctuation(insertIntoWindow);
         } else if (key === "KeyE") {
           // it will just close overlay
           startRepunctuation();
         } else if (key === "KeyA") {
-          startRepunctuation("ru>en");
+          startRepunctuation(() => {
+            translateTextAndInsert("ru", "en");
+          });
         } else if (key === "KeyS") {
-          startRepunctuation("ru>es");
+          startRepunctuation(() => {
+            translateTextAndInsert("ru", "es");
+          });
         } else if (key === "KeyD") {
-          startRepunctuation("calendar");
+          startRepunctuation(dealToCalendar);
         } else if (key === "KeyF") {
-          startRepunctuation("note");
+          startRepunctuation(fastNote);
         }
       }
     }
