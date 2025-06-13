@@ -25,10 +25,13 @@ export const useCallFunction = () => {
   const insertIntoWindow = async () => {
     if (!mainInputStore.value.trim()) return;
 
-    await ipcStore.callFunction("typeIntoWindowAndClose", [
+    const result = await ipcStore.callFunction("typeIntoWindowAndClose", [
       mainInputStore.value,
       ipcStore.windowId,
     ]);
+    if (!result.success) {
+      console.error(result.error);
+    }
   };
 
   const translateAndInsert = async (from: string, to: string) => {
@@ -247,6 +250,21 @@ export const useCallFunction = () => {
     }
   };
 
+  const searchInInternet = async () => {
+    if (!mainInputStore.value.trim()) return;
+
+    const result = await ipcStore.callFunction("openInBrowserAndClose", [
+      `https://duckduckgo.com/?q=${encodeURIComponent(mainInputStore.value)}`,
+    ]);
+    if (!result.success) {
+      console.error(result.error);
+    }
+  };
+
+  const voiceRecognition = () => {
+    voiceRecognitionStore.startRecognizing();
+  };
+
   const correctAndInsert = async () => {
     if (!mainInputStore.value.trim()) return;
 
@@ -271,10 +289,6 @@ export const useCallFunction = () => {
     console.log("editAndEdit");
   };
 
-  const voiceRecognition = () => {
-    voiceRecognitionStore.startRecognizing();
-  };
-
   return {
     insertIntoWindow,
     translateAndInsert,
@@ -294,5 +308,6 @@ export const useCallFunction = () => {
     formatCodeAndInsert,
     formatCodeAndEdit,
     voiceRecognition,
+    searchInInternet,
   };
 };

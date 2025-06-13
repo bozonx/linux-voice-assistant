@@ -20,10 +20,10 @@
 
     <ul class="big-buttons-toolbar">
       <li>
-        <button class="button" @click="translateAndInsert('en', 'ru')">EN ➡️ RU</button>
+        <button class="button" @click="translateAndInsert('ru', 'en')">RU ➡️ EN</button>
       </li>
       <li>
-        <button class="button" @click="translateAndInsert('ru', 'en')">RU ➡️ EN</button>
+        <button class="button" @click="translateAndInsert('en', 'ru')">EN ➡️ RU</button>
       </li>
       <li>
         <button class="button" @click="translateAndInsert('ru', 'es')">RU ➡️ ES</button>

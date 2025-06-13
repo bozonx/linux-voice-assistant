@@ -10,10 +10,10 @@
         </button>
       </li>
       <li>
-        <button class="mini-button" @click="translateAndEdit('en', 'ru')">EN ➡️ RU</button>
+        <button class="mini-button" @click="translateAndEdit('ru', 'en')">RU ➡️ EN</button>
       </li>
       <li>
-        <button class="mini-button" @click="translateAndEdit('ru', 'en')">RU ➡️ EN</button>
+        <button class="mini-button" @click="translateAndEdit('en', 'ru')">EN ➡️ RU</button>
       </li>
       <li>
         <button class="mini-button" @click="translateAndEdit('ru', 'es')">RU ➡️ ES</button>

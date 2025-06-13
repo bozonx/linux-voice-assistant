@@ -4,17 +4,21 @@
   </div>
   <div v-if="overlayStore.status === 'VOICE_RECOGNITION'" class="overlay-process">
     <div>Распознавание голоса...</div>
-    <div>
-      <button class="dialog-button" @click="onStopRecognition">Остановить</button>
+    <div class="flex gap-2">
+      <button class="dialog-button" @click="onStopRecognition">Прервать</button>
+      <button class="dialog-button" @click="onGoToEditor">В редактор</button>
     </div>
-    <div>q - выйти</div>
-    <div>w - RU ➡️ EN > вставить</div>
-    <div>e - RU ➡️ ES > вставить</div>
-    <div>a - в редактор</div>
-    <div>s - вставить в окно</div>
-    <div>d - дело в календарь</div>
-    <div>f - быстрая заметка в Obsidian</div>
-    <div>g - поиск в интернете</div>
+    <div class="text-sm mt-4">
+      <div>q - выйти</div>
+      <div>w - RU ➡️ EN > вставить</div>
+      <div>e - RU ➡️ ES > вставить</div>
+      <div>a - в редактор</div>
+      <div>s - вставить в окно</div>
+      <div>d - дело в календарь</div>
+      <div>f - быстрая заметка в Obsidian</div>
+      <div>g - поиск в интернете</div>
+    </div>
+
   </div>
   <div v-if="overlayStore.status === 'REPUNCTUATION'" class="overlay-process">
     <div>Коррекция пунктуации...</div>
@@ -30,6 +34,10 @@ const voiceRecognitionStore = useVoiceRecognitionStore();
 
 const onStopRecognition = () => {
   voiceRecognitionStore.stopRecognizing();
+};
+
+const onGoToEditor = () => {
+  voiceRecognitionStore.startRepunctuation();
 };
 </script>
 

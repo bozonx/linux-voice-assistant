@@ -19,8 +19,13 @@ export const useVoiceRecognitionStore = defineStore("voiceRecognition", () => {
   const ipcStore = useIpcStore();
   const keysStore = useKeysStore();
   const mainInputStore = useMainInputStore();
-  const { insertIntoWindow, translateTextAndInsert, dealToCalendar, fastNote } =
-    useCallFunction();
+  const {
+    insertIntoWindow,
+    dealToCalendar,
+    fastNote,
+    translateAndInsert,
+    searchInInternet,
+  } = useCallFunction();
   // Действия
   const startRecognizing = async () => {
     overlayStore.startVoiceRecognition();
@@ -48,6 +53,13 @@ export const useVoiceRecognitionStore = defineStore("voiceRecognition", () => {
   };
 
   const startRepunctuation = async (cb?: () => void) => {
+    if (!mainInputStore.value.trim()) {
+      state.value = VOICE_RECOGNITION_STATES.INACTIVE;
+      overlayStore.hideOverlay();
+
+      return;
+    }
+
     overlayStore.startRepunctuation();
     state.value = VOICE_RECOGNITION_STATES.REPUNCTUATION;
 
@@ -82,22 +94,24 @@ export const useVoiceRecognitionStore = defineStore("voiceRecognition", () => {
         } else if (key === "KeyQ") {
           ipcStore.callFunction("closeMainWindow");
         } else if (key === "KeyW") {
-          startRepunctuation(insertIntoWindow);
+          startRepunctuation(() => {
+            translateAndInsert("ru", "en");
+          });
         } else if (key === "KeyE") {
+          startRepunctuation(() => {
+            translateAndInsert("ru", "es");
+          });
+        } else if (key === "KeyA") {
           // it will just close overlay
           startRepunctuation();
-        } else if (key === "KeyA") {
-          startRepunctuation(() => {
-            translateTextAndInsert("ru", "en");
-          });
         } else if (key === "KeyS") {
-          startRepunctuation(() => {
-            translateTextAndInsert("ru", "es");
-          });
+          startRepunctuation(insertIntoWindow);
         } else if (key === "KeyD") {
           startRepunctuation(dealToCalendar);
         } else if (key === "KeyF") {
           startRepunctuation(fastNote);
+        } else if (key === "KeyG") {
+          startRepunctuation(searchInInternet);
         }
       }
     }
