@@ -15,6 +15,5 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     TextEditToolbar: typeof import('./src/components/TextEditToolbar.vue')['default']
     TransformAndInsertMenu: typeof import('./src/components/TransformAndInsertMenu.vue')['default']
-    VoiceRecognitionProcess: typeof import('./src/components/VoiceRecognitionProcess.vue')['default']
   }
 }

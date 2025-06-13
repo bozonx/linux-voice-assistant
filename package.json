@@ -4,24 +4,24 @@
   "description": "Desktop assistant built with Electron",
   "main": "dist/main.js",
   "scripts": {
-    "build": "tsc && electron-builder",
-    "watch": "tsc -w",
-    "dev": "tsc && electron ./"
+    "build": "NODE_ENV=production tsc && electron-builder",
+    "watch": "NODE_ENV=development tsc -w",
+    "dev": "NODE_ENV=development tsc && electron ./"
   },
   "author": "Kozyrin Ivan",
   "license": "MIT",
   "dependencies": {
-    "electron-store": "^8.1.0",
+    "electron-store": "^10.0.1",
     "mic": "^2.1.2",
     "ws": "^8.18.2"
   },
   "devDependencies": {
     "@types/electron": "^1.4.38",
-    "@types/node": "^22.15.29",
-    "@types/vue": "^1.0.31",
+    "@types/node": "^24.0.1",
+    "@types/vue": "^2.0.0",
     "@types/ws": "^8.18.1",
-    "electron": "^28.1.0",
-    "electron-builder": "^24.9.1",
+    "electron": "^36.4.0",
+    "electron-builder": "^26.0.12",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   }

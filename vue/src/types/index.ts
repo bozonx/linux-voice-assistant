@@ -2,6 +2,7 @@ export enum START_MODES {
   SELECT = "select",
   VOICE = "voice",
   EDIT = "edit",
+  CORRECT = "correct",
 }
 
 export interface InitParams {

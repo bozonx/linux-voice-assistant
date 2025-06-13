@@ -2,7 +2,6 @@ import { app, BrowserWindow, ipcMain } from "electron";
 import path from "path";
 import { functions } from "./functions";
 
-const DEBUG: boolean = true;
 let mainWindow: BrowserWindow | null = null;
 
 // Интерфейс для параметров командной строки
@@ -36,17 +35,6 @@ const getCommandLineArgs = (): CommandLineParams => {
 // Отключаем предупреждения о безопасности
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "true";
 
-// The built directory structure
-//
-// ├─┬─┬ dist
-// │ │ └── index.html
-// │ │
-// │ ├─┬ dist-electron
-// │ │ ├── main
-// │ │ │   └── index.js
-// │ │ └── preload
-// │ │   └── index.js
-// │
 process.env.DIST = path.join(__dirname, "../..");
 process.env.VITE_PUBLIC = app.isPackaged
   ? process.env.DIST
@@ -65,10 +53,10 @@ function createWindow() {
     },
   });
 
-  if (process.env.NODE_ENV === "production") {
-    mainWindow.loadFile(path.join(__dirname, "../vuedist/index.html"));
-  } else {
+  if (process.env.NODE_ENV === "development") {
     mainWindow.loadURL("http://localhost:3000");
+  } else {
+    mainWindow.loadFile(path.join(__dirname, "../vue/dist/index.html"));
   }
 
   // Отправляем параметры в renderer процесс после загрузки страницы
@@ -77,7 +65,7 @@ function createWindow() {
   });
 
   // Open DevTools in development mode
-  if (DEBUG) {
+  if (process.env.NODE_ENV === "development") {
     mainWindow.webContents.openDevTools();
   }
 }

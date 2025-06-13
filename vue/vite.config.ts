@@ -32,18 +32,21 @@ export default defineConfig({
     outDir: "dist",
     assetsDir: "assets",
     emptyOutDir: true,
+    target: "es2020",
     rollupOptions: {
       input: {
         main: resolve(__dirname, "index.html"),
       },
     },
-    minify: "terser",
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-      },
-    },
+    minify: false,
+    // minify: "esbuild",
+    // minify: "terser",
+    // terserOptions: {
+    //   compress: {
+    //     drop_console: true,
+    //     drop_debugger: true,
+    //   },
+    // },
   },
   server: {
     port: 3000,
