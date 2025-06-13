@@ -105,13 +105,24 @@ const editText = () => {
 // Функция для перевода текста
 const translateText = async (from: string, to: string) => {
   if (!mainInputStore.value.trim()) return;
+
+  let text = mainInputStore.value;
+
+  if (mainInputStore.selectedText) {
+    text = mainInputStore.selectedText;
+  }
   
   overlayStore.startTranslating();
 
-  const result = await ipcStore.callFunction('translateText', [mainInputStore.value, from, to]);
+  const result = await ipcStore.callFunction('translateText', [text, from, to]);
 
   if (result.success) {
-    mainInputStore.setValue(result.result as string);
+    if (mainInputStore.selectedText) {
+      mainInputStore.replaceSelection(result.result as string);
+    }
+    else {
+      mainInputStore.setValue(result.result as string);
+    }
   } else {
     console.error(result.error);
   }
