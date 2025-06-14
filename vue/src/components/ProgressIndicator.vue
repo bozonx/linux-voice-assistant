@@ -20,6 +20,15 @@
     </div>
 
   </div>
+  <div v-if="overlayStore.status === 'HOTKEYS'" class="overlay-process">
+
+  </div>
+  <div v-if="overlayStore.status === 'EDITING'" class="overlay-process"></div>
+
+  </div>
+  <div v-if="overlayStore.status === 'CORRECTING'" class="overlay-process">
+
+  </div>
   <div v-if="overlayStore.status === 'REPUNCTUATION'" class="overlay-process">
     <div>Коррекция пунктуации...</div>
   </div>

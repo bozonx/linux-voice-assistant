@@ -11,5 +11,6 @@
     "skipLibCheck": true,
     "resolveJsonModule": true
   },
+  "include": ["electron/**/*"],
   "exclude": ["node_modules", "dist", "vue", "_old"]
 }
