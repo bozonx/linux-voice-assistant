@@ -25,6 +25,8 @@ export const useVoiceRecognitionStore = defineStore("voiceRecognition", () => {
     fastNote,
     translateAndInsert,
     searchInInternet,
+    askAI,
+    addToKnowledgeBase,
   } = useCallFunction();
   // Действия
   const startRecognizing = async () => {
@@ -116,12 +118,14 @@ export const useVoiceRecognitionStore = defineStore("voiceRecognition", () => {
           startRepunctuation(fastNote);
         } else if (key === "KeyG") {
           startRepunctuation(searchInInternet);
+        } else if (key === "KeyZ") {
+          startRepunctuation(addToKnowledgeBase);
         } else if (key === "KeyX") {
           // edit preset 2
         } else if (key === "KeyC") {
           startRepunctuation(dealToCalendar);
         } else if (key === "KeyV") {
-          // ask AI
+          startRepunctuation(askAI);
         }
       }
     }

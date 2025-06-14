@@ -92,6 +92,12 @@ export const useCallFunction = () => {
     console.log("fastNoteInObsidian");
   };
 
+  const addToKnowledgeBase = async () => {
+    if (!mainInputStore.value.trim()) return;
+
+    console.log("addToKnowledgeBase");
+  };
+
   const formatMdAndInsert = async () => {
     if (!mainInputStore.value.trim()) return;
 
@@ -261,6 +267,10 @@ export const useCallFunction = () => {
     }
   };
 
+  const askAI = async () => {
+    if (!mainInputStore.value.trim()) return;
+  };
+
   const voiceRecognition = () => {
     voiceRecognitionStore.startRecognizing();
   };
@@ -309,5 +319,7 @@ export const useCallFunction = () => {
     formatCodeAndEdit,
     voiceRecognition,
     searchInInternet,
+    askAI,
+    addToKnowledgeBase,
   };
 };

@@ -14,6 +14,8 @@ export const useHandleKeys = () => {
     editAndInsert,
     correctAndInsert,
     editAndEdit,
+    askAI,
+    addToKnowledgeBase,
   } = useCallFunction();
 
   const globalHandleKeyUp = async (event: KeyboardEvent) => {
@@ -43,13 +45,15 @@ export const useHandleKeys = () => {
         fastNote();
       } else if (event.code === "KeyG") {
         searchInInternet();
+      } else if (event.code === "KeyZ") {
+        addToKnowledgeBase();
       } else if (event.code === "KeyX") {
         // edit preset 2
         editAndEdit();
       } else if (event.code === "KeyC") {
         await dealToCalendar();
       } else if (event.code === "KeyV") {
-        // ask AI
+        askAI();
       }
     }
   };

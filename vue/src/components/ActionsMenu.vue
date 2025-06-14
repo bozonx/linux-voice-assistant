@@ -5,10 +5,16 @@
         <button class="button" @click="fastNote">Создать быструю заметку</button>
       </li>
       <li>
+        <button class="button" @click="addToKnowledgeBase">Добавить в базу знаний</button>
+      </li>
+      <li>
         <button class="button" @click="dealToCalendar">Дело в календарь</button>
       </li>
       <li>
         <button class="button" @click="searchInInternet">Поиск выбранного текста в интернете</button>
+      </li>
+      <li>
+        <button class="button" @click="askAI">Спросить у AI</button>
       </li>
       <li>
         <button class="button" @click="insertIntoWindow">Вставить в окно</button>
@@ -25,6 +31,8 @@ const {
   insertIntoWindow,
   fastNote,
   dealToCalendar,
+  askAI,
+  addToKnowledgeBase,
 } = useCallFunction();
 </script>
 

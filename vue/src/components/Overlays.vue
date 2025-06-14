@@ -6,7 +6,7 @@
     <div>Распознавание голоса...</div>
     <div class="flex gap-2">
       <button class="dialog-button" @click="onStopRecognition">Прервать</button>
-      <button class="dialog-button" @click="onGoToEditor">В редактор</button>
+      <button class="dialog-button" @click="onFromRecognitionToEditor">В редактор</button>
     </div>
     <div class="text-sm mt-4">
       <div>Esc - в редактор</div>
@@ -18,6 +18,7 @@
       <div>s - редактирование и вставка (пресет 1)</div>
       <div>f - быстрая заметка в Obsidian</div>
       <div>g - поиск в интернете</div>
+      <div>z - в базу знаний</div>
       <div>x - редактирование и вставка (пресет 2)</div>
       <div>c - дело в календарь</div>
       <div>v - спросить у AI</div>
@@ -40,6 +41,7 @@
       <div>d - коррекция и вставка</div>
       <div>f - быстрая заметка в Obsidian</div>
       <div>g - поиск в интернете</div>
+      <div>z - в базу знаний</div>
       <div>x - редактирование и вставка (пресет 2)</div>
       <div>c - дело в календарь</div>
       <div>v - спросить у AI</div>
@@ -67,8 +69,12 @@ const onStopRecognition = () => {
   voiceRecognitionStore.stopRecognizing();
 };
 
-const onGoToEditor = () => {
+const onFromRecognitionToEditor = () => {
   voiceRecognitionStore.startRepunctuation();
+};
+
+const onGoToEditor = () => {
+  overlayStore.hideOverlay();
 };
 </script>
 
