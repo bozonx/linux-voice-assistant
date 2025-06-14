@@ -53,6 +53,8 @@ function createWindow() {
     },
   });
 
+  console.log(111, process.env);
+
   if (process.env.NODE_ENV === "development") {
     mainWindow.loadURL("http://localhost:3000");
   } else {

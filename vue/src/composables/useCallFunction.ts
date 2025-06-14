@@ -268,25 +268,25 @@ export const useCallFunction = () => {
   const correctAndInsert = async () => {
     if (!mainInputStore.value.trim()) return;
 
-    console.log("correctAndInsert");
+    overlayStore.startCorrecting();
   };
 
   const correctAndEdit = async () => {
     if (!mainInputStore.value.trim()) return;
 
-    console.log("correctTextAndEdit");
+    overlayStore.startCorrecting();
   };
 
   const editAndInsert = async () => {
     if (!mainInputStore.value.trim()) return;
 
-    console.log("edit");
+    overlayStore.startEditing();
   };
 
   const editAndEdit = async () => {
     if (!mainInputStore.value.trim()) return;
 
-    console.log("editAndEdit");
+    overlayStore.startEditing();
   };
 
   return {

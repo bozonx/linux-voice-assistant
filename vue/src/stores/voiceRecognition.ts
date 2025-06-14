@@ -90,7 +90,10 @@ export const useVoiceRecognitionStore = defineStore("voiceRecognition", () => {
 
       if (state.value === VOICE_RECOGNITION_STATES.RECOGNIZING) {
         if (key === "Escape") {
-          stopRecognizing();
+          // stopRecognizing();
+          // TODO: провверить были ли изменения в инпуте
+          // it will just close overlay
+          startRepunctuation();
         } else if (key === "KeyQ") {
           ipcStore.callFunction("closeMainWindow");
         } else if (key === "KeyW") {
@@ -101,17 +104,24 @@ export const useVoiceRecognitionStore = defineStore("voiceRecognition", () => {
           startRepunctuation(() => {
             translateAndInsert("ru", "es");
           });
+        } else if (key === "KeyR") {
+          startRepunctuation(() => {
+            translateAndInsert("es", "ru");
+          });
         } else if (key === "KeyA") {
-          // it will just close overlay
-          startRepunctuation();
-        } else if (key === "KeyS") {
           startRepunctuation(insertIntoWindow);
-        } else if (key === "KeyD") {
-          startRepunctuation(dealToCalendar);
+        } else if (key === "KeyS") {
+          // edit preset 1
         } else if (key === "KeyF") {
           startRepunctuation(fastNote);
         } else if (key === "KeyG") {
           startRepunctuation(searchInInternet);
+        } else if (key === "KeyX") {
+          // edit preset 2
+        } else if (key === "KeyC") {
+          startRepunctuation(dealToCalendar);
+        } else if (key === "KeyV") {
+          // ask AI
         }
       }
     }
