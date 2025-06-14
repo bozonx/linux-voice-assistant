@@ -10,6 +10,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     ActionsMenu: typeof import('./src/components/ActionsMenu.vue')['default']
     MainInput: typeof import('./src/components/MainInput.vue')['default']
+    Overlays: typeof import('./src/components/Overlays.vue')['default']
     ProgressIndicator: typeof import('./src/components/ProgressIndicator.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

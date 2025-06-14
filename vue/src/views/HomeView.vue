@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ProgressIndicator />
+    <Overlays />
 
     <div>
       <MainInput ref="mainInput"/>
