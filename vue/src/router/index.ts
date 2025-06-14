@@ -1,6 +1,7 @@
 import { createRouter, createMemoryHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import HistoryView from "../views/HistoryView.vue";
+import ConfigView from "../views/ConfigView.vue";
 
 const router = createRouter({
   history: createMemoryHistory(),
@@ -15,6 +16,11 @@ const router = createRouter({
       path: "/historia",
       name: "historia",
       component: HistoryView,
+    },
+    {
+      path: "/config",
+      name: "config",
+      component: ConfigView,
     },
   ],
 });

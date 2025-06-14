@@ -18,6 +18,7 @@
 
     <div class="havigation">
       <RouterLink to="/historia">История</RouterLink>
+      <RouterLink to="/config">Настройки</RouterLink>
     </div>
   </div>
 </template>
