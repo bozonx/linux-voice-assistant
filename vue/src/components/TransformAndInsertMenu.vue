@@ -60,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { useCallFunction } from '../composables/useCallFunction';
+import { useCallApi } from '../composables/useCallApi';
 
 const {
   correctAndInsert,
@@ -70,7 +70,7 @@ const {
   formatCodeAndInsert,
   rusStressAndInsert,
   transformTextAndInsert,
-} = useCallFunction();
+} = useCallApi();
 </script>
 
 <style scoped>

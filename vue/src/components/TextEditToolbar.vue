@@ -68,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-import { useCallFunction } from '../composables/useCallFunction';
+import { useCallApi } from '../composables/useCallApi';
 
 const {
   translateAndEdit,
@@ -79,7 +79,7 @@ const {
   rusStressAndEdit,
   voiceRecognition,
   transformTextAndEdit,
-} = useCallFunction();
+} = useCallApi();
 </script>
 
 <style scoped>

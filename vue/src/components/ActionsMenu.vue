@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { useCallFunction } from '../composables/useCallFunction';
+import { useCallApi } from '../composables/useCallApi';
 
 const {
   searchInInternet,
@@ -47,7 +47,7 @@ const {
   addToKnowledgeBase,
   intoClipboardAndClose,
   askAItext,
-} = useCallFunction();
+} = useCallApi();
 </script>
 
 <style scoped>

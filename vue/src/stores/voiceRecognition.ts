@@ -4,7 +4,7 @@ import { useIpcStore } from "./ipc";
 import { useOverlayStore } from "./overlay";
 import { useKeysStore } from "./keys";
 import { useMainInputStore } from "./mainInput";
-import { useCallFunction } from "../composables/useCallFunction";
+import { useCallFunction } from "../composables/useCallApi";
 
 const VOICE_RECOGNITION_STATES = {
   INACTIVE: "INACTIVE",

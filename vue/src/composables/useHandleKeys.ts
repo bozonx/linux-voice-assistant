@@ -1,6 +1,6 @@
 import { useIpcStore } from "../stores/ipc";
 import { OVERLAY_STATUSES, useOverlayStore } from "../stores/overlay";
-import { useCallFunction } from "./useCallFunction";
+import { useCallFunction } from "./useCallApi";
 
 export const useHandleKeys = () => {
   const overlayStore = useOverlayStore();

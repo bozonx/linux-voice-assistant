@@ -5,7 +5,7 @@ import { useCodeFormatter } from "./useCodeFormatter";
 import { useTextTransform } from "./useTextTransform";
 import { useVoiceRecognitionStore } from "../stores/voiceRecognition";
 
-export const useCallFunction = () => {
+export const useCallApi = () => {
   const ipcStore = useIpcStore();
   const mainInputStore = useMainInputStore();
   const overlayStore = useOverlayStore();
