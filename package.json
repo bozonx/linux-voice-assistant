@@ -1,7 +1,7 @@
 {
-  "name": "desktop-assistant",
+  "name": "librnet-assistant",
   "version": "0.0.2",
-  "description": "Desktop assistant built with Electron",
+  "description": "Librnet assistant built with Electron",
   "main": "dist/main.js",
   "scripts": {
     "build": "NODE_ENV=production tsc && electron-builder",
@@ -14,7 +14,8 @@
     "electron-store": "^10.0.1",
     "mic": "^2.1.2",
     "openai": "^5.3.0",
-    "ws": "^8.18.2"
+    "ws": "^8.18.2",
+    "yaml": "^2.8.0"
   },
   "devDependencies": {
     "@types/electron": "^1.4.38",

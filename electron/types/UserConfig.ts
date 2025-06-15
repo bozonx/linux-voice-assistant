@@ -1,3 +1,40 @@
+export const CONFIG_PATHS = {
+  linux: "~/.config/librnet-assistant/config.yaml",
+  windows: "C:\\Users\\ivan\\AppData\\Roaming\\librnet-assistant\\config.yaml",
+  macos: "~/Library/Application Support/librnet-assistant/config.yaml",
+};
+
+export const DEFAULT_USER_CONFIG: UserConfig = {
+  openrouterDefaultApiKey: "",
+  openrouterDefaultBaseUrl: "https://openrouter.ai/api/v1",
+  xdotoolBin: "/usr/bin/xdotool",
+  appLanguage: "ru",
+  userLanguage: "ru",
+  toTranslateLanguages: ["en_US", "ru_RU", "es_AR"],
+  searchITheInternetProvider: "https://duckduckgo.com/?q=",
+  models: {},
+  aiModelUsage: {
+    voiceRecognition: "",
+    fastTranslate: "",
+    completion: "",
+    intentionRecognition: "",
+    correction: "",
+    deepEdit: "",
+    deepTranslate: "",
+    askAI: "",
+  },
+  aiContexts: {
+    fastTranslate: "",
+    completion: "",
+    toCalendar: "",
+    assistant: "",
+    correction: "",
+    askAiForText: "",
+    deepEdit: [],
+    deepTranslate: [],
+  },
+};
+
 export type ModelTag =
   | "voice"
   | "text"
@@ -11,7 +48,7 @@ export type ModelTag =
   | "lowCost"
   | "free";
 
-export interface Config {
+export interface UserConfig {
   openrouterDefaultApiKey: string;
   openrouterDefaultBaseUrl: string;
   xdotoolBin: string;
@@ -60,17 +97,13 @@ export interface Config {
     correction: string;
     askAiForText: string;
 
-    deepEdit: [
-      {
-        description: string;
-        context: string;
-      }
-    ];
-    deepTranslate: [
-      {
-        description: string;
-        context: string;
-      }
-    ];
+    deepEdit: {
+      description: string;
+      context: string;
+    }[];
+    deepTranslate: {
+      description: string;
+      context: string;
+    }[];
   };
 }

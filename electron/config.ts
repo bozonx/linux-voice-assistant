@@ -1,7 +1,24 @@
-export const config = {
-  argostranslateBin:
-    "/home/ivan/.local/opt/argostranslate/argos_env/bin/argos-translate",
-  xdotoolBin: "/usr/bin/xdotool",
-  voskWsUrl: "ws://localhost:2700",
-  sileroPuncBin: "~/.local/opt/silero/bin/python ~/.local/opt/silero/punc.py",
-};
+import {
+  CONFIG_PATHS,
+  DEFAULT_USER_CONFIG,
+  UserConfig,
+} from "./types/UserConfig.js";
+import fs from "fs/promises";
+import yaml from "yaml";
+
+export async function createOrReadConfig(): Promise<UserConfig> {
+  console.log("initConfig", process.platform);
+
+  const configPath = CONFIG_PATHS[process.platform];
+
+  if (!(await fs.stat(configPath))) {
+    await fs.writeFile(configPath, yaml.stringify(DEFAULT_USER_CONFIG));
+
+    return DEFAULT_USER_CONFIG;
+  }
+
+  const fileContent = await fs.readFile(configPath, "utf8");
+  const config = yaml.parse(fileContent) as UserConfig;
+
+  return config;
+}
