@@ -1,6 +1,7 @@
 import OpenAI from "openai";
 import { APP_CONFIG } from "./appConfig";
 import { UserConfig } from "./types/UserConfig";
+import client from "openai";
 
 export class AI {
   private openai: OpenAI;
@@ -21,24 +22,42 @@ export class AI {
         "X-Title": "Librnet assistant", // Optional. Site title for rankings on openrouter.ai.
       },
     });
-
-    // test
-
-    await this.translate("ru", "Translate this text to Russian:\n\nUGI: Uncensored General Intelligence. A benchmark measuring both willingness to answer and accuracy in fact-based contentious questions. The test set is made of roughly 100 questions/tasks, covering topics that are commonly difficult to get LLMs to answer. The leaderboard's questions are kept private in order to avoid the common problem of not knowing if a model is intelligent or if it was just trained on the test questions.");
   }
 
-  async translate(to: string, content: string) {
-    const completion = await this.openai.chat.completions.create({
-      model: "deepseek/deepseek-chat-v3-0324:free",
+  async chatCompletion(model: string, content: string) {
+    return this.openai.chat.completions.create({
+      // model: "deepseek/deepseek-chat-v3-0324:free",
+      model,
       messages: [
         {
+          // TODO: what is the role?
           role: "user",
           content,
         },
       ],
     });
+  }
 
-    console.log("translate", completion);
-    console.log(completion.choices[0].message);
+  async responseCreate(model: string, instructions: string, input: string) {
+    /*
+        input: [
+        {
+            role: "developer",
+            content: "Talk like a pirate."
+        },
+        {
+            role: "user",
+            content: "Are semicolons optional in JavaScript?",
+        },
+    ],
+    */
+    return this.openai.responses.create({
+      model,
+      instructions,
+      input,
+      // max_output_tokens: 100,
+      // temperature: 0.2,
+      // text: { "type": "json_schema" }
+    });
   }
 }

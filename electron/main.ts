@@ -27,7 +27,7 @@ async function createWindow() {
     },
   });
 
-  const params: CommandLineParams = getCommandLineArgs();
+  const args: CommandLineParams = getCommandLineArgs();
   const userConfig = await createOrReadConfig();
   const api = new Api(APP_CONFIG, userConfig, mainWindow);
 
@@ -42,7 +42,7 @@ async function createWindow() {
   // Отправляем параметры в renderer процесс после загрузки страницы
   mainWindow.webContents.on("did-finish-load", () => {
     mainWindow?.webContents.send("init-params", {
-      ...params,
+      ...args,
       NODE_ENV: process.env.NODE_ENV,
       appConfig: APP_CONFIG,
       userConfig,
@@ -57,6 +57,7 @@ async function createWindow() {
   ipcMain.handle(
     "call-function",
     async (event, funcName: string, args: any[]): Promise<FunctionResult> => {
+      console.log("call-function", funcName, args);
       try {
         const result = await (api[funcName as keyof Api] as any)(...args);
         return { success: true, result };

@@ -1,9 +1,11 @@
-export const CONFIG_PATHS = {
-  linux: "~/.config/librnet-assistant/userConfig.yaml",
-  windows:
-    "C:\\Users\\ivan\\AppData\\Roaming\\librnet-assistant\\userConfig.yaml",
-  macos: "~/Library/Application Support/librnet-assistant/userConfig.yaml",
-};
+// export const CONFIG_PATHS = {
+//   linux: "~/.config/librnet-assistant/userConfig.yaml",
+//   windows:
+//     "C:\\Users\\ivan\\AppData\\Roaming\\librnet-assistant\\userConfig.yaml",
+//   macos: "~/Library/Application Support/librnet-assistant/userConfig.yaml",
+// };
+
+export const CONFIG_FILE_NAME = "userConfig.yaml";
 
 export const DEFAULT_USER_CONFIG: UserConfig = {
   openrouterDefaultApiKey: "",
