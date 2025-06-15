@@ -1,20 +1,23 @@
 <template>
   <div>
-    <ul class="text-insert-buttons">
+    <ul class="big-buttons-toolbar">
       <li>
-        <button class="button" @click="fastNote">Создать быструю заметку</button>
+        <button class="button" @click="fastNote">Быстрая заметка</button>
       </li>
       <li>
-        <button class="button" @click="addToKnowledgeBase">Добавить в базу знаний</button>
+        <button class="button" @click="addToKnowledgeBase">В базу знаний</button>
       </li>
       <li>
         <button class="button" @click="dealToCalendar">Дело в календарь</button>
       </li>
       <li>
-        <button class="button" @click="searchInInternet">Поиск выбранного текста в интернете</button>
+        <button class="button" @click="searchInInternet">Поиск в интернете</button>
       </li>
       <li>
-        <button class="button" @click="askAI">Спросить у AI</button>
+        <button class="button" @click="askAIShort">Быстрый вопрос к AI</button>
+      </li>
+      <li>
+        <button class="button" @click="askAfull">Подробный ответ от AI</button>
       </li>
       <li>
         <button class="button" @click="insertIntoWindow">Вставить в окно</button>
@@ -31,7 +34,8 @@ const {
   insertIntoWindow,
   fastNote,
   dealToCalendar,
-  askAI,
+  askAIShort,
+  askAfull,
   addToKnowledgeBase,
 } = useCallFunction();
 </script>

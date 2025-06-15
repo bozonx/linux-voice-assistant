@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ul class="text-edit-toolbar">
+    <ul class="small-buttons-toolbar">
       <li>
         <button
           class="mini-button"
@@ -23,7 +23,7 @@
       </li>
     </ul>
 
-    <ul class="text-edit-toolbar">
+    <ul class="small-buttons-toolbar">
       <li>
         <button class="mini-button" @click="correctAndEdit">Коррекция</button>
       </li>
@@ -41,7 +41,7 @@
       </li>
     </ul>
 
-    <ul class="text-edit-toolbar">
+    <ul class="small-buttons-toolbar">
       <li>
         <button class="mini-button" @click="transformTextAndEdit('capitalize')">Capitalize</button>
       </li>
@@ -83,7 +83,7 @@ const {
 </script>
 
 <style scoped>
-.text-edit-toolbar {
+.big-buttons-toolbar {
   display: flex;
   flex-direction: row;
   width: 100%;

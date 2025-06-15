@@ -267,7 +267,11 @@ export const useCallFunction = () => {
     }
   };
 
-  const askAI = async () => {
+  const askAIShort = async () => {
+    if (!mainInputStore.value.trim()) return;
+  };
+
+  const askAfull = async () => {
     if (!mainInputStore.value.trim()) return;
   };
 
@@ -319,7 +323,8 @@ export const useCallFunction = () => {
     formatCodeAndEdit,
     voiceRecognition,
     searchInInternet,
-    askAI,
+    askAIShort,
+    askAfull,
     addToKnowledgeBase,
   };
 };

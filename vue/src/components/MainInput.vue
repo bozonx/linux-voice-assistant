@@ -22,11 +22,11 @@ watch(() => store.focusCount, (newValue, oldValue) => {
   }
 })
 
-watch(() => store.selectAllCount, (newValue, oldValue) => {
-  if (newValue > oldValue) {
-    textareaRef.value?.select()
-  }
-})
+// watch(() => store.selectAllCount, (newValue, oldValue) => {
+//   if (newValue > oldValue) {
+//     textareaRef.value?.select()
+//   }
+// })
 
 // Следим за изменениями выделения в store
 watch(
@@ -76,7 +76,7 @@ const handleMouseUp = (event: Event): void => {
 <style scoped>
 .main-input {
   width: 100%;
-  min-height: 100px;
+  min-height: 150px;
   padding: 6px;
   margin-bottom: 0px;
   border: 2px solid #e0e0e0;
@@ -85,6 +85,7 @@ const handleMouseUp = (event: Event): void => {
   resize: vertical;
   font-family: inherit;
   box-sizing: border-box;
+  overflow-y: scroll;
 }
 
 .main-input:focus {

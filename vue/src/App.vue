@@ -49,6 +49,11 @@ onMounted(() => {
     else if (ipcStore.mode === START_MODES.VOICE) {
       voiceRecognitionStore.startRecognizing();
     }
+    // WRITE mode
+    else {
+      await nextTick()
+      mainInputStore.focus()
+    }
   });
 
   window.electron.ipcRenderer.on('voice-recognition', (data: string) => {
