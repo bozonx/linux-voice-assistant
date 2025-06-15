@@ -17,12 +17,6 @@ process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "true";
 //   : path.join(process.env.DIST, "public");
 
 async function createWindow() {
-  const params: CommandLineParams = getCommandLineArgs();
-  const userConfig = await createOrReadConfig();
-  const api = new Api(APP_CONFIG, userConfig);
-  
-  await api.init();
-
   mainWindow = new BrowserWindow({
     width: APP_CONFIG.windowWidth,
     height: APP_CONFIG.windowHeight,
@@ -32,6 +26,12 @@ async function createWindow() {
       preload: path.join(__dirname, "preload.js"),
     },
   });
+
+  const params: CommandLineParams = getCommandLineArgs();
+  const userConfig = await createOrReadConfig();
+  const api = new Api(APP_CONFIG, userConfig, mainWindow);
+
+  await api.init();
 
   if (process.env.NODE_ENV === "development") {
     mainWindow.loadURL(APP_CONFIG.devServerUrl);
@@ -53,6 +53,19 @@ async function createWindow() {
   if (process.env.NODE_ENV === "development") {
     mainWindow.webContents.openDevTools();
   }
+
+  ipcMain.handle(
+    "call-function",
+    async (event, funcName: string, args: any[]): Promise<FunctionResult> => {
+      try {
+        const result = await (api[funcName as keyof Api] as any)(...args);
+        return { success: true, result };
+      } catch (error) {
+        console.error("Error executing function in window:", error);
+        return { success: false, error: error as Error };
+      }
+    }
+  );
 }
 
 app.on("window-all-closed", () => {
@@ -71,18 +84,3 @@ app.whenReady().then(() => {
     }
   });
 });
-
-ipcMain.handle(
-  "call-function",
-  async (event, funcName: string, args: any[]): Promise<FunctionResult> => {
-    try {
-      const func = functions[funcName as keyof typeof functions];
-      type FuncType = typeof func;
-      const result = await (func as Function)(mainWindow, ...args);
-      return { success: true, result };
-    } catch (error) {
-      console.error("Error executing function in window:", error);
-      return { success: false, error: error as Error };
-    }
-  }
-);

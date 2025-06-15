@@ -259,9 +259,8 @@ export const useCallFunction = () => {
   const searchInInternet = async () => {
     if (!mainInputStore.value.trim()) return;
 
-    // TODO: use user config
     const result = await ipcStore.callFunction("openInBrowserAndClose", [
-      `https://duckduckgo.com/?q=${encodeURIComponent(mainInputStore.value)}`,
+      mainInputStore.value,
     ]);
     if (!result.success) {
       console.error(result.error);

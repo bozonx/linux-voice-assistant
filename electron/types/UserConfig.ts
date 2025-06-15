@@ -1,7 +1,8 @@
 export const CONFIG_PATHS = {
-  linux: "~/.config/librnet-assistant/config.yaml",
-  windows: "C:\\Users\\ivan\\AppData\\Roaming\\librnet-assistant\\config.yaml",
-  macos: "~/Library/Application Support/librnet-assistant/config.yaml",
+  linux: "~/.config/librnet-assistant/userConfig.yaml",
+  windows:
+    "C:\\Users\\ivan\\AppData\\Roaming\\librnet-assistant\\userConfig.yaml",
+  macos: "~/Library/Application Support/librnet-assistant/userConfig.yaml",
 };
 
 export const DEFAULT_USER_CONFIG: UserConfig = {
@@ -11,7 +12,7 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
   appLanguage: "ru",
   userLanguage: "ru",
   toTranslateLanguages: ["en_US", "ru_RU", "es_AR"],
-  searchITheInternetProvider: "https://duckduckgo.com/?q=",
+  internetSearchUrl: "https://duckduckgo.com/?q=",
   models: {},
   aiModelUsage: {
     voiceRecognition: "",
@@ -57,7 +58,7 @@ export interface UserConfig {
   // Language of the user for questioning AI and getting answers
   userLanguage: string;
   toTranslateLanguages: string[];
-  searchITheInternetProvider: string;
+  internetSearchUrl: string;
 
   models: {
     // key is the id of the model

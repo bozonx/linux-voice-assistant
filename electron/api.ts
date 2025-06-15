@@ -9,11 +9,17 @@ export class Api {
   private readonly appConfig: typeof APP_CONFIG;
   private readonly userConfig: UserConfig;
   private readonly ai: AI;
+  private readonly mainWindow: BrowserWindow;
 
-  constructor(appConfig: typeof APP_CONFIG, userConfig: UserConfig) {
+  constructor(
+    appConfig: typeof APP_CONFIG,
+    userConfig: UserConfig,
+    mainWindow: BrowserWindow
+  ) {
     this.appConfig = appConfig;
     this.userConfig = userConfig;
-    this.ai = new AI();
+    this.mainWindow = mainWindow;
+    this.ai = new AI(appConfig, userConfig);
   }
 
   async init() {
@@ -21,72 +27,56 @@ export class Api {
   }
 
   // Функция для открытия URL в браузере
-  async openInBrowserAndClose(
-    mainWindow: BrowserWindow,
-    url: string
-  ): Promise<void> {
+  async openInBrowserAndClose(url: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      exec(`xdg-open "${url}"`, (error) => {
-        if (error) {
-          console.error("Error opening browser:", error);
-          reject(error);
-          return;
-        }
-        resolve();
-        mainWindow.close();
-      });
-    });
-  }
-
-  async typeIntoWindowAndClose(
-    mainWindow: BrowserWindow,
-    text: string,
-    windowId: string
-  ): Promise<void> {
-    // Сначала активируем окно
-    return new Promise<void>((resolve, reject) => {
-      exec(`${config.xdotoolBin} windowactivate ${windowId}`, (error) => {
-        if (error) {
-          console.error("Error activating window:", error);
-          reject(error);
-          return;
-        }
-
-        // Затем вводим текст
-        exec(`${config.xdotoolBin} type "${text}"`, (error) => {
+      exec(
+        `xdg-open "${this.userConfig.internetSearchUrl}${encodeURIComponent(
+          url
+        )}"`,
+        (error) => {
           if (error) {
-            console.error("Error typing text:", error);
+            console.error("Error opening browser:", error);
             reject(error);
             return;
           }
-          // Закрываем окно после ввода текста
-          if (mainWindow) {
-            mainWindow.close();
-          }
           resolve();
-        });
-      });
+          this.mainWindow.close();
+        }
+      );
     });
   }
 
-  async closeMainWindow(mainWindow: BrowserWindow): Promise<void> {
-    mainWindow.close();
+  async typeIntoWindowAndClose(text: string, windowId: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      // Сначала активируем окно
+      exec(
+        `${this.userConfig.xdotoolBin} windowactivate ${windowId}`,
+        (error) => {
+          if (error) {
+            console.error("Error activating window:", error);
+            reject(error);
+            return;
+          }
+
+          // Затем вводим текст
+          exec(`${this.userConfig.xdotoolBin} type "${text}"`, (error) => {
+            if (error) {
+              console.error("Error typing text:", error);
+              reject(error);
+              return;
+            }
+            // Закрываем окно после ввода текста
+            if (this.mainWindow) {
+              this.mainWindow.close();
+            }
+            resolve();
+          });
+        }
+      );
+    });
   }
 
-  async translateTextAndInsert(
-    mainWindow: BrowserWindow,
-    text: string,
-    sourceLang: string,
-    targetLang: string,
-    windowId: string
-  ): Promise<void> {
-    const translatedText = await translateText(
-      mainWindow,
-      text,
-      sourceLang,
-      targetLang
-    );
-
-    await typeIntoWindowAndClose(mainWindow, translatedText, windowId);
+  async closeMainWindow(): Promise<void> {
+    this.mainWindow.close();
   }
 }
