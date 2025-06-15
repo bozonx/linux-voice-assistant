@@ -1,10 +1,9 @@
 //const electron = require("electron");
 import { BrowserWindow } from "electron";
 import { exec } from "child_process";
-import { config } from "./config";
-import VoskVoiceRecognition from "./vosk";
+// import VoskVoiceRecognition from "./vosk";
 
-const vosk = new VoskVoiceRecognition(config.voskWsUrl);
+// const vosk = new VoskVoiceRecognition(config.voskWsUrl);
 
 interface ExternalFunctions {
   translateText: (

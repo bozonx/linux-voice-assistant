@@ -1,51 +1,31 @@
 import { app, BrowserWindow, ipcMain } from "electron";
 import path from "path";
-import { functions } from "./functions";
+import { Api } from "./api";
+import { getCommandLineArgs } from "./helpers";
+import { CommandLineParams, FunctionResult } from "./types/types.js";
+import { APP_CONFIG } from "./appConfig.js";
+import { createOrReadConfig } from "./config";
 
 let mainWindow: BrowserWindow | null = null;
-
-// Интерфейс для параметров командной строки
-interface CommandLineParams {
-  windowId?: string;
-  selectedText?: string;
-  mode?: string;
-}
-
-// Получаем аргументы командной строки
-const getCommandLineArgs = (): CommandLineParams => {
-  const args: string[] = process.argv.slice(2);
-  const params: CommandLineParams = {};
-
-  for (let i = 0; i < args.length; i++) {
-    if (args[i] === "--window-id" && i + 1 < args.length) {
-      params.windowId = args[i + 1];
-      i++;
-    } else if (args[i] === "--selected-text" && i + 1 < args.length) {
-      params.selectedText = args[i + 1];
-      i++;
-    } else if (args[i] === "--mode" && i + 1 < args.length) {
-      params.mode = args[i + 1];
-      i++;
-    }
-  }
-
-  return params;
-};
 
 // Отключаем предупреждения о безопасности
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "true";
 
-process.env.DIST = path.join(__dirname, "../..");
-process.env.VITE_PUBLIC = app.isPackaged
-  ? process.env.DIST
-  : path.join(process.env.DIST, "public");
+// process.env.DIST = path.join(__dirname, "../..");
+// process.env.VITE_PUBLIC = app.isPackaged
+//   ? process.env.DIST
+//   : path.join(process.env.DIST, "public");
 
-function createWindow() {
+async function createWindow() {
   const params: CommandLineParams = getCommandLineArgs();
+  const userConfig = await createOrReadConfig();
+  const api = new Api(APP_CONFIG, userConfig);
+  
+  await api.init();
 
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: APP_CONFIG.windowWidth,
+    height: APP_CONFIG.windowHeight,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: true,
@@ -53,17 +33,20 @@ function createWindow() {
     },
   });
 
-  console.log(111, process.env);
-
   if (process.env.NODE_ENV === "development") {
-    mainWindow.loadURL("http://localhost:3000");
+    mainWindow.loadURL(APP_CONFIG.devServerUrl);
   } else {
-    mainWindow.loadFile(path.join(__dirname, "../vue/dist/index.html"));
+    mainWindow.loadFile(APP_CONFIG.indexHtmlPath);
   }
 
   // Отправляем параметры в renderer процесс после загрузки страницы
   mainWindow.webContents.on("did-finish-load", () => {
-    mainWindow?.webContents.send("init-params", params);
+    mainWindow?.webContents.send("init-params", {
+      ...params,
+      NODE_ENV: process.env.NODE_ENV,
+      appConfig: APP_CONFIG,
+      userConfig,
+    });
   });
 
   // Open DevTools in development mode
@@ -89,14 +72,6 @@ app.whenReady().then(() => {
   });
 });
 
-// Интерфейс для результата выполнения функции
-interface FunctionResult {
-  success: boolean;
-  result?: any;
-  error?: Error;
-}
-
-// Обработчики IPC
 ipcMain.handle(
   "call-function",
   async (event, funcName: string, args: any[]): Promise<FunctionResult> => {
