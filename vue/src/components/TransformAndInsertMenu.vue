@@ -2,6 +2,21 @@
   <div>
     <ul class="big-buttons-toolbar">
       <li>
+        <button class="button" @click="translateAndInsert('ru', 'en')">RU ➡️ EN</button>
+      </li>
+      <li>
+        <button class="button" @click="translateAndInsert('en', 'ru')">EN ➡️ RU</button>
+      </li>
+      <li>
+        <button class="button" @click="translateAndInsert('ru', 'es')">RU ➡️ ES</button>
+      </li>
+      <li>
+        <button class="button" @click="translateAndInsert('es', 'ru')">ES ➡️ RU</button>
+      </li>
+    </ul>
+
+    <ul class="big-buttons-toolbar">
+      <li>
         <button class="button" @click="correctAndInsert">Коррекция</button>
       </li>
       <li>
@@ -15,21 +30,6 @@
       </li>
       <li>
         <button class="button" @click="rusStressAndInsert">Ударение рус</button>
-      </li>
-    </ul>
-
-    <ul class="big-buttons-toolbar">
-      <li>
-        <button class="button" @click="translateAndInsert('ru', 'en')">RU ➡️ EN</button>
-      </li>
-      <li>
-        <button class="button" @click="translateAndInsert('en', 'ru')">EN ➡️ RU</button>
-      </li>
-      <li>
-        <button class="button" @click="translateAndInsert('ru', 'es')">RU ➡️ ES</button>
-      </li>
-      <li>
-        <button class="button" @click="translateAndInsert('es', 'ru')">ES ➡️ RU</button>
       </li>
     </ul>
 

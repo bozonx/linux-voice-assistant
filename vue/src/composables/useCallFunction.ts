@@ -271,7 +271,11 @@ export const useCallFunction = () => {
     if (!mainInputStore.value.trim()) return;
   };
 
-  const askAfull = async () => {
+  const askAIlong = async () => {
+    if (!mainInputStore.value.trim()) return;
+  };
+
+  const askAItext = async () => {
     if (!mainInputStore.value.trim()) return;
   };
 
@@ -303,6 +307,10 @@ export const useCallFunction = () => {
     overlayStore.startEditing();
   };
 
+  const intoClipboardAndClose = async () => {
+    if (!mainInputStore.value.trim()) return;
+  };
+
   return {
     insertIntoWindow,
     translateAndInsert,
@@ -324,7 +332,9 @@ export const useCallFunction = () => {
     voiceRecognition,
     searchInInternet,
     askAIShort,
-    askAfull,
+    askAIlong,
     addToKnowledgeBase,
+    intoClipboardAndClose,
+    askAItext,
   };
 };
