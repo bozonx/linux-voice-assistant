@@ -4,7 +4,7 @@ import { useIpcStore } from "./ipc";
 import { useOverlayStore } from "./overlay";
 import { useKeysStore } from "./keys";
 import { useMainInputStore } from "./mainInput";
-import { useCallFunction } from "../composables/useCallApi";
+import { useCallApi } from "../composables/useCallApi";
 
 const VOICE_RECOGNITION_STATES = {
   INACTIVE: "INACTIVE",
@@ -25,9 +25,11 @@ export const useVoiceRecognitionStore = defineStore("voiceRecognition", () => {
     fastNote,
     translateAndInsert,
     searchInInternet,
-    askAI,
+    askAIShort,
+    askAIlong,
+    askAItext,
     addToKnowledgeBase,
-  } = useCallFunction();
+  } = useCallApi();
   // Действия
   const startRecognizing = async () => {
     overlayStore.startVoiceRecognition();
@@ -125,7 +127,7 @@ export const useVoiceRecognitionStore = defineStore("voiceRecognition", () => {
         } else if (key === "KeyC") {
           startRepunctuation(dealToCalendar);
         } else if (key === "KeyV") {
-          startRepunctuation(askAI);
+          startRepunctuation(askAIShort);
         }
       }
     }

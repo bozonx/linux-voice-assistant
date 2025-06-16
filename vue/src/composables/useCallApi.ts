@@ -4,6 +4,7 @@ import { useMainInputStore } from "../stores/mainInput";
 import { useCodeFormatter } from "./useCodeFormatter";
 import { useTextTransform } from "./useTextTransform";
 import { useVoiceRecognitionStore } from "../stores/voiceRecognition";
+import miniToastr from "mini-toastr";
 
 export const useCallApi = () => {
   const ipcStore = useIpcStore();
@@ -22,16 +23,24 @@ export const useCallApi = () => {
     makeRusStress,
   } = useTextTransform();
 
+  async function handleRequest(funcName: string, args: any[]) {
+    const result = await ipcStore.callFunction(funcName, args);
+
+    if (!result.success) {
+      miniToastr.error(result.error, "Api call error");
+      console.error(result.error);
+    }
+
+    return result;
+  }
+
   const insertIntoWindow = async () => {
     if (!mainInputStore.value.trim()) return;
 
-    const result = await ipcStore.callFunction("typeIntoWindowAndClose", [
+    await handleRequest("typeIntoWindowAndClose", [
       mainInputStore.value,
       ipcStore.windowId,
     ]);
-    if (!result.success) {
-      console.error(result.error);
-    }
   };
 
   const translateAndInsert = async (from: string, to: string) => {
@@ -259,12 +268,7 @@ export const useCallApi = () => {
   const searchInInternet = async () => {
     if (!mainInputStore.value.trim()) return;
 
-    const result = await ipcStore.callFunction("openInBrowserAndClose", [
-      mainInputStore.value,
-    ]);
-    if (!result.success) {
-      console.error(result.error);
-    }
+    await handleRequest("openInBrowserAndClose", [mainInputStore.value]);
   };
 
   const askAIShort = async () => {
@@ -284,15 +288,37 @@ export const useCallApi = () => {
   };
 
   const correctAndInsert = async () => {
-    if (!mainInputStore.value.trim()) return;
-
-    overlayStore.startCorrecting();
+    // if (!mainInputStore.value.trim()) return;
+    // overlayStore.startCorrecting();
+    // const result = await handleRequest("responseCreate", [
+    //   "deepseek/deepseek-chat-v3-0324:free",
+    //   "Correct the text",
+    //   mainInputStore.value,
+    // ]);
+    // if (result.success) {
+    //   mainInputStore.setValue(result.result as string);
+    //   console.log(111, result.result);
+    // }
+    // overlayStore.hideOverlay();
   };
 
   const correctAndEdit = async () => {
     if (!mainInputStore.value.trim()) return;
 
     overlayStore.startCorrecting();
+
+    const result = await handleRequest("chatCompletion", [
+      "deepseek/deepseek-chat-v3-0324:free",
+      "Correct the text and restore punctuation",
+      mainInputStore.value,
+    ]);
+
+    if (result.success) {
+      mainInputStore.setValue(result.result.choices[0].message.content);
+      console.log(111, result.result);
+    }
+
+    overlayStore.hideOverlay();
   };
 
   const editAndInsert = async () => {

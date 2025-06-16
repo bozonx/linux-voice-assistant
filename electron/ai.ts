@@ -24,40 +24,43 @@ export class AI {
     });
   }
 
-  async chatCompletion(model: string, content: string) {
+  async chatCompletion(model: string, instructions: string, userInput: string) {
     return this.openai.chat.completions.create({
       // model: "deepseek/deepseek-chat-v3-0324:free",
       model,
       messages: [
         {
-          // TODO: what is the role?
+          role: "developer",
+          content: instructions,
+        },
+        {
           role: "user",
-          content,
+          content: userInput,
         },
       ],
     });
   }
 
-  async responseCreate(model: string, instructions: string, input: string) {
-    /*
-        input: [
-        {
-            role: "developer",
-            content: "Talk like a pirate."
-        },
-        {
-            role: "user",
-            content: "Are semicolons optional in JavaScript?",
-        },
-    ],
-    */
-    return this.openai.responses.create({
-      model,
-      instructions,
-      input,
-      // max_output_tokens: 100,
-      // temperature: 0.2,
-      // text: { "type": "json_schema" }
-    });
-  }
+  // async responseCreate(model: string, instructions: string, input: string) {
+  //   /*
+  //       input: [
+  //       {
+  //           role: "developer",
+  //           content: "Talk like a pirate."
+  //       },
+  //       {
+  //           role: "user",
+  //           content: "Are semicolons optional in JavaScript?",
+  //       },
+  //   ],
+  //   */
+  //   return this.openai.responses.create({
+  //     model,
+  //     instructions,
+  //     input,
+  //     // max_output_tokens: 100,
+  //     // temperature: 0.2,
+  //     // text: { "type": "json_schema" }
+  //   });
+  // }
 }

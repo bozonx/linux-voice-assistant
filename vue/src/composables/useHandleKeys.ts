@@ -1,6 +1,6 @@
 import { useIpcStore } from "../stores/ipc";
 import { OVERLAY_STATUSES, useOverlayStore } from "../stores/overlay";
-import { useCallFunction } from "./useCallApi";
+import { useCallApi } from "./useCallApi";
 
 export const useHandleKeys = () => {
   const overlayStore = useOverlayStore();
@@ -14,9 +14,11 @@ export const useHandleKeys = () => {
     editAndInsert,
     correctAndInsert,
     editAndEdit,
-    askAI,
+    askAIShort,
+    askAIlong,
+    askAItext,
     addToKnowledgeBase,
-  } = useCallFunction();
+  } = useCallApi();
 
   const globalHandleKeyUp = async (event: KeyboardEvent) => {
     if (overlayStore.status === OVERLAY_STATUSES.NONE) {
@@ -53,7 +55,7 @@ export const useHandleKeys = () => {
       } else if (event.code === "KeyC") {
         await dealToCalendar();
       } else if (event.code === "KeyV") {
-        askAI();
+        askAIShort();
       }
     }
   };

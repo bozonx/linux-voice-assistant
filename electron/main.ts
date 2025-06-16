@@ -57,7 +57,6 @@ async function createWindow() {
   ipcMain.handle(
     "call-function",
     async (event, funcName: string, args: any[]): Promise<FunctionResult> => {
-      console.log("call-function", funcName, args);
       try {
         const result = await (api[funcName as keyof Api] as any)(...args);
         return { success: true, result };

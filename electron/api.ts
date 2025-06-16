@@ -26,6 +26,10 @@ export class Api {
     await this.ai.init();
   }
 
+  async chatCompletion(model: string, instructions: string, content: string) {
+    return this.ai.chatCompletion(model, instructions, content);
+  }
+
   // Функция для открытия URL в браузере
   async openInBrowserAndClose(url: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
