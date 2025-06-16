@@ -23,18 +23,25 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
     intentionRecognition: "",
     correction: "",
     deepEdit: "",
-    deepTranslate: "",
+    // deepTranslate: "",
     askAI: "",
   },
   aiContexts: {
-    fastTranslate: "",
+    fastTranslate: "Переведи этот текст на",
     completion: "",
     toCalendar: "",
     assistant: "",
-    correction: "",
+    correction: "Исправь этот текст и восстановь пунктуацию",
     askAiForText: "",
-    deepEdit: [],
-    deepTranslate: [],
+    askAiShort: "",
+    deepEdit: [
+      {
+        description: "Редактирование текста",
+        context:
+          "убрать косноязычие , добавить местоимения где они нужны, исправление смысла и запутанности, убрать дублирование, подобрать уместные синонимы",
+      },
+    ],
+    // deepTranslate: [],
   },
 };
 
@@ -69,7 +76,7 @@ export interface UserConfig {
       description?: string;
       baseUrl?: string;
       apiKey?: string;
-      tags: ModelTag[];
+      tags?: ModelTag[];
     };
   };
 
@@ -86,7 +93,7 @@ export interface UserConfig {
     ////// Most smart models //////
     deepEdit: string;
     // translate for writers purposes
-    deepTranslate: string;
+    // deepTranslate: string;
     askAI: string;
   };
 
@@ -98,15 +105,15 @@ export interface UserConfig {
     // intention recognition
     assistant: string;
     correction: string;
+    askAiShort: string;
     askAiForText: string;
-
     deepEdit: {
       description: string;
       context: string;
     }[];
-    deepTranslate: {
-      description: string;
-      context: string;
-    }[];
+    // deepTranslate: {
+    //   description: string;
+    //   context: string;
+    // }[];
   };
 }

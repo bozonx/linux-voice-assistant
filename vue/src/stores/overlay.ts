@@ -6,12 +6,11 @@ import { useMainInputStore } from "./mainInput";
 // Константы для статусов overlay
 export const OVERLAY_STATUSES = {
   NONE: "NONE",
-  TRANSLATING: "TRANSLATING",
   VOICE_RECOGNITION: "VOICE_RECOGNITION",
   REPUNCTUATION: "REPUNCTUATION",
   HOTKEYS: "HOTKEYS",
-  EDITING: "EDITING",
-  CORRECTING: "CORRECTING",
+  ASKING_AI: "ASKING_AI",
+  AI_RESULT: "AI_RESULT",
 } as const;
 
 // Тип для возможных значений статуса
@@ -20,14 +19,9 @@ type OverlayStatus = (typeof OVERLAY_STATUSES)[keyof typeof OVERLAY_STATUSES];
 export const useOverlayStore = defineStore("overlay", () => {
   // Состояние
   const status = ref<OverlayStatus>(OVERLAY_STATUSES.NONE);
+  const messages = ref<Record<string, any>>({});
   const { globalResetFocus } = useHelpers();
   const mainInputStore = useMainInputStore();
-
-  // Действия
-  const startTranslating = () => {
-    status.value = OVERLAY_STATUSES.TRANSLATING;
-    globalResetFocus();
-  };
 
   const startVoiceRecognition = () => {
     status.value = OVERLAY_STATUSES.VOICE_RECOGNITION;
@@ -43,13 +37,8 @@ export const useOverlayStore = defineStore("overlay", () => {
     mainInputStore.focus();
   };
 
-  const startEditing = () => {
-    status.value = OVERLAY_STATUSES.EDITING;
-    globalResetFocus();
-  };
-
-  const startCorrecting = () => {
-    status.value = OVERLAY_STATUSES.CORRECTING;
+  const startAskingAi = () => {
+    status.value = OVERLAY_STATUSES.ASKING_AI;
     globalResetFocus();
   };
 
@@ -58,14 +47,25 @@ export const useOverlayStore = defineStore("overlay", () => {
     globalResetFocus();
   };
 
+  const showAiResult = (messages: Record<string, any>) => {
+    status.value = OVERLAY_STATUSES.AI_RESULT;
+    messages.value = messages;
+    globalResetFocus();
+  };
+
+  const setMessage = (message: string) => {
+    messages.value[message] = message;
+  };
+
   return {
     status,
-    startTranslating,
+    messages,
     startVoiceRecognition,
     startRepunctuation,
     hideOverlay,
-    startEditing,
-    startCorrecting,
+    startAskingAi,
     showHotkeys,
+    showAiResult,
+    setMessage,
   };
 });

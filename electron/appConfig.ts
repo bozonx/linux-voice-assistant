@@ -1,5 +1,3 @@
-import path from "path";
-
 const clearResult = `
 Что возвращать:
 - Возвращай только результат, без комментариев и объяснений и без какой либо дополнительной информации
@@ -20,6 +18,6 @@ export const APP_CONFIG = {
   windowWidth: 800,
   windowHeight: 600,
   devServerUrl: "http://localhost:3000",
-  indexHtmlPath: path.join(__dirname, "../vue/dist/index.html"),
+  indexHtmlPath: "../vue/dist/index.html",
   aiInstructions: { clearResult },
 };

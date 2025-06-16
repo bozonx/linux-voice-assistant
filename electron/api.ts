@@ -1,18 +1,18 @@
 //const electron = require("electron");
 import { BrowserWindow } from "electron";
 import { exec } from "child_process";
-import { APP_CONFIG } from "./appConfig";
 import { UserConfig } from "./types/UserConfig";
 import { AI } from "./ai";
+import { AppConfig } from "./types/types";
 
 export class Api {
-  private readonly appConfig: typeof APP_CONFIG;
+  private readonly appConfig: AppConfig;
   private readonly userConfig: UserConfig;
   private readonly ai: AI;
   private readonly mainWindow: BrowserWindow;
 
   constructor(
-    appConfig: typeof APP_CONFIG,
+    appConfig: AppConfig,
     userConfig: UserConfig,
     mainWindow: BrowserWindow
   ) {

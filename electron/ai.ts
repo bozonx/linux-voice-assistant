@@ -1,14 +1,13 @@
 import OpenAI from "openai";
-import { APP_CONFIG } from "./appConfig";
 import { UserConfig } from "./types/UserConfig";
-import client from "openai";
+import { AppConfig } from "./types/types";
 
 export class AI {
   private openai: OpenAI;
-  private appConfig: typeof APP_CONFIG;
+  private appConfig: AppConfig;
   private userConfig: UserConfig;
 
-  constructor(appConfig: typeof APP_CONFIG, userConfig: UserConfig) {
+  constructor(appConfig: AppConfig, userConfig: UserConfig) {
     this.appConfig = appConfig;
     this.userConfig = userConfig;
   }

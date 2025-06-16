@@ -36,7 +36,7 @@ async function createWindow() {
   if (process.env.NODE_ENV === "development") {
     mainWindow.loadURL(APP_CONFIG.devServerUrl);
   } else {
-    mainWindow.loadFile(APP_CONFIG.indexHtmlPath);
+    mainWindow.loadFile(path.join(__dirname, APP_CONFIG.indexHtmlPath));
   }
 
   // Отправляем параметры в renderer процесс после загрузки страницы

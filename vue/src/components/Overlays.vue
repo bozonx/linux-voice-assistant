@@ -1,7 +1,4 @@
 <template>
-  <div v-if="overlayStore.status === 'TRANSLATING'" class="overlay-process">
-    <div>Перевод...</div>
-  </div>
   <div v-if="overlayStore.status === 'VOICE_RECOGNITION'" class="overlay-process">
     <div>Распознавание голоса...</div>
     <div class="flex gap-2">
@@ -50,11 +47,12 @@
   <div v-if="overlayStore.status === 'REPUNCTUATION'" class="overlay-process">
     <div>Коррекция пунктуации...</div>
   </div>
-  <div v-if="overlayStore.status === 'EDITING'" class="overlay-process">
-    <div>Редактирование...</div>
+  <div v-if="overlayStore.status === 'ASKING_AI'" class="overlay-process">
+    <div>Запрос к AI...</div>
   </div>
-  <div v-if="overlayStore.status === 'CORRECTING'" class="overlay-process">
-    <div>Коррекция...</div>
+  <div v-if="overlayStore.status === 'AI_RESULT'" class="overlay-process">
+    <div>Результат от AI</div>
+    <div>{{ overlayStore.messages.result }}</div>
   </div>
 </template>
 

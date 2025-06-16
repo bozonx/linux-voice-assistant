@@ -1,12 +1,10 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import type { IpcResult, START_MODES } from "../types";
+import type { InitialData } from "../../../electron/types/types";
 
 export const useIpcStore = defineStore("ipc", () => {
-  // Состояние
-  const windowId = ref<string | null>(null);
-  const selectedText = ref<string | null>(null);
-  const mode = ref<START_MODES | null>(null);
+  const data = ref<InitialData>();
 
   // Действия
   const callFunction = async (
@@ -26,27 +24,15 @@ export const useIpcStore = defineStore("ipc", () => {
     }
   };
 
-  const setWindowId = (id: string | null) => {
-    windowId.value = id;
-  };
-
-  const setSelectedText = (text: string | null) => {
-    selectedText.value = text;
-  };
-
-  const setMode = (newMode: START_MODES | null) => {
-    mode.value = newMode;
+  const setInitialData = (incomingData: InitialData) => {
+    data.value = incomingData;
   };
 
   return {
     // Состояние
-    windowId,
-    selectedText,
-    mode,
+    data,
     // Действия
     callFunction,
-    setWindowId,
-    setSelectedText,
-    setMode,
+    setInitialData,
   };
 });

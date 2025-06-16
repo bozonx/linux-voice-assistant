@@ -25,17 +25,15 @@ onMounted(() => {
 
   window.electron.ipcRenderer.on('init-params', async (params: any) => {
     console.log("Received params:", params);
-    
-    ipcStore.setWindowId(params.windowId);
-    ipcStore.setSelectedText(params.selectedText);
-    ipcStore.setMode(params.mode);
+
+    ipcStore.setInitialData(params);
 
     // Режим выбора текста в предыдущем окне
-    if (ipcStore.mode === START_MODES.SELECT) {
-      if (ipcStore.selectedText) {
+    if (ipcStore.data!.mode === START_MODES.SELECT) {
+      if (ipcStore.data!.selectedText) {
         // если есть выбранный текст, то вставляем его в поле
         // и открываем оверлей с горячими клавишами
-        mainInputStore.setValue(ipcStore.selectedText);
+        mainInputStore.setValue(ipcStore.data!.selectedText);
         overlayStore.showHotkeys();
       }
       else {
@@ -46,7 +44,7 @@ onMounted(() => {
       }
     }
     // Режим голосового ввода - сразу запускаем распознавание голоса
-    else if (ipcStore.mode === START_MODES.VOICE) {
+    else if (ipcStore.data!.mode === START_MODES.VOICE) {
       voiceRecognitionStore.startRecognizing();
     }
     // WRITE mode
