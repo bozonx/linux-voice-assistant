@@ -1,6 +1,6 @@
 import OpenAI from "openai";
-import { UserConfig } from "./types/UserConfig";
-import { AppConfig } from "./types/types";
+import { UserConfig } from "../electron/types/UserConfig";
+import { AppConfig } from "../electron/types/types";
 
 export class AI {
   private openai: OpenAI;

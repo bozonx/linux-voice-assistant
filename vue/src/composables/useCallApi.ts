@@ -1,5 +1,3 @@
-// @ts-ignore
-import miniToastr from "mini-toastr";
 import { useIpcStore } from "../stores/ipc";
 import { useMainInputStore } from "../stores/mainInput";
 import { useCodeFormatter } from "./useCodeFormatter";
@@ -9,35 +7,45 @@ export const useCallApi = () => {
   const ipcStore = useIpcStore();
   const mainInputStore = useMainInputStore();
   const { formatMdAndStyle, formatSomeCode } = useCodeFormatter();
-  const {
-    capitalizeFirstLetter,
-    toUppercase,
-    toLowercase,
-    toCamelCase,
-    toPascalCase,
-    toSnakeCase,
-    toKebabCase,
-    makeRusStress,
-  } = useTextTransform();
-
-  async function doApiRequest(funcName: string, args: any[]) {
-    const result = await ipcStore.callFunction(funcName, args);
-
-    if (!result.success) {
-      miniToastr.error(result.error, "Api call error");
-      console.error(result.error);
-    }
-
-    return result;
-  }
+  const { makeRusStress, doCaseTransform } = useTextTransform();
 
   async function typeIntoWindowAndClose(text: string) {
     if (!text.trim()) return;
 
-    await doApiRequest("typeIntoWindowAndClose", [
+    await ipcStore.callFunction("typeIntoWindowAndClose", [
       text,
       ipcStore.data?.windowId,
     ]);
+  }
+
+  async function editMode(transformCb: (value: string) => Promise<string>) {
+    if (!mainInputStore.value.trim()) return;
+
+    let value = mainInputStore.value;
+
+    if (mainInputStore.selectedText) {
+      value = mainInputStore.selectedText;
+    }
+
+    value = await transformCb(value);
+
+    mainInputStore.selectedText
+      ? mainInputStore.replaceSelection(value)
+      : mainInputStore.setValue(value);
+  }
+
+  async function insertMode(transformCb: (value: string) => Promise<string>) {
+    if (!mainInputStore.value.trim()) return;
+
+    let value = mainInputStore.value;
+
+    if (mainInputStore.selectedText) {
+      value = mainInputStore.selectedText;
+    }
+
+    value = await transformCb(value);
+
+    await typeIntoWindowAndClose(value);
   }
 
   const insertIntoWindow = async () => {
@@ -63,171 +71,49 @@ export const useCallApi = () => {
   };
 
   const formatMdAndInsert = async () => {
-    if (!mainInputStore.value.trim()) return;
-
-    const value = await formatMdAndStyle(mainInputStore.value);
-    const result = await ipcStore.callFunction("typeIntoWindowAndClose", [
-      value,
-      ipcStore.data?.windowId,
-    ]);
-
-    if (!result.success) {
-      console.error(result.error);
-    }
+    await insertMode((value) => formatMdAndStyle(value));
   };
 
   const formatMdAndEdit = async () => {
-    if (!mainInputStore.value.trim()) return;
-
-    if (mainInputStore.selectedText) {
-      mainInputStore.replaceSelection(
-        await formatMdAndStyle(mainInputStore.selectedText)
-      );
-    } else {
-      mainInputStore.setValue(await formatMdAndStyle(mainInputStore.value));
-    }
+    await editMode((value) => formatMdAndStyle(value));
   };
 
   const formatCodeAndInsert = async () => {
-    if (!mainInputStore.value.trim()) return;
-
-    const value = await formatSomeCode(mainInputStore.value);
-    const result = await ipcStore.callFunction("typeIntoWindowAndClose", [
-      value,
-      ipcStore.data?.windowId,
-    ]);
-
-    if (!result.success) {
-      console.error(result.error);
-    }
+    await insertMode((value) => formatSomeCode(value));
   };
 
   const formatCodeAndEdit = async () => {
-    if (!mainInputStore.value.trim()) return;
-
-    if (mainInputStore.selectedText) {
-      mainInputStore.replaceSelection(
-        await formatSomeCode(mainInputStore.selectedText)
-      );
-    } else {
-      mainInputStore.setValue(await formatSomeCode(mainInputStore.value));
-    }
+    await editMode((value) => formatSomeCode(value));
   };
 
   const rusStressAndInsert = async () => {
-    if (!mainInputStore.value.trim()) return;
-
-    const value = makeRusStress(mainInputStore.value);
-    const result = await ipcStore.callFunction("typeIntoWindowAndClose", [
-      value,
-      ipcStore.data?.windowId,
-    ]);
-
-    if (!result.success) {
-      console.error(result.error);
-    }
+    await insertMode((value) => Promise.resolve(makeRusStress(value)));
   };
 
   const rusStressAndEdit = async () => {
-    if (!mainInputStore.value.trim()) return;
-
-    if (mainInputStore.selectedText) {
-      mainInputStore.replaceSelection(
-        makeRusStress(mainInputStore.selectedText)
-      );
-    } else {
-      mainInputStore.setValue(makeRusStress(mainInputStore.value));
-    }
+    await editMode((value) => Promise.resolve(makeRusStress(value)));
   };
 
   const transformTextAndInsert = async (type: string) => {
-    if (!mainInputStore.value.trim()) return;
-
-    let transformedText = mainInputStore.value;
-
-    switch (type) {
-      case "capitalize":
-        transformedText = capitalizeFirstLetter(mainInputStore.value);
-        break;
-      case "uppercase":
-        transformedText = toUppercase(mainInputStore.value);
-        break;
-      case "lowercase":
-        transformedText = toLowercase(mainInputStore.value);
-        break;
-      case "camelCase":
-        transformedText = toCamelCase(mainInputStore.value);
-        break;
-      case "pascalCase":
-        transformedText = toPascalCase(mainInputStore.value);
-        break;
-      case "snakeCase":
-        transformedText = toSnakeCase(mainInputStore.value);
-        break;
-      case "kebabCase":
-        transformedText = toKebabCase(mainInputStore.value);
-        break;
-    }
-
-    const result = await ipcStore.callFunction("typeIntoWindowAndClose", [
-      transformedText,
-      ipcStore.data?.windowId,
-    ]);
-
-    if (!result.success) {
-      console.error(result.error);
-    }
+    await insertMode((value) => Promise.resolve(doCaseTransform(value, type)));
   };
 
   const transformTextAndEdit = async (type: string) => {
-    if (!mainInputStore.value.trim()) return;
-
-    let text = mainInputStore.value;
-    let result = "";
-
-    if (mainInputStore.selectedText) {
-      text = mainInputStore.selectedText;
-    }
-
-    switch (type) {
-      case "capitalize":
-        result = capitalizeFirstLetter(text);
-        break;
-      case "uppercase":
-        result = toUppercase(text);
-        break;
-      case "lowercase":
-        result = toLowercase(text);
-        break;
-      case "camelCase":
-        result = toCamelCase(text);
-        break;
-      case "pascalCase":
-        result = toPascalCase(text);
-        break;
-      case "snakeCase":
-        result = toSnakeCase(text);
-        break;
-      case "kebabCase":
-        result = toKebabCase(text);
-        break;
-    }
-
-    if (mainInputStore.selectedText) {
-      mainInputStore.replaceSelection(result);
-    } else {
-      mainInputStore.setValue(result);
-    }
+    await editMode((value) => Promise.resolve(doCaseTransform(value, type)));
   };
 
   const searchInInternet = async () => {
     if (!mainInputStore.value.trim()) return;
 
-    await doApiRequest("openInBrowserAndClose", [mainInputStore.value]);
+    await ipcStore.callFunction("openInBrowserAndClose", [
+      mainInputStore.value,
+    ]);
   };
 
   const intoClipboardAndClose = async () => {
     if (!mainInputStore.value.trim()) return;
+
+    // TODO: do it
   };
 
   const askAIlong = async () => {

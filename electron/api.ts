@@ -2,13 +2,11 @@
 import { BrowserWindow } from "electron";
 import { exec } from "child_process";
 import { UserConfig } from "./types/UserConfig";
-import { AI } from "./ai";
 import { AppConfig } from "./types/types";
 
 export class Api {
   private readonly appConfig: AppConfig;
   private readonly userConfig: UserConfig;
-  private readonly ai: AI;
   private readonly mainWindow: BrowserWindow;
 
   constructor(
@@ -19,15 +17,9 @@ export class Api {
     this.appConfig = appConfig;
     this.userConfig = userConfig;
     this.mainWindow = mainWindow;
-    this.ai = new AI(appConfig, userConfig);
   }
 
   async init() {
-    await this.ai.init();
-  }
-
-  async chatCompletion(model: string, instructions: string, content: string) {
-    return this.ai.chatCompletion(model, instructions, content);
   }
 
   // Функция для открытия URL в браузере

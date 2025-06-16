@@ -1,3 +1,5 @@
+// @ts-ignore
+import miniToastr from "mini-toastr";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import type { IpcResult } from "../types";
@@ -6,7 +8,6 @@ import type { InitialData } from "../../../electron/types/types";
 export const useIpcStore = defineStore("ipc", () => {
   const data = ref<InitialData>();
 
-  // Действия
   const callFunction = async (
     functionName: string,
     args: any[] = []
@@ -19,7 +20,9 @@ export const useIpcStore = defineStore("ipc", () => {
       );
       return result;
     } catch (error) {
+      miniToastr.error(String(error), "Api call error");
       console.error("Error calling function:", error);
+
       return { success: false, error: String(error) };
     }
   };

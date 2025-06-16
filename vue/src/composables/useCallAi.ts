@@ -32,6 +32,8 @@ export const useCallAi = () => {
     if (result.error) {
       miniToastr.error(result.error, "Api call error " + result.status);
       console.error(result.status + " " + result.statusText, result.error);
+      
+      return "";
     }
 
     return result.content;

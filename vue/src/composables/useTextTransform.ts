@@ -43,6 +43,27 @@ export function useTextTransform() {
       .join("-");
   };
 
+  const doCaseTransform = (text: string, caseType: string): string => {
+    switch (caseType) {
+      case "capitalize":
+        return capitalizeFirstLetter(text);
+      case "uppercase":
+        return toUppercase(text);
+      case "lowercase":
+        return toLowercase(text);
+      case "camelCase":
+        return toCamelCase(text);
+      case "pascalCase":
+        return toPascalCase(text);
+      case "snakeCase":
+        return toSnakeCase(text);
+      case "kebabCase":
+        return toKebabCase(text);
+    }
+
+    return text;
+  };
+
   const makeRusStress = (text: string): string => {
     // Словарь соответствия обычных гласных и гласных с ударением
     const stressMap: Record<string, string> = {
@@ -79,13 +100,7 @@ export function useTextTransform() {
   };
 
   return {
-    capitalizeFirstLetter,
-    toUppercase,
-    toLowercase,
-    toCamelCase,
-    toPascalCase,
-    toSnakeCase,
-    toKebabCase,
     makeRusStress,
+    doCaseTransform,
   };
 }
