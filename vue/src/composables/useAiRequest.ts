@@ -7,8 +7,7 @@ export const useAiRequest = () => {
     developerInstructions: string,
     task: string,
     userInput: string | string[]
-  ): Promise<string | { error: string; status: number; statusText: string }> {
-    // const userConfig = ipcStore.data!.userConfig;
+  ): Promise<Record<string, any>> {
     const modelId = (userConfig.aiModelUsage as any)[modelUsage];
     const preparedInstructions = developerInstructions.replace(
       "{{LANGUAGE}}",
@@ -44,7 +43,7 @@ export const useAiRequest = () => {
       const data = await result.json();
       console.log("result", data);
 
-      return data.choices[0].message.content;
+      return data.choices[0].message;
     }
 
     const body = await result.text();

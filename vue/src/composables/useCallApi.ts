@@ -1,19 +1,14 @@
 // @ts-ignore
 import miniToastr from "mini-toastr";
-import { useOverlayStore } from "../stores/overlay";
 import { useIpcStore } from "../stores/ipc";
 import { useMainInputStore } from "../stores/mainInput";
 import { useCodeFormatter } from "./useCodeFormatter";
 import { useTextTransform } from "./useTextTransform";
-import { useVoiceRecognitionStore } from "../stores/voiceRecognition";
-import { useAiRequest } from "./useAiRequest";
 
 export const useCallApi = () => {
   const ipcStore = useIpcStore();
   const mainInputStore = useMainInputStore();
-  const overlayStore = useOverlayStore();
   const { formatMdAndStyle, formatSomeCode } = useCodeFormatter();
-  const voiceRecognitionStore = useVoiceRecognitionStore();
   const {
     capitalizeFirstLetter,
     toUppercase,
@@ -24,7 +19,6 @@ export const useCallApi = () => {
     toKebabCase,
     makeRusStress,
   } = useTextTransform();
-  const { chatCompletion } = useAiRequest();
 
   async function doApiRequest(funcName: string, args: any[]) {
     const result = await ipcStore.callFunction(funcName, args);
@@ -37,29 +31,7 @@ export const useCallApi = () => {
     return result;
   }
 
-  async function aiRequest(
-    modelUsage: string,
-    developerInstructions: string,
-    task: string,
-    userInput: string | string[]
-  ) {
-    const result = await chatCompletion(
-      ipcStore.data!.userConfig,
-      modelUsage,
-      developerInstructions,
-      task,
-      userInput
-    );
-
-    if (typeof result === "object" && result.error) {
-      miniToastr.error(result.error, "Api call error " + result.status);
-      console.error(result.status + " " + result.statusText, result.error);
-    }
-
-    return result;
-  }
-
-  async function justInsertIntoWindow(text: string) {
+  async function typeIntoWindowAndClose(text: string) {
     if (!text.trim()) return;
 
     await doApiRequest("typeIntoWindowAndClose", [
@@ -71,19 +43,23 @@ export const useCallApi = () => {
   const insertIntoWindow = async () => {
     if (!mainInputStore.value.trim()) return;
 
-    await justInsertIntoWindow(mainInputStore.value);
+    await typeIntoWindowAndClose(mainInputStore.value);
   };
 
   const fastNote = async () => {
     if (!mainInputStore.value.trim()) return;
 
     console.log("fastNoteInObsidian");
+
+    // TODO: do it
   };
 
   const addToKnowledgeBase = async () => {
     if (!mainInputStore.value.trim()) return;
 
     console.log("addToKnowledgeBase");
+
+    // TODO: do it
   };
 
   const formatMdAndInsert = async () => {
@@ -260,202 +236,8 @@ export const useCallApi = () => {
     // TODO: open in browser
   };
 
-  ////////////////////////////////////////
-  /////////////// AI TASKS ///////////////
-
-  const voiceRecognition = () => {
-    // TODO: remake
-    voiceRecognitionStore.startRecognizing();
-  };
-
-  const correctAndInsert = async () => {
-    let text = mainInputStore.value;
-
-    if (mainInputStore.selectedText) {
-      text = mainInputStore.selectedText;
-    }
-
-    if (!text.trim()) return;
-
-    overlayStore.startAskingAi();
-
-    const result = await aiRequest(
-      "correction",
-      ipcStore.data!.appConfig.aiInstructions.clearResult,
-      ipcStore.data!.userConfig.aiContexts.correction,
-      text
-    );
-
-    await justInsertIntoWindow(result);
-  };
-
-  const correctAndEdit = async () => {
-    let text = mainInputStore.value;
-
-    if (mainInputStore.selectedText) {
-      text = mainInputStore.selectedText;
-    }
-
-    if (!text.trim()) return;
-
-    overlayStore.startAskingAi();
-
-    const result = await aiRequest(
-      "correction",
-      ipcStore.data!.appConfig.aiInstructions.clearResult,
-      ipcStore.data!.userConfig.aiContexts.correction,
-      text
-    );
-
-    if (result) {
-      if (mainInputStore.selectedText) {
-        mainInputStore.replaceSelection(result);
-      } else {
-        mainInputStore.setValue(result);
-      }
-    }
-
-    overlayStore.hideOverlay();
-  };
-
-  const editAndInsert = async (presetNum: number) => {
-    let text = mainInputStore.value;
-
-    if (mainInputStore.selectedText) {
-      text = mainInputStore.selectedText;
-    }
-
-    if (!text.trim()) return;
-
-    overlayStore.startAskingAi();
-
-    const result = await aiRequest(
-      "deepEdit",
-      ipcStore.data!.appConfig.aiInstructions.clearResult,
-      ipcStore.data!.userConfig.aiContexts.deepEdit[presetNum].context,
-      text
-    );
-
-    await justInsertIntoWindow(result);
-  };
-
-  const editAndEdit = async (presetNum: number) => {
-    let text = mainInputStore.value;
-
-    if (mainInputStore.selectedText) {
-      text = mainInputStore.selectedText;
-    }
-
-    if (!text.trim()) return;
-
-    overlayStore.startAskingAi();
-
-    const result = await aiRequest(
-      "deepEdit",
-      ipcStore.data!.appConfig.aiInstructions.clearResult,
-      ipcStore.data!.userConfig.aiContexts.deepEdit[presetNum].context,
-      text
-    );
-
-    if (result) {
-      if (mainInputStore.selectedText) {
-        mainInputStore.replaceSelection(result);
-      } else {
-        mainInputStore.setValue(result);
-      }
-    }
-
-    overlayStore.hideOverlay();
-  };
-
-  const translateAndInsert = async (to: string) => {
-    let text = mainInputStore.value;
-
-    if (mainInputStore.selectedText) {
-      text = mainInputStore.selectedText;
-    }
-
-    if (!text.trim()) return;
-
-    overlayStore.startAskingAi();
-
-    const result = await aiRequest(
-      "fastTranslate",
-      ipcStore.data!.appConfig.aiInstructions.clearResult,
-      ipcStore.data!.userConfig.aiContexts.fastTranslate + " " + to,
-      text
-    );
-
-    await justInsertIntoWindow(result);
-  };
-
-  const translateAndEdit = async (to: string) => {
-    let text = mainInputStore.value;
-
-    if (mainInputStore.selectedText) {
-      text = mainInputStore.selectedText;
-    }
-
-    if (!text.trim()) return;
-
-    overlayStore.startAskingAi();
-
-    const result = await aiRequest(
-      "fastTranslate",
-      ipcStore.data!.appConfig.aiInstructions.clearResult,
-      ipcStore.data!.userConfig.aiContexts.fastTranslate + " " + to,
-      text
-    );
-
-    if (result) {
-      if (mainInputStore.selectedText) {
-        mainInputStore.replaceSelection(result);
-      } else {
-        mainInputStore.setValue(result);
-      }
-    }
-
-    overlayStore.hideOverlay();
-  };
-
-  const askAIShort = async () => {
-    let text = mainInputStore.value;
-
-    if (mainInputStore.selectedText) {
-      text = mainInputStore.selectedText;
-    }
-
-    if (!text.trim()) return;
-
-    overlayStore.startAskingAi();
-
-    const result = await aiRequest(
-      "askAI",
-      ipcStore.data!.appConfig.aiInstructions.clearResult,
-      ipcStore.data!.userConfig.aiContexts.askAiShort,
-      text
-    );
-
-    console.log("askAIShort result", result);
-
-    overlayStore.showAiResult(result);
-  };
-
-  const askAItext = async () => {
-    if (!mainInputStore.value.trim()) return;
-
-    // TODO: do it
-  };
-
-  const dealToCalendar = async () => {
-    if (!mainInputStore.value.trim()) return;
-
-    console.log("dealToCalendar");
-
-    // TODO: do it
-  };
-
   return {
+    typeIntoWindowAndClose,
     insertIntoWindow,
     fastNote,
     rusStressAndInsert,
@@ -470,17 +252,5 @@ export const useCallApi = () => {
     addToKnowledgeBase,
     intoClipboardAndClose,
     askAIlong,
-
-    // AI TASKS
-    voiceRecognition,
-    correctAndInsert,
-    correctAndEdit,
-    editAndInsert,
-    editAndEdit,
-    translateAndInsert,
-    translateAndEdit,
-    askAIShort,
-    askAItext,
-    dealToCalendar,
   };
 };

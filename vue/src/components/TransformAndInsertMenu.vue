@@ -52,6 +52,7 @@
 
 <script setup lang="ts">
 import { useCallApi } from '../composables/useCallApi';
+import { useCallAi } from '../composables/useCallAi';
 import { useIpcStore } from '../stores/ipc';
 
 const ipcStore = useIpcStore();
@@ -60,6 +61,9 @@ const {
   correctAndInsert,
   editAndInsert,
   translateAndInsert,
+} = useCallAi();
+
+const {
   formatMdAndInsert,
   formatCodeAndInsert,
   rusStressAndInsert,

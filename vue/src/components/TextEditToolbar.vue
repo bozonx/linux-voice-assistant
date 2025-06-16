@@ -60,18 +60,22 @@
 
 <script setup lang="ts">
 import { useCallApi } from '../composables/useCallApi';
+import { useCallAi } from '../composables/useCallAi';
 import { useIpcStore } from '../stores/ipc';
 
 const ipcStore = useIpcStore();
 
 const {
+  voiceRecognition,
   translateAndEdit,
-  formatMdAndEdit,
   correctAndEdit,
   editAndEdit,
+} = useCallAi();
+
+const {
+  formatMdAndEdit,
   formatCodeAndEdit,
   rusStressAndEdit,
-  voiceRecognition,
   transformTextAndEdit,
 } = useCallApi();
 </script>
