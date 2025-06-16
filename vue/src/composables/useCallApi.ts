@@ -6,6 +6,7 @@ import { useMainInputStore } from "../stores/mainInput";
 import { useCodeFormatter } from "./useCodeFormatter";
 import { useTextTransform } from "./useTextTransform";
 import { useVoiceRecognitionStore } from "../stores/voiceRecognition";
+import { useAiRequest } from "./useAiRequest";
 
 export const useCallApi = () => {
   const ipcStore = useIpcStore();
@@ -23,8 +24,9 @@ export const useCallApi = () => {
     toKebabCase,
     makeRusStress,
   } = useTextTransform();
+  const { chatCompletion } = useAiRequest();
 
-  async function handleRequest(funcName: string, args: any[]) {
+  async function doApiRequest(funcName: string, args: any[]) {
     const result = await ipcStore.callFunction(funcName, args);
 
     if (!result.success) {
@@ -40,57 +42,27 @@ export const useCallApi = () => {
     developerInstructions: string,
     task: string,
     userInput: string | string[]
-  ): Promise<string> {
-    const userConfig = ipcStore.data!.userConfig;
-    const modelId = (userConfig.aiModelUsage as any)[modelUsage];
-    const preparedInstructions = developerInstructions.replace(
-      "{{LANGUAGE}}",
-      userConfig.userLanguage
+  ) {
+    const result = await chatCompletion(
+      ipcStore.data!.userConfig,
+      modelUsage,
+      developerInstructions,
+      task,
+      userInput
     );
-    const model = userConfig.models[modelId];
-    const baseUrl = model.baseUrl || userConfig.openrouterDefaultBaseUrl;
-    const apiKey = model.apiKey || userConfig.openrouterDefaultApiKey;
-    const result = await fetch(baseUrl + "/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + apiKey,
-        // "HTTP-Referer": "<YOUR_SITE_URL>", // Optional. Site URL for rankings on openrouter.ai.
-        "X-Title": "Librnet assistant", // Optional. Site title for rankings on openrouter.ai.
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: model.model,
-        messages: [
-          {
-            role: "developer",
-            content: preparedInstructions,
-          },
-          {
-            role: "user",
-            content: task + ":\n\n" + userInput,
-          },
-        ],
-      }),
-    });
 
-    if (result.ok) {
-      const data = await result.json();
-      console.log("result", data);
-
-      return data.choices[0].message.content;
+    if (typeof result === "object" && result.error) {
+      miniToastr.error(result.error, "Api call error " + result.status);
+      console.error(result.status + " " + result.statusText, result.error);
     }
 
-    const body = await result.text();
-    miniToastr.error(body, "Api call error " + result.status);
-    console.error(result.status + " " + result.statusText, body);
-
-    return "";
+    return result;
   }
 
   async function justInsertIntoWindow(text: string) {
     if (!text.trim()) return;
 
-    await handleRequest("typeIntoWindowAndClose", [
+    await doApiRequest("typeIntoWindowAndClose", [
       text,
       ipcStore.data?.windowId,
     ]);
@@ -275,7 +247,7 @@ export const useCallApi = () => {
   const searchInInternet = async () => {
     if (!mainInputStore.value.trim()) return;
 
-    await handleRequest("openInBrowserAndClose", [mainInputStore.value]);
+    await doApiRequest("openInBrowserAndClose", [mainInputStore.value]);
   };
 
   const intoClipboardAndClose = async () => {
