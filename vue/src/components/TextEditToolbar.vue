@@ -9,17 +9,8 @@
           Голосовой ввод
         </button>
       </li>
-      <li>
-        <button class="mini-button" @click="translateAndEdit('ru', 'en')">RU ➡️ EN</button>
-      </li>
-      <li>
-        <button class="mini-button" @click="translateAndEdit('en', 'ru')">EN ➡️ RU</button>
-      </li>
-      <li>
-        <button class="mini-button" @click="translateAndEdit('ru', 'es')">RU ➡️ ES</button>
-      </li>
-      <li>
-        <button class="mini-button" @click="translateAndEdit('es', 'ru')">ES ➡️ RU</button>
+      <li v-for="lang in ipcStore.data?.userConfig.toTranslateLanguages" :key="lang">
+        <button class="mini-button" @click="translateAndEdit(lang)">➡️ {{ lang }}</button>
       </li>
     </ul>
 
@@ -69,6 +60,9 @@
 
 <script setup lang="ts">
 import { useCallApi } from '../composables/useCallApi';
+import { useIpcStore } from '../stores/ipc';
+
+const ipcStore = useIpcStore();
 
 const {
   translateAndEdit,

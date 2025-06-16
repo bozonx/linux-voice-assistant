@@ -1,17 +1,8 @@
 <template>
   <div>
     <ul class="big-buttons-toolbar">
-      <li>
-        <button class="button" @click="translateAndInsert('ru', 'en')">RU ➡️ EN</button>
-      </li>
-      <li>
-        <button class="button" @click="translateAndInsert('en', 'ru')">EN ➡️ RU</button>
-      </li>
-      <li>
-        <button class="button" @click="translateAndInsert('ru', 'es')">RU ➡️ ES</button>
-      </li>
-      <li>
-        <button class="button" @click="translateAndInsert('es', 'ru')">ES ➡️ RU</button>
+      <li v-for="lang in ipcStore.data?.userConfig.toTranslateLanguages" :key="lang">
+        <button class="button" @click="translateAndInsert(lang)">➡️ {{ lang }}</button>
       </li>
     </ul>
 
@@ -61,6 +52,9 @@
 
 <script setup lang="ts">
 import { useCallApi } from '../composables/useCallApi';
+import { useIpcStore } from '../stores/ipc';
+
+const ipcStore = useIpcStore();
 
 const {
   correctAndInsert,

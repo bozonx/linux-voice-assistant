@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import type { IpcResult, START_MODES } from "../types";
+import type { IpcResult } from "../types";
 import type { InitialData } from "../../../electron/types/types";
 
 export const useIpcStore = defineStore("ipc", () => {

@@ -39,23 +39,50 @@ export const useCallApi = () => {
     modelUsage: string,
     developerInstructions: string,
     task: string,
-    userInput: string
+    userInput: string | string[]
   ): Promise<string> {
-    const modelId = (ipcStore.data!.userConfig.aiModelUsage as any)[modelUsage];
+    const userConfig = ipcStore.data!.userConfig;
+    const modelId = (userConfig.aiModelUsage as any)[modelUsage];
     const preparedInstructions = developerInstructions.replace(
       "{{LANGUAGE}}",
-      ipcStore.data!.userConfig.userLanguage
+      userConfig.userLanguage
     );
+    const model = userConfig.models[modelId];
+    const baseUrl = model.baseUrl || userConfig.openrouterDefaultBaseUrl;
+    const apiKey = model.apiKey || userConfig.openrouterDefaultApiKey;
+    const result = await fetch(baseUrl + "/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + apiKey,
+        // "HTTP-Referer": "<YOUR_SITE_URL>", // Optional. Site URL for rankings on openrouter.ai.
+        "X-Title": "Librnet assistant", // Optional. Site title for rankings on openrouter.ai.
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: model.model,
+        messages: [
+          {
+            role: "developer",
+            content: preparedInstructions,
+          },
+          {
+            role: "user",
+            content: task + ":\n\n" + userInput,
+          },
+        ],
+      }),
+    });
 
-    const result = await handleRequest("chatCompletion", [
-      modelId,
-      preparedInstructions,
-      task + ":\n\n" + userInput,
-    ]);
+    if (result.ok) {
+      const data = await result.json();
+      console.log("result", data);
 
-    if (result.success) {
-      return result.result.choices[0].message.content;
+      return data.choices[0].message.content;
     }
+
+    const body = await result.text();
+    miniToastr.error(body, "Api call error " + result.status);
+    console.error(result.status + " " + result.statusText, body);
 
     return "";
   }
