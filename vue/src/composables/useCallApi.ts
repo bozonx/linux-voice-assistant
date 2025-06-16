@@ -5,6 +5,7 @@ import { useCodeFormatter } from "./useCodeFormatter";
 import { useTextTransform } from "./useTextTransform";
 import { useVoiceRecognitionStore } from "../stores/voiceRecognition";
 import miniToastr from "mini-toastr";
+import { APP_CONFIG } from "../../../electron/appConfig";
 
 export const useCallApi = () => {
   const ipcStore = useIpcStore();
@@ -309,8 +310,8 @@ export const useCallApi = () => {
 
     const result = await handleRequest("chatCompletion", [
       "deepseek/deepseek-chat-v3-0324:free",
-      "Correct the text and restore punctuation",
-      mainInputStore.value,
+      APP_CONFIG.aiInstructions.correctAndInsert,
+      "Исправь этот текст и восстановь пунктуацию:\n\n" + mainInputStore.value,
     ]);
 
     if (result.success) {
