@@ -23,10 +23,18 @@ export class AI {
     });
   }
 
-  async chatCompletion(model: string, instructions: string, userInput: string) {
+  async chatCompletion(
+    modelId: string,
+    instructions: string,
+    userInput: string
+  ) {
+    const model = this.userConfig.models[modelId];
+
+    // TODO: если у модели есть apiKey, baseURL то его нужно передать в заголовке Authorization
+
     return this.openai.chat.completions.create({
       // model: "deepseek/deepseek-chat-v3-0324:free",
-      model,
+      model: model.model,
       messages: [
         {
           role: "developer",

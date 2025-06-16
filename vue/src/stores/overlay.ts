@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
 import { useHelpers } from "../composables/useHelpers";
 import { useMainInputStore } from "./mainInput";
 
@@ -19,7 +18,7 @@ type OverlayStatus = (typeof OVERLAY_STATUSES)[keyof typeof OVERLAY_STATUSES];
 export const useOverlayStore = defineStore("overlay", () => {
   // Состояние
   const status = ref<OverlayStatus>(OVERLAY_STATUSES.NONE);
-  const messages = ref<Record<string, any>>({});
+  const message = ref<string>("");
   const { globalResetFocus } = useHelpers();
   const mainInputStore = useMainInputStore();
 
@@ -47,19 +46,19 @@ export const useOverlayStore = defineStore("overlay", () => {
     globalResetFocus();
   };
 
-  const showAiResult = (messages: Record<string, any>) => {
+  const showAiResult = (message: string) => {
     status.value = OVERLAY_STATUSES.AI_RESULT;
-    messages.value = messages;
+    setMessage(message);
     globalResetFocus();
   };
 
-  const setMessage = (message: string) => {
-    messages.value[message] = message;
+  const setMessage = (newMessage: string) => {
+    message.value = newMessage;
   };
 
   return {
     status,
-    messages,
+    message,
     startVoiceRecognition,
     startRepunctuation,
     hideOverlay,

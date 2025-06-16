@@ -6,7 +6,6 @@ import { useMainInputStore } from "../stores/mainInput";
 import { useCodeFormatter } from "./useCodeFormatter";
 import { useTextTransform } from "./useTextTransform";
 import { useVoiceRecognitionStore } from "../stores/voiceRecognition";
-import { AppConfig } from "../../electron/types/types";
 
 export const useCallApi = () => {
   const ipcStore = useIpcStore();
@@ -43,11 +42,14 @@ export const useCallApi = () => {
     userInput: string
   ): Promise<string> {
     const modelId = (ipcStore.data!.userConfig.aiModelUsage as any)[modelUsage];
-    const model = ipcStore.data!.userConfig.models[modelId];
+    const preparedInstructions = developerInstructions.replace(
+      "{{LANGUAGE}}",
+      ipcStore.data!.userConfig.userLanguage
+    );
 
     const result = await handleRequest("chatCompletion", [
-      model,
-      developerInstructions,
+      modelId,
+      preparedInstructions,
       task + ":\n\n" + userInput,
     ]);
 
@@ -429,13 +431,15 @@ export const useCallApi = () => {
     overlayStore.startAskingAi();
 
     const result = await aiRequest(
-      "askAiShort",
+      "askAI",
       ipcStore.data!.appConfig.aiInstructions.clearResult,
       ipcStore.data!.userConfig.aiContexts.askAiShort,
       text
     );
 
-    overlayStore.showAiResult({ result });
+    console.log("askAIShort result", result);
+
+    overlayStore.showAiResult(result);
   };
 
   const askAItext = async () => {

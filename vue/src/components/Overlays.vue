@@ -52,7 +52,7 @@
   </div>
   <div v-if="overlayStore.status === 'AI_RESULT'" class="overlay-process">
     <div>Результат от AI</div>
-    <div>{{ overlayStore.messages.result }}</div>
+    <div class="ai-result">{{ overlayStore.message }}</div>
   </div>
 </template>
 
@@ -93,5 +93,12 @@ const onGoToEditor = () => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+.ai-result {
+  font-size: 14px;
+  font-weight: normal;
+  text-align: left;
+  max-width: 80%;
 }
 </style>
