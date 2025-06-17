@@ -1,24 +1,23 @@
 import { useIpcStore } from "../stores/ipc";
 import { OVERLAY_STATUSES, useOverlayStore } from "../stores/overlay";
 import { useCallApi } from "./useCallApi";
+import { useCallAi } from "./useCallAi";
 
 export const useHandleKeys = () => {
   const overlayStore = useOverlayStore();
   const ipcStore = useIpcStore();
+  const { insertIntoWindow, fastNote, searchInInternet, addToKnowledgeBase } =
+    useCallApi();
+
   const {
-    dealToCalendar,
     translateAndInsert,
-    insertIntoWindow,
-    fastNote,
-    searchInInternet,
-    editAndInsert,
     correctAndInsert,
+    editAndInsert,
+    correctAndEdit,
     editAndEdit,
+    dealToCalendar,
     askAIShort,
-    askAIlong,
-    askAItext,
-    addToKnowledgeBase,
-  } = useCallApi();
+  } = useCallAi();
 
   const globalHandleKeyUp = async (event: KeyboardEvent) => {
     if (overlayStore.status === OVERLAY_STATUSES.NONE) {
@@ -30,17 +29,17 @@ export const useHandleKeys = () => {
         overlayStore.hideOverlay();
       } else if (event.code === "KeyQ") {
         ipcStore.callFunction("closeMainWindow");
-      } else if (event.code === "KeyW") {
-        translateAndInsert("ru", "en");
-      } else if (event.code === "KeyE") {
-        translateAndInsert("ru", "es");
-      } else if (event.code === "KeyR") {
-        translateAndInsert("es", "ru");
-      } else if (event.code === "KeyA") {
-        insertIntoWindow();
-      } else if (event.code === "KeyS") {
-        // edit preset 1
-        editAndInsert();
+        // } else if (event.code === "KeyW") {
+        //   translateAndInsert("ru", "en");
+        // } else if (event.code === "KeyE") {
+        //   translateAndInsert("ru", "es");
+        // } else if (event.code === "KeyR") {
+        //   translateAndInsert("es", "ru");
+        // } else if (event.code === "KeyA") {
+        //   insertIntoWindow();
+        // } else if (event.code === "KeyS") {
+        //   // edit preset 1
+        //   editAndInsert();
       } else if (event.code === "KeyD") {
         correctAndInsert();
       } else if (event.code === "KeyF") {
@@ -49,9 +48,9 @@ export const useHandleKeys = () => {
         searchInInternet();
       } else if (event.code === "KeyZ") {
         addToKnowledgeBase();
-      } else if (event.code === "KeyX") {
-        // edit preset 2
-        editAndEdit();
+        // } else if (event.code === "KeyX") {
+        //   // edit preset 2
+        //   editAndEdit();
       } else if (event.code === "KeyC") {
         await dealToCalendar();
       } else if (event.code === "KeyV") {

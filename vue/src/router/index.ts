@@ -2,6 +2,7 @@ import { createRouter, createMemoryHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import HistoryView from "../views/HistoryView.vue";
 import ConfigView from "../views/ConfigView.vue";
+import ChatView from "../views/ChatView.vue";
 
 const router = createRouter({
   history: createMemoryHistory(),
@@ -13,14 +14,19 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: "/historia",
-      name: "historia",
+      path: "/history",
+      name: "history",
       component: HistoryView,
     },
     {
       path: "/config",
       name: "config",
       component: ConfigView,
+    },
+    {
+      path: "/chat",
+      name: "chat",
+      component: ChatView,
     },
   ],
 });

@@ -7,7 +7,7 @@
 <script setup lang="ts">
 import { useIpcStore } from './stores/ipc';
 import { useMainInputStore } from './stores/mainInput';
-import { START_MODES } from './types';
+import { InitParams, START_MODES } from './types';
 import { useVoiceRecognitionStore } from './stores/voiceRecognition';
 import { useKeysStore } from './stores/keys';
 import { useHandleKeys } from './composables/useHandleKeys';
@@ -23,7 +23,7 @@ const overlayStore = useOverlayStore();
 onMounted(() => {
   window.addEventListener('keyup', handleKeyUp)
 
-  window.electron.ipcRenderer.on('init-params', async (params: any) => {
+  window.electron.ipcRenderer.on('init-params', async (params: InitParams) => {
     console.log("Received params:", params);
 
     ipcStore.setInitialData(params);

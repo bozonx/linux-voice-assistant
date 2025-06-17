@@ -1,13 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-// Интерфейс для store'а
-interface MainInputState {
-  value: string;
-}
-
 export const useMainInputStore = defineStore("mainInput", () => {
-  // Состояние
   const value = ref<string>("");
   const focusCount = ref<number>(0);
   // const selectAllCount = ref<number>(0);

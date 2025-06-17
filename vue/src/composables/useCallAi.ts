@@ -82,8 +82,6 @@ export const useCallAi = () => {
     overlayStore.hideOverlay();
   };
 
-
-
   const askAIShort = async () => {
     let text = mainInputStore.value;
 
@@ -104,7 +102,7 @@ export const useCallAi = () => {
 
     console.log("askAIShort result", result);
 
-    overlayStore.showAiResult(result);
+    // overlayStore.showAiResult(result);
   };
 
   const askAItext = async () => {

@@ -64,14 +64,12 @@ import { useCallAi } from '../composables/useCallAi';
 import { useIpcStore } from '../stores/ipc';
 
 const ipcStore = useIpcStore();
-
 const {
   voiceRecognition,
   translateAndEdit,
   correctAndEdit,
   editAndEdit,
 } = useCallAi();
-
 const {
   formatMdAndEdit,
   formatCodeAndEdit,

@@ -9,16 +9,12 @@ export const OVERLAY_STATUSES = {
   REPUNCTUATION: "REPUNCTUATION",
   HOTKEYS: "HOTKEYS",
   ASKING_AI: "ASKING_AI",
-  AI_RESULT: "AI_RESULT",
 } as const;
 
-// Тип для возможных значений статуса
 type OverlayStatus = (typeof OVERLAY_STATUSES)[keyof typeof OVERLAY_STATUSES];
 
 export const useOverlayStore = defineStore("overlay", () => {
-  // Состояние
   const status = ref<OverlayStatus>(OVERLAY_STATUSES.NONE);
-  const message = ref<string>("");
   const { globalResetFocus } = useHelpers();
   const mainInputStore = useMainInputStore();
 
@@ -46,25 +42,12 @@ export const useOverlayStore = defineStore("overlay", () => {
     globalResetFocus();
   };
 
-  const showAiResult = (message: string) => {
-    status.value = OVERLAY_STATUSES.AI_RESULT;
-    setMessage(message);
-    globalResetFocus();
-  };
-
-  const setMessage = (newMessage: string) => {
-    message.value = newMessage;
-  };
-
   return {
     status,
-    message,
     startVoiceRecognition,
     startRepunctuation,
     hideOverlay,
     startAskingAi,
     showHotkeys,
-    showAiResult,
-    setMessage,
   };
 });

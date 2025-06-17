@@ -3,10 +3,10 @@ import miniToastr from "mini-toastr";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import type { IpcResult } from "../types";
-import type { InitialData } from "../../../electron/types/types";
+import type { InitParams } from "../types";
 
 export const useIpcStore = defineStore("ipc", () => {
-  const data = ref<InitialData>();
+  const data = ref<InitParams>();
 
   const callFunction = async (
     functionName: string,
@@ -27,14 +27,12 @@ export const useIpcStore = defineStore("ipc", () => {
     }
   };
 
-  const setInitialData = (incomingData: InitialData) => {
+  const setInitialData = (incomingData: InitParams) => {
     data.value = incomingData;
   };
 
   return {
-    // Состояние
     data,
-    // Действия
     callFunction,
     setInitialData,
   };

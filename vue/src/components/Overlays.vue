@@ -5,7 +5,7 @@
       <button class="dialog-button" @click="onStopRecognition">Прервать</button>
       <button class="dialog-button" @click="onFromRecognitionToEditor">В редактор</button>
     </div>
-    <div class="text-sm mt-4">
+    <div class="description">
       <div>Esc - в редактор</div>
       <div>q - закрыть программу</div>
       <div>w - ➡️ EN > вставить</div>
@@ -27,7 +27,7 @@
     <div class="flex gap-2">
       <button class="dialog-button" @click="onGoToEditor">В редактор</button>
     </div>
-    <div class="text-sm mt-4">
+    <div class="description">
       <div>Esc - в редактор</div>
       <div>q - закрыть программу</div>
       <div>w - ➡️ EN > вставить</div>
@@ -49,10 +49,6 @@
   </div>
   <div v-if="overlayStore.status === 'ASKING_AI'" class="overlay-process">
     <div>Запрос к AI...</div>
-  </div>
-  <div v-if="overlayStore.status === 'AI_RESULT'" class="overlay-process">
-    <div>Результат от AI</div>
-    <div class="ai-result">{{ overlayStore.message }}</div>
   </div>
 </template>
 
@@ -95,7 +91,7 @@ const onGoToEditor = () => {
   align-items: center;
 }
 
-.ai-result {
+.description {
   font-size: 14px;
   font-weight: normal;
   text-align: left;

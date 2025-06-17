@@ -19,17 +19,8 @@ export const useVoiceRecognitionStore = defineStore("voiceRecognition", () => {
   const ipcStore = useIpcStore();
   const keysStore = useKeysStore();
   const mainInputStore = useMainInputStore();
-  const {
-    insertIntoWindow,
-    dealToCalendar,
-    fastNote,
-    translateAndInsert,
-    searchInInternet,
-    askAIShort,
-    askAIlong,
-    askAItext,
-    addToKnowledgeBase,
-  } = useCallApi();
+  const { insertIntoWindow, fastNote, searchInInternet, addToKnowledgeBase } =
+    useCallApi();
   // Действия
   const startRecognizing = async () => {
     overlayStore.startVoiceRecognition();
@@ -100,18 +91,18 @@ export const useVoiceRecognitionStore = defineStore("voiceRecognition", () => {
           startRepunctuation();
         } else if (key === "KeyQ") {
           ipcStore.callFunction("closeMainWindow");
-        } else if (key === "KeyW") {
-          startRepunctuation(() => {
-            translateAndInsert("ru", "en");
-          });
-        } else if (key === "KeyE") {
-          startRepunctuation(() => {
-            translateAndInsert("ru", "es");
-          });
-        } else if (key === "KeyR") {
-          startRepunctuation(() => {
-            translateAndInsert("es", "ru");
-          });
+          // } else if (key === "KeyW") {
+          //   startRepunctuation(() => {
+          //     translateAndInsert("ru", "en");
+          //   });
+          // } else if (key === "KeyE") {
+          //   startRepunctuation(() => {
+          //     translateAndInsert("ru", "es");
+          //   });
+          // } else if (key === "KeyR") {
+          //   startRepunctuation(() => {
+          //     translateAndInsert("es", "ru");
+          //   });
         } else if (key === "KeyA") {
           startRepunctuation(insertIntoWindow);
         } else if (key === "KeyS") {
@@ -124,19 +115,17 @@ export const useVoiceRecognitionStore = defineStore("voiceRecognition", () => {
           startRepunctuation(addToKnowledgeBase);
         } else if (key === "KeyX") {
           // edit preset 2
-        } else if (key === "KeyC") {
-          startRepunctuation(dealToCalendar);
-        } else if (key === "KeyV") {
-          startRepunctuation(askAIShort);
+          // } else if (key === "KeyC") {
+          //   startRepunctuation(dealToCalendar);
+          // } else if (key === "KeyV") {
+          //   startRepunctuation(askAIShort);
         }
       }
     }
   );
 
   return {
-    // Состояние
     state,
-    // Действия
     startRecognizing,
     stopRecognizing,
     startRepunctuation,

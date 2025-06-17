@@ -36,18 +36,22 @@
 
 <script setup lang="ts">
 import { useCallApi } from '../composables/useCallApi';
+import { useCallAi } from '../composables/useCallAi';
 
 const {
   searchInInternet,
   insertIntoWindow,
   fastNote,
-  dealToCalendar,
-  askAIShort,
   askAIlong,
   addToKnowledgeBase,
   intoClipboardAndClose,
-  askAItext,
 } = useCallApi();
+
+const {
+  askAIShort,
+  askAItext,
+  dealToCalendar,
+} = useCallAi();
 </script>
 
 <style scoped>
