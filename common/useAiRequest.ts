@@ -1,4 +1,4 @@
-import { UserConfig } from "../../../electron/types/UserConfig";
+import type { UserConfig } from "../electron/types/UserConfig";
 
 export const useAiRequest = () => {
   async function chatCompletion(

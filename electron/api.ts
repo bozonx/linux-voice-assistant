@@ -3,6 +3,7 @@ import { BrowserWindow } from "electron";
 import { exec } from "child_process";
 import { UserConfig } from "./types/UserConfig";
 import { AppConfig } from "./types/types";
+import { typeIntoWindow } from "../common/helpers";
 
 export class Api {
   private readonly appConfig: AppConfig;
@@ -19,8 +20,7 @@ export class Api {
     this.mainWindow = mainWindow;
   }
 
-  async init() {
-  }
+  async init() {}
 
   // Функция для открытия URL в браузере
   async openInBrowserAndClose(url: string): Promise<void> {
@@ -43,36 +43,12 @@ export class Api {
   }
 
   async typeIntoWindowAndClose(text: string, windowId: string): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      // Сначала активируем окно
-      exec(
-        `${this.userConfig.xdotoolBin} windowactivate ${windowId}`,
-        (error) => {
-          if (error) {
-            console.error("Error activating window:", error);
-            reject(error);
-            return;
-          }
+    await typeIntoWindow(text, windowId);
 
-          // Затем вводим текст
-          exec(`${this.userConfig.xdotoolBin} type "${text}"`, (error) => {
-            if (error) {
-              console.error("Error typing text:", error);
-              reject(error);
-              return;
-            }
-            // Закрываем окно после ввода текста
-            if (this.mainWindow) {
-              this.mainWindow.close();
-            }
-            resolve();
-          });
-        }
-      );
-    });
+    if (this.mainWindow) this.mainWindow.close();
   }
 
   async closeMainWindow(): Promise<void> {
-    this.mainWindow.close();
+    if (this.mainWindow) this.mainWindow.close();
   }
 }

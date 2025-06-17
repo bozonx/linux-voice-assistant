@@ -1,10 +1,10 @@
 import { app, BrowserWindow, ipcMain } from "electron";
 import path from "path";
 import { Api } from "./api";
-import { getCommandLineArgs } from "./helpers";
+import { getCommandLineArgs } from "../common/helpers";
 import { CommandLineParams, FunctionResult } from "./types/types.js";
 import { APP_CONFIG } from "./appConfig.js";
-import { createOrReadConfig } from "./config";
+import { createOrReadConfig } from "./userConfigManager";
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -28,7 +28,7 @@ async function createWindow() {
   });
 
   const args: CommandLineParams = getCommandLineArgs();
-  const userConfig = await createOrReadConfig();
+  const userConfig = await createOrReadConfig(app.getPath("userData"));
   const api = new Api(APP_CONFIG, userConfig, mainWindow);
 
   await api.init();

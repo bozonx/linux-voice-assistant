@@ -1,16 +1,17 @@
 import fs from "fs/promises";
 import path from "path";
 import yaml from "yaml";
-import { app } from "electron";
 import {
   CONFIG_FILE_NAME,
   DEFAULT_USER_CONFIG,
   UserConfig,
 } from "./types/UserConfig.js";
 
-export async function createOrReadConfig(): Promise<UserConfig> {
+export async function createOrReadConfig(
+  pathToConfig: string
+): Promise<UserConfig> {
   // Формируем путь к файлу конфигурации в пользовательской директории
-  const configPath = path.join(app.getPath("userData"), CONFIG_FILE_NAME);
+  const configPath = path.join(pathToConfig, CONFIG_FILE_NAME);
 
   try {
     // Проверяем существование файла и права доступа

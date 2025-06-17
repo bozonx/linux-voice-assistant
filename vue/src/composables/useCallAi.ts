@@ -5,7 +5,7 @@ import { useMainInputStore } from "../stores/mainInput";
 import { useOverlayStore } from "../stores/overlay";
 import { useVoiceRecognitionStore } from "../stores/voiceRecognition";
 import { useCallApi } from "./useCallApi";
-import { useAiRequest } from "./useAiRequest";
+import { useAiRequest } from "../../../common/useAiRequest";
 
 export const useCallAi = () => {
   const { chatCompletion } = useAiRequest();
@@ -32,7 +32,7 @@ export const useCallAi = () => {
     if (result.error) {
       miniToastr.error(result.error, "Api call error " + result.status);
       console.error(result.status + " " + result.statusText, result.error);
-      
+
       return "";
     }
 
@@ -96,7 +96,7 @@ export const useCallAi = () => {
     const result = await aiRequest(
       "askAI",
       ipcStore.data!.appConfig.aiInstructions.clearResult,
-      ipcStore.data!.userConfig.aiContexts.askAiShort,
+      ipcStore.data!.userConfig.aiTasks.askAiShort,
       text
     );
 
@@ -130,7 +130,7 @@ export const useCallAi = () => {
         aiRequest(
           "correction",
           ipcStore.data!.appConfig.aiInstructions.clearResult,
-          ipcStore.data!.userConfig.aiContexts.correction,
+          ipcStore.data!.userConfig.aiTasks.correction,
           value
         )
       ),
@@ -140,7 +140,7 @@ export const useCallAi = () => {
         aiRequest(
           "correction",
           ipcStore.data!.appConfig.aiInstructions.clearResult,
-          ipcStore.data!.userConfig.aiContexts.correction,
+          ipcStore.data!.userConfig.aiTasks.correction,
           value
         )
       ),
@@ -150,7 +150,7 @@ export const useCallAi = () => {
         aiRequest(
           "deepEdit",
           ipcStore.data!.appConfig.aiInstructions.clearResult,
-          ipcStore.data!.userConfig.aiContexts.deepEdit[presetNum].context,
+          ipcStore.data!.userConfig.aiTasks.deepEdit[presetNum].context,
           value
         )
       ),
@@ -160,7 +160,7 @@ export const useCallAi = () => {
         aiRequest(
           "deepEdit",
           ipcStore.data!.appConfig.aiInstructions.clearResult,
-          ipcStore.data!.userConfig.aiContexts.deepEdit[presetNum].context,
+          ipcStore.data!.userConfig.aiTasks.deepEdit[presetNum].context,
           value
         )
       ),
@@ -170,7 +170,7 @@ export const useCallAi = () => {
         aiRequest(
           "translate",
           ipcStore.data!.appConfig.aiInstructions.clearResult,
-          ipcStore.data!.userConfig.aiContexts.translate + " " + to,
+          ipcStore.data!.userConfig.aiTasks.translate + " " + to,
           value
         )
       ),
@@ -180,7 +180,7 @@ export const useCallAi = () => {
         aiRequest(
           "translate",
           ipcStore.data!.appConfig.aiInstructions.clearResult,
-          ipcStore.data!.userConfig.aiContexts.translate + " " + to,
+          ipcStore.data!.userConfig.aiTasks.translate + " " + to,
           value
         )
       ),

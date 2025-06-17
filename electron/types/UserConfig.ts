@@ -25,7 +25,7 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
     deepEdit: "",
     askAI: "",
   },
-  aiContexts: {
+  aiTasks: {
     translate: "Переведи этот текст на",
     completion: "",
     toCalendar: "",
@@ -93,8 +93,8 @@ export interface UserConfig {
     askAI: string;
   };
 
-  // Contexts for specific tasks
-  aiContexts: {
+  // Tasks contexts
+  aiTasks: {
     // simple translate
     translate: string;
     completion: string;
