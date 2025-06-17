@@ -43,9 +43,7 @@ export const useCallApi = () => {
 
     if (!value.trim()) return;
 
-    value = await transformCb(value);
-
-    await typeIntoWindowAndClose(value);
+    await typeIntoWindowAndClose(await transformCb(value));
   }
 
   const insertIntoWindow = async () => {

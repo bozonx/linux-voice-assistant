@@ -1,9 +1,9 @@
 // @ts-ignore
 import miniToastr from "mini-toastr";
-import { useIpcStore } from "src/stores/ipc";
-import { useMainInputStore } from "src/stores/mainInput";
-import { useOverlayStore } from "src/stores/overlay";
-import { useVoiceRecognitionStore } from "src/stores/voiceRecognition";
+import { useIpcStore } from "../stores/ipc";
+import { useMainInputStore } from "../stores/mainInput";
+import { useOverlayStore } from "../stores/overlay";
+import { useVoiceRecognitionStore } from "../stores/voiceRecognition";
 import { useCallApi } from "./useCallApi";
 import { useAiRequest } from "./useAiRequest";
 
