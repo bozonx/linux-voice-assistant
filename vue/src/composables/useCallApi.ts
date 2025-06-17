@@ -70,38 +70,6 @@ export const useCallApi = () => {
     // TODO: do it
   };
 
-  const formatMdAndInsert = async () => {
-    await insertMode((value) => formatMdAndStyle(value));
-  };
-
-  const formatMdAndEdit = async () => {
-    await editMode((value) => formatMdAndStyle(value));
-  };
-
-  const formatCodeAndInsert = async () => {
-    await insertMode((value) => formatSomeCode(value));
-  };
-
-  const formatCodeAndEdit = async () => {
-    await editMode((value) => formatSomeCode(value));
-  };
-
-  const rusStressAndInsert = async () => {
-    await insertMode((value) => Promise.resolve(makeRusStress(value)));
-  };
-
-  const rusStressAndEdit = async () => {
-    await editMode((value) => Promise.resolve(makeRusStress(value)));
-  };
-
-  const transformTextAndInsert = async (type: string) => {
-    await insertMode((value) => Promise.resolve(doCaseTransform(value, type)));
-  };
-
-  const transformTextAndEdit = async (type: string) => {
-    await editMode((value) => Promise.resolve(doCaseTransform(value, type)));
-  };
-
   const searchInInternet = async () => {
     if (!mainInputStore.value.trim()) return;
 
@@ -126,17 +94,22 @@ export const useCallApi = () => {
     typeIntoWindowAndClose,
     insertIntoWindow,
     fastNote,
-    rusStressAndInsert,
-    rusStressAndEdit,
-    formatMdAndInsert,
-    formatMdAndEdit,
-    transformTextAndInsert,
-    transformTextAndEdit,
-    formatCodeAndInsert,
-    formatCodeAndEdit,
     searchInInternet,
     addToKnowledgeBase,
     intoClipboardAndClose,
     askAIlong,
+
+    formatMdAndInsert: () => insertMode((value) => formatMdAndStyle(value)),
+    formatMdAndEdit: () => editMode((value) => formatMdAndStyle(value)),
+    formatCodeAndInsert: () => insertMode((value) => formatSomeCode(value)),
+    formatCodeAndEdit: () => editMode((value) => formatSomeCode(value)),
+    rusStressAndInsert: () =>
+      insertMode((value) => Promise.resolve(makeRusStress(value))),
+    rusStressAndEdit: () =>
+      editMode((value) => Promise.resolve(makeRusStress(value))),
+    transformTextAndInsert: (type: string) =>
+      insertMode((value) => Promise.resolve(doCaseTransform(value, type))),
+    transformTextAndEdit: (type: string) =>
+      editMode((value) => Promise.resolve(doCaseTransform(value, type))),
   };
 };
