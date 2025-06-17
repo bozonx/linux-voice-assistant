@@ -1,0 +1,32 @@
+openrouterDefaultApiKey: ""
+openrouterDefaultBaseUrl: https://openrouter.ai/api/v1
+xdotoolBin: /usr/bin/xdotool
+appLanguage: ru_RU
+userLanguage: ru_RU
+toTranslateLanguages:
+  - en_US
+  - ru_RU
+  - es_AR
+  - tr_TR
+internetSearchUrl: https://duckduckgo.com/?q=
+models: {}
+aiModelUsage:
+  voiceRecognition: ""
+  translate: ""
+  completion: ""
+  intentionRecognition: ""
+  correction: ""
+  deepEdit: ""
+  askAI: ""
+aiTasks:
+  translate: Переведи этот текст на
+  completion: ""
+  toCalendar: ""
+  assistant: ""
+  correction: Исправь этот текст и восстановь пунктуацию
+  askAiForText: ""
+  askAiShort: Отвечай лаконично
+  deepEdit:
+    - description: Редактирование текста
+      context: убрать косноязычие , добавить местоимения где они нужны, исправление
+        смысла и запутанности, убрать дублирование, подобрать уместные синонимы

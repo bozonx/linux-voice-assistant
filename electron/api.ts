@@ -43,7 +43,7 @@ export class Api {
   }
 
   async typeIntoWindowAndClose(text: string, windowId: string): Promise<void> {
-    await typeIntoWindow(text, windowId);
+    await typeIntoWindow(this.userConfig.xdotoolBin, text, windowId);
 
     if (this.mainWindow) this.mainWindow.close();
   }

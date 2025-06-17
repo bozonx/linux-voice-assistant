@@ -8,15 +8,12 @@ import {
 } from "./types/UserConfig.js";
 
 export async function createOrReadConfig(
-  pathToConfig: string
+  configDir: string
 ): Promise<UserConfig> {
-  // Формируем путь к файлу конфигурации в пользовательской директории
-  const configPath = path.join(pathToConfig, CONFIG_FILE_NAME);
+  const configPath = path.join(configDir, CONFIG_FILE_NAME);
 
   try {
-    // Проверяем существование файла и права доступа
     await fs.access(configPath, fs.constants.F_OK | fs.constants.R_OK);
-
     // Если файл существует и доступен для чтения, читаем его
     const fileContent = await fs.readFile(configPath, "utf8");
     const config = yaml.parse(fileContent) as UserConfig;

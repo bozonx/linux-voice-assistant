@@ -22,31 +22,29 @@ export function getCommandLineArgs(): CommandLineParams {
 }
 
 export async function typeIntoWindow(
+  xdotoolBin: string,
   text: string,
   windowId: string
 ): Promise<void> {
   return new Promise<void>((resolve, reject) => {
     // Сначала активируем окно
-    exec(
-      `${this.userConfig.xdotoolBin} windowactivate ${windowId}`,
-      (error) => {
+    exec(`${xdotoolBin} windowactivate ${windowId}`, (error) => {
+      if (error) {
+        console.error("Error activating window:", error);
+        reject(error);
+        return;
+      }
+
+      // Затем вводим текст
+      exec(`${xdotoolBin} type "${text}"`, (error) => {
         if (error) {
-          console.error("Error activating window:", error);
+          console.error("Error typing text:", error);
           reject(error);
           return;
         }
 
-        // Затем вводим текст
-        exec(`${this.userConfig.xdotoolBin} type "${text}"`, (error) => {
-          if (error) {
-            console.error("Error typing text:", error);
-            reject(error);
-            return;
-          }
-
-          resolve();
-        });
-      }
-    );
+        resolve();
+      });
+    });
   });
 }
