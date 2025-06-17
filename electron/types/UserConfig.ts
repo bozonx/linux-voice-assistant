@@ -13,27 +13,26 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
   xdotoolBin: "/usr/bin/xdotool",
   appLanguage: "ru_RU",
   userLanguage: "ru_RU",
-  toTranslateLanguages: ["en_US", "ru_RU", "es_AR"],
+  toTranslateLanguages: ["en_US", "ru_RU", "es_AR", "tr_TR"],
   internetSearchUrl: "https://duckduckgo.com/?q=",
   models: {},
   aiModelUsage: {
     voiceRecognition: "",
-    fastTranslate: "",
+    translate: "",
     completion: "",
     intentionRecognition: "",
     correction: "",
     deepEdit: "",
-    // deepTranslate: "",
     askAI: "",
   },
   aiContexts: {
-    fastTranslate: "Переведи этот текст на",
+    translate: "Переведи этот текст на",
     completion: "",
     toCalendar: "",
     assistant: "",
     correction: "Исправь этот текст и восстановь пунктуацию",
     askAiForText: "",
-    askAiShort: "",
+    askAiShort: "Отвечай лаконично",
     deepEdit: [
       {
         description: "Редактирование текста",
@@ -41,7 +40,6 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
           "убрать косноязычие , добавить местоимения где они нужны, исправление смысла и запутанности, убрать дублирование, подобрать уместные синонимы",
       },
     ],
-    // deepTranslate: [],
   },
 };
 
@@ -84,7 +82,7 @@ export interface UserConfig {
     voiceRecognition: string;
 
     ////// simple models //////
-    fastTranslate: string;
+    translate: string;
     completion: string;
     intentionRecognition: string;
     // correction of the text and restorastion after voice recognition
@@ -92,13 +90,13 @@ export interface UserConfig {
 
     ////// Most smart models //////
     deepEdit: string;
-    // translate for writers purposes
-    // deepTranslate: string;
     askAI: string;
   };
 
+  // Contexts for specific tasks
   aiContexts: {
-    fastTranslate: string;
+    // simple translate
+    translate: string;
     completion: string;
     // intention recognition
     toCalendar: string;
@@ -111,9 +109,5 @@ export interface UserConfig {
       description: string;
       context: string;
     }[];
-    // deepTranslate: {
-    //   description: string;
-    //   context: string;
-    // }[];
   };
 }

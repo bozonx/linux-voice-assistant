@@ -75,9 +75,9 @@ export const useCallAi = () => {
 
     if (!value.trim()) return;
 
-    value = await transformCb(value);
+    overlayStore.startAskingAi();
 
-    await typeIntoWindowAndClose(value);
+    await typeIntoWindowAndClose(await transformCb(value));
 
     overlayStore.hideOverlay();
   };
@@ -126,63 +126,63 @@ export const useCallAi = () => {
     dealToCalendar,
 
     correctAndInsert: () =>
-      insertMode(async (value) => {
-        return await aiRequest(
+      insertMode((value) =>
+        aiRequest(
           "correction",
           ipcStore.data!.appConfig.aiInstructions.clearResult,
           ipcStore.data!.userConfig.aiContexts.correction,
           value
-        );
-      }),
+        )
+      ),
 
     correctAndEdit: () =>
-      editMode(async (value) => {
-        return await aiRequest(
+      editMode((value) =>
+        aiRequest(
           "correction",
           ipcStore.data!.appConfig.aiInstructions.clearResult,
           ipcStore.data!.userConfig.aiContexts.correction,
           value
-        );
-      }),
+        )
+      ),
 
     editAndInsert: (presetNum: number) =>
-      insertMode(async (value) => {
-        return await aiRequest(
+      insertMode((value) =>
+        aiRequest(
           "deepEdit",
           ipcStore.data!.appConfig.aiInstructions.clearResult,
           ipcStore.data!.userConfig.aiContexts.deepEdit[presetNum].context,
           value
-        );
-      }),
+        )
+      ),
 
     editAndEdit: (presetNum: number) =>
-      editMode(async (value) => {
-        return await aiRequest(
+      editMode((value) =>
+        aiRequest(
           "deepEdit",
           ipcStore.data!.appConfig.aiInstructions.clearResult,
           ipcStore.data!.userConfig.aiContexts.deepEdit[presetNum].context,
           value
-        );
-      }),
+        )
+      ),
 
     translateAndInsert: (to: string) =>
-      insertMode(async (value) => {
-        return await aiRequest(
-          "fastTranslate",
+      insertMode((value) =>
+        aiRequest(
+          "translate",
           ipcStore.data!.appConfig.aiInstructions.clearResult,
-          ipcStore.data!.userConfig.aiContexts.fastTranslate + " " + to,
+          ipcStore.data!.userConfig.aiContexts.translate + " " + to,
           value
-        );
-      }),
+        )
+      ),
 
     translateAndEdit: (to: string) =>
-      editMode(async (value) => {
-        return await aiRequest(
-          "fastTranslate",
+      editMode((value) =>
+        aiRequest(
+          "translate",
           ipcStore.data!.appConfig.aiInstructions.clearResult,
-          ipcStore.data!.userConfig.aiContexts.fastTranslate + " " + to,
+          ipcStore.data!.userConfig.aiContexts.translate + " " + to,
           value
-        );
-      }),
+        )
+      ),
   };
 };

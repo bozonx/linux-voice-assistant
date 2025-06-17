@@ -11,6 +11,6 @@
     "skipLibCheck": true,
     "resolveJsonModule": true
   },
-  "include": ["electron/**/*", "_old/vosk.ts", "_old/ai.ts"],
+  "include": ["electron/**/*", "common/**/*"],
   "exclude": ["node_modules", "dist", "vue", "_old"]
 }
