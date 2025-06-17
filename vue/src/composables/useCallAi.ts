@@ -44,155 +44,45 @@ export const useCallAi = () => {
     voiceRecognitionStore.startRecognizing();
   };
 
-  const correctAndInsert = async () => {
-    let text = mainInputStore.value;
+  const editMode = async (transformCb: (value: string) => Promise<string>) => {
+    let value = mainInputStore.value;
 
     if (mainInputStore.selectedText) {
-      text = mainInputStore.selectedText;
+      value = mainInputStore.selectedText;
     }
 
-    if (!text.trim()) return;
+    if (!value.trim()) return;
 
     overlayStore.startAskingAi();
 
-    const result = await aiRequest(
-      "correction",
-      ipcStore.data!.appConfig.aiInstructions.clearResult,
-      ipcStore.data!.userConfig.aiContexts.correction,
-      text
-    );
+    value = await transformCb(value);
 
-    await typeIntoWindowAndClose(result);
-  };
-
-  const correctAndEdit = async () => {
-    let text = mainInputStore.value;
-
-    if (mainInputStore.selectedText) {
-      text = mainInputStore.selectedText;
-    }
-
-    if (!text.trim()) return;
-
-    overlayStore.startAskingAi();
-
-    const result = await aiRequest(
-      "correction",
-      ipcStore.data!.appConfig.aiInstructions.clearResult,
-      ipcStore.data!.userConfig.aiContexts.correction,
-      text
-    );
-
-    if (result) {
-      if (mainInputStore.selectedText) {
-        mainInputStore.replaceSelection(result);
-      } else {
-        mainInputStore.setValue(result);
-      }
-    }
+    mainInputStore.selectedText
+      ? mainInputStore.replaceSelection(value)
+      : mainInputStore.setValue(value);
 
     overlayStore.hideOverlay();
   };
 
-  const editAndInsert = async (presetNum: number) => {
-    let text = mainInputStore.value;
+  const insertMode = async (
+    transformCb: (value: string) => Promise<string>
+  ) => {
+    let value = mainInputStore.value;
 
     if (mainInputStore.selectedText) {
-      text = mainInputStore.selectedText;
+      value = mainInputStore.selectedText;
     }
 
-    if (!text.trim()) return;
+    if (!value.trim()) return;
 
-    overlayStore.startAskingAi();
+    value = await transformCb(value);
 
-    const result = await aiRequest(
-      "deepEdit",
-      ipcStore.data!.appConfig.aiInstructions.clearResult,
-      ipcStore.data!.userConfig.aiContexts.deepEdit[presetNum].context,
-      text
-    );
-
-    await typeIntoWindowAndClose(result);
-  };
-
-  const editAndEdit = async (presetNum: number) => {
-    let text = mainInputStore.value;
-
-    if (mainInputStore.selectedText) {
-      text = mainInputStore.selectedText;
-    }
-
-    if (!text.trim()) return;
-
-    overlayStore.startAskingAi();
-
-    const result = await aiRequest(
-      "deepEdit",
-      ipcStore.data!.appConfig.aiInstructions.clearResult,
-      ipcStore.data!.userConfig.aiContexts.deepEdit[presetNum].context,
-      text
-    );
-
-    if (result) {
-      if (mainInputStore.selectedText) {
-        mainInputStore.replaceSelection(result);
-      } else {
-        mainInputStore.setValue(result);
-      }
-    }
+    await typeIntoWindowAndClose(value);
 
     overlayStore.hideOverlay();
   };
 
-  const translateAndInsert = async (to: string) => {
-    let text = mainInputStore.value;
 
-    if (mainInputStore.selectedText) {
-      text = mainInputStore.selectedText;
-    }
-
-    if (!text.trim()) return;
-
-    overlayStore.startAskingAi();
-
-    const result = await aiRequest(
-      "fastTranslate",
-      ipcStore.data!.appConfig.aiInstructions.clearResult,
-      ipcStore.data!.userConfig.aiContexts.fastTranslate + " " + to,
-      text
-    );
-
-    await typeIntoWindowAndClose(result);
-  };
-
-  const translateAndEdit = async (to: string) => {
-    let text = mainInputStore.value;
-
-    if (mainInputStore.selectedText) {
-      text = mainInputStore.selectedText;
-    }
-
-    if (!text.trim()) return;
-
-    overlayStore.startAskingAi();
-
-    const result = await aiRequest(
-      "fastTranslate",
-      ipcStore.data!.appConfig.aiInstructions.clearResult,
-      ipcStore.data!.userConfig.aiContexts.fastTranslate + " " + to,
-      text
-    );
-
-    if (result) {
-      if (mainInputStore.selectedText) {
-        mainInputStore.replaceSelection(result);
-      } else {
-        mainInputStore.setValue(result);
-      }
-    }
-
-    overlayStore.hideOverlay();
-  };
 
   const askAIShort = async () => {
     let text = mainInputStore.value;
@@ -233,14 +123,68 @@ export const useCallAi = () => {
 
   return {
     voiceRecognition,
-    correctAndInsert,
-    correctAndEdit,
-    editAndInsert,
-    editAndEdit,
-    translateAndInsert,
-    translateAndEdit,
     askAIShort,
     askAItext,
     dealToCalendar,
+
+    correctAndInsert: () =>
+      insertMode(async (value) => {
+        return await aiRequest(
+          "correction",
+          ipcStore.data!.appConfig.aiInstructions.clearResult,
+          ipcStore.data!.userConfig.aiContexts.correction,
+          value
+        );
+      }),
+
+    correctAndEdit: () =>
+      editMode(async (value) => {
+        return await aiRequest(
+          "correction",
+          ipcStore.data!.appConfig.aiInstructions.clearResult,
+          ipcStore.data!.userConfig.aiContexts.correction,
+          value
+        );
+      }),
+
+    editAndInsert: (presetNum: number) =>
+      insertMode(async (value) => {
+        return await aiRequest(
+          "deepEdit",
+          ipcStore.data!.appConfig.aiInstructions.clearResult,
+          ipcStore.data!.userConfig.aiContexts.deepEdit[presetNum].context,
+          value
+        );
+      }),
+
+    editAndEdit: (presetNum: number) =>
+      editMode(async (value) => {
+        return await aiRequest(
+          "deepEdit",
+          ipcStore.data!.appConfig.aiInstructions.clearResult,
+          ipcStore.data!.userConfig.aiContexts.deepEdit[presetNum].context,
+          value
+        );
+      }),
+
+    translateAndInsert: (to: string) =>
+      insertMode(async (value) => {
+        return await aiRequest(
+          "fastTranslate",
+          ipcStore.data!.appConfig.aiInstructions.clearResult,
+          ipcStore.data!.userConfig.aiContexts.fastTranslate + " " + to,
+          value
+        );
+      }),
+
+    translateAndEdit: (to: string) =>
+      editMode(async (value) => {
+        return await aiRequest(
+          "fastTranslate",
+          ipcStore.data!.appConfig.aiInstructions.clearResult,
+          ipcStore.data!.userConfig.aiContexts.fastTranslate + " " + to,
+          value
+        );
+      }),
   };
 };

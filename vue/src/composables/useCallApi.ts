@@ -19,13 +19,13 @@ export const useCallApi = () => {
   }
 
   async function editMode(transformCb: (value: string) => Promise<string>) {
-    if (!mainInputStore.value.trim()) return;
-
     let value = mainInputStore.value;
 
     if (mainInputStore.selectedText) {
       value = mainInputStore.selectedText;
     }
+
+    if (!value.trim()) return;
 
     value = await transformCb(value);
 
@@ -35,13 +35,13 @@ export const useCallApi = () => {
   }
 
   async function insertMode(transformCb: (value: string) => Promise<string>) {
-    if (!mainInputStore.value.trim()) return;
-
     let value = mainInputStore.value;
 
     if (mainInputStore.selectedText) {
       value = mainInputStore.selectedText;
     }
+
+    if (!value.trim()) return;
 
     value = await transformCb(value);
 
