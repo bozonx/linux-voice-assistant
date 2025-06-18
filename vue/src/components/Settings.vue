@@ -11,7 +11,15 @@
     <InputRow v-model:value="userSettings.xdotoolBin" label="Xdotool Bin" />
     <InputRow v-model:value="userSettings.appLanguage" label="App Language" />
     <InputRow v-model:value="userSettings.userLanguage" label="User Language" />
-    <!-- <InputRow v-model:value="userSettings.toTranslateLanguages" /> -->
+    <ItemsField
+      :items="translateLanguagesItems"
+      label="To Translate Languages"
+      @update:items="updateTranslateLanguages"
+    >
+      <template #item="{ item, index }">
+        <InputRow v-model:value="item.value" label="Language" />
+      </template>
+    </ItemsField>
     <InputRow
       v-model:value="userSettings.internetSearchUrl"
       label="Internet Search URL"
@@ -103,6 +111,14 @@
 
   const saveSettings = () => {
     ipcStore.saveUserConfig(userSettings.value);
+  };
+
+  const translateLanguagesItems = computed(() => {
+    return (userSettings.value.toTranslateLanguages || []).map((lang) => ({ value: lang }));
+  });
+
+  const updateTranslateLanguages = (items: Record<string, any>[]) => {
+    userSettings.value.toTranslateLanguages = items.map((item: Record<string, any>) => item.value);
   };
 </script>
 

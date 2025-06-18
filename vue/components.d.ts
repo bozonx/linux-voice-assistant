@@ -14,6 +14,7 @@ declare module 'vue' {
     History: typeof import('./src/components/History.vue')['default']
     Input: typeof import('./src/components/Input.vue')['default']
     InputRow: typeof import('./src/components/InputRow.vue')['default']
+    ItemsField: typeof import('./src/components/ItemsField.vue')['default']
     MainInput: typeof import('./src/components/MainInput.vue')['default']
     Overlays: typeof import('./src/components/Overlays.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
