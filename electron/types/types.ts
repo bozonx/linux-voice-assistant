@@ -20,3 +20,8 @@ export interface AppConfig {
     clearResult: string;
   };
 }
+
+export interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+}

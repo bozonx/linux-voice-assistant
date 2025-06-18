@@ -1,4 +1,5 @@
 import type { UserConfig } from "../electron/types/UserConfig";
+import { ChatMessage } from "../electron/types/types";
 
 export const useAiRequest = () => {
   async function chatCompletion(
@@ -6,7 +7,7 @@ export const useAiRequest = () => {
     modelUsage: string,
     developerInstructions: string,
     task: string,
-    userInput: string | string[]
+    userInput: string | ChatMessage[]
   ): Promise<Record<string, any>> {
     console.log(
       "chatCompletion",
@@ -16,12 +17,18 @@ export const useAiRequest = () => {
       task,
       userInput
     );
-    
-    const modelId = (userConfig.aiModelUsage as any)[modelUsage];
+
     const preparedInstructions = developerInstructions.replace(
       "{{LANGUAGE}}",
       userConfig.userLanguage
     );
+    const messages = Array.isArray(userInput)
+      ? userInput
+      : [
+          { role: "developer", content: preparedInstructions },
+          { role: "user", content: task + ":\n\n" + userInput },
+        ];
+    const modelId = (userConfig.aiModelUsage as any)[modelUsage];
     const model = userConfig.models[modelId];
     const baseUrl = model.baseUrl || userConfig.openrouterDefaultBaseUrl;
     const apiKey = model.apiKey || userConfig.openrouterDefaultApiKey;
@@ -35,16 +42,7 @@ export const useAiRequest = () => {
       },
       body: JSON.stringify({
         model: model.model,
-        messages: [
-          {
-            role: "developer",
-            content: preparedInstructions,
-          },
-          {
-            role: "user",
-            content: task + ":\n\n" + userInput,
-          },
-        ],
+        messages,
       }),
     });
 

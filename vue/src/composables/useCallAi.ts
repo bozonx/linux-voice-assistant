@@ -6,6 +6,7 @@ import { useOverlayStore } from "../stores/overlay";
 import { useVoiceRecognitionStore } from "../stores/voiceRecognition";
 import { useCallApi } from "./useCallApi";
 import { useAiRequest } from "../../../common/useAiRequest";
+import { ChatMessage } from "../../../electron/types/types";
 
 export const useCallAi = () => {
   const { chatCompletion } = useAiRequest();
@@ -19,7 +20,7 @@ export const useCallAi = () => {
     modelUsage: string,
     developerInstructions: string,
     task: string,
-    userInput: string | string[]
+    userInput: string | ChatMessage[]
   ) {
     const result = await chatCompletion(
       ipcStore.data!.userConfig,
@@ -90,16 +91,11 @@ export const useCallAi = () => {
     // TODO: do it
   };
 
-  const sendChatMessage = async (message: string) => {
+  const sendChatMessage = async (
+    message: string,
+    prevMessages: ChatMessage[]
+  ) => {
     if (!message.trim()) return;
-
-    let text = mainInputStore.value;
-
-    if (mainInputStore.selectedText) {
-      text = mainInputStore.selectedText;
-    }
-
-    if (!text.trim()) return;
 
     overlayStore.startAskingAi();
 
@@ -107,13 +103,12 @@ export const useCallAi = () => {
       "askAI",
       ipcStore.data!.appConfig.aiInstructions.clearResult,
       ipcStore.data!.userConfig.aiTasks.askAiShort,
-      text
+      [...prevMessages, { role: "user", content: message }]
     );
 
-    console.log("askAIShort result", result);
+    overlayStore.hideOverlay();
 
-    // overlayStore.showAiResult(result);
-    // TODO: do it
+    return result;
   };
 
   return {

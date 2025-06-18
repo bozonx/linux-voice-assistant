@@ -1,29 +1,37 @@
 <template>
   <div class="chat-container">
-    <div class="messages">
-      <div class="message">
-        <p>Hello, how are you?</p>
+    <div class="messages-container">
+      <div v-for="message in chatStore.messages" :key="message.content" class="message" :class="{ 'user': message.role === 'user', 'opponent': message.role === 'assistant' }">
+        <p>{{ message.content }}</p>
       </div>
     </div>
-    <div class="input">
-      <input type="text" v-model="message" />
-      <button @click="sendMessage">Send</button>
-      <button @click="clearMessages">Clear</button>
+    <div class="input-container">
+      <div class="input">
+        <textarea v-model="message" />
+      </div>
+      <div class="input-buttons">
+        <button class="button" @click="sendMessage">Send</button>
+        <button class="button" @click="chatStore.clearMessages">Clear</button>
+        <button class="button" @click="back">Back</button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-  const messages = ref<string[]>([]);
+  import { useChatStore } from "../stores/chat";
+
+  const router = useRouter();
+  const chatStore = useChatStore();
   const message = ref<string>("");
 
   const sendMessage = () => {
-    messages.value.push(message.value);
+    chatStore.sendMessage(message.value);
     message.value = "";
   };
 
-  const clearMessages = () => {
-    messages.value = [];
+  const back = () => {
+    router.push("/");
   };
 </script>
 
@@ -36,7 +44,7 @@
     align-items: stretch;
     justify-content: stretch;
   }
-  .messages {
+  .messages-container {
     gap: 10px;
     padding: 10px;
     border: 1px solid #ccc;
@@ -45,14 +53,32 @@
 
   .message {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
     padding: 10px;
+
+  }
+
+  .message p {
+    margin: 0;
     border: 1px solid #ccc;
+    padding: 10px;
     border-radius: 5px;
   }
 
-  .input {
+  .message.user {
+    justify-content: flex-end;
+  }
+
+  .message.user p {
+    background-color: #007bff;
+    color: white;
+  }
+
+  .message.opponent p {
+    background-color: #f0f0f0;
+    color: black;
+  }
+
+  .input-container {
     display: flex;
     gap: 10px;
     padding: 10px;
@@ -60,11 +86,20 @@
     border-radius: 5px;
   }
 
-  .input input {
+  .input {
     flex: 1;
   }
 
-  .input button {
-    flex: 1;
+  .input textarea {
+    width: 100%;
+    height: 100px;
   }
+
+  .input-buttons {
+    display: flex;
+    flex-direction: column;
+    width: 50px;
+    gap: 10px;
+  } 
+
 </style>
