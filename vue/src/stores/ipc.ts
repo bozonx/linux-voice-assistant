@@ -4,6 +4,7 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import type { IpcResult } from "../types";
 import type { InitParams } from "../types";
+import { UserConfig } from "../../../electron/types/UserConfig";
 
 export const useIpcStore = defineStore("ipc", () => {
   const data = ref<InitParams>();
@@ -31,9 +32,14 @@ export const useIpcStore = defineStore("ipc", () => {
     data.value = incomingData;
   };
 
+  const saveUserConfig = (userConfig: UserConfig) => {
+    data.value!.userConfig = userConfig;
+  };
+
   return {
     data,
     callFunction,
     setInitialData,
+    saveUserConfig,
   };
 });

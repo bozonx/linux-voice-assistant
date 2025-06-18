@@ -1,4 +1,4 @@
-import { ChatMessage } from "../types";
+import { ChatMessage } from "../../../electron/types/types";
 import { defineStore } from "pinia";
 import { useCallAi } from "../composables/useCallAi";
 
@@ -10,9 +10,11 @@ export const useChatStore = defineStore("chat", () => {
   ]);
 
   const sendMessage = async (message: string) => {
+    const prevMessages = messages.value;
+
     messages.value.push({ role: "user", content: message });
 
-    const result = await sendChatMessage(message);
+    const result = await sendChatMessage(message, prevMessages);
 
     messages.value.push({ role: "assistant", content: result });
 

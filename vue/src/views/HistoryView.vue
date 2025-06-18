@@ -1,8 +1,8 @@
 <template>
-  <div>
-    <h1>История</h1>
-  </div>
+  <History />
 </template>
 
-<style scoped>
-</style> 
+<script setup lang="ts">
+</script>
+
+<style scoped></style>

@@ -33,6 +33,7 @@
     "src/**/*.vue",
     "components.d.ts",
     "auto-imports.d.ts",
-    "../common/useAiRequest.ts"
+    "../common/useAiRequest.ts",
+    "src/components/DropdownRow"
   ]
 }

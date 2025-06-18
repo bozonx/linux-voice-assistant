@@ -10,10 +10,17 @@ declare module 'vue' {
   export interface GlobalComponents {
     ActionsMenu: typeof import('./src/components/ActionsMenu.vue')['default']
     AiChat: typeof import('./src/components/AiChat.vue')['default']
+    DropdownRow: typeof import('./src/components/DropdownRow.vue')['default']
+    History: typeof import('./src/components/History.vue')['default']
+    Input: typeof import('./src/components/Input.vue')['default']
+    InputRow: typeof import('./src/components/InputRow.vue')['default']
     MainInput: typeof import('./src/components/MainInput.vue')['default']
     Overlays: typeof import('./src/components/Overlays.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SelectRow: typeof import('./src/components/SelectRow.vue')['default']
+    Settings: typeof import('./src/components/Settings.vue')['default']
+    TextArea: typeof import('./src/components/TextArea.vue')['default']
     TextEditToolbar: typeof import('./src/components/TextEditToolbar.vue')['default']
     TransformAndInsertMenu: typeof import('./src/components/TransformAndInsertMenu.vue')['default']
   }

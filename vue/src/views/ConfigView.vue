@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Настройки</h1>
+    <Settings />
   </div>
 </template>
 

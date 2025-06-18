@@ -125,3 +125,17 @@ body {
   cursor: pointer;
   font-size: 14px;
 }
+
+.form-row {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+}
+
+.form-row .form-row-label {
+  width: 200px;
+}
+
+.form-row .form-row-input {
+  flex: 1;
+}
