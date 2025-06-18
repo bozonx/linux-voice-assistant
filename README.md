@@ -1,6 +1,6 @@
 # Writer Assistant
 
-Assistant for linux for writers and programmers.
+Assistant for Linux for writers and programmers.
 
 Set bindings
 

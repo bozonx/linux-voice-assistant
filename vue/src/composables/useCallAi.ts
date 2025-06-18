@@ -82,7 +82,17 @@ export const useCallAi = () => {
     overlayStore.hideOverlay();
   };
 
-  const askAIShort = async () => {
+  const dealToCalendar = async () => {
+    if (!mainInputStore.value.trim()) return;
+
+    console.log("dealToCalendar");
+
+    // TODO: do it
+  };
+
+  const sendChatMessage = async (message: string) => {
+    if (!message.trim()) return;
+
     let text = mainInputStore.value;
 
     if (mainInputStore.selectedText) {
@@ -103,27 +113,13 @@ export const useCallAi = () => {
     console.log("askAIShort result", result);
 
     // overlayStore.showAiResult(result);
-  };
-
-  const askAItext = async () => {
-    if (!mainInputStore.value.trim()) return;
-
-    // TODO: do it
-  };
-
-  const dealToCalendar = async () => {
-    if (!mainInputStore.value.trim()) return;
-
-    console.log("dealToCalendar");
-
     // TODO: do it
   };
 
   return {
     voiceRecognition,
-    askAIShort,
-    askAItext,
     dealToCalendar,
+    sendChatMessage,
 
     correctAndInsert: () =>
       insertMode((value) =>

@@ -7,10 +7,8 @@ import {
   UserConfig,
 } from "./types/UserConfig.js";
 
-export async function createOrReadConfig(
-  configDir: string
-): Promise<UserConfig> {
-  const configPath = path.join(configDir, CONFIG_FILE_NAME);
+export async function createOrReadConfig(appDir: string): Promise<UserConfig> {
+  const configPath = path.join(appDir, CONFIG_FILE_NAME);
 
   try {
     await fs.access(configPath, fs.constants.F_OK | fs.constants.R_OK);

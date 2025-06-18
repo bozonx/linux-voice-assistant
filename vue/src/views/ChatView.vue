@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <h1>Chat</h1>
+  <div class="chat-view">
+    <AiChat />
   </div>
 </template>
 
@@ -9,4 +9,8 @@
 </script>
 
 <style scoped>
+  .chat-view {
+    height: 100%;
+    width: 100%;
+  }
 </style>

@@ -22,10 +22,10 @@
         <button class="button" @click="searchInInternet">Поиск в интернете</button>
       </li>
       <li>
-        <button class="button" @click="askAIShort">Быстрый вопрос к AI</button>
-      </li>
-      <li>
         <button class="button" @click="askAIlong">Подробный ответ от AI</button>
+      </li>
+      <li>        
+        <button class="button" @click="askAIShort">Быстрый вопрос к AI</button>
       </li>
       <li>
         <button class="button" @click="askAItext">Вопрос по тексту к AI</button>
@@ -45,11 +45,11 @@ const {
   askAIlong,
   addToKnowledgeBase,
   intoClipboardAndClose,
+  askAIShort,
+  askAItext,
 } = useCallApi();
 
 const {
-  askAIShort,
-  askAItext,
   dealToCalendar,
 } = useCallAi();
 </script>

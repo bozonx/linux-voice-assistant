@@ -8,6 +8,15 @@ export const useAiRequest = () => {
     task: string,
     userInput: string | string[]
   ): Promise<Record<string, any>> {
+    console.log(
+      "chatCompletion",
+      userConfig,
+      modelUsage,
+      developerInstructions,
+      task,
+      userInput
+    );
+    
     const modelId = (userConfig.aiModelUsage as any)[modelUsage];
     const preparedInstructions = developerInstructions.replace(
       "{{LANGUAGE}}",
@@ -41,6 +50,7 @@ export const useAiRequest = () => {
 
     if (result.ok) {
       const data = await result.json();
+
       console.log("result", data);
 
       return data.choices[0].message;

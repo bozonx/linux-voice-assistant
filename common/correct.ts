@@ -1,3 +1,5 @@
+import path from "path";
+import fs from "fs/promises";
 import { createOrReadConfig } from "../electron/userConfigManager";
 import { getCommandLineArgs, typeIntoWindow } from "./helpers";
 import { useAiRequest } from "./useAiRequest";
@@ -5,9 +7,8 @@ import { APP_CONFIG } from "../electron/appConfig";
 
 (async () => {
   const args = getCommandLineArgs();
-  const userConfig = await createOrReadConfig(
-    process.env.HOME + "/.config/librnet-assistant"
-  );
+  const appDir = process.env.HOME + "/.config/librnet-assistant";
+  const userConfig = await createOrReadConfig(appDir);
   const { chatCompletion } = useAiRequest();
 
   const result = await chatCompletion(
@@ -18,7 +19,17 @@ import { APP_CONFIG } from "../electron/appConfig";
     args.selectedText
   );
 
-  console.log(result);
+  await fs.appendFile(
+    path.join(appDir, "correctionCall.log"),
+    new Date().toISOString() +
+      " " +
+      JSON.stringify({
+        content: result.content,
+        windowId: args.windowId,
+        selectedText: args.selectedText,
+      }) +
+      "\n"
+  );
 
-  await typeIntoWindow(userConfig.xdotoolBin, result.result, args.windowId);
+  await typeIntoWindow(userConfig.xdotoolBin, result.content, args.windowId);
 })();

@@ -18,6 +18,6 @@ export const APP_CONFIG = {
   windowWidth: 800,
   windowHeight: 600,
   devServerUrl: "http://localhost:3000",
-  indexHtmlPath: "../vue/dist/index.html",
+  indexHtmlPath: "../../vue/dist/index.html",
   aiInstructions: { clearResult },
 };

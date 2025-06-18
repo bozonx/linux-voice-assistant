@@ -2,12 +2,14 @@ import { useIpcStore } from "../stores/ipc";
 import { useMainInputStore } from "../stores/mainInput";
 import { useCodeFormatter } from "./useCodeFormatter";
 import { useTextTransform } from "./useTextTransform";
+import { useRouter } from "vue-router";
 
 export const useCallApi = () => {
   const ipcStore = useIpcStore();
   const mainInputStore = useMainInputStore();
   const { formatMdAndStyle, formatSomeCode } = useCodeFormatter();
   const { makeRusStress, doCaseTransform } = useTextTransform();
+  const router = useRouter();
 
   async function typeIntoWindowAndClose(text: string) {
     if (!text.trim()) return;
@@ -69,11 +71,15 @@ export const useCallApi = () => {
   };
 
   const searchInInternet = async () => {
-    if (!mainInputStore.value.trim()) return;
+    let value = mainInputStore.value;
 
-    await ipcStore.callFunction("openInBrowserAndClose", [
-      mainInputStore.value,
-    ]);
+    if (mainInputStore.selectedText) {
+      value = mainInputStore.selectedText;
+    }
+
+    if (!value.trim()) return;
+
+    await ipcStore.callFunction("openInBrowserAndClose", [value]);
   };
 
   const intoClipboardAndClose = async () => {
@@ -87,6 +93,15 @@ export const useCallApi = () => {
 
     // TODO: open in browser
   };
+  const askAIShort = async () => {
+    router.push("/chat");
+  };
+
+  const askAItext = async () => {
+    if (!mainInputStore.value.trim()) return;
+
+    router.push("/chat");
+  };
 
   return {
     typeIntoWindowAndClose,
@@ -96,6 +111,8 @@ export const useCallApi = () => {
     addToKnowledgeBase,
     intoClipboardAndClose,
     askAIlong,
+    askAIShort,
+    askAItext,
 
     formatMdAndInsert: () => insertMode((value) => formatMdAndStyle(value)),
     formatMdAndEdit: () => editMode((value) => formatMdAndStyle(value)),
