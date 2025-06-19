@@ -11,25 +11,20 @@ export const useMainInputHistoryStore = defineStore("mainInputHistory", () => {
       "getMainInputHistory",
       []
     );
+
+    console.log("loadedHistory", loadedHistory.result);
+
     history.value = loadedHistory.result as string[];
   };
 
   const clearHistory = async (): Promise<void> => {
     await ipcStore.callFunction("clearMainInputHistory", []);
+    history.value = [];
   };
 
   const removeFromHistory = async (value: string): Promise<void> => {
     await ipcStore.callFunction("removeFromMainInputHistory", [value]);
-  };
-
-  // Получение истории с фильтрацией по поисковому запросу
-  const getFilteredHistory = (searchQuery: string): string[] => {
-    if (!searchQuery.trim()) {
-      return history.value;
-    }
-
-    const query = searchQuery.toLowerCase();
-    return history.value.filter((item) => item.toLowerCase().includes(query));
+    history.value = history.value.filter((item) => item !== value);
   };
 
   const saveMainInput = async (value: string) => {
@@ -41,7 +36,6 @@ export const useMainInputHistoryStore = defineStore("mainInputHistory", () => {
     loadHistory,
     clearHistory,
     removeFromHistory,
-    getFilteredHistory,
     saveMainInput,
   };
 });

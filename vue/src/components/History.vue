@@ -31,12 +31,12 @@
 
     <div class="history-list">
       <div
-        v-for="(item, index) in items"
+        v-for="(item, index) in props.items || []"
         :key="index"
         class="history-item"
       >
-        <div class="history-text"">
-          {{ item }}
+        <div class="history-text">
+          {{ item || 'пусто' }}
         </div>
         <button
           @click="$emit('remove-item', item)"
@@ -59,23 +59,27 @@ const props = defineProps<{
   items: string[]
 }>()
 
+console.log("items", props.items);
+
 const searchQuery = ref<string>('')
 const back = () => {
   router.push("/");
 };
-// // Фильтрованная история на основе поискового запроса
+
+// // Получение истории с фильтрацией по поисковому запросу
+//   const getFilteredHistory = (searchQuery: string): string[] => {
+//     if (!searchQuery.trim()) {
+//       return history.value;
+//     }
+
+//     const query = searchQuery.toLowerCase();
+//     return history.value.filter((item) => item.toLowerCase().includes(query));
+//   };
+
+// // // Фильтрованная история на основе поискового запроса
 // const filteredHistory = computed(() => {
-//   return historyStore.getFilteredHistory(searchQuery.value)
+//   return getFilteredHistory(searchQuery.value)
 // })
-
-// Загрузка истории при монтировании компонента
-
-
-// // Выбор элемента из истории
-// const selectHistoryItem = (item: string): void => {
-//   mainInputStore.setValue(item)
-//   mainInputStore.focus()
-// }
 
 </script>
 
