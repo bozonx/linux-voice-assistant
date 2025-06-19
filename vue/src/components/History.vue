@@ -1,5 +1,16 @@
 <template>
   <div class="main-input-history">
+    <div class="history-toolbar">
+      <button @click="back">
+        Назад
+      </button>
+      <button
+          @click="$emit('clear-history')"
+          class="clear-history-btn"
+        >
+          Очистить историю
+        </button>
+    </div>
     <div class="history-header">
       <h3>История ввода</h3>
       <div class="history-controls">
@@ -9,35 +20,26 @@
           placeholder="Поиск в истории..."
           class="history-search"
         />
-        <button
-          @click="clearHistory"
-          class="clear-history-btn"
-          :disabled="historyStore.isLoading"
-        >
-          Очистить историю
-        </button>
+
       </div>
     </div>
 
-    <div v-if="historyStore.isLoading" class="loading">
-      Загрузка истории...
-    </div>
 
-    <div v-else-if="filteredHistory.length === 0" class="empty-history">
+    <!-- <div v-else-if="filteredHistory.length === 0" class="empty-history">
       {{ searchQuery ? 'Ничего не найдено' : 'История пуста' }}
-    </div>
+    </div> -->
 
-    <div v-else class="history-list">
+    <div class="history-list">
       <div
-        v-for="(item, index) in filteredHistory"
+        v-for="(item, index) in items"
         :key="index"
         class="history-item"
       >
-        <div class="history-text" @click="selectHistoryItem(item)">
+        <div class="history-text"">
           {{ item }}
         </div>
         <button
-          @click="removeHistoryItem(item)"
+          @click="$emit('remove-item', item)"
           class="remove-history-btn"
           title="Удалить из истории"
         >
@@ -49,39 +51,32 @@
 </template>
 
 <script setup lang="ts">
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
 const props = defineProps<{
   items: string[]
 }>()
 
 const searchQuery = ref<string>('')
-
-// Фильтрованная история на основе поискового запроса
-const filteredHistory = computed(() => {
-  return historyStore.getFilteredHistory(searchQuery.value)
-})
+const back = () => {
+  router.push("/");
+};
+// // Фильтрованная история на основе поискового запроса
+// const filteredHistory = computed(() => {
+//   return historyStore.getFilteredHistory(searchQuery.value)
+// })
 
 // Загрузка истории при монтировании компонента
-onMounted(async () => {
-  await historyStore.loadHistory()
-})
 
-// Выбор элемента из истории
-const selectHistoryItem = (item: string): void => {
-  mainInputStore.setValue(item)
-  mainInputStore.focus()
-}
 
-// Удаление элемента из истории
-const removeHistoryItem = async (item: string): Promise<void> => {
-  await historyStore.removeFromHistory(item)
-}
+// // Выбор элемента из истории
+// const selectHistoryItem = (item: string): void => {
+//   mainInputStore.setValue(item)
+//   mainInputStore.focus()
+// }
 
-// Очистка всей истории
-const clearHistory = async (): Promise<void> => {
-  if (confirm('Вы уверены, что хотите очистить всю историю?')) {
-    await historyStore.clearHistory()
-  }
-}
 </script>
 
 <style scoped>

@@ -1,5 +1,5 @@
 <template>
-  <History />
+  <InputHistory />
 </template>
 
 <script setup lang="ts">
