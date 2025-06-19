@@ -37,10 +37,15 @@ export const useIpcStore = defineStore("ipc", () => {
     data.value!.userConfig = userConfig;
   };
 
+  const saveMainInput = async (value: string) => {
+    await callFunction("saveMainInput", [value]);
+  };
+
   return {
     data,
     callFunction,
     setInitialData,
     saveUserConfig,
+    saveMainInput,
   };
 });

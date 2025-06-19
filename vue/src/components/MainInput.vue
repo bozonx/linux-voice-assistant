@@ -12,9 +12,21 @@
 
 <script setup lang="ts">
 import { useMainInputStore } from '../stores/mainInput'
+import { DebounceCallIncreasing } from 'squidlet-lib'
+import { useIpcStore } from '../stores/ipc'
 
+const ipcStore = useIpcStore()
 const store = useMainInputStore()
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
+const debounced = new DebounceCallIncreasing()
+
+watch(() => store.value, (newValue, oldValue) => {
+  if (newValue !== oldValue) {
+    debounced.invoke(() => {
+      ipcStore.saveMainInput(newValue)
+    }, 600)
+  }
+})
 
 watch(() => store.focusCount, (newValue, oldValue) => {
   if (newValue > oldValue) {

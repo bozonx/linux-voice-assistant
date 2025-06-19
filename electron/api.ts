@@ -58,4 +58,8 @@ export class Api {
     await saveUserConfig(userConfigObj);
     this.userConfig = userConfigObj;
   }
+
+  async saveMainInput(value: string): Promise<void> {
+    console.log("Saving main input", value);
+  }
 }
