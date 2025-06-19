@@ -71,11 +71,8 @@ export class Api {
 
   async saveMainInput(value: string): Promise<void> {
     try {
-      // Сохраняем значение в electron-store
       mainInputStore.set("value", value);
       mainInputStore.set("lastSaved", new Date().toISOString());
-
-      console.log("Main input saved successfully:", value);
     } catch (error) {
       console.error("Error saving main input:", error);
       throw error;
