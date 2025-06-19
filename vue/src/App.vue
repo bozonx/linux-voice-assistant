@@ -37,7 +37,8 @@ onMounted(() => {
         overlayStore.showHotkeys();
       }
       else {
-        // ничего не передано, поэтому открываем редактор
+        // ничего не передано, поэтому загружаем сохраненное значение
+        // await mainInputStore.loadSavedValue();
         await nextTick()
         mainInputStore.focus()
         // mainInputStore.selectAll()
@@ -47,8 +48,9 @@ onMounted(() => {
     else if (ipcStore.data!.mode === START_MODES.VOICE) {
       voiceRecognitionStore.startRecognizing();
     }
-    // WRITE mode
+    // WRITE mode - загружаем сохраненное значение
     else {
+      // await mainInputStore.loadSavedValue();
       await nextTick()
       mainInputStore.focus()
     }

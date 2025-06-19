@@ -1,10 +1,20 @@
 //const electron = require("electron");
 import { BrowserWindow } from "electron";
 import { exec } from "child_process";
+import Store from "electron-store";
 import { UserConfig } from "./types/UserConfig";
 import { AppConfig } from "./types/types";
 import { typeIntoWindow } from "../common/helpers";
 import { saveUserConfig } from "./userConfigManager";
+
+// Создаем store для main input
+const mainInputStore = new Store({
+  name: "main-input", // имя файла конфигурации
+  defaults: {
+    value: "", // значение по умолчанию
+    lastSaved: null, // время последнего сохранения
+  },
+}) as any;
 
 export class Api {
   private readonly appConfig: AppConfig;
@@ -60,6 +70,25 @@ export class Api {
   }
 
   async saveMainInput(value: string): Promise<void> {
-    console.log("Saving main input", value);
+    try {
+      // Сохраняем значение в electron-store
+      mainInputStore.set("value", value);
+      mainInputStore.set("lastSaved", new Date().toISOString());
+
+      console.log("Main input saved successfully:", value);
+    } catch (error) {
+      console.error("Error saving main input:", error);
+      throw error;
+    }
+  }
+
+  // Метод для получения сохраненного main input
+  async getMainInput(): Promise<string> {
+    try {
+      return mainInputStore.get("value", "") as string;
+    } catch (error) {
+      console.error("Error getting main input:", error);
+      return "";
+    }
   }
 }
