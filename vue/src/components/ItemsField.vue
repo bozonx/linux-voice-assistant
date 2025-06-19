@@ -1,9 +1,10 @@
 <template>
   <div class="form-row">
-    <div class="form-row-label">{{ label }}</div>
+    <div v-if="label" class="form-row-label">{{ label }}</div>
     <div class="form-row-input">
       <div class="items-field-item" v-for="(item, index) in localItems" :key="index">
         <slot name="item" :item="item" :index="index" />
+        <button @click="removeItem(index)">Remove</button>
       </div>
       <div>
         <button @click="addItem">Add</button>
@@ -17,7 +18,7 @@ import { ref, watch } from 'vue';
 
 const props = defineProps<{
   items: Record<string, any>[];
-  label: string;
+  label?: string;
 }>();
 
 const emit = defineEmits<{
@@ -39,5 +40,9 @@ watch(localItems, (newItems) => {
 
 const addItem = () => {
   localItems.value.push({});
+};
+
+const removeItem = (index: number) => {
+  localItems.value.splice(index, 1);
 };
 </script>

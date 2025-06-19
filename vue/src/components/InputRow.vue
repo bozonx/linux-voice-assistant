@@ -1,6 +1,6 @@
 <template>
   <div class="form-row">
-    <div class="form-row-label">{{ label }}</div>
+    <div v-if="label" class="form-row-label">{{ label }}</div>
     <div class="form-row-input">
       <input type="text" v-model="value" />
     </div>
@@ -10,7 +10,7 @@
 <script setup lang="ts">
   const props = defineProps<{
     value: string;
-    label: string;
+    label?: string;
   }>();
 
   const emit = defineEmits<{

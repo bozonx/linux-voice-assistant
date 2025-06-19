@@ -7,7 +7,10 @@ import {
   UserConfig,
 } from "./types/UserConfig.js";
 
+let APP_DIR: string;
+
 export async function createOrReadConfig(appDir: string): Promise<UserConfig> {
+  APP_DIR = appDir;
   const configPath = path.join(appDir, CONFIG_FILE_NAME);
 
   try {
@@ -33,4 +36,9 @@ export async function createOrReadConfig(appDir: string): Promise<UserConfig> {
       );
     }
   }
+}
+
+export async function saveUserConfig(userConfig: UserConfig): Promise<void> {
+  const configPath = path.join(APP_DIR, CONFIG_FILE_NAME);
+  await fs.writeFile(configPath, yaml.stringify(userConfig));
 }

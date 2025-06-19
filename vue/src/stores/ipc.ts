@@ -32,7 +32,8 @@ export const useIpcStore = defineStore("ipc", () => {
     data.value = incomingData;
   };
 
-  const saveUserConfig = (userConfig: UserConfig) => {
+  const saveUserConfig = async (userConfig: UserConfig) => {
+    await callFunction("saveUserConfig", [JSON.stringify(userConfig)]);
     data.value!.userConfig = userConfig;
   };
 

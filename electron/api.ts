@@ -4,10 +4,11 @@ import { exec } from "child_process";
 import { UserConfig } from "./types/UserConfig";
 import { AppConfig } from "./types/types";
 import { typeIntoWindow } from "../common/helpers";
+import { saveUserConfig } from "./userConfigManager";
 
 export class Api {
   private readonly appConfig: AppConfig;
-  private readonly userConfig: UserConfig;
+  userConfig: UserConfig;
   private readonly mainWindow: BrowserWindow;
 
   constructor(
@@ -50,5 +51,11 @@ export class Api {
 
   async closeMainWindow(): Promise<void> {
     if (this.mainWindow) this.mainWindow.close();
+  }
+
+  async saveUserConfig(userConfig: string): Promise<void> {
+    const userConfigObj = JSON.parse(userConfig) as UserConfig;
+    await saveUserConfig(userConfigObj);
+    this.userConfig = userConfigObj;
   }
 }

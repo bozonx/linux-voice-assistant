@@ -17,14 +17,24 @@
       @update:items="updateTranslateLanguages"
     >
       <template #item="{ item, index }">
-        <InputRow v-model:value="item.value" label="Language" />
+        <InputRow v-model:value="item.value" />
       </template>
     </ItemsField>
     <InputRow
       v-model:value="userSettings.internetSearchUrl"
       label="Internet Search URL"
     />
-    <!-- <InputRow v-model:value="userSettings.models" /> -->
+
+    <h2>Models</h2>
+    <ItemsField :items="modelsItems" label="Models" @update:items="updateModels">
+      <template #item="{ item, index }">
+        <InputRow v-model:value="item.model" label="Model" />
+        <InputRow v-model:value="item.description" label="Description" />
+        <InputRow v-model:value="item.baseUrl" label="Base URL" />
+        <InputRow v-model:value="item.apiKey" label="API Key" />
+        <InputRow v-model:value="item.tags" label="Tags" />
+      </template>
+    </ItemsField>
 
     <h2>AI Model Usage</h2>
     <DropdownRow
@@ -83,7 +93,13 @@
       label="Ask AI Short"
     />
     <TextArea v-model:value="userSettings.aiTasks.askAiForText" label="Ask AI For Text" />
-    <!-- <InputRow v-model:value="userSettings.aiTasks.deepEdit" /> -->
+    
+    <ItemsField :items="deepEditItems" label="Deep Edit" @update:items="updateDeepEdit">
+      <template #item="{ item, index }">
+        <InputRow v-model:value="item.description" label="Description" />
+        <TextArea v-model:value="item.context" label="Context" />
+      </template>
+    </ItemsField>
 
     <div class="buttons">
       <button @click="back">Back</button>
@@ -105,6 +121,13 @@
     return Object.keys(userSettings.value.models);
   });
 
+  const deepEditItems = computed(() => {
+    return userSettings.value.aiTasks.deepEdit.map((item) => ({
+      description: item.description,
+      context: item.context,
+    }));
+  });
+
   const back = () => {
     router.push("/");
   };
@@ -117,8 +140,32 @@
     return (userSettings.value.toTranslateLanguages || []).map((lang) => ({ value: lang }));
   });
 
+  const modelsItems = computed(() => {
+    return Object.keys(userSettings.value.models).map((key) => ({
+      model: key,
+      description: userSettings.value.models[key].description,
+      baseUrl: userSettings.value.models[key].baseUrl,
+      apiKey: userSettings.value.models[key].apiKey,
+      tags: userSettings.value.models[key].tags,
+    }));
+  });
+
   const updateTranslateLanguages = (items: Record<string, any>[]) => {
     userSettings.value.toTranslateLanguages = items.map((item: Record<string, any>) => item.value);
+  };
+
+  const updateModels = (items: Record<string, any>[]) => {
+    userSettings.value.models = items.reduce((acc, item) => {
+      acc[item.model] = item;
+      return acc;
+    }, {});
+  };
+
+  const updateDeepEdit = (items: Record<string, any>[]) => {
+    userSettings.value.aiTasks.deepEdit = items.map((item) => ({
+      description: item.description,
+      context: item.context,
+    }));
   };
 </script>
 
