@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { useIpcStore } from "./ipc";
 
 export const useMainInputStore = defineStore("mainInput", () => {
   const value = ref<string>("");
@@ -45,20 +44,6 @@ export const useMainInputStore = defineStore("mainInput", () => {
     setSelection(newText, selectionStart.value, newEnd);
   };
 
-  // Загрузка сохраненного значения из electron-store
-  const loadSavedValue = async (): Promise<void> => {
-    try {
-      const ipcStore = useIpcStore();
-      const savedValue = await ipcStore.getMainInput();
-      if (savedValue && savedValue.trim() !== "") {
-        value.value = savedValue;
-        console.log("Loaded saved main input value:", savedValue);
-      }
-    } catch (error) {
-      console.error("Error loading saved main input:", error);
-    }
-  };
-
   return {
     value,
     focusCount,
@@ -71,6 +56,5 @@ export const useMainInputStore = defineStore("mainInput", () => {
     // selectAll,
     setSelection,
     replaceSelection,
-    loadSavedValue,
   };
 });

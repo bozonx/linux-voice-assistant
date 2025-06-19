@@ -1,20 +1,11 @@
 //const electron = require("electron");
 import { BrowserWindow } from "electron";
 import { exec } from "child_process";
-import Store from "electron-store";
 import { UserConfig } from "./types/UserConfig";
 import { AppConfig } from "./types/types";
 import { typeIntoWindow } from "../common/helpers";
 import { saveUserConfig } from "./userConfigManager";
-
-// Создаем store для main input
-const mainInputStore = new Store({
-  name: "main-input", // имя файла конфигурации
-  defaults: {
-    value: "", // значение по умолчанию
-    lastSaved: null, // время последнего сохранения
-  },
-}) as any;
+import { mainInputStore, mainInputHistoryStore } from "./history";
 
 export class Api {
   private readonly appConfig: AppConfig;
@@ -79,13 +70,33 @@ export class Api {
     }
   }
 
-  // Метод для получения сохраненного main input
-  async getMainInput(): Promise<string> {
+  async getMainInputHistory(): Promise<string[]> {
     try {
-      return mainInputStore.get("value", "") as string;
+      return mainInputHistoryStore.get("history", []) as string[];
     } catch (error) {
-      console.error("Error getting main input:", error);
-      return "";
+      console.error("Error getting main input history:", error);
+      return [];
+    }
+  }
+
+  // Очистка истории main input
+  async clearMainInputHistory(): Promise<void> {
+    try {
+      mainInputHistoryStore.set("history", []);
+    } catch (error) {
+      console.error("Error clearing main input history:", error);
+      throw error;
+    }
+  }
+
+  async removeFromMainInputHistory(value: string): Promise<void> {
+    try {
+      const history = mainInputHistoryStore.get("history", []) as string[];
+      const filteredHistory = history.filter((item) => item !== value);
+      mainInputHistoryStore.set("history", filteredHistory);
+    } catch (error) {
+      console.error("Error removing from main input history:", error);
+      throw error;
     }
   }
 }

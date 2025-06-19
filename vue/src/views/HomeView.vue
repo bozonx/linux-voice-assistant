@@ -8,6 +8,8 @@
       <TextEditToolbar/>
     </div>
 
+    
+
     <h2 class="section-title">Действия</h2>
 
     <ActionsMenu />

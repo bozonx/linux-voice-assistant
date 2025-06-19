@@ -5,6 +5,7 @@ import { getCommandLineArgs } from "../common/helpers";
 import { CommandLineParams, FunctionResult } from "./types/types.js";
 import { APP_CONFIG } from "./appConfig.js";
 import { createOrReadConfig } from "./userConfigManager";
+import { makeInputHistoryOnStart } from "./history";
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -32,6 +33,7 @@ async function createWindow() {
   const api = new Api(APP_CONFIG, userConfig, mainWindow);
 
   await api.init();
+  await makeInputHistoryOnStart();
 
   if (process.env.NODE_ENV === "development") {
     mainWindow.loadURL(APP_CONFIG.devServerUrl);
