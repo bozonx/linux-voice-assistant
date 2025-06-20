@@ -1,12 +1,16 @@
 <template>
+  <OverlayOneColumn v-if="overlayMode === OverlayMode.EDIT_PRESETS">
+    <EditPresets @close="toEditor" />
+  </OverlayOneColumn>
+  <OverlayOneColumn v-if="overlayMode === OverlayMode.ASKING_AI">
+    <div>Запрос к AI...</div>
+  </OverlayOneColumn>
   <div>
     <div>
       <MainInput ref="mainInput"/>
 
       <TextEditToolbar/>
     </div>
-
-    
 
     <h2 class="section-title">Действия</h2>
 
@@ -26,9 +30,12 @@
 
 <script setup lang="ts">
 import { useMainInputStore } from '../stores/mainInput';
+import { OverlayMode, useOverlayStore } from '../stores/mainOverlay';
 
 const route = useRoute();
 const mainInputStore = useMainInputStore();
+const overlayStore = useOverlayStore();
+const overlayMode = computed(() => overlayStore.overlayMode);
 
 // Обработка query параметра text при загрузке страницы
 onMounted(() => {
@@ -49,4 +56,8 @@ onMounted(() => {
     // Продолжаем работу без установки текста
   }
 });
+
+function toEditor() {
+  overlayMode.value = OverlayMode.NONE;
+}
 </script>

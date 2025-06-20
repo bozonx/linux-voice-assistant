@@ -10,7 +10,7 @@ import { useIpcStore } from './stores/ipc';
 import { useMainInputStore } from './stores/mainInput';
 import { GlobalEvents, InitParams, START_MODES } from './types';
 import { useVoiceRecognitionStore } from './stores/voiceRecognition';
-import { useOverlayStore } from './stores/overlay';
+import { useOverlayStore } from './stores/mainOverlay';
 import { useRouter } from 'vue-router';
 import { useGlobalEvents } from './composables/useGlobalEvents';
 

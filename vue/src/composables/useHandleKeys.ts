@@ -1,5 +1,5 @@
 import { useIpcStore } from "../stores/ipc";
-import { OVERLAY_STATUSES, useOverlayStore } from "../stores/overlay";
+import { OVERLAY_STATUSES, useOverlayStore } from "../stores/mainOverlay";
 import { useCallApi } from "./useCallApi";
 import { useCallAi } from "./useCallAi";
 

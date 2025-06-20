@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useIpcStore } from "./ipc";
-import { useOverlayStore } from "./overlay";
+import { useOverlayStore } from "./mainOverlay";
 import { useKeysStore } from "./keys";
 import { useMainInputStore } from "./mainInput";
 import { useCallApi } from "../composables/useCallApi";

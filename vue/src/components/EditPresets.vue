@@ -15,7 +15,7 @@ import { useIpcStore } from '../stores/ipc';
 import { useCallAi } from '../composables/useCallAi';
 
 const props = defineProps<{
-  text: string
+  text?: string
 }>();
 
 const ipcStore = useIpcStore();

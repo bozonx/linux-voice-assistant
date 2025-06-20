@@ -53,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { useOverlayStore } from '../stores/overlay';
+import { useOverlayStore } from '../stores/mainOverlay';
 import { useVoiceRecognitionStore } from '../stores/voiceRecognition';
 
 const overlayStore = useOverlayStore();

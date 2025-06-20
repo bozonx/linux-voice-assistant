@@ -2,7 +2,7 @@
 import miniToastr from "mini-toastr";
 import { useIpcStore } from "../stores/ipc";
 import { useMainInputStore } from "../stores/mainInput";
-import { useOverlayStore } from "../stores/overlay";
+import { useOverlayStore } from "../stores/mainOverlay";
 import { useVoiceRecognitionStore } from "../stores/voiceRecognition";
 import { useCallApi } from "./useCallApi";
 import { useAiRequest } from "../../../common/useAiRequest";
