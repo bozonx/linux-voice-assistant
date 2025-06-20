@@ -23,3 +23,7 @@ export interface IpcResult {
   error?: string;
   result?: any;
 }
+
+export enum GlobalEvents {
+  KEY_UP,
+}

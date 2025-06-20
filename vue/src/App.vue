@@ -7,12 +7,13 @@
 <script setup lang="ts">
 import { useIpcStore } from './stores/ipc';
 import { useMainInputStore } from './stores/mainInput';
-import { InitParams, START_MODES } from './types';
+import { GlobalEvents, InitParams, START_MODES } from './types';
 import { useVoiceRecognitionStore } from './stores/voiceRecognition';
 import { useKeysStore } from './stores/keys';
 import { useHandleKeys } from './composables/useHandleKeys';
 import { useOverlayStore } from './stores/overlay';
 import { useRouter } from 'vue-router';
+import { useGlobalEvents } from './composables/useGlobalEvents';
 
 const ipcStore = useIpcStore();
 const mainInputStore = useMainInputStore();
@@ -21,6 +22,7 @@ const keysStore = useKeysStore();
 const { globalHandleKeyUp } = useHandleKeys();
 const overlayStore = useOverlayStore();
 const router = useRouter();
+const { globalEvents } = useGlobalEvents();
 
 onMounted(() => {
   window.addEventListener('keyup', handleKeyUp)
@@ -76,8 +78,9 @@ onUnmounted(() => {
 });
 
 const handleKeyUp = (event: KeyboardEvent) => {
-  keysStore.setKeyUp(event.code);
-  globalHandleKeyUp(event);
+    // keysStore.setKeyUp(event.code);
+    // globalHandleKeyUp(event);
+    globalEvents.emit(GlobalEvents.KEY_UP, event);
 };
 
 
