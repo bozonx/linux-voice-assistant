@@ -12,6 +12,7 @@ import { useVoiceRecognitionStore } from './stores/voiceRecognition';
 import { useKeysStore } from './stores/keys';
 import { useHandleKeys } from './composables/useHandleKeys';
 import { useOverlayStore } from './stores/overlay';
+import { useRouter } from 'vue-router';
 
 const ipcStore = useIpcStore();
 const mainInputStore = useMainInputStore();
@@ -19,6 +20,7 @@ const voiceRecognitionStore = useVoiceRecognitionStore();
 const keysStore = useKeysStore();
 const { globalHandleKeyUp } = useHandleKeys();
 const overlayStore = useOverlayStore();
+const router = useRouter();
 
 onMounted(() => {
   window.addEventListener('keyup', handleKeyUp)
@@ -48,7 +50,15 @@ onMounted(() => {
     else if (ipcStore.data!.mode === START_MODES.VOICE) {
       voiceRecognitionStore.startRecognizing();
     }
-    // WRITE mode - загружаем сохраненное значение
+    // WRITE mode - переключаемся на роут /write и загружаем сохраненное значение
+    else if (ipcStore.data!.mode === START_MODES.WRITE) {
+      // Переключаемся на роут /write
+      router.push('/write');
+      // await mainInputStore.loadSavedValue();
+      await nextTick()
+      mainInputStore.focus()
+    }
+    // Остальные режимы - загружаем сохраненное значение
     else {
       // await mainInputStore.loadSavedValue();
       await nextTick()

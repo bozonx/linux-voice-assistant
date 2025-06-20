@@ -26,5 +26,6 @@ declare module 'vue' {
     TextArea: typeof import('./src/components/TextArea.vue')['default']
     TextEditToolbar: typeof import('./src/components/TextEditToolbar.vue')['default']
     TransformAndInsertMenu: typeof import('./src/components/TransformAndInsertMenu.vue')['default']
+    WriteMode: typeof import('./src/components/WriteMode.vue')['default']
   }
 }

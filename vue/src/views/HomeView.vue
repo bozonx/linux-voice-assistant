@@ -21,6 +21,7 @@
     <div class="havigation">
       <RouterLink to="/history">История</RouterLink>
       <RouterLink to="/config">Настройки</RouterLink>
+      <RouterLink to="/write">Режим написания</RouterLink>
     </div>
   </div>
 </template>
