@@ -1,26 +1,28 @@
 <template>
-  <OverlayOneColumn>
-    <pre>
-      Esc - назад
+  <OverlayOneColumn v-if="overlayMode === OverlayMode.SHORTCUTS">
+    <pre @keyup="handleShortCutKeyUp" class="shortcuts-list">
+      Esc - <button ref="backButton" @click="toWriteMode">назад</button>
       Ctrl + q - закрыть программу
-      q - ➡️ RU > вставить
-      w - ➡️ EN > вставить
-      e - ➡️ ES > вставить
-      r - ➡️ 
-      t - ➡️ 
-      a - в буфер обмена
-      s - выбор пресета редактирования
-      d - 
-      f - быстрая заметка в Obsidian
+      q - в редактор
+      w - 
+      e - 
+      r - быстрый вопрос к AI
+      t - добавить дело в календарь
+      
+      a - в буфер обмена и закрыть окно
+      s - быстрая заметка в Obsidian
+      d - вставить в базу знаний
+      f - выбор пресета редактирования
       g - поиск в интернете
-      z - в редактор
-      x - в базу знаний
-      c - дело в календарь
-      v - быстрый вопрос к AI
-      b - 
+
+      z - ➡️ RU > вставить
+      x - ➡️ EN > вставить
+      c - ➡️ ES > вставить
+      v - ➡️ 
+      b - ➡️ 
     </pre>
   </OverlayOneColumn>
-  <div class="write-mode-container">
+  <div @keyup="handleKeyUp" class="write-mode-container">
     <div class="hint">
       <div class="hint-text">
         <span>Escape to menu</span>
@@ -29,28 +31,48 @@
       </div>
     </div>
     <div class="textarea-container">
-      <div ref="textareaRef" @keyup="handleKeyUp" @input="handleInput" class="textarea" contenteditable="true"></div>
+      <div ref="textareaRef" @input="handleInput" class="textarea" contenteditable="true"></div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+enum OverlayMode {
+  SHORTCUTS = "shortcuts",
+  EDIT_PRESETS = "edit-presets",
+  NONE = "none",
+}
+
 const currentLineText = ref('');
+const overlayMode = ref(OverlayMode.NONE);
 const textareaRef = ref<HTMLDivElement>();
+const router = useRouter();
+const backButton = ref<HTMLButtonElement>();
 
 onMounted(() => {
   nextTick(() => {
     if (textareaRef.value) {
-      textareaRef.value.focus();
-      const range = document.createRange();
-      const selection = window.getSelection();
-      range.selectNodeContents(textareaRef.value);
-      range.collapse(false);
-      selection?.removeAllRanges();
-      selection?.addRange(range);
+      focusTextarea();
     }
   })
 })
+
+function focusTextarea() {
+  textareaRef.value?.focus();
+  const range = document.createRange();
+  const selection = window.getSelection();
+  range.selectNodeContents(textareaRef.value!);
+  range.collapse(false);
+  selection?.removeAllRanges();
+  selection?.addRange(range);
+}
+
+function toWriteMode() {
+  overlayMode.value = OverlayMode.NONE;
+  nextTick(() => {
+    focusTextarea();
+  })
+}
 
 const handleInput = (event: Event) => {
   currentLineText.value = (event.target as HTMLDivElement).textContent || '';
@@ -59,13 +81,24 @@ const handleInput = (event: Event) => {
 const handleKeyUp = (event: KeyboardEvent) => {
   console.log(event);
   if (event.code === "Escape") {
-    router.push("/");
+    overlayMode.value = OverlayMode.SHORTCUTS;
+
+    nextTick(() => {
+      backButton.value?.focus();
+    })
   }
   else if (event.code === "q" && event.ctrlKey) {
     router.push("/");
   }
   else if (event.code === "Enter" && event.shiftKey) {
     console.log("Enter");
+  }
+}
+
+const handleShortCutKeyUp = (event: KeyboardEvent) => {
+  console.log(event);
+  if (event.code === "Escape") {
+    toWriteMode();
   }
 }
 
@@ -115,4 +148,7 @@ const handleKeyUp = (event: KeyboardEvent) => {
   margin-right: 50px;
 }
 
+.shortcuts-input {
+  /* visibility: hidden; */
+}
 </style>

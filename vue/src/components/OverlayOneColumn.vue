@@ -16,7 +16,7 @@
   z-index: 100;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgb(0 8 2 / 80%);
   color: white;
   font-size: 24px;
   font-weight: bold;
