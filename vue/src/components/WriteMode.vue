@@ -22,7 +22,7 @@
       b - ➡️ 
     </pre>
   </OverlayOneColumn>
-  <div @keyup="handleKeyUp" class="write-mode-container">
+  <div @keyup.enter="handleWriteModeKeyUp" class="write-mode-container">
     <div class="hint">
       <div class="hint-text">
         <span>Escape to menu</span>
@@ -78,7 +78,7 @@ const handleInput = (event: Event) => {
   currentLineText.value = (event.target as HTMLDivElement).textContent || '';
 }
 
-const handleKeyUp = (event: KeyboardEvent) => {
+const handleWriteModeKeyUp = (event: KeyboardEvent) => {
   console.log(event);
   if (event.code === "Escape") {
     overlayMode.value = OverlayMode.SHORTCUTS;
