@@ -13,19 +13,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, watch, onMounted } from 'vue';
-
 const currentLineText = ref('');
-const textareaRef = ref<HTMLTextAreaElement>();
+const textareaRef = ref<HTMLDivElement>();
 
 onMounted(() => {
   nextTick(() => {
-    textareaRef.value?.focus();
+    if (textareaRef.value) {
+      textareaRef.value.focus();
+      const range = document.createRange();
+      const selection = window.getSelection();
+      range.selectNodeContents(textareaRef.value);
+      range.collapse(false);
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+    }
   })
 })
 
 const handleInput = (event: Event) => {
-  currentLineText.value = (event.target as HTMLTextAreaElement).lastChild?.textContent || '';
+  currentLineText.value = (event.target as HTMLDivElement).textContent || '';
 }
 
 </script>
