@@ -2,32 +2,32 @@
   <OverlayOneColumn v-if="overlayMode === OverlayMode.SHORTCUTS">
     <pre @keyup="handleShortCutKeyUp" class="shortcuts-list">
       Esc - <button ref="backButton" @click="toWriteMode">назад</button>
-      Ctrl + q - закрыть программу
-      q - в редактор
+      Ctrl + q - <button @click="closeWindow">закрыть программу</button>
+      q - <button @click="toEditor">в редактор</button>
       w - 
       e - 
-      r - быстрый вопрос к AI
-      t - добавить дело в календарь
+      r - <button @click="askAIShort(inputText)">быстрый вопрос к AI</button>
+      t - <button @click="dealToCalendar(inputText)">добавить дело в календарь</button>
       
-      a - в буфер обмена и закрыть окно
-      s - быстрая заметка в Obsidian
-      d - вставить в базу знаний
+      a - <button @click="intoClipboardAndClose(inputText)">в буфер обмена и закрыть окно</button>
+      s - <button @click="fastNote(inputText)">быстрая заметка в Obsidian</button>
+      d - <button @click="addToKnowledgeBase(inputText)">вставить в базу знаний</button>
       f - выбор пресета редактирования
-      g - поиск в интернете
+      g - <button @click="searchInInternet(inputText)">поиск в интернете</button>
 
-      z - ➡️ RU > вставить
-      x - ➡️ EN > вставить
-      c - ➡️ ES > вставить
-      v - ➡️ 
-      b - ➡️ 
+      <span v-if="ipcStore.data?.userConfig.toTranslateLanguages[0]">z - ➡️ <button @click="translate(0)">{{ipcStore.data?.userConfig.toTranslateLanguages[0]}}</button></span>
+      <span v-if="ipcStore.data?.userConfig.toTranslateLanguages[1]">x - ➡️ <button @click="translate(1)">{{ipcStore.data?.userConfig.toTranslateLanguages[1]}}</button></span>
+      <span v-if="ipcStore.data?.userConfig.toTranslateLanguages[2]">c - ➡️ <button @click="translate(2)">{{ipcStore.data?.userConfig.toTranslateLanguages[2]}}</button></span>
+      <span v-if="ipcStore.data?.userConfig.toTranslateLanguages[3]">v - ➡️ <button @click="translate(3)">{{ipcStore.data?.userConfig.toTranslateLanguages[3]}}</button></span>
+      <span v-if="ipcStore.data?.userConfig.toTranslateLanguages[4]">b - ➡️ <button @click="translate(4)">{{ipcStore.data?.userConfig.toTranslateLanguages[4]}}</button></span>
     </pre>
   </OverlayOneColumn>
   <div @keyup="handleWriteModeKeyUp" class="write-mode-container">
     <div class="hint">
       <div class="hint-text">
-        <span>Escape to menu</span>
-        <span>Shift + Enter to apply and put to the editor</span>
-        <span>Ctrl + q - закрыть программу</span>
+        <span>Escape <button @click="toMenu">to menu</button></span>
+        <span>Shift + Enter <button @click="applyAndInsert">to apply</button></span>
+        <span>Ctrl + q - <button @click="closeWindow">закрыть программу</button></span>
       </div>
     </div>
     <div class="textarea-container">
@@ -37,17 +37,31 @@
 </template>
 
 <script setup lang="ts">
+import { useCallApi } from '../composables/useCallApi';
+import { useIpcStore } from '../stores/ipc';
+import { useCallAi } from '../composables/useCallAi';
+
 enum OverlayMode {
   SHORTCUTS = "shortcuts",
   EDIT_PRESETS = "edit-presets",
   NONE = "none",
 }
 
-const currentLineText = ref('');
+const inputText = ref('');
 const overlayMode = ref(OverlayMode.NONE);
 const textareaRef = ref<HTMLDivElement>();
 const router = useRouter();
 const backButton = ref<HTMLButtonElement>();
+const ipcStore = useIpcStore();
+const { closeWindow, askAIShort,
+  typeIntoWindowAndClose, searchInInternet, fastNote, dealToCalendar,
+  addToKnowledgeBase, intoClipboardAndClose
+} = useCallApi();
+
+const { translateAndInsert } = useCallAi();
+
+
+
 
 onMounted(() => {
   nextTick(() => {
@@ -74,21 +88,38 @@ function toWriteMode() {
   })
 }
 
+function toMenu() {
+  overlayMode.value = OverlayMode.SHORTCUTS;
+
+  nextTick(() => {
+    backButton.value?.focus();
+  })
+}
+
 const handleInput = (event: Event) => {
-  currentLineText.value = (event.target as HTMLDivElement).textContent || '';
+  inputText.value = (event.target as HTMLDivElement).innerText || '';
+  console.log(inputText.value);
+}
+
+function translate(toLangNum: number) {
+  translateAndInsert(toLangNum, inputText.value);
+}
+
+function applyAndInsert() {
+  typeIntoWindowAndClose(inputText.value);
+}
+
+function toEditor() {
+  router.push("/");
 }
 
 const handleWriteModeKeyUp = (event: KeyboardEvent) => {
   console.log(event);
   if (event.code === "Escape") {
-    overlayMode.value = OverlayMode.SHORTCUTS;
-
-    nextTick(() => {
-      backButton.value?.focus();
-    })
+    toMenu();
   }
   else if (event.code === "q" && event.ctrlKey) {
-    router.push("/");
+    closeWindow();
   }
   else if (event.code === "Enter" && event.shiftKey) {
     console.log("Enter");
@@ -96,9 +127,56 @@ const handleWriteModeKeyUp = (event: KeyboardEvent) => {
 }
 
 const handleShortCutKeyUp = (event: KeyboardEvent) => {
-  console.log(event);
   if (event.code === "Escape") {
     toWriteMode();
+  }
+  else if (event.code === "q" && event.ctrlKey) {
+    closeWindow();
+  }
+  else if (event.code === "q") {
+    toEditor();
+  }
+  else if (event.code === "w") {
+    console.log("w");
+  }
+  else if (event.code === "e") {
+    console.log("e");
+  }
+  else if (event.code === "r") {
+    askAIShort(inputText.value);
+  }
+  else if (event.code === "t") {
+    dealToCalendar(inputText.value);
+  }
+  else if (event.code === "a") {
+    intoClipboardAndClose(inputText.value);
+  }
+  else if (event.code === "s") {
+    fastNote(inputText.value);
+  }
+  else if (event.code === "d") {
+    addToKnowledgeBase(inputText.value);
+  }
+  else if (event.code === "f") {
+    // TODO: open edit presets
+  }
+  else if (event.code === "g") {
+    searchInInternet(inputText.value);
+  }
+  else if (event.code === "z") {
+    translate(0);
+  }
+  else if (event.code === "x") {
+    translate(1);
+  }
+  else if (event.code === "c") {
+    translate(2);
+  }
+  else if (event.code === "v") {
+    translate(3);
+  }
+  else if (event.code === "b") {
+    translate(4);
   }
 }
 

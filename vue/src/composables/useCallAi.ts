@@ -156,7 +156,7 @@ export const useCallAi = () => {
         )
       ),
 
-    translateAndInsert: (to: string) =>
+    translateAndInsert: (toLangNum: number, text?: string) =>
       insertMode((value) =>
         aiRequest(
           "translate",

@@ -11,6 +11,10 @@ export const useCallApi = () => {
   const { makeRusStress, doCaseTransform } = useTextTransform();
   const router = useRouter();
 
+  async function closeWindow() {
+    await ipcStore.callFunction("closeMainWindow", []);
+  }
+
   async function typeIntoWindowAndClose(text: string) {
     if (!text.trim()) return;
 
@@ -48,64 +52,78 @@ export const useCallApi = () => {
     await typeIntoWindowAndClose(await transformCb(value));
   }
 
-  const insertIntoWindow = async () => {
-    if (!mainInputStore.value.trim()) return;
+  // const insertIntoWindow = async (text: string) => {
+  //   if (!text.trim()) return;
 
-    await typeIntoWindowAndClose(mainInputStore.value);
-  };
+  //   await typeIntoWindowAndClose(text);
+  // };
 
-  const fastNote = async () => {
-    if (!mainInputStore.value.trim()) return;
+  const fastNote = async (text?: string) => {
+    if (!text?.trim()) return;
 
     console.log("fastNoteInObsidian");
 
     // TODO: do it
   };
 
-  const addToKnowledgeBase = async () => {
-    if (!mainInputStore.value.trim()) return;
+  const addToKnowledgeBase = async (text?: string) => {
+    if (!text?.trim()) return;
 
     console.log("addToKnowledgeBase");
 
     // TODO: do it
   };
 
-  const searchInInternet = async () => {
-    let value = mainInputStore.value;
+  const dealToCalendar = async (text?: string) => {
+    if (!text?.trim()) return;
 
-    if (mainInputStore.selectedText) {
-      value = mainInputStore.selectedText;
-    }
-
-    if (!value.trim()) return;
-
-    await ipcStore.callFunction("openInBrowserAndClose", [value]);
-  };
-
-  const intoClipboardAndClose = async () => {
-    if (!mainInputStore.value.trim()) return;
+    console.log("dealToCalendar");
 
     // TODO: do it
   };
 
-  const askAIlong = async () => {
-    if (!mainInputStore.value.trim()) return;
+  const searchInInternet = async (text?: string) => {
+    let value = text;
+
+    if (!value) {
+      if (mainInputStore.selectedText) {
+        value = mainInputStore.selectedText;
+      } else {
+        value = mainInputStore.value;
+      }
+
+      if (!value.trim()) return;
+    }
+
+    await ipcStore.callFunction("openInBrowserAndClose", [value]);
+  };
+
+  const intoClipboardAndClose = async (text?: string) => {
+    if (!text?.trim()) return;
+
+    // TODO: do it
+  };
+
+  const askAIlong = async (text?: string) => {
+    if (!text?.trim()) return;
 
     // TODO: open in browser
   };
-  const askAIShort = async () => {
-    router.push("/chat");
+
+  const askAIShort = async (text: string) => {
+    // TODO: как правильно передать текст?
+    router.push("/chat?text=" + encodeURIComponent(text));
   };
 
-  const askAItext = async () => {
-    if (!mainInputStore.value.trim()) return;
+  const askAItext = async (text?: string) => {
+    if (!text?.trim()) return;
 
     router.push("/chat");
   };
 
   return {
+    closeWindow,
     typeIntoWindowAndClose,
-    insertIntoWindow,
     fastNote,
     searchInInternet,
     addToKnowledgeBase,
@@ -113,7 +131,7 @@ export const useCallApi = () => {
     askAIlong,
     askAIShort,
     askAItext,
-
+    dealToCalendar,
     formatMdAndInsert: () => insertMode((value) => formatMdAndStyle(value)),
     formatMdAndEdit: () => editMode((value) => formatMdAndStyle(value)),
     formatCodeAndInsert: () => insertMode((value) => formatSomeCode(value)),
