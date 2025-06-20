@@ -1,5 +1,6 @@
 <template>
   <div class="layout">
+    <Overlays />
     <RouterView />
   </div>
 </template>
@@ -9,8 +10,6 @@ import { useIpcStore } from './stores/ipc';
 import { useMainInputStore } from './stores/mainInput';
 import { GlobalEvents, InitParams, START_MODES } from './types';
 import { useVoiceRecognitionStore } from './stores/voiceRecognition';
-import { useKeysStore } from './stores/keys';
-import { useHandleKeys } from './composables/useHandleKeys';
 import { useOverlayStore } from './stores/overlay';
 import { useRouter } from 'vue-router';
 import { useGlobalEvents } from './composables/useGlobalEvents';
@@ -18,8 +17,6 @@ import { useGlobalEvents } from './composables/useGlobalEvents';
 const ipcStore = useIpcStore();
 const mainInputStore = useMainInputStore();
 const voiceRecognitionStore = useVoiceRecognitionStore();
-const keysStore = useKeysStore();
-const { globalHandleKeyUp } = useHandleKeys();
 const overlayStore = useOverlayStore();
 const router = useRouter();
 const { globalEvents } = useGlobalEvents();

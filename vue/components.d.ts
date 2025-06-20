@@ -11,6 +11,7 @@ declare module 'vue' {
     ActionsMenu: typeof import('./src/components/ActionsMenu.vue')['default']
     AiChat: typeof import('./src/components/AiChat.vue')['default']
     DropdownRow: typeof import('./src/components/DropdownRow.vue')['default']
+    EditPresets: typeof import('./src/components/EditPresets.vue')['default']
     History: typeof import('./src/components/History.vue')['default']
     InputHistory: typeof import('./src/components/InputHistory.vue')['default']
     InputRow: typeof import('./src/components/InputRow.vue')['default']

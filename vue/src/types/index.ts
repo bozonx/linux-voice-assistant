@@ -27,3 +27,23 @@ export interface IpcResult {
 export enum GlobalEvents {
   KEY_UP,
 }
+
+export const EDIT_PRESET_KEYS = [
+  "q",
+  "w",
+  "e",
+  "r",
+  "t",
+
+  "a",
+  "s",
+  "d",
+  "f",
+  "g",
+
+  "z",
+  "x",
+  "c",
+  "v",
+  "b",
+];

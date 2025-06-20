@@ -66,12 +66,17 @@ export const useCallAi = () => {
   };
 
   const insertMode = async (
-    transformCb: (value: string) => Promise<string>
+    transformCb: (value: string) => Promise<string>,
+    text?: string
   ) => {
-    let value = mainInputStore.value;
+    let value;
 
-    if (mainInputStore.selectedText) {
+    if (text) {
+      value = text;
+    } else if (mainInputStore.selectedText) {
       value = mainInputStore.selectedText;
+    } else {
+      value = mainInputStore.value;
     }
 
     if (!value.trim()) return;
@@ -116,14 +121,16 @@ export const useCallAi = () => {
     dealToCalendar,
     sendChatMessage,
 
-    correctAndInsert: () =>
-      insertMode((value) =>
-        aiRequest(
-          "correction",
-          ipcStore.data!.appConfig.aiInstructions.clearResult,
-          ipcStore.data!.userConfig.aiTasks.correction,
-          value
-        )
+    correctAndInsert: (text?: string) =>
+      insertMode(
+        (value) =>
+          aiRequest(
+            "correction",
+            ipcStore.data!.appConfig.aiInstructions.clearResult,
+            ipcStore.data!.userConfig.aiTasks.correction,
+            value
+          ),
+        text
       ),
 
     correctAndEdit: () =>
@@ -136,14 +143,16 @@ export const useCallAi = () => {
         )
       ),
 
-    editAndInsert: (presetNum: number) =>
-      insertMode((value) =>
-        aiRequest(
-          "deepEdit",
-          ipcStore.data!.appConfig.aiInstructions.clearResult,
-          ipcStore.data!.userConfig.aiTasks.deepEdit[presetNum].context,
-          value
-        )
+    editAndInsert: (presetNum: number, text?: string) =>
+      insertMode(
+        (value) =>
+          aiRequest(
+            "deepEdit",
+            ipcStore.data!.appConfig.aiInstructions.clearResult,
+            ipcStore.data!.userConfig.aiTasks.deepEdit[presetNum].context,
+            value
+          ),
+        text
       ),
 
     editAndEdit: (presetNum: number) =>
@@ -157,13 +166,17 @@ export const useCallAi = () => {
       ),
 
     translateAndInsert: (toLangNum: number, text?: string) =>
-      insertMode((value) =>
-        aiRequest(
-          "translate",
-          ipcStore.data!.appConfig.aiInstructions.clearResult,
-          ipcStore.data!.userConfig.aiTasks.translate + " " + to,
-          value
-        )
+      insertMode(
+        (value) =>
+          aiRequest(
+            "translate",
+            ipcStore.data!.appConfig.aiInstructions.clearResult,
+            ipcStore.data!.userConfig.aiTasks.translate +
+              " " +
+              ipcStore.data!.userConfig.toTranslateLanguages[toLangNum],
+            value
+          ),
+        text
       ),
 
     translateAndEdit: (to: string) =>

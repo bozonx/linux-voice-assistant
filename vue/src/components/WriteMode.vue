@@ -1,32 +1,36 @@
 <template>
-  <OverlayOneColumn v-if="overlayMode === OverlayMode.SHORTCUTS">
-    <pre @keyup.prevent="handleShortCutKeyUp" class="shortcuts-list">
-      Esc - <button ref="backButton" @click="toWriteMode">назад</button>
-      Space - <button @click="typeIntoWindowAndClose(inputText)">вставить</button>
-      Ctrl + q - <button @click="closeWindow">закрыть программу</button>
-      q - <button @click="toEditor">в редактор</button>
-      w - 
-      e - 
-      r - <button @click="askAIShort(inputText)">быстрый вопрос к AI</button>
-      t - <button @click="dealToCalendar(inputText)">добавить дело в календарь</button>
+<OverlayOneColumn v-if="overlayMode === OverlayMode.EDIT_PRESETS">
+  <EditPresets @close="toShortcuts" :text="inputText" />
+</OverlayOneColumn>
+<OverlayOneColumn v-if="overlayMode === OverlayMode.SHORTCUTS">
+    <div @keyup.prevent="handleShortCutKeyUp" class="shortcuts-list">
+      <div>Esc - <button ref="backButton" @click="toWriteMode">назад</button></div>
+      <div>Space - <button @click="typeIntoWindowAndClose(inputText)">вставить</button></div>
+      <div>Ctrl + q - <button @click="closeWindow">закрыть программу</button></div>
+      <div>q - <button @click="toEditor">в редактор</button></div>
+      <div>w - </div>
+      <div>e - </div>
+      <div>r - <button @click="askAIShort(inputText)">быстрый вопрос к AI</button></div>
+      <div>t - <button @click="dealToCalendar(inputText)">добавить дело в календарь</button></div>
       
-      a - <button @click="intoClipboardAndClose(inputText)">в буфер обмена и закрыть окно</button>
-      s - <button @click="fastNote(inputText)">быстрая заметка в Obsidian</button>
-      d - <button @click="addToKnowledgeBase(inputText)">вставить в базу знаний</button>
-      f - выбор пресета редактирования
-      g - <button @click="searchInInternet(inputText)">поиск в интернете</button>
+      <div>a - <button @click="intoClipboardAndClose(inputText)">в буфер обмена и закрыть окно</button></div>
+      <div>s - <button @click="fastNote(inputText)">быстрая заметка в Obsidian</button></div>
+      <div>d - <button @click="addToKnowledgeBase(inputText)">вставить в базу знаний</button></div>
+      <div>f - <button @click="toEditPresets">выбор пресета редактирования</button></div>
+      <div>g - <button @click="searchInInternet(inputText)">поиск в интернете</button></div>
 
-      <span v-if="ipcStore.data?.userConfig.toTranslateLanguages[0]">z - ➡️ <button @click="translate(0)">{{ipcStore.data?.userConfig.toTranslateLanguages[0]}}</button></span>
-      <span v-if="ipcStore.data?.userConfig.toTranslateLanguages[1]">x - ➡️ <button @click="translate(1)">{{ipcStore.data?.userConfig.toTranslateLanguages[1]}}</button></span>
-      <span v-if="ipcStore.data?.userConfig.toTranslateLanguages[2]">c - ➡️ <button @click="translate(2)">{{ipcStore.data?.userConfig.toTranslateLanguages[2]}}</button></span>
-      <span v-if="ipcStore.data?.userConfig.toTranslateLanguages[3]">v - ➡️ <button @click="translate(3)">{{ipcStore.data?.userConfig.toTranslateLanguages[3]}}</button></span>
-      <span v-if="ipcStore.data?.userConfig.toTranslateLanguages[4]">b - ➡️ <button @click="translate(4)">{{ipcStore.data?.userConfig.toTranslateLanguages[4]}}</button></span>
-    </pre>
+      <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[0]">z - ➡️ <button @click="translate(0)">{{ipcStore.data?.userConfig.toTranslateLanguages[0]}}</button></div>
+      <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[1]">x - ➡️ <button @click="translate(1)">{{ipcStore.data?.userConfig.toTranslateLanguages[1]}}</button></div>
+      <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[2]">c - ➡️ <button @click="translate(2)">{{ipcStore.data?.userConfig.toTranslateLanguages[2]}}</button></div>
+      <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[3]">v - ➡️ <button @click="translate(3)">{{ipcStore.data?.userConfig.toTranslateLanguages[3]}}</button></div>
+      <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[4]">b - ➡️ <button @click="translate(4)">{{ipcStore.data?.userConfig.toTranslateLanguages[4]}}</button></div>
+    </div>
   </OverlayOneColumn>
+
   <div @keyup="handleWriteModeKeyUp" class="write-mode-container">
     <div class="hint">
       <div class="hint-text">
-        <span>Escape <button @click="toMenu">to menu</button></span>
+        <span>Escape <button @click="toShortcuts">to menu</button></span>
         <span>Ctrl + q - <button @click="closeWindow">закрыть программу</button></span>
       </div>
     </div>
@@ -89,12 +93,16 @@ function toWriteMode() {
   })
 }
 
-function toMenu() {
+function toShortcuts() {
   overlayMode.value = OverlayMode.SHORTCUTS;
 
   nextTick(() => {
     backButton.value?.focus();
   })
+}
+
+function toEditPresets() {
+  overlayMode.value = OverlayMode.EDIT_PRESETS;
 }
 
 function translate(toLangNum: number) {
@@ -120,7 +128,7 @@ function toEditor() {
 
 const handleWriteModeKeyUp = (event: KeyboardEvent) => {
   if (event.code === "Escape") {
-    toMenu();
+    toShortcuts();
   }
   else if (event.code === "KeyQ" && event.ctrlKey) {
     closeWindow();
@@ -162,7 +170,7 @@ const handleShortCutKeyUp = (event: KeyboardEvent) => {
     addToKnowledgeBase(inputText.value);
   }
   else if (event.code === "KeyF") {
-    // TODO: open edit presets
+    toEditPresets();
   }
   else if (event.code === "KeyG") {
     searchInInternet(inputText.value);
@@ -230,7 +238,4 @@ const handleShortCutKeyUp = (event: KeyboardEvent) => {
   margin-right: 50px;
 }
 
-.shortcuts-input {
-  /* visibility: hidden; */
-}
 </style>

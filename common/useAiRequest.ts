@@ -32,6 +32,24 @@ export const useAiRequest = () => {
     const model = userConfig.models[modelId];
     const baseUrl = model.baseUrl || userConfig.openrouterDefaultBaseUrl;
     const apiKey = model.apiKey || userConfig.openrouterDefaultApiKey;
+    const modelName = model.model;
+
+    console.log(
+      1,
+      preparedInstructions,
+      2,
+      messages,
+      3,
+      modelId,
+      4,
+      modelName,
+      5,
+      baseUrl,
+      6,
+      apiKey
+    );
+    return;
+
     const result = await fetch(baseUrl + "/chat/completions", {
       method: "POST",
       headers: {
@@ -41,7 +59,7 @@ export const useAiRequest = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: model.model,
+        model: modelName,
         messages,
       }),
     });

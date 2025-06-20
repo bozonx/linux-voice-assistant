@@ -1,8 +1,8 @@
 <template>
   <div>
     <ul class="big-buttons-toolbar">
-      <li v-for="lang in ipcStore.data?.userConfig.toTranslateLanguages" :key="lang">
-        <button class="button" @click="translateAndInsert(lang)">➡️ {{ lang }}</button>
+      <li v-for="(lang, index) in ipcStore.data?.userConfig.toTranslateLanguages" :key="lang">
+        <button class="button" @click="translateAndInsert(index)">➡️ {{ lang }}</button>
       </li>
     </ul>
 
