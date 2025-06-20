@@ -22,7 +22,7 @@
       b - ➡️ 
     </pre>
   </OverlayOneColumn>
-  <div @keyup.enter="handleWriteModeKeyUp" class="write-mode-container">
+  <div @keyup="handleWriteModeKeyUp" class="write-mode-container">
     <div class="hint">
       <div class="hint-text">
         <span>Escape to menu</span>
