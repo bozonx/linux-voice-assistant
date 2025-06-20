@@ -1,7 +1,8 @@
 <template>
   <OverlayOneColumn v-if="overlayMode === OverlayMode.SHORTCUTS">
-    <pre @keyup="handleShortCutKeyUp" class="shortcuts-list">
+    <pre @keyup.prevent="handleShortCutKeyUp" class="shortcuts-list">
       Esc - <button ref="backButton" @click="toWriteMode">назад</button>
+      Space - <button @click="typeIntoWindowAndClose(inputText)">вставить</button>
       Ctrl + q - <button @click="closeWindow">закрыть программу</button>
       q - <button @click="toEditor">в редактор</button>
       w - 
@@ -26,7 +27,6 @@
     <div class="hint">
       <div class="hint-text">
         <span>Escape <button @click="toMenu">to menu</button></span>
-        <span>Shift + Enter <button @click="applyAndInsert">to apply</button></span>
         <span>Ctrl + q - <button @click="closeWindow">закрыть программу</button></span>
       </div>
     </div>
@@ -60,9 +60,6 @@ const { closeWindow, askAIShort,
 
 const { translateAndInsert } = useCallAi();
 
-
-
-
 onMounted(() => {
   nextTick(() => {
     if (textareaRef.value) {
@@ -70,6 +67,10 @@ onMounted(() => {
     }
   })
 })
+
+const handleInput = (event: Event) => {
+  inputText.value = (event.target as HTMLDivElement).innerText || '';
+}
 
 function focusTextarea() {
   textareaRef.value?.focus();
@@ -96,17 +97,8 @@ function toMenu() {
   })
 }
 
-const handleInput = (event: Event) => {
-  inputText.value = (event.target as HTMLDivElement).innerText || '';
-  console.log(inputText.value);
-}
-
 function translate(toLangNum: number) {
   translateAndInsert(toLangNum, inputText.value);
-}
-
-function applyAndInsert() {
-  typeIntoWindowAndClose(inputText.value);
 }
 
 function toEditor() {
@@ -127,15 +119,11 @@ function toEditor() {
 }
 
 const handleWriteModeKeyUp = (event: KeyboardEvent) => {
-  console.log(event);
   if (event.code === "Escape") {
     toMenu();
   }
-  else if (event.code === "q" && event.ctrlKey) {
+  else if (event.code === "KeyQ" && event.ctrlKey) {
     closeWindow();
-  }
-  else if (event.code === "Enter" && event.shiftKey) {
-    console.log("Enter");
   }
 }
 
@@ -143,52 +131,55 @@ const handleShortCutKeyUp = (event: KeyboardEvent) => {
   if (event.code === "Escape") {
     toWriteMode();
   }
-  else if (event.code === "q" && event.ctrlKey) {
+  else if (event.code === "Space") {
+    typeIntoWindowAndClose(inputText.value)
+  }
+  else if (event.code === "KeyQ" && event.ctrlKey) {
     closeWindow();
   }
-  else if (event.code === "q") {
+  else if (event.code === "KeyQ") {
     toEditor();
   }
-  else if (event.code === "w") {
+  else if (event.code === "KeyW") {
     console.log("w");
   }
-  else if (event.code === "e") {
+  else if (event.code === "KeyE") {
     console.log("e");
   }
-  else if (event.code === "r") {
+  else if (event.code === "KeyR") {
     askAIShort(inputText.value);
   }
-  else if (event.code === "t") {
+  else if (event.code === "KeyT") {
     dealToCalendar(inputText.value);
   }
-  else if (event.code === "a") {
+  else if (event.code === "KeyA") {
     intoClipboardAndClose(inputText.value);
   }
-  else if (event.code === "s") {
+  else if (event.code === "KeyS") {
     fastNote(inputText.value);
   }
-  else if (event.code === "d") {
+  else if (event.code === "KeyD") {
     addToKnowledgeBase(inputText.value);
   }
-  else if (event.code === "f") {
+  else if (event.code === "KeyF") {
     // TODO: open edit presets
   }
-  else if (event.code === "g") {
+  else if (event.code === "KeyG") {
     searchInInternet(inputText.value);
   }
-  else if (event.code === "z") {
+  else if (event.code === "KeyZ") {
     translate(0);
   }
-  else if (event.code === "x") {
+  else if (event.code === "KeyX") {
     translate(1);
   }
-  else if (event.code === "c") {
+  else if (event.code === "KeyC") {
     translate(2);
   }
-  else if (event.code === "v") {
+  else if (event.code === "KeyV") {
     translate(3);
   }
-  else if (event.code === "b") {
+  else if (event.code === "KeyB") {
     translate(4);
   }
 }
