@@ -1,13 +1,35 @@
 <template>
+  <OverlayOneColumn>
+    <pre>
+      Esc - назад
+      Ctrl + q - закрыть программу
+      q - ➡️ RU > вставить
+      w - ➡️ EN > вставить
+      e - ➡️ ES > вставить
+      r - ➡️ 
+      t - ➡️ 
+      a - в буфер обмена
+      s - выбор пресета редактирования
+      d - 
+      f - быстрая заметка в Obsidian
+      g - поиск в интернете
+      z - в редактор
+      x - в базу знаний
+      c - дело в календарь
+      v - быстрый вопрос к AI
+      b - 
+    </pre>
+  </OverlayOneColumn>
   <div class="write-mode-container">
     <div class="hint">
       <div class="hint-text">
         <span>Escape to menu</span>
-        <span>Left Shift to apply and put to the editor</span>
+        <span>Shift + Enter to apply and put to the editor</span>
+        <span>Ctrl + q - закрыть программу</span>
       </div>
     </div>
     <div class="textarea-container">
-      <div ref="textareaRef" @input="handleInput" class="textarea" contenteditable="true"></div>
+      <div ref="textareaRef" @keyup="handleKeyUp" @input="handleInput" class="textarea" contenteditable="true"></div>
     </div>
   </div>
 </template>
@@ -32,6 +54,19 @@ onMounted(() => {
 
 const handleInput = (event: Event) => {
   currentLineText.value = (event.target as HTMLDivElement).textContent || '';
+}
+
+const handleKeyUp = (event: KeyboardEvent) => {
+  console.log(event);
+  if (event.code === "Escape") {
+    router.push("/");
+  }
+  else if (event.code === "q" && event.ctrlKey) {
+    router.push("/");
+  }
+  else if (event.code === "Enter" && event.shiftKey) {
+    console.log("Enter");
+  }
 }
 
 </script>
