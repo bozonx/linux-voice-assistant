@@ -22,10 +22,33 @@
   import { useChatStore } from "../stores/chat";
 
   const router = useRouter();
+  const route = useRoute();
   const chatStore = useChatStore();
   const message = ref<string>("");
 
+  // Обработка query параметра text при загрузке компонента
+  onMounted(() => {
+    try {
+      const textFromQuery = route.query.text as string;
+      if (textFromQuery && textFromQuery.trim()) {
+        // Декодируем URL-encoded текст
+        const decodedText = decodeURIComponent(textFromQuery);
+        message.value = decodedText;
+        
+        // Автоматически отправляем сообщение если текст передан
+        nextTick(() => {
+          sendMessage();
+        });
+      }
+    } catch (error) {
+      console.error("Error processing query parameter:", error);
+      // Продолжаем работу без автоматической отправки
+    }
+  });
+
   const sendMessage = () => {
+    if (!message.value.trim()) return;
+    
     chatStore.sendMessage(message.value);
     message.value = "";
   };

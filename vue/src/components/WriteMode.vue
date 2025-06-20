@@ -110,7 +110,20 @@ function applyAndInsert() {
 }
 
 function toEditor() {
-  router.push("/");
+  if (!inputText.value.trim()) {
+    router.push("/");
+    return;
+  }
+  
+  try {
+    router.push({
+      path: "/",
+      query: { text: inputText.value }
+    });
+  } catch (error) {
+    console.error("Error navigating to editor:", error);
+    router.push("/");
+  }
 }
 
 const handleWriteModeKeyUp = (event: KeyboardEvent) => {

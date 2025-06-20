@@ -111,8 +111,15 @@ export const useCallApi = () => {
   };
 
   const askAIShort = async (text: string) => {
-    // TODO: как правильно передать текст?
-    router.push("/chat?text=" + encodeURIComponent(text));
+    if (!text.trim()) return;
+
+    // Передаем текст через query параметры в чат
+    // Пример: router.push({ path: "/chat", query: { text: "Question" } })
+    // Результат: /chat?text=Question
+    router.push({
+      path: "/chat",
+      query: { text: text },
+    });
   };
 
   const askAItext = async (text?: string) => {
