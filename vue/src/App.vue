@@ -85,7 +85,10 @@ const handleKeyUp = (event: KeyboardEvent) => {
 
 <style scoped>
 .layout {
-  min-height: 100vh;
+  height: 100dvh;
+  width: 100vw;
   padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
 }
 </style>

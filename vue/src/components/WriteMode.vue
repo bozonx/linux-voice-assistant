@@ -1,19 +1,28 @@
 <template>
   <div class="write-mode-container">
-    <div>test text</div>
+    <textarea class="write-mode-textarea" v-model="text" />
   </div>
 </template>
 
 <script setup lang="ts">
+
+const text = ref('');
 
 </script>
 
 <style scoped>
 .write-mode-container {
   display: flex;
-  flex-direction: column;
   align-items: end;
   justify-content: center;
   height: 100%;
+  min-height: 100%;
 }
+
+.write-mode-textarea {
+  width: 80%;
+  height: 100%;
+  resize: none;
+}
+
 </style>
