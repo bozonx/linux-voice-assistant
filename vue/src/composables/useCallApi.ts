@@ -24,22 +24,6 @@ export const useCallApi = () => {
     ]);
   }
 
-  async function editMode(transformCb: (value: string) => Promise<string>) {
-    let value = mainInputStore.value;
-
-    if (mainInputStore.selectedText) {
-      value = mainInputStore.selectedText;
-    }
-
-    if (!value.trim()) return;
-
-    value = await transformCb(value);
-
-    mainInputStore.selectedText
-      ? mainInputStore.replaceSelection(value)
-      : mainInputStore.setValue(value);
-  }
-
   async function insertMode(transformCb: (value: string) => Promise<string>) {
     let value = mainInputStore.value;
 
@@ -137,16 +121,10 @@ export const useCallApi = () => {
     askAItext,
     dealToCalendar,
     formatMdAndInsert: () => insertMode((value) => formatMdAndStyle(value)),
-    formatMdAndEdit: () => editMode((value) => formatMdAndStyle(value)),
     formatCodeAndInsert: () => insertMode((value) => formatSomeCode(value)),
-    formatCodeAndEdit: () => editMode((value) => formatSomeCode(value)),
     rusStressAndInsert: () =>
       insertMode((value) => Promise.resolve(makeRusStress(value))),
-    rusStressAndEdit: () =>
-      editMode((value) => Promise.resolve(makeRusStress(value))),
     transformTextAndInsert: (type: string) =>
       insertMode((value) => Promise.resolve(doCaseTransform(value, type))),
-    transformTextAndEdit: (type: string) =>
-      editMode((value) => Promise.resolve(doCaseTransform(value, type))),
   };
 };

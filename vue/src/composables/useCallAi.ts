@@ -45,26 +45,6 @@ export const useCallAi = () => {
     voiceRecognitionStore.startRecognizing();
   };
 
-  const editMode = async (transformCb: (value: string) => Promise<string>) => {
-    let value = mainInputStore.value;
-
-    if (mainInputStore.selectedText) {
-      value = mainInputStore.selectedText;
-    }
-
-    if (!value.trim()) return;
-
-    overlayStore.startAskingAi();
-
-    value = await transformCb(value);
-
-    mainInputStore.selectedText
-      ? mainInputStore.replaceSelection(value)
-      : mainInputStore.setValue(value);
-
-    overlayStore.hideOverlay();
-  };
-
   const insertMode = async (
     transformCb: (value: string) => Promise<string>,
     text?: string
@@ -117,6 +97,7 @@ export const useCallAi = () => {
   };
 
   return {
+    aiRequest,
     voiceRecognition,
     dealToCalendar,
     sendChatMessage,
@@ -133,16 +114,6 @@ export const useCallAi = () => {
         text
       ),
 
-    correctAndEdit: () =>
-      editMode((value) =>
-        aiRequest(
-          "correction",
-          ipcStore.data!.appConfig.aiInstructions.clearResult,
-          ipcStore.data!.userConfig.aiTasks.correction,
-          value
-        )
-      ),
-
     editAndInsert: (presetNum: number, text?: string) =>
       insertMode(
         (value) =>
@@ -153,16 +124,6 @@ export const useCallAi = () => {
             value
           ),
         text
-      ),
-
-    editAndEdit: (presetNum: number) =>
-      editMode((value) =>
-        aiRequest(
-          "deepEdit",
-          ipcStore.data!.appConfig.aiInstructions.clearResult,
-          ipcStore.data!.userConfig.aiTasks.deepEdit[presetNum].context,
-          value
-        )
       ),
 
     translateAndInsert: (toLangNum: number, text?: string) =>
@@ -177,16 +138,6 @@ export const useCallAi = () => {
             value
           ),
         text
-      ),
-
-    translateAndEdit: (to: string) =>
-      editMode((value) =>
-        aiRequest(
-          "translate",
-          ipcStore.data!.appConfig.aiInstructions.clearResult,
-          ipcStore.data!.userConfig.aiTasks.translate + " " + to,
-          value
-        )
       ),
   };
 };
