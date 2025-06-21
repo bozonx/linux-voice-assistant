@@ -14,7 +14,7 @@ export const useCallAi = () => {
   const mainInputStore = useMainInputStore();
   const overlayStore = useOverlayStore();
   const voiceRecognitionStore = useVoiceRecognitionStore();
-  const { typeIntoWindowAndClose } = useCallApi();
+  const { typeIntoWindowAndClose, resolveText } = useCallApi();
 
   async function aiRequest(
     modelUsage: string,
@@ -68,8 +68,13 @@ export const useCallAi = () => {
     overlayStore.hideOverlay();
   };
 
-  const dealToCalendar = async () => {
-    if (!mainInputStore.value.trim()) return;
+  const dealToCalendar = async (text?: string) => {
+    let value = resolveText(text);
+
+    if (!value?.trim()) {
+      miniToastr.error("Текст не выбран");
+      return;
+    }
 
     console.log("dealToCalendar");
 

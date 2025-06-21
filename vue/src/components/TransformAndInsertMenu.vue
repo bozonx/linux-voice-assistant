@@ -58,6 +58,7 @@ import { useMainInputStore } from '../stores/mainInput';
 import { useCodeFormatter } from '../composables/useCodeFormatter';
 import { useTextTransform } from '../composables/useTextTransform';
 import { useCallApi } from '../composables/useCallApi';
+import miniToastr from "mini-toastr";
 
 const { formatMdAndStyle, formatSomeCode } = useCodeFormatter();
 const { makeRusStress, doCaseTransform } = useTextTransform();
@@ -78,7 +79,10 @@ async function insertMode(transformCb: (value: string) => Promise<string>) {
     value = mainInputStore.selectedText;
   }
 
-  if (!value.trim()) return;
+  if (!value.trim()) {
+    miniToastr.error("Текст не выбран");
+    return;
+  }
 
   await typeIntoWindowAndClose(await transformCb(value));
 }

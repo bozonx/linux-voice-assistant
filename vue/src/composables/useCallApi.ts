@@ -1,7 +1,8 @@
-import { useRouteParams } from "src/stores/routeParams";
+import { useRouteParams } from "../stores/routeParams";
 import { useIpcStore } from "../stores/ipc";
 import { useMainInputStore } from "../stores/mainInput";
 import { useRouter } from "vue-router";
+import miniToastr from "mini-toastr";
 
 export const useCallApi = () => {
   const ipcStore = useIpcStore();
@@ -23,14 +24,18 @@ export const useCallApi = () => {
     ]);
   }
 
-  function resolveText(text?: string) {
+  function resolveText(text?: string): string {
+    let value;
+
     if (text) {
-      return text;
+      value = text;
     } else if (mainInputStore.selectedText) {
-      return mainInputStore.selectedText;
+      value = mainInputStore.selectedText;
     } else {
-      return mainInputStore.value;
+      value = mainInputStore.value;
     }
+
+    return value || "";
   }
 
   // const insertIntoWindow = async (text: string) => {
@@ -42,7 +47,10 @@ export const useCallApi = () => {
   const fastNote = async (text?: string) => {
     let value = resolveText(text);
 
-    if (!value?.trim()) return;
+    if (!value?.trim()) {
+      miniToastr.error("Текст не выбран");
+      return;
+    }
 
     console.log("fastNoteInObsidian");
 
@@ -52,7 +60,10 @@ export const useCallApi = () => {
   const addToKnowledgeBase = async (text?: string) => {
     let value = resolveText(text);
 
-    if (!value?.trim()) return;
+    if (!value?.trim()) {
+      miniToastr.error("Текст не выбран");
+      return;
+    }
 
     console.log("addToKnowledgeBase");
 
@@ -62,7 +73,10 @@ export const useCallApi = () => {
   const dealToCalendar = async (text?: string) => {
     let value = resolveText(text);
 
-    if (!value?.trim()) return;
+    if (!value?.trim()) {
+      miniToastr.error("Текст не выбран");
+      return;
+    }
 
     console.log("dealToCalendar");
 
@@ -72,7 +86,10 @@ export const useCallApi = () => {
   const searchInInternet = async (text?: string) => {
     let value = resolveText(text);
 
-    if (!value?.trim()) return;
+    if (!value?.trim()) {
+      miniToastr.error("Текст не выбран");
+      return;
+    }
 
     await ipcStore.callFunction("openInBrowserAndClose", [value]);
   };
@@ -80,15 +97,32 @@ export const useCallApi = () => {
   const intoClipboardAndClose = async (text?: string) => {
     let value = resolveText(text);
 
-    if (!value?.trim()) return;
+    if (!value?.trim()) {
+      miniToastr.error("Текст не выбран");
+      return;
+    }
 
     // TODO: do it
+  };
+
+  const insertIntoWindow = async (text?: string) => {
+    let value = resolveText(text);
+
+    if (!value?.trim()) {
+      miniToastr.error("Текст не выбран");
+      return;
+    }
+
+    await typeIntoWindowAndClose(value);
   };
 
   const askAIlong = async (text?: string) => {
     let value = resolveText(text);
 
-    if (!value?.trim()) return;
+    if (!value?.trim()) {
+      miniToastr.error("Текст не выбран");
+      return;
+    }
 
     // TODO: open in browser
   };
@@ -96,7 +130,10 @@ export const useCallApi = () => {
   const askAIShort = async (text?: string) => {
     let value = resolveText(text);
 
-    if (!value?.trim()) return;
+    if (!value?.trim()) {
+      miniToastr.error("Текст не выбран");
+      return;
+    }
 
     routeParamsStore.setParams({ message: value });
     router.push("/chat");
@@ -105,19 +142,24 @@ export const useCallApi = () => {
   const askAItext = async (text?: string) => {
     let value = resolveText(text);
 
-    if (!value?.trim()) return;
+    if (!value?.trim()) {
+      miniToastr.error("Текст не выбран");
+      return;
+    }
 
     routeParamsStore.setParams({ context: value });
     router.push("/chat");
   };
 
   return {
+    resolveText,
     closeWindow,
     typeIntoWindowAndClose,
     fastNote,
     searchInInternet,
     addToKnowledgeBase,
     intoClipboardAndClose,
+    insertIntoWindow,
     askAIlong,
     askAIShort,
     askAItext,
