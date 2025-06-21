@@ -1,16 +1,20 @@
 <template>
   <OverlayOneColumn v-if="overlayMode === OverlayMode.EDIT_PRESETS">
-    <EditPresets @close="toShortcuts" :text="inputText" />
+    <EditPresets @close="toShortcuts" :text="correctedText" />
   </OverlayOneColumn>
 
   <OverlayOneColumn v-if="overlayMode === OverlayMode.SHORTCUTS">
     <InsertShortCuts :text="inputText" @back="toWriteMode" @editPresets="toEditPresets" />
   </OverlayOneColumn>
 
+  <OverlayOneColumn v-if="overlayMode === OverlayMode.CORRECTION">
+    Коррекция ...
+  </OverlayOneColumn>
+
   <div @keyup="handleWriteModeKeyUp" class="write-mode-container">
     <div class="hint">
       <div class="hint-text">
-        <span>Escape <button @click="toShortcuts">to menu</button></span>
+        <span>Escape <button @click="doCorrection">to menu</button></span>
         <span>Ctrl + q - <button @click="closeWindow">закрыть программу</button></span>
       </div>
     </div>
@@ -22,17 +26,22 @@
 
 <script setup lang="ts">
 import { useCallApi } from '../composables/useCallApi';
+import { useCallAi } from '../composables/useCallAi';
 
 enum OverlayMode {
+  CORRECTION = "correction",
   SHORTCUTS = "shortcuts",
   EDIT_PRESETS = "edit-presets",
   NONE = "none",
 }
 
 const { closeWindow } = useCallApi();
+const { correctText } = useCallAi();
 const overlayMode = ref(OverlayMode.NONE);
 const textareaRef = ref<HTMLDivElement>();
 const inputText = ref('');
+const correctedText = ref('');
+const correctionIsActual = ref(true);
 
 onMounted(() => {
   if (textareaRef.value) {
@@ -42,6 +51,7 @@ onMounted(() => {
 
 const handleInput = (event: Event) => {
   inputText.value = (event.target as HTMLDivElement).innerText || '';
+  correctionIsActual.value = false;
 }
 
 function focusTextarea() {
@@ -70,9 +80,22 @@ function toWriteMode() {
   focusTextarea();
 }
 
+async function doCorrection() {
+  if (correctionIsActual.value) {
+    overlayMode.value = OverlayMode.CORRECTION;
+
+    const result = await correctText(inputText.value);
+
+    correctedText.value = result;
+    correctionIsActual.value = true;
+  }
+
+  toShortcuts();
+}
+
 const handleWriteModeKeyUp = (event: KeyboardEvent) => {
   if (event.code === "Escape") {
-    toShortcuts();
+    doCorrection();
   }
   else if (event.code === "KeyQ" && event.ctrlKey) {
     closeWindow();

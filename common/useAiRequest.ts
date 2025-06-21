@@ -25,8 +25,8 @@ export const useAiRequest = () => {
     const messages = Array.isArray(userInput)
       ? userInput
       : [
-          { role: "developer", content: preparedInstructions },
-          { role: "user", content: task + ":\n\n" + userInput },
+          { role: "developer", content: preparedInstructions.trim() },
+          { role: "user", content: task.trim() + ":\n\n" + userInput },
         ];
     const modelId = (userConfig.aiModelUsage as any)[modelUsage];
     const model = userConfig.models[modelId];

@@ -29,7 +29,7 @@ export const useCallAi = () => {
       task,
       userInput
     );
-
+    doCorrection
     if (result.error) {
       miniToastr.error(result.error, "Api call error " + result.status);
       console.error(result.status + " " + result.statusText, result.error);
@@ -101,23 +101,23 @@ export const useCallAi = () => {
     return result;
   };
 
+  const correctText = async (text: string) => {
+    return await aiRequest(
+      "correction",
+      ipcStore.data!.appConfig.aiInstructions.clearResult,
+      ipcStore.data!.userConfig.aiTasks.correction,
+      text
+    );
+  };
+
   return {
     aiRequest,
     voiceRecognition,
     dealToCalendar,
     sendChatMessage,
-
+    correctText,
     correctAndInsert: (text?: string) =>
-      insertMode(
-        (value) =>
-          aiRequest(
-            "correction",
-            ipcStore.data!.appConfig.aiInstructions.clearResult,
-            ipcStore.data!.userConfig.aiTasks.correction,
-            value
-          ),
-        text
-      ),
+      insertMode((value) => correctText(value), text),
 
     editAndInsert: (presetNum: number, text?: string) =>
       insertMode(
