@@ -2,25 +2,29 @@
   <div @keyup.prevent="handleShortCutKeyUp" class="shortcuts-list">
     <slot name="backButton"></slot>
     <div>Esc - <button ref="backButton" @click="emit('back')">назад</button></div>
-    <div>Space - <button @click="typeIntoWindowAndClose(props.text ?? '')">вставить</button></div>
     <div>Ctrl + q - <button @click="closeWindow">закрыть программу</button></div>
-    <div v-if="props.toEditor">q - <button @click="toEditor">в редактор</button></div>
-    <div>w - </div>
-    <div>e - </div>
-    <div>r - <button @click="askAIShort(props.text)">быстрый вопрос к AI</button></div>
-    <div>t - <button @click="dealToCalendar(props.text)">добавить дело в календарь</button></div>
-    
-    <div>a - <button @click="intoClipboardAndClose(props.text)">в буфер обмена и закрыть окно</button></div>
-    <div>s - <button @click="fastNote(props.text)">быстрая заметка в Obsidian</button></div>
-    <div>d - <button @click="addToKnowledgeBase(props.text)">вставить в базу знаний</button></div>
-    <div>f - <button @click="toEditPresets">выбор пресета редактирования</button></div>
-    <div>g - <button @click="searchInInternet(props.text)">поиск в интернете</button></div>
+    <template v-if="props.text">
+      <div v-if="ipcStore.data?.windowId">Space - <button @click="typeIntoWindowAndClose(props.text ?? '')">вставить</button></div>
+      <div v-if="props.toEditor">q - <button @click="toEditor">в редактор</button></div>
+      <div>w - </div>
+      <div>e - </div>
+      <div>r - <button @click="askAIShort(props.text)">быстрый вопрос к AI</button></div>
+      <div>t - <button @click="dealToCalendar(props.text)">добавить дело в календарь</button></div>
+      
+      <div>a - <button @click="intoClipboardAndClose(props.text)">в буфер обмена и закрыть окно</button></div>
+      <div>s - <button @click="fastNote(props.text)">быстрая заметка в Obsidian</button></div>
+      <div>d - <button @click="addToKnowledgeBase(props.text)">вставить в базу знаний</button></div>
+      <div v-if="ipcStore.data?.windowId">f - <button @click="toEditPresets">выбор пресета редактирования</button></div>
+      <div>g - <button @click="searchInInternet(props.text)">поиск в интернете</button></div>
 
-    <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[0]">z - ➡️ <button @click="translate(0)">{{ipcStore.data?.userConfig.toTranslateLanguages[0]}}</button></div>
-    <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[1]">x - ➡️ <button @click="translate(1)">{{ipcStore.data?.userConfig.toTranslateLanguages[1]}}</button></div>
-    <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[2]">c - ➡️ <button @click="translate(2)">{{ipcStore.data?.userConfig.toTranslateLanguages[2]}}</button></div>
-    <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[3]">v - ➡️ <button @click="translate(3)">{{ipcStore.data?.userConfig.toTranslateLanguages[3]}}</button></div>
-    <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[4]">b - ➡️ <button @click="translate(4)">{{ipcStore.data?.userConfig.toTranslateLanguages[4]}}</button></div>
+      <template v-if="ipcStore.data?.windowId">
+        <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[0]">z - ➡️ <button @click="translate(0)">{{ipcStore.data?.userConfig.toTranslateLanguages[0]}}</button></div>
+        <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[1]">x - ➡️ <button @click="translate(1)">{{ipcStore.data?.userConfig.toTranslateLanguages[1]}}</button></div>
+        <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[2]">c - ➡️ <button @click="translate(2)">{{ipcStore.data?.userConfig.toTranslateLanguages[2]}}</button></div>
+        <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[3]">v - ➡️ <button @click="translate(3)">{{ipcStore.data?.userConfig.toTranslateLanguages[3]}}</button></div>
+        <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[4]">b - ➡️ <button @click="translate(4)">{{ipcStore.data?.userConfig.toTranslateLanguages[4]}}</button></div>
+      </template>
+    </template>
   </div>
 </template>
 
@@ -59,7 +63,7 @@ onMounted(() => {
 const router = useRouter();
 const { closeWindow,
   typeIntoWindowAndClose, searchInInternet, fastNote, dealToCalendar,
-  addToKnowledgeBase, intoClipboardAndClose, askAIShort
+  addToKnowledgeBase, intoClipboardAndClose, askAIShort, insertIntoWindow
 } = useCallApi();
 const { translateAndInsert } = useCallAi();
 const ipcStore = useIpcStore();
@@ -74,12 +78,10 @@ function translate(toLangNum: number) {
 }
 
 function toEditor() {
-  if (!props.text?.trim()) {
-    router.push("/");
-    return;
+  if (props.text?.trim()) {
+    routeParamsStore.setParams({ text: props.text });
   }
   
-  routeParamsStore.setParams({ text: props.text });
   router.push("/");
 }
 
@@ -88,55 +90,72 @@ const handleShortCutKeyUp = (event: KeyboardEvent) => {
   if (event.code === "Escape") {
     emit('back');
   }
-  else if (event.code === "Space") {
-    typeIntoWindowAndClose(props.text ?? '')
-  }
   else if (event.code === "KeyQ" && event.ctrlKey) {
     closeWindow();
   }
+  else if (event.code === "Space") {
+    if (!ipcStore.data?.windowId || !props.text) return;
+
+    insertIntoWindow(props.text ?? '');
+  }
   else if (event.code === "KeyQ") {
+    if (!props.text) return;
     if (props.toEditor) toEditor();
   }
   else if (event.code === "KeyW") {
+    if (!props.text) return;
     console.log("w");
   }
   else if (event.code === "KeyE") {
+    if (!props.text) return;
     console.log("e");
   }
   else if (event.code === "KeyR") {
+    if (!props.text) return;
     askAIShort(props.text);
   }
   else if (event.code === "KeyT") {
+    if (!props.text) return;
     dealToCalendar(props.text);
   }
   else if (event.code === "KeyA") {
+    if (!props.text) return;
     intoClipboardAndClose(props.text ?? '');
   }
   else if (event.code === "KeyS") {
+    if (!props.text) return;
     fastNote(props.text);
   }
   else if (event.code === "KeyD") {
+    if (!props.text) return;
     addToKnowledgeBase(props.text);
   }
   else if (event.code === "KeyF") {
+    if (!ipcStore.data?.windowId || !props.text) return;
     toEditPresets();
   }
   else if (event.code === "KeyG") {
+    if (!props.text) return;
     searchInInternet(props.text);
   }
   else if (event.code === "KeyZ") {
+    if (!ipcStore.data?.windowId || !props.text) return;
     translate(0);
   }
   else if (event.code === "KeyX") {
+    if (!ipcStore.data?.windowId || !props.text) return;
     translate(1);
   }
   else if (event.code === "KeyC") {
+    if (!ipcStore.data?.windowId || !props.text) return;
     translate(2);
   }
   else if (event.code === "KeyV") {
+    if (!ipcStore.data?.windowId || !props.text) return;
     translate(3);
   }
   else if (event.code === "KeyB") {
+    if (!ipcStore.data?.windowId || !props.text) return;
     translate(4);
   }
 }

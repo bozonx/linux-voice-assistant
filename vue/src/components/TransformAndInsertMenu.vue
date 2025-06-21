@@ -8,19 +8,19 @@
 
     <ul class="big-buttons-toolbar">
       <li>
-        <button class="button" @click="correctAndInsert">Коррекция</button>
+        <button class="button" @click="correctAndInsert()">Коррекция</button>
       </li>
       <li>
-        <button class="button" @click="overlayStore.showEditPresets">Редактировать</button>
+        <button class="button" @click="overlayStore.showEditPresets()">Редактировать</button>
       </li>
       <li>
-        <button class="button" @click="formatMdAndInsert">Beautyfy MD</button>
+        <button class="button" @click="formatMdAndInsert()">Beautyfy MD</button>
       </li>
       <li>
-        <button class="button" @click="formatCodeAndInsert">Формат JS/JSON/CSS/HTML/XML</button>
+        <button class="button" @click="formatCodeAndInsert()">Формат JS/JSON/CSS/HTML/XML</button>
       </li>
       <li>
-        <button class="button" @click="rusStressAndInsert">Ударение рус</button>
+        <button class="button" @click="rusStressAndInsert()">Ударение рус</button>
       </li>
     </ul>
 

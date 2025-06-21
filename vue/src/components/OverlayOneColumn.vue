@@ -1,12 +1,10 @@
 <template>
   <div class="overlay-one-column">
-    <div class="overlay-one-column-content"><slot /></div>
+    <div class="overlay-one-column-content">
+      <slot />
+    </div>
   </div>
 </template>
-
-<script setup lang="ts">
-
-</script>
 
 <style scoped>
 .overlay-one-column {
