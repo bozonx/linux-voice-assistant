@@ -29,7 +29,7 @@ export const useCallAi = () => {
       task,
       userInput
     );
-    doCorrection
+
     if (result.error) {
       miniToastr.error(result.error, "Api call error " + result.status);
       console.error(result.status + " " + result.statusText, result.error);

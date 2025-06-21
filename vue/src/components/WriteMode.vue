@@ -81,7 +81,7 @@ function toWriteMode() {
 }
 
 async function doCorrection() {
-  if (correctionIsActual.value) {
+  if (!correctionIsActual.value || !inputText.value) {
     overlayMode.value = OverlayMode.CORRECTION;
 
     const result = await correctText(inputText.value);

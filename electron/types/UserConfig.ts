@@ -33,7 +33,7 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
   userLanguage: "ru_RU",
   toTranslateLanguages: ["en_US", "ru_RU", "es_AR", "tr_TR"],
   internetSearchUrl: "https://duckduckgo.com/?q=",
-  models: {},
+  models: [],
   aiModelUsage: {
     voiceRecognition: "",
     translate: "",
@@ -86,15 +86,13 @@ export interface UserConfig {
   internetSearchUrl: string;
 
   models: {
-    // key is the id of the model
-    [key: string]: {
-      model: string;
-      description?: string;
-      baseUrl?: string;
-      apiKey?: string;
-      tags?: ModelTag[];
-    };
-  };
+    id: string;
+    model: string;
+    description?: string;
+    baseUrl?: string;
+    apiKey?: string;
+    tags?: ModelTag[];
+  }[];
 
   aiModelUsage: {
     voiceRecognition: string;

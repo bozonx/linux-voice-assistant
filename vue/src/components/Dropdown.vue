@@ -1,10 +1,9 @@
 <template>
-  <div class="form-row">
-    <div v-if="label" class="form-row-label">{{ label }}</div>
-    <div class="form-row-input">
-      <Dropdown v-model:value="value" :options="options" />
-    </div>
-  </div>
+  <select v-model="value">
+    <option v-for="option in options" :key="option" :value="option">{{
+      option
+    }}</option>
+  </select>
 </template>
 
 <script setup lang="ts">

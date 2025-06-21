@@ -16,7 +16,7 @@
       label="To Translate Languages"
       @update:items="updateTranslateLanguages"
     >
-      <template #item="{ item, index }">
+      <template #item="{ item }">
         <InputRow v-model:value="item.value" />
       </template>
     </ItemsField>
@@ -26,8 +26,9 @@
     />
 
     <h2>Models</h2>
-    <ItemsField :items="modelsItems" label="Models" @update:items="updateModels">
-      <template #item="{ item, index }">
+    <ItemsField :items="models" label="Models" @update:items="updateModels">
+      <template #item="{ item }">
+        <InputRow v-model:value="item.id" label="Id" />
         <InputRow v-model:value="item.model" label="Model" />
         <InputRow v-model:value="item.description" label="Description" />
         <InputRow v-model:value="item.baseUrl" label="Base URL" />
@@ -39,37 +40,37 @@
     <h2>AI Model Usage</h2>
     <DropdownRow
       v-model:value="userSettings.aiModelUsage.voiceRecognition"
-      :options="models"
+      :options="models.map((model) => model.model)"
       label="Voice Recognition"
     />
     <DropdownRow
       v-model:value="userSettings.aiModelUsage.translate"
-      :options="models"
+      :options="models.map((model) => model.model)"
       label="Translate"
     />
     <DropdownRow
       v-model:value="userSettings.aiModelUsage.completion"
-      :options="models"
+      :options="models.map((model) => model.model)"
       label="Completion"
     />
     <DropdownRow
       v-model:value="userSettings.aiModelUsage.intentionRecognition"
-      :options="models"
+      :options="models.map((model) => model.model)"
       label="Intention Recognition"
     />
     <DropdownRow
       v-model:value="userSettings.aiModelUsage.correction"
-      :options="models"
+      :options="models.map((model) => model.model)"
       label="Correction"
     />
     <DropdownRow
       v-model:value="userSettings.aiModelUsage.deepEdit"
-      :options="models"
+      :options="models.map((model) => model.model)"
       label="Deep Edit"
     />
     <DropdownRow
       v-model:value="userSettings.aiModelUsage.askAI"
-      :options="models"
+      :options="models.map((model) => model.model)"
       label="Ask AI"
     />
 
@@ -94,8 +95,8 @@
     />
     <TextArea v-model:value="userSettings.aiTasks.askAiForText" label="Ask AI For Text" />
     
-    <ItemsField :items="deepEditItems" label="Deep Edit" @update:items="updateDeepEdit">
-      <template #item="{ item, index }">
+    <ItemsField :items="deepEditItems" label="Deep edit" @update:items="updateDeepEdit">
+      <template #item="{ item }">
         <InputRow v-model:value="item.description" label="Description" />
         <TextArea v-model:value="item.context" label="Context" />
       </template>
@@ -118,7 +119,7 @@
   const userSettings = ref(ipcStore.data!.userConfig);
 
   const models = computed(() => {
-    return Object.keys(userSettings.value.models);
+    return userSettings.value.models;
   });
 
   const deepEditItems = computed(() => {
@@ -140,25 +141,12 @@
     return (userSettings.value.toTranslateLanguages || []).map((lang) => ({ value: lang }));
   });
 
-  const modelsItems = computed(() => {
-    return Object.keys(userSettings.value.models).map((key) => ({
-      model: key,
-      description: userSettings.value.models[key].description,
-      baseUrl: userSettings.value.models[key].baseUrl,
-      apiKey: userSettings.value.models[key].apiKey,
-      tags: userSettings.value.models[key].tags,
-    }));
-  });
-
   const updateTranslateLanguages = (items: Record<string, any>[]) => {
     userSettings.value.toTranslateLanguages = items.map((item: Record<string, any>) => item.value);
   };
 
-  const updateModels = (items: Record<string, any>[]) => {
-    userSettings.value.models = items.reduce((acc, item) => {
-      acc[item.model] = item;
-      return acc;
-    }, {});
+  const updateModels = (items: any[]) => {
+    userSettings.value.models = items;
   };
 
   const updateDeepEdit = (items: Record<string, any>[]) => {

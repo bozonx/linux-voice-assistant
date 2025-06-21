@@ -29,7 +29,12 @@ export const useAiRequest = () => {
           { role: "user", content: task.trim() + ":\n\n" + userInput },
         ];
     const modelId = (userConfig.aiModelUsage as any)[modelUsage];
-    const model = userConfig.models[modelId];
+    const model = userConfig.models.find((model) => model.id === modelId);
+
+    if (!model) {
+      throw new Error("Model not found");
+    }
+
     const baseUrl = model.baseUrl || userConfig.openrouterDefaultBaseUrl;
     const apiKey = model.apiKey || userConfig.openrouterDefaultApiKey;
     const modelName = model.model;
