@@ -1,15 +1,12 @@
 import { useRouteParams } from "src/stores/routeParams";
 import { useIpcStore } from "../stores/ipc";
 import { useMainInputStore } from "../stores/mainInput";
-import { useCodeFormatter } from "./useCodeFormatter";
-import { useTextTransform } from "./useTextTransform";
 import { useRouter } from "vue-router";
 
 export const useCallApi = () => {
   const ipcStore = useIpcStore();
   const mainInputStore = useMainInputStore();
-  const { formatMdAndStyle, formatSomeCode } = useCodeFormatter();
-  const { makeRusStress, doCaseTransform } = useTextTransform();
+
   const router = useRouter();
   const routeParamsStore = useRouteParams();
 
@@ -26,16 +23,14 @@ export const useCallApi = () => {
     ]);
   }
 
-  async function insertMode(transformCb: (value: string) => Promise<string>) {
-    let value = mainInputStore.value;
-
-    if (mainInputStore.selectedText) {
-      value = mainInputStore.selectedText;
+  function resolveText(text?: string) {
+    if (text) {
+      return text;
+    } else if (mainInputStore.selectedText) {
+      return mainInputStore.selectedText;
+    } else {
+      return mainInputStore.value;
     }
-
-    if (!value.trim()) return;
-
-    await typeIntoWindowAndClose(await transformCb(value));
   }
 
   // const insertIntoWindow = async (text: string) => {
@@ -45,15 +40,7 @@ export const useCallApi = () => {
   // };
 
   const fastNote = async (text?: string) => {
-    let value;
-
-    if (text) {
-      value = text;
-    } else if (mainInputStore.selectedText) {
-      value = mainInputStore.selectedText;
-    } else {
-      value = mainInputStore.value;
-    }
+    let value = resolveText(text);
 
     if (!value?.trim()) return;
 
@@ -63,15 +50,7 @@ export const useCallApi = () => {
   };
 
   const addToKnowledgeBase = async (text?: string) => {
-    let value;
-
-    if (text) {
-      value = text;
-    } else if (mainInputStore.selectedText) {
-      value = mainInputStore.selectedText;
-    } else {
-      value = mainInputStore.value;
-    }
+    let value = resolveText(text);
 
     if (!value?.trim()) return;
 
@@ -81,15 +60,7 @@ export const useCallApi = () => {
   };
 
   const dealToCalendar = async (text?: string) => {
-    let value;
-
-    if (text) {
-      value = text;
-    } else if (mainInputStore.selectedText) {
-      value = mainInputStore.selectedText;
-    } else {
-      value = mainInputStore.value;
-    }
+    let value = resolveText(text);
 
     if (!value?.trim()) return;
 
@@ -99,15 +70,7 @@ export const useCallApi = () => {
   };
 
   const searchInInternet = async (text?: string) => {
-    let value;
-
-    if (text) {
-      value = text;
-    } else if (mainInputStore.selectedText) {
-      value = mainInputStore.selectedText;
-    } else {
-      value = mainInputStore.value;
-    }
+    let value = resolveText(text);
 
     if (!value?.trim()) return;
 
@@ -115,15 +78,7 @@ export const useCallApi = () => {
   };
 
   const intoClipboardAndClose = async (text?: string) => {
-    let value;
-
-    if (text) {
-      value = text;
-    } else if (mainInputStore.selectedText) {
-      value = mainInputStore.selectedText;
-    } else {
-      value = mainInputStore.value;
-    }
+    let value = resolveText(text);
 
     if (!value?.trim()) return;
 
@@ -131,15 +86,7 @@ export const useCallApi = () => {
   };
 
   const askAIlong = async (text?: string) => {
-    let value;
-
-    if (text) {
-      value = text;
-    } else if (mainInputStore.selectedText) {
-      value = mainInputStore.selectedText;
-    } else {
-      value = mainInputStore.value;
-    }
+    let value = resolveText(text);
 
     if (!value?.trim()) return;
 
@@ -147,15 +94,7 @@ export const useCallApi = () => {
   };
 
   const askAIShort = async (text?: string) => {
-    let value;
-
-    if (text) {
-      value = text;
-    } else if (mainInputStore.selectedText) {
-      value = mainInputStore.selectedText;
-    } else {
-      value = mainInputStore.value;
-    }
+    let value = resolveText(text);
 
     if (!value?.trim()) return;
 
@@ -164,15 +103,7 @@ export const useCallApi = () => {
   };
 
   const askAItext = async (text?: string) => {
-    let value;
-
-    if (text) {
-      value = text;
-    } else if (mainInputStore.selectedText) {
-      value = mainInputStore.selectedText;
-    } else {
-      value = mainInputStore.value;
-    }
+    let value = resolveText(text);
 
     if (!value?.trim()) return;
 
@@ -191,11 +122,5 @@ export const useCallApi = () => {
     askAIShort,
     askAItext,
     dealToCalendar,
-    formatMdAndInsert: () => insertMode((value) => formatMdAndStyle(value)),
-    formatCodeAndInsert: () => insertMode((value) => formatSomeCode(value)),
-    rusStressAndInsert: () =>
-      insertMode((value) => Promise.resolve(makeRusStress(value))),
-    transformTextAndInsert: (type: string) =>
-      insertMode((value) => Promise.resolve(doCaseTransform(value, type))),
   };
 };

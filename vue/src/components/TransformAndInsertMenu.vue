@@ -51,25 +51,42 @@
 </template>
 
 <script setup lang="ts">
-import { useCallApi } from '../composables/useCallApi';
 import { useCallAi } from '../composables/useCallAi';
 import { useIpcStore } from '../stores/ipc';
 import { useOverlayStore } from '../stores/mainOverlay';
+import { useMainInputStore } from '../stores/mainInput';
+import { useCodeFormatter } from '../composables/useCodeFormatter';
+import { useTextTransform } from '../composables/useTextTransform';
+import { useCallApi } from '../composables/useCallApi';
 
+const { formatMdAndStyle, formatSomeCode } = useCodeFormatter();
+const { makeRusStress, doCaseTransform } = useTextTransform();
+const { typeIntoWindowAndClose } = useCallApi();
 const ipcStore = useIpcStore();
 const overlayStore = useOverlayStore();
+const mainInputStore = useMainInputStore();
 const {
   correctAndInsert,
   translateAndInsert,
 } = useCallAi();
-const {
-  formatMdAndInsert,
-  formatCodeAndInsert,
-  rusStressAndInsert,
-  transformTextAndInsert,
-} = useCallApi();
+
+
+async function insertMode(transformCb: (value: string) => Promise<string>) {
+  let value = mainInputStore.value;
+
+  if (mainInputStore.selectedText) {
+    value = mainInputStore.selectedText;
+  }
+
+  if (!value.trim()) return;
+
+  await typeIntoWindowAndClose(await transformCb(value));
+}
+
+const formatMdAndInsert = () => insertMode((value) => formatMdAndStyle(value));
+const formatCodeAndInsert = () => insertMode((value) => formatSomeCode(value));
+const rusStressAndInsert = () =>
+  insertMode((value) => Promise.resolve(makeRusStress(value)));
+const transformTextAndInsert = (type: string) =>
+  insertMode((value) => Promise.resolve(doCaseTransform(value, type)));
 </script>
-
-<style scoped>
-
-</style> 
