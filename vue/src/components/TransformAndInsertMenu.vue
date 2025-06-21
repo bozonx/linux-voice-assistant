@@ -11,7 +11,7 @@
         <button class="button" @click="correctAndInsert">Коррекция</button>
       </li>
       <li>
-        <button class="button" @click="editAndInsert">Редактировать</button>
+        <button class="button" @click="overlayStore.showEditPresets">Редактировать</button>
       </li>
       <li>
         <button class="button" @click="formatMdAndInsert">Beautyfy MD</button>
@@ -54,11 +54,12 @@
 import { useCallApi } from '../composables/useCallApi';
 import { useCallAi } from '../composables/useCallAi';
 import { useIpcStore } from '../stores/ipc';
+import { useOverlayStore } from '../stores/mainOverlay';
 
 const ipcStore = useIpcStore();
+const overlayStore = useOverlayStore();
 const {
   correctAndInsert,
-  editAndInsert,
   translateAndInsert,
 } = useCallAi();
 const {

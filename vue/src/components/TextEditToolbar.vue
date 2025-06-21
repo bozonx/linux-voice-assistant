@@ -79,16 +79,3 @@ const {
 } = useCallApi();
 
 </script>
-
-<style scoped>
-.big-buttons-toolbar {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  flex-wrap: wrap;
-  gap: 2px;
-  list-style: none;
-  padding: 0;
-  margin: 0 0 2px 0;
-}
-</style> 

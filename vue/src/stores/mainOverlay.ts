@@ -3,6 +3,7 @@ import { useHelpers } from "../composables/useHelpers";
 import { useMainInputStore } from "./mainInput";
 
 export enum OverlayMode {
+  TEXT_DO_SHORTCUTS = "text-do-shortcuts",
   EDIT_PRESETS = "edit-presets",
   ASKING_AI = "asking-ai",
   NONE = "none",
@@ -48,6 +49,11 @@ export const useOverlayStore = defineStore("mainOverlay", () => {
     // globalResetFocus();
   };
 
+  const showTextDoShortcuts = () => {
+    overlayMode.value = OverlayMode.TEXT_DO_SHORTCUTS;
+    // globalResetFocus();
+  };
+
   // const showHotkeys = () => {
   //   status.value = OVERLAY_STATUSES.HOTKEYS;
   //   globalResetFocus();
@@ -60,6 +66,7 @@ export const useOverlayStore = defineStore("mainOverlay", () => {
     hideOverlay,
     startAskingAi,
     showEditPresets,
+    showTextDoShortcuts,
     // showHotkeys,
   };
 });

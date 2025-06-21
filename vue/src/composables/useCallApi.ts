@@ -113,9 +113,6 @@ export const useCallApi = () => {
   const askAIShort = async (text: string) => {
     if (!text.trim()) return;
 
-    // Передаем текст через query параметры в чат
-    // Пример: router.push({ path: "/chat", query: { text: "Question" } })
-    // Результат: /chat?text=Question
     router.push({
       path: "/chat",
       query: { text: text },

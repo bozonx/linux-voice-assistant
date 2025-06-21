@@ -15,6 +15,7 @@ declare module 'vue' {
     History: typeof import('./src/components/History.vue')['default']
     InputHistory: typeof import('./src/components/InputHistory.vue')['default']
     InputRow: typeof import('./src/components/InputRow.vue')['default']
+    InsertShortCuts: typeof import('./src/components/InsertShortCuts.vue')['default']
     ItemsField: typeof import('./src/components/ItemsField.vue')['default']
     MainInput: typeof import('./src/components/MainInput.vue')['default']
     OverlayOneColumn: typeof import('./src/components/OverlayOneColumn.vue')['default']

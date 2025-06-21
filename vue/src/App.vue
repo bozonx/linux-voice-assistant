@@ -29,37 +29,33 @@ onMounted(() => {
 
     ipcStore.setInitialData(params);
 
-    // Режим выбора текста в предыдущем окне
     if (ipcStore.data!.mode === START_MODES.SELECT) {
       if (ipcStore.data!.selectedText) {
         // если есть выбранный текст, то вставляем его в поле
         // и открываем оверлей с горячими клавишами
         mainInputStore.setValue(ipcStore.data!.selectedText);
-        overlayStore.showHotkeys();
+        overlayStore.showTextDoShortcuts();
       }
       else {
-        // ничего не передано, поэтому загружаем сохраненное значение
-        // await mainInputStore.loadSavedValue();
         await nextTick()
         mainInputStore.focus()
         // mainInputStore.selectAll()
       }
     }
+    else if (ipcStore.data!.mode === START_MODES.EDIT) {
+      if (ipcStore.data!.selectedText) mainInputStore.setValue(ipcStore.data!.selectedText);
+      overlayStore.showEditPresets();
+    }
     // Режим голосового ввода - сразу запускаем распознавание голоса
     else if (ipcStore.data!.mode === START_MODES.VOICE) {
-      voiceRecognitionStore.startRecognizing();
+      // voiceRecognitionStore.startRecognizing();
     }
     // WRITE mode - переключаемся на роут /write и загружаем сохраненное значение
     else if (ipcStore.data!.mode === START_MODES.WRITE) {
-      // Переключаемся на роут /write
       router.push('/write');
-      // await mainInputStore.loadSavedValue();
-      await nextTick()
-      mainInputStore.focus()
     }
-    // Остальные режимы - загружаем сохраненное значение
+    // Без режима - фокусируемся на поле ввода
     else {
-      // await mainInputStore.loadSavedValue();
       await nextTick()
       mainInputStore.focus()
     }

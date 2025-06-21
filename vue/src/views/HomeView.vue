@@ -1,11 +1,15 @@
 <template>
+  <OverlayOneColumn v-if="overlayMode === OverlayMode.TEXT_DO_SHORTCUTS">
+    <InsertShortCuts @back="toEditor" @editPresets="overlayStore.showEditPresets"
+       :toEditor="false" :text="mainInputStore.value" />
+  </OverlayOneColumn>
   <OverlayOneColumn v-if="overlayMode === OverlayMode.EDIT_PRESETS">
-    <EditPresets @close="toEditor" />
+    <EditPresets @close="toShortcuts" />
   </OverlayOneColumn>
   <OverlayOneColumn v-if="overlayMode === OverlayMode.ASKING_AI">
     <div>Запрос к AI...</div>
   </OverlayOneColumn>
-  <div>
+  <div @keyup="handleKeyUp">
     <div>
       <MainInput ref="mainInput"/>
 
@@ -46,7 +50,6 @@ onMounted(() => {
       const decodedText = decodeURIComponent(textFromQuery);
       mainInputStore.setValue(decodedText);
       
-      // Фокусируемся на поле ввода
       nextTick(() => {
         mainInputStore.focus();
       });
@@ -58,6 +61,19 @@ onMounted(() => {
 });
 
 function toEditor() {
-  overlayMode.value = OverlayMode.NONE;
+  overlayStore.hideOverlay();
+  nextTick(() => {
+    mainInputStore.focus();
+  })
+}
+
+function toShortcuts() {
+  overlayStore.showTextDoShortcuts();
+}
+
+function handleKeyUp(event: KeyboardEvent) {
+  if (event.code === "Escape") {
+    overlayStore.showTextDoShortcuts();
+  }
 }
 </script>
