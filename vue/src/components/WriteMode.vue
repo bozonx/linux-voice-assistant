@@ -2,6 +2,7 @@
   <OverlayOneColumn v-if="overlayMode === OverlayMode.EDIT_PRESETS">
     <EditPresets @close="toShortcuts" :text="inputText" />
   </OverlayOneColumn>
+
   <OverlayOneColumn v-if="overlayMode === OverlayMode.SHORTCUTS">
     <InsertShortCuts :text="inputText" @back="toWriteMode" @editPresets="toEditPresets" />
   </OverlayOneColumn>
@@ -28,18 +29,15 @@ enum OverlayMode {
   NONE = "none",
 }
 
-const inputText = ref('');
+const { closeWindow } = useCallApi();
 const overlayMode = ref(OverlayMode.NONE);
 const textareaRef = ref<HTMLDivElement>();
-const backButton = ref<HTMLButtonElement>();
-const { closeWindow } = useCallApi();
+const inputText = ref('');
 
 onMounted(() => {
-  nextTick(() => {
-    if (textareaRef.value) {
-      focusTextarea();
-    }
-  })
+  if (textareaRef.value) {
+    focusTextarea();
+  }
 })
 
 const handleInput = (event: Event) => {
@@ -47,32 +45,29 @@ const handleInput = (event: Event) => {
 }
 
 function focusTextarea() {
-  textareaRef.value?.focus();
-  const range = document.createRange();
-  const selection = window.getSelection();
-  range.selectNodeContents(textareaRef.value!);
-  range.collapse(false);
-  selection?.removeAllRanges();
-  selection?.addRange(range);
+  nextTick(() => {
+    textareaRef.value?.focus();
+    const range = document.createRange();
+    const selection = window.getSelection();
+    range.selectNodeContents(textareaRef.value!);
+    range.collapse(false);
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+  })
 }
 
 function toShortcuts() {
   overlayMode.value = OverlayMode.SHORTCUTS;
-
-  nextTick(() => {
-    backButton.value?.focus();
-  })
-}
-
-function toWriteMode() {
-  overlayMode.value = OverlayMode.NONE;
-  nextTick(() => {
-    focusTextarea();
-  })
 }
 
 function toEditPresets() {
   overlayMode.value = OverlayMode.EDIT_PRESETS;
+}
+
+function toWriteMode() {
+  overlayMode.value = OverlayMode.NONE;
+
+  focusTextarea();
 }
 
 const handleWriteModeKeyUp = (event: KeyboardEvent) => {
@@ -83,8 +78,6 @@ const handleWriteModeKeyUp = (event: KeyboardEvent) => {
     closeWindow();
   }
 }
-
-
 </script>
 
 <style scoped>

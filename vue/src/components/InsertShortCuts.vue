@@ -3,11 +3,11 @@
     <slot name="backButton"></slot>
     <div>Esc - <button ref="backButton" @click="emit('back')">назад</button></div>
     <div>Ctrl + q - <button @click="closeWindow">закрыть программу</button></div>
+    <div v-if="props.toEditor">q - <button @click="goToEditor">в редактор</button></div>
     <template v-if="props.text">
       <div v-if="ipcStore.data?.windowId">Space - <button @click="typeIntoWindowAndClose(props.text ?? '')">вставить</button></div>
-      <div v-if="props.toEditor">q - <button @click="toEditor">в редактор</button></div>
-      <div>w - </div>
-      <div>e - </div>
+      <!-- <div>w - </div> -->
+      <!-- <div>e - </div> -->
       <div>r - <button @click="askAIShort(props.text)">быстрый вопрос к AI</button></div>
       <div>t - <button @click="dealToCalendar(props.text)">добавить дело в календарь</button></div>
       
@@ -77,7 +77,7 @@ function translate(toLangNum: number) {
   translateAndInsert(toLangNum, props.text);
 }
 
-function toEditor() {
+function goToEditor() {
   if (props.text?.trim()) {
     routeParamsStore.setParams({ text: props.text });
   }
@@ -99,8 +99,7 @@ const handleShortCutKeyUp = (event: KeyboardEvent) => {
     insertIntoWindow(props.text ?? '');
   }
   else if (event.code === "KeyQ") {
-    if (!props.text) return;
-    if (props.toEditor) toEditor();
+    if (props.toEditor) goToEditor();
   }
   else if (event.code === "KeyW") {
     if (!props.text) return;

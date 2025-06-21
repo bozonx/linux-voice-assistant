@@ -5,7 +5,7 @@
   </OverlayOneColumn>
 
   <OverlayOneColumn v-if="overlayMode === OverlayMode.EDIT_PRESETS">
-    <EditPresets @close="toShortcuts" />
+    <EditPresets @close="toEditor" />
   </OverlayOneColumn>
 
   <OverlayOneColumn v-if="overlayMode === OverlayMode.ASKING_AI">
@@ -33,6 +33,7 @@
       <RouterLink to="/history">История</RouterLink>
       <RouterLink to="/config">Настройки</RouterLink>
       <RouterLink to="/write">Режим написания</RouterLink>
+      <RouterLink to="/voice">Режим голоса</RouterLink>
     </div>
   </div>
 </template>
@@ -66,9 +67,9 @@ function toEditor() {
   })
 }
 
-function toShortcuts() {
-  overlayStore.showTextDoShortcuts();
-}
+// function toShortcuts() {
+//   overlayStore.showTextDoShortcuts();
+// }
 
 function handleKeyUp(event: KeyboardEvent) {
   if (event.code === "Escape") {

@@ -1,11 +1,3 @@
 <template>
-    <WriteMode />
+  <WriteMode />
 </template>
-
-<script setup lang="ts">
-
-</script>
-
-<style scoped>
-
-</style>

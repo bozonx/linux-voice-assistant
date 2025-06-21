@@ -20,19 +20,18 @@ const props = defineProps<{
 
 const ipcStore = useIpcStore();
 const { editAndInsert } = useCallAi();
-
 const { closeWindow } = useCallApi();
 const backButton = ref<HTMLButtonElement | null>(null);
+
+const emit = defineEmits<{
+  (e: 'close'): void
+}>();
 
 onMounted(() => {
   nextTick(() => {
     backButton.value?.focus();
   })
 })
-
-const emit = defineEmits<{
-  (e: 'close'): void
-}>();
 
 function close() {
   emit('close');

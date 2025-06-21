@@ -1,11 +1,3 @@
 <template>
-  <div>
-    <h1>Voice View</h1>
-  </div>
+  <VoiceMode />
 </template>
-
-<script setup lang="ts">
-
-</script>
-
-<style scoped></style>
