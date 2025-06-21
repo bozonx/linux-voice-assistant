@@ -7,7 +7,7 @@
     <div v-if="props.toEditor">q - <button @click="toEditor">в редактор</button></div>
     <div>w - </div>
     <div>e - </div>
-    <div>r - <button @click="askAIShort(props.text ?? '')">быстрый вопрос к AI</button></div>
+    <div>r - <button @click="askAIShort(props.text)">быстрый вопрос к AI</button></div>
     <div>t - <button @click="dealToCalendar(props.text)">добавить дело в календарь</button></div>
     
     <div>a - <button @click="intoClipboardAndClose(props.text)">в буфер обмена и закрыть окно</button></div>
@@ -29,6 +29,7 @@ import { useRouter } from 'vue-router';
 import { useCallApi } from '../composables/useCallApi';
 import { useIpcStore } from '../stores/ipc';
 import { useCallAi } from '../composables/useCallAi';
+import { useRouteParams } from '../stores/routeParams';
 
 const props = defineProps({
   text: {
@@ -56,13 +57,13 @@ onMounted(() => {
 })  
 
 const router = useRouter();
-const { closeWindow, askAIShort,
+const { closeWindow,
   typeIntoWindowAndClose, searchInInternet, fastNote, dealToCalendar,
-  addToKnowledgeBase, intoClipboardAndClose
+  addToKnowledgeBase, intoClipboardAndClose, askAIShort
 } = useCallApi();
 const { translateAndInsert } = useCallAi();
 const ipcStore = useIpcStore();
-
+const routeParamsStore = useRouteParams();
 
 function toEditPresets() {
   emit('editPresets');
@@ -78,15 +79,8 @@ function toEditor() {
     return;
   }
   
-  try {
-    router.push({
-      path: "/",
-      query: { text: props.text }
-    });
-  } catch (error) {
-    console.error("Error navigating to editor:", error);
-    router.push("/");
-  }
+  routeParamsStore.setParams({ text: props.text });
+  router.push("/");
 }
 
 
@@ -110,7 +104,7 @@ const handleShortCutKeyUp = (event: KeyboardEvent) => {
     console.log("e");
   }
   else if (event.code === "KeyR") {
-    askAIShort(props.text ?? '');
+    askAIShort(props.text);
   }
   else if (event.code === "KeyT") {
     dealToCalendar(props.text);

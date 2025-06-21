@@ -1,3 +1,4 @@
+import { useRouteParams } from "src/stores/routeParams";
 import { useIpcStore } from "../stores/ipc";
 import { useMainInputStore } from "../stores/mainInput";
 import { useCodeFormatter } from "./useCodeFormatter";
@@ -10,6 +11,7 @@ export const useCallApi = () => {
   const { formatMdAndStyle, formatSomeCode } = useCodeFormatter();
   const { makeRusStress, doCaseTransform } = useTextTransform();
   const router = useRouter();
+  const routeParamsStore = useRouteParams();
 
   async function closeWindow() {
     await ipcStore.callFunction("closeMainWindow", []);
@@ -43,7 +45,17 @@ export const useCallApi = () => {
   // };
 
   const fastNote = async (text?: string) => {
-    if (!text?.trim()) return;
+    let value;
+
+    if (text) {
+      value = text;
+    } else if (mainInputStore.selectedText) {
+      value = mainInputStore.selectedText;
+    } else {
+      value = mainInputStore.value;
+    }
+
+    if (!value?.trim()) return;
 
     console.log("fastNoteInObsidian");
 
@@ -51,7 +63,17 @@ export const useCallApi = () => {
   };
 
   const addToKnowledgeBase = async (text?: string) => {
-    if (!text?.trim()) return;
+    let value;
+
+    if (text) {
+      value = text;
+    } else if (mainInputStore.selectedText) {
+      value = mainInputStore.selectedText;
+    } else {
+      value = mainInputStore.value;
+    }
+
+    if (!value?.trim()) return;
 
     console.log("addToKnowledgeBase");
 
@@ -59,7 +81,17 @@ export const useCallApi = () => {
   };
 
   const dealToCalendar = async (text?: string) => {
-    if (!text?.trim()) return;
+    let value;
+
+    if (text) {
+      value = text;
+    } else if (mainInputStore.selectedText) {
+      value = mainInputStore.selectedText;
+    } else {
+      value = mainInputStore.value;
+    }
+
+    if (!value?.trim()) return;
 
     console.log("dealToCalendar");
 
@@ -67,45 +99,84 @@ export const useCallApi = () => {
   };
 
   const searchInInternet = async (text?: string) => {
-    let value = text;
+    let value;
 
-    if (!value) {
-      if (mainInputStore.selectedText) {
-        value = mainInputStore.selectedText;
-      } else {
-        value = mainInputStore.value;
-      }
-
-      if (!value.trim()) return;
+    if (text) {
+      value = text;
+    } else if (mainInputStore.selectedText) {
+      value = mainInputStore.selectedText;
+    } else {
+      value = mainInputStore.value;
     }
+
+    if (!value?.trim()) return;
 
     await ipcStore.callFunction("openInBrowserAndClose", [value]);
   };
 
   const intoClipboardAndClose = async (text?: string) => {
-    if (!text?.trim()) return;
+    let value;
+
+    if (text) {
+      value = text;
+    } else if (mainInputStore.selectedText) {
+      value = mainInputStore.selectedText;
+    } else {
+      value = mainInputStore.value;
+    }
+
+    if (!value?.trim()) return;
 
     // TODO: do it
   };
 
   const askAIlong = async (text?: string) => {
-    if (!text?.trim()) return;
+    let value;
+
+    if (text) {
+      value = text;
+    } else if (mainInputStore.selectedText) {
+      value = mainInputStore.selectedText;
+    } else {
+      value = mainInputStore.value;
+    }
+
+    if (!value?.trim()) return;
 
     // TODO: open in browser
   };
 
-  const askAIShort = async (text: string) => {
-    if (!text.trim()) return;
+  const askAIShort = async (text?: string) => {
+    let value;
 
-    router.push({
-      path: "/chat",
-      query: { text: text },
-    });
+    if (text) {
+      value = text;
+    } else if (mainInputStore.selectedText) {
+      value = mainInputStore.selectedText;
+    } else {
+      value = mainInputStore.value;
+    }
+
+    if (!value?.trim()) return;
+
+    routeParamsStore.setParams({ message: value });
+    router.push("/chat");
   };
 
   const askAItext = async (text?: string) => {
-    if (!text?.trim()) return;
+    let value;
 
+    if (text) {
+      value = text;
+    } else if (mainInputStore.selectedText) {
+      value = mainInputStore.selectedText;
+    } else {
+      value = mainInputStore.value;
+    }
+
+    if (!value?.trim()) return;
+
+    routeParamsStore.setParams({ context: value });
     router.push("/chat");
   };
 

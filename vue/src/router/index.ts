@@ -14,6 +14,7 @@ const router = createRouter({
       path: "/",
       name: "home",
       component: HomeView,
+      props: true,
     },
     {
       path: "/history",
@@ -29,6 +30,7 @@ const router = createRouter({
       path: "/chat",
       name: "chat",
       component: ChatView,
+      props: true,
     },
     {
       path: "/write",

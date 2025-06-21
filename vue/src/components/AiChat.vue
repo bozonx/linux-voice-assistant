@@ -20,28 +20,16 @@
 
 <script setup lang="ts">
   import { useChatStore } from "../stores/chat";
+  import { useRouteParams } from "../stores/routeParams";
 
   const router = useRouter();
-  const route = useRoute();
   const chatStore = useChatStore();
   const message = ref<string>("");
+  const routeParamsStore = useRouteParams();
 
   onMounted(() => {
-    try {
-      const textFromQuery = route.query.text as string;
-      if (textFromQuery && textFromQuery.trim()) {
-        // Декодируем URL-encoded текст
-        const decodedText = decodeURIComponent(textFromQuery);
-        message.value = decodedText;
-        
-        // Автоматически отправляем сообщение если текст передан
-        // nextTick(() => {
-        //   sendMessage();
-        // });
-      }
-    } catch (error) {
-      console.error("Error processing query parameter:", error);
-      // Продолжаем работу без автоматической отправки
+    if (routeParamsStore.params.text) {
+      message.value = routeParamsStore.params.text;
     }
   });
 

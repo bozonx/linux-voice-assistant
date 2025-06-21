@@ -25,7 +25,7 @@
         <button class="button" @click="askAIlong">Подробный ответ от AI</button>
       </li>
       <li>        
-        <button class="button" @click="askAIShort">Быстрый вопрос к AI</button>
+        <button class="button" @click="askAIShort">Быстрый вопрос к AI</button>  
       </li>
       <li>
         <button class="button" @click="askAItext">Вопрос по тексту к AI</button>
@@ -38,8 +38,10 @@
 import { useCallApi } from '../composables/useCallApi';
 import { useCallAi } from '../composables/useCallAi';
 import { useIpcStore } from '../stores/ipc';
+import { useMainInputStore } from '../stores/mainInput';
 
 const ipcStore = useIpcStore();
+const mainInputStore = useMainInputStore();
 
 const {
   searchInInternet,
