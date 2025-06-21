@@ -53,8 +53,8 @@
 </template>
 
 <script setup lang="ts">
-import { useOverlayStore } from '../stores/mainOverlay';
-import { useVoiceRecognitionStore } from '../stores/voiceRecognition';
+import { useOverlayStore } from '../vue/src/stores/mainOverlay';
+import { useVoiceRecognitionStore } from '../vue/src/stores/voiceRecognition';
 
 const overlayStore = useOverlayStore();
 const voiceRecognitionStore = useVoiceRecognitionStore();
