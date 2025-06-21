@@ -26,7 +26,6 @@
   const chatStore = useChatStore();
   const message = ref<string>("");
 
-  // Обработка query параметра text при загрузке компонента
   onMounted(() => {
     try {
       const textFromQuery = route.query.text as string;
@@ -36,9 +35,9 @@
         message.value = decodedText;
         
         // Автоматически отправляем сообщение если текст передан
-        nextTick(() => {
-          sendMessage();
-        });
+        // nextTick(() => {
+        //   sendMessage();
+        // });
       }
     } catch (error) {
       console.error("Error processing query parameter:", error);

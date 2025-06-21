@@ -13,8 +13,8 @@
       <li>
         <button class="button" @click="intoClipboardAndClose">В буфер обмена</button>
       </li>
-      <li>
-        <button class="button" @click="insertIntoWindow">Вставить в окно</button>
+      <li v-if="ipcStore.data?.windowId">
+        <button class="button" @click="typeIntoWindowAndClose">Вставить в окно</button>
       </li>
     </ul>
     <ul class="big-buttons-toolbar">
@@ -37,16 +37,19 @@
 <script setup lang="ts">
 import { useCallApi } from '../composables/useCallApi';
 import { useCallAi } from '../composables/useCallAi';
+import { useIpcStore } from '../stores/ipc';
+
+const ipcStore = useIpcStore();
 
 const {
   searchInInternet,
-  insertIntoWindow,
   fastNote,
   askAIlong,
   addToKnowledgeBase,
   intoClipboardAndClose,
   askAIShort,
   askAItext,
+  typeIntoWindowAndClose,
 } = useCallApi();
 
 const {

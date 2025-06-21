@@ -1,6 +1,5 @@
 <template>
   <div class="layout">
-    <Overlays />
     <RouterView />
   </div>
 </template>
@@ -9,14 +8,12 @@
 import { useIpcStore } from './stores/ipc';
 import { useMainInputStore } from './stores/mainInput';
 import { GlobalEvents, InitParams, START_MODES } from './types';
-import { useVoiceRecognitionStore } from './stores/voiceRecognition';
 import { useOverlayStore } from './stores/mainOverlay';
 import { useRouter } from 'vue-router';
 import { useGlobalEvents } from './composables/useGlobalEvents';
 
 const ipcStore = useIpcStore();
 const mainInputStore = useMainInputStore();
-const voiceRecognitionStore = useVoiceRecognitionStore();
 const overlayStore = useOverlayStore();
 const router = useRouter();
 const { globalEvents } = useGlobalEvents();
@@ -39,18 +36,15 @@ onMounted(() => {
       else {
         await nextTick()
         mainInputStore.focus()
-        // mainInputStore.selectAll()
       }
     }
     else if (ipcStore.data!.mode === START_MODES.EDIT) {
       if (ipcStore.data!.selectedText) mainInputStore.setValue(ipcStore.data!.selectedText);
       overlayStore.showEditPresets();
     }
-    // Режим голосового ввода - сразу запускаем распознавание голоса
     else if (ipcStore.data!.mode === START_MODES.VOICE) {
-      // voiceRecognitionStore.startRecognizing();
+      router.push('/voice');
     }
-    // WRITE mode - переключаемся на роут /write и загружаем сохраненное значение
     else if (ipcStore.data!.mode === START_MODES.WRITE) {
       router.push('/write');
     }
@@ -61,9 +55,9 @@ onMounted(() => {
     }
   });
 
-  window.electron.ipcRenderer.on('voice-recognition', (data: string) => {
-    mainInputStore.setValue(data);
-  });
+    // window.electron.ipcRenderer.on('voice-recognition', (data: string) => {
+    //   mainInputStore.setValue(data);
+    // });
 });
 
 onUnmounted(() => {
@@ -71,11 +65,8 @@ onUnmounted(() => {
 });
 
 const handleKeyUp = (event: KeyboardEvent) => {
-    // keysStore.setKeyUp(event.code);
-    // globalHandleKeyUp(event);
     globalEvents.emit(GlobalEvents.KEY_UP, event);
 };
-
 
 </script>
 

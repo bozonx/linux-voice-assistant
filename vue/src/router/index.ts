@@ -4,6 +4,7 @@ import HistoryView from "../views/HistoryView.vue";
 import ConfigView from "../views/ConfigView.vue";
 import ChatView from "../views/ChatView.vue";
 import WriteModeView from "../views/WriteModeView.vue";
+import VoiceView from "../views/VoiceView.vue";
 
 const router = createRouter({
   history: createMemoryHistory(),
@@ -33,6 +34,11 @@ const router = createRouter({
       path: "/write",
       name: "write",
       component: WriteModeView,
+    },
+    {
+      path: "/voice",
+      name: "voice",
+      component: VoiceView,
     },
   ],
 });

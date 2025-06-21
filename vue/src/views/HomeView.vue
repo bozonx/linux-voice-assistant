@@ -16,13 +16,15 @@
       <TextEditToolbar/>
     </div>
 
-    <h2 class="section-title">Действия</h2>
+    <div>
+      <h2 class="section-title">Действия</h2>
+      <ActionsMenu />
+    </div>
 
-    <ActionsMenu />
-
-    <h2 class="section-title">Трансформирование и вставка</h2>
-
-    <TransformAndInsertMenu />
+    <div v-if="ipcStore.data?.windowId">
+      <h2 class="section-title">Трансформирование и вставка</h2>
+      <TransformAndInsertMenu />
+    </div>
 
     <div class="havigation">
       <RouterLink to="/history">История</RouterLink>
@@ -35,11 +37,13 @@
 <script setup lang="ts">
 import { useMainInputStore } from '../stores/mainInput';
 import { OverlayMode, useOverlayStore } from '../stores/mainOverlay';
+import { useIpcStore } from '../stores/ipc';
 
 const route = useRoute();
 const mainInputStore = useMainInputStore();
 const overlayStore = useOverlayStore();
 const overlayMode = computed(() => overlayStore.overlayMode);
+const ipcStore = useIpcStore();
 
 // Обработка query параметра text при загрузке страницы
 onMounted(() => {
