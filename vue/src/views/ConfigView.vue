@@ -1,11 +1,3 @@
 <template>
-  <div>
-    <Settings />
-  </div>
+  <Settings />
 </template>
-
-<script setup lang="ts">
-</script>
-
-<style scoped>
-</style>

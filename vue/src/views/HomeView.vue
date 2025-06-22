@@ -9,7 +9,7 @@
   </OverlayOneColumn>
 
   <OverlayOneColumn v-if="overlayMode === OverlayMode.ASKING_AI">
-    <div>Запрос к AI...</div>
+    <InProgressMessage :ai="true" />
   </OverlayOneColumn>
 
   <div @keyup="handleKeyUp">
