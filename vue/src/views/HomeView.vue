@@ -5,7 +5,7 @@
   </OverlayOneColumn>
 
   <OverlayOneColumn v-if="overlayMode === OverlayMode.EDIT_PRESETS">
-    <EditPresets @close="toEditor" />
+    <EditPresets @close="toEditor" :text="mainInputStore.value" />
   </OverlayOneColumn>
 
   <OverlayOneColumn v-if="overlayMode === OverlayMode.ASKING_AI">
@@ -33,6 +33,7 @@
       <RouterLink to="/config">Настройки</RouterLink>
       <RouterLink to="/write">Режим написания</RouterLink>
       <RouterLink to="/voice">Режим голоса</RouterLink>
+      <RouterLink to="/edit">Режим редактирования</RouterLink>
     </div>
   </div>
 </template>

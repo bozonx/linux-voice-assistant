@@ -33,14 +33,9 @@ onMounted(() => {
         mainInputStore.setValue(ipcStore.data!.selectedText);
         overlayStore.showTextDoShortcuts();
       }
-      else {
-        await nextTick()
-        mainInputStore.focus()
-      }
     }
     else if (ipcStore.data!.mode === START_MODES.EDIT) {
-      if (ipcStore.data!.selectedText) mainInputStore.setValue(ipcStore.data!.selectedText);
-      overlayStore.showEditPresets();
+      router.push('/edit');
     }
     else if (ipcStore.data!.mode === START_MODES.VOICE) {
       router.push('/voice');
@@ -48,11 +43,7 @@ onMounted(() => {
     else if (ipcStore.data!.mode === START_MODES.WRITE) {
       router.push('/write');
     }
-    // Без режима - фокусируемся на поле ввода
-    else {
-      await nextTick()
-      mainInputStore.focus()
-    }
+    // Else just show the editor
   });
 
     // window.electron.ipcRenderer.on('voice-recognition', (data: string) => {

@@ -146,12 +146,12 @@ const correct = () =>
   );
 
 const translate = (toLangNum: number) =>
-  editMode((value) => translateText(toLangNum, value));
+  aiEditMode((value) => translateText(toLangNum, value));
 
 const edit = (presetNum: number) => {
   if (presetNum === -1) return;
 
-  return editMode((value) =>
+  return aiEditMode((value) =>
     deepEdit(presetNum, value)
   );
 }

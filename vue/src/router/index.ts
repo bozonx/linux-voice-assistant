@@ -5,6 +5,7 @@ import ConfigView from "../views/ConfigView.vue";
 import ChatView from "../views/ChatView.vue";
 import WriteModeView from "../views/WriteModeView.vue";
 import VoiceView from "../views/VoiceView.vue";
+import EditModeView from "../views/EditModeView.vue";
 
 const router = createRouter({
   history: createMemoryHistory(),
@@ -41,6 +42,11 @@ const router = createRouter({
       path: "/voice",
       name: "voice",
       component: VoiceView,
+    },
+    {
+      path: "/edit",
+      name: "edit",
+      component: EditModeView,
     },
   ],
 });

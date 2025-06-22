@@ -1,8 +1,9 @@
 <template>
+  <div>{{ props.text }}</div>
   <div @keyup.prevent="handleKeyUp" class="shortcuts-list">
     <div>Esc - <button ref="backButton" @click="close">назад</button></div>
     <div>Ctrl + q - <button @click="closeWindow">закрыть программу</button></div>
-    <div v-for="(preset, index) in ipcStore.data?.userConfig.aiTasks.deepEdit" :key="preset.description">
+    <div v-for="(preset, index) in ipcStore.data?.userConfig.aiRules.deepEdit" :key="preset.description">
       {{ EDIT_PRESET_KEYS[index] }} - <button @click="editAndInsert(index, props.text)">{{ preset.description }}</button>
     </div>
   </div>

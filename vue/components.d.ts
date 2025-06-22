@@ -20,7 +20,6 @@ declare module 'vue' {
     ItemsField: typeof import('./src/components/ItemsField.vue')['default']
     MainInput: typeof import('./src/components/MainInput.vue')['default']
     OverlayOneColumn: typeof import('./src/components/OverlayOneColumn.vue')['default']
-    Overlays: typeof import('./src/components/Overlays.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Settings: typeof import('./src/components/Settings.vue')['default']

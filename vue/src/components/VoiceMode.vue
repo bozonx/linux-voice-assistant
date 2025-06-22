@@ -1,10 +1,10 @@
 <template>
-  <OverlayOneColumn v-if="overlayMode === OverlayMode.EDIT_PRESETS">
-    <EditPresets @close="toShortcuts" :text="inputText" />
-  </OverlayOneColumn>
-
   <OverlayOneColumn v-if="overlayMode === OverlayMode.SHORTCUTS">
     <InsertShortCuts :text="inputText" @back="toVoiceMode" @editPresets="toEditPresets" />
+  </OverlayOneColumn>
+  
+  <OverlayOneColumn v-if="overlayMode === OverlayMode.EDIT_PRESETS">
+    <EditPresets @close="toShortcuts" :text="inputText" />
   </OverlayOneColumn>
 
   <div>
