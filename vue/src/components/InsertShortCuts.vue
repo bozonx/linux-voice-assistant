@@ -1,8 +1,8 @@
 <template>
   <div @keyup.prevent="handleShortCutKeyUp" class="shortcuts-list">
     <slot name="backButton"></slot>
-    <div>Esc - <button ref="backButton" @click="emit('back')">назад</button></div>
-    <div>Ctrl + q - <button @click="closeWindow">закрыть программу</button></div>
+    <div v-if="props.showBackButton">Esc - <button @click="emit('back')">назад</button></div>
+    <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>
     <div v-if="props.showToEditor">q - <button @click="goToEditor">в редактор</button></div>
     <template v-if="props.text">
       <div v-if="ipcStore.data?.windowId">Space - <button @click="typeIntoWindowAndClose(props.text ?? '')">вставить</button></div>
@@ -39,6 +39,10 @@ const props = defineProps({
   text: {
     type: String,
   },
+  showBackButton: {
+    type: Boolean,
+    default: true
+  },
   showToEditor: {
     type: Boolean,
     default: true
@@ -50,12 +54,12 @@ const emit = defineEmits<{
   (e: 'editPresets'): void;
 }>();
 
-const backButton = ref<HTMLButtonElement>();
+const inFocusButton = ref<HTMLButtonElement>();
 
 onMounted(() => {
   nextTick(() => {
-    if (backButton.value) {
-      backButton.value.focus();
+    if (inFocusButton.value) {
+      inFocusButton.value.focus();
     }
   })
 })  

@@ -6,15 +6,11 @@
 
 <script setup lang="ts">
 import { useIpcStore } from './stores/ipc';
-import { useMainInputStore } from './stores/mainInput';
 import { GlobalEvents, InitParams, START_MODES } from './types';
-import { useOverlayStore } from './stores/mainOverlay';
 import { useRouter } from 'vue-router';
 import { useGlobalEvents } from './composables/useGlobalEvents';
 
 const ipcStore = useIpcStore();
-const mainInputStore = useMainInputStore();
-const overlayStore = useOverlayStore();
 const router = useRouter();
 const { globalEvents } = useGlobalEvents();
 
@@ -27,12 +23,7 @@ onMounted(() => {
     ipcStore.setInitialData(params);
 
     if (ipcStore.data!.mode === START_MODES.SELECT) {
-      if (ipcStore.data!.selectedText) {
-        // если есть выбранный текст, то вставляем его в поле
-        // и открываем оверлей с горячими клавишами
-        mainInputStore.setValue(ipcStore.data!.selectedText);
-        overlayStore.showTextDoShortcuts();
-      }
+      router.push('/select');
     }
     else if (ipcStore.data!.mode === START_MODES.EDIT) {
       router.push('/edit');

@@ -34,6 +34,7 @@
       <RouterLink to="/write">Режим написания</RouterLink>
       <RouterLink to="/voice">Режим голоса</RouterLink>
       <RouterLink to="/edit">Режим редактирования</RouterLink>
+      <RouterLink to="/select">Режим выбора</RouterLink>
     </div>
   </div>
 </template>
