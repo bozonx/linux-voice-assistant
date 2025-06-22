@@ -1,7 +1,21 @@
 <template>
+  <OverlayOneColumn v-if="overlayMode === OverlayMode.MENU">
+    <InsertShortCuts @back="overlayStore.hideOverlay" @editPresets="overlayStore.showMenu"
+       :showToEditor="false" :text="mainInputStore.value" />
+  </OverlayOneColumn>
+
+  <OverlayOneColumn v-if="overlayMode === OverlayMode.EDIT_PRESETS">
+    <EditPresets @close="overlayStore.hideOverlay" :text="mainInputStore.value" />
+  </OverlayOneColumn>
+
+  <OverlayOneColumn v-if="overlayMode === OverlayMode.ASKING_AI">
+    <InProgressMessage :ai="true" />
+  </OverlayOneColumn>
+
   <div @keyup="handleKeyUp">
     <div>
       <MainInput ref="mainInput"/>
+      <p class="main-input-hint">Hint: press Esc to open menu</p>
       <TextEditToolbar/>
     </div>
 
@@ -14,7 +28,6 @@
       <h2 class="section-title">Трансформирование и вставка</h2>
       <TransformAndInsertMenu />
     </div>
-
   </div>
 </template>
 
@@ -22,14 +35,13 @@
 import { useIpcStore } from '../stores/ipc';
 import { useRouteParams } from '../stores/routeParams';
 import { useMainInputStore } from '../stores/mainInput';
+import { OverlayMode, useOverlayStore } from '../stores/mainOverlay';
 
 const ipcStore = useIpcStore();
 const routeParamsStore = useRouteParams();
 const mainInputStore = useMainInputStore();
-
-const emit = defineEmits<{
-  (e: 'toMenu'): void
-}>();
+const overlayStore = useOverlayStore();
+const overlayMode = computed(() => overlayStore.overlayMode);
 
 onMounted(() => {
   if (routeParamsStore.params.text) {
@@ -40,16 +52,11 @@ onMounted(() => {
   }
 });
 
-// function toShortcuts() {
-//   overlayStore.showTextDoShortcuts();
-// }
-
 function handleKeyUp(event: KeyboardEvent) {
   if (event.code === "Escape") {
-    emit('toMenu');
+    overlayStore.showMenu();
   }
 }
-
 </script>
 
 <style scoped>

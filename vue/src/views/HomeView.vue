@@ -1,18 +1,5 @@
 <template>
-  <OverlayOneColumn v-if="overlayMode === OverlayMode.MENU">
-    <InsertShortCuts @back="overlayStore.hideOverlay" @editPresets="overlayStore.showMenu"
-       :showToEditor="false" :text="mainInputStore.value" />
-  </OverlayOneColumn>
-
-  <OverlayOneColumn v-if="overlayMode === OverlayMode.EDIT_PRESETS">
-    <EditPresets @close="overlayStore.hideOverlay" :text="mainInputStore.value" />
-  </OverlayOneColumn>
-
-  <OverlayOneColumn v-if="overlayMode === OverlayMode.ASKING_AI">
-    <InProgressMessage :ai="true" />
-  </OverlayOneColumn>
-
-  <Editor @toMenu="overlayStore.showMenu" />
+  <Editor />
 
   <div class="navigation">
     <RouterLink to="/history">История</RouterLink>
@@ -25,12 +12,6 @@
 </template>
 
 <script setup lang="ts">
-import { useMainInputStore } from '../stores/mainInput';
-import { OverlayMode, useOverlayStore } from '../stores/mainOverlay';
-
-const mainInputStore = useMainInputStore();
-const overlayStore = useOverlayStore();
-const overlayMode = computed(() => overlayStore.overlayMode);
 </script>
 
 <style scoped>
