@@ -5,7 +5,11 @@
         <p>{{ message.content }}</p>
       </div>
     </div>
+    <div class="input-context">
+      <p>Context: {{ context }}</p>
+    </div>
     <div class="input-container">
+
       <div class="input">
         <textarea v-model="message" />
       </div>
@@ -25,11 +29,15 @@
   const router = useRouter();
   const chatStore = useChatStore();
   const message = ref<string>("");
+  const context = ref<string>("");
   const routeParamsStore = useRouteParams();
 
   onMounted(() => {
-    if (routeParamsStore.params.text) {
-      message.value = routeParamsStore.params.text;
+    if (routeParamsStore.params.message) {
+      message.value = routeParamsStore.params.message;
+    }
+    if (routeParamsStore.params.context) {
+      context.value = routeParamsStore.params.context;
     }
   });
 

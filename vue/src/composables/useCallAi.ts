@@ -7,27 +7,21 @@ import { useVoiceRecognitionStore } from "../stores/voiceRecognition";
 import { useCallApi } from "./useCallApi";
 import { useAiRequest } from "../../../common/useAiRequest";
 import { ChatMessage } from "../../../electron/types/types";
+import { AI_TASKS } from "../types";
 
 export const useCallAi = () => {
-  const { chatCompletion } = useAiRequest();
+  const { chatCompletion, prepareAiMessages } = useAiRequest();
   const ipcStore = useIpcStore();
   const mainInputStore = useMainInputStore();
   const overlayStore = useOverlayStore();
   const voiceRecognitionStore = useVoiceRecognitionStore();
   const { typeIntoWindowAndClose, resolveText } = useCallApi();
 
-  async function aiRequest(
-    modelUsage: string,
-    developerInstructions: string,
-    task: string,
-    userInput: string | ChatMessage[]
-  ) {
+  async function aiRequest(taskName: string, messages: string | ChatMessage[]) {
     const result = await chatCompletion(
       ipcStore.data!.userConfig,
-      modelUsage,
-      developerInstructions,
-      task,
-      userInput
+      taskName,
+      messages
     );
 
     if (result.error) {
@@ -85,28 +79,84 @@ export const useCallAi = () => {
     message: string,
     prevMessages: ChatMessage[]
   ) => {
-    if (!message.trim()) return;
-
-    overlayStore.startAskingAi();
+    if (!message?.trim()) {
+      miniToastr.error("Текст не выбран");
+      return;
+    }
 
     const result = await aiRequest(
-      "askAI",
-      ipcStore.data!.appConfig.aiInstructions.clearResult,
-      ipcStore.data!.userConfig.aiTasks.askAiShort,
-      [...prevMessages, { role: "user", content: message }]
+      "askAiShort",
+      prepareAiMessages(
+        ipcStore.data!.userConfig,
+        "askAiShort",
+        ipcStore.data!.appConfig.aiInstructions.clearResult,
+        [...prevMessages, { role: "user", content: message }]
+      )
     );
-
-    overlayStore.hideOverlay();
 
     return result;
   };
 
   const correctText = async (text: string) => {
+    if (!text?.trim()) {
+      miniToastr.error("Текст не выбран");
+      return;
+    }
+
     return await aiRequest(
-      "correction",
-      ipcStore.data!.appConfig.aiInstructions.clearResult,
-      ipcStore.data!.userConfig.aiTasks.correction,
-      text
+      AI_TASKS.CORRECTION,
+      prepareAiMessages(
+        ipcStore.data!.userConfig,
+        AI_TASKS.CORRECTION,
+        ipcStore.data!.appConfig.aiInstructions.clearResult,
+        text
+      )
+    );
+  };
+
+  const translateText = async (toLangNum: number, text?: string) => {
+    if (!text?.trim()) {
+      miniToastr.error("Текст не выбран");
+      return;
+    }
+
+    return await aiRequest(
+      AI_TASKS.TRANSLATE,
+      prepareAiMessages(
+        ipcStore.data!.userConfig,
+        AI_TASKS.TRANSLATE,
+        ipcStore.data!.appConfig.aiInstructions.clearResult,
+        [
+          {
+            role: "developer",
+            content:
+              "Language to translate: " +
+              ipcStore.data!.userConfig.toTranslateLanguages[toLangNum],
+          },
+          {
+            role: "user",
+            content: text,
+          },
+        ]
+      )
+    );
+  };
+
+  const deepEdit = async (presetNum: number, text?: string) => {
+    if (!text?.trim()) {
+      miniToastr.error("Текст не выбран");
+      return;
+    }
+
+    return await aiRequest(
+      AI_TASKS.DEEP_EDIT,
+      prepareAiMessages(
+        ipcStore.data!.userConfig,
+        AI_TASKS.DEEP_EDIT,
+        ipcStore.data!.appConfig.aiInstructions.clearResult,
+        text,
+        ipcStore.data!.userConfig.aiRules[AI_TASKS.DEEP_EDIT][presetNum].context
+      )
     );
   };
 
@@ -116,33 +166,15 @@ export const useCallAi = () => {
     dealToCalendar,
     sendChatMessage,
     correctText,
+    translateText,
+    deepEdit,
     correctAndInsert: (text?: string) =>
       insertMode((value) => correctText(value), text),
 
     editAndInsert: (presetNum: number, text?: string) =>
-      insertMode(
-        (value) =>
-          aiRequest(
-            "deepEdit",
-            ipcStore.data!.appConfig.aiInstructions.clearResult,
-            ipcStore.data!.userConfig.aiTasks.deepEdit[presetNum].context,
-            value
-          ),
-        text
-      ),
+      insertMode((value) => deepEdit(presetNum, value), text),
 
     translateAndInsert: (toLangNum: number, text?: string) =>
-      insertMode(
-        (value) =>
-          aiRequest(
-            "translate",
-            ipcStore.data!.appConfig.aiInstructions.clearResult,
-            ipcStore.data!.userConfig.aiTasks.translate +
-              " " +
-              ipcStore.data!.userConfig.toTranslateLanguages[toLangNum],
-            value
-          ),
-        text
-      ),
+      insertMode((value) => translateText(toLangNum, value), text),
   };
 };

@@ -1,6 +1,6 @@
 export const CONFIG_FILE_NAME = "userConfig.yaml";
 
-const TRANSLATION_TASK = `Учитывай следующие правила:
+const TRANSLATION_TASK = `
 - Исходный текст может быть передан с ошибками и опечатками
 - Сохраняй общий стиль: разговорный, деловой, юридический, игривый, стиль статьи, стиль нехудожественной литературы, стиль совеременной художественной литературы и подобное
 - Но при этом не нужно переводить точь в точь и стараться детально соотвествовать стилю включая опечатки и пропуски знаков пунктуации
@@ -8,9 +8,7 @@ const TRANSLATION_TASK = `Учитывай следующие правила:
 - Используй лучшие практики по граматике и пунктуации для того языка на который идет перевод
 - Граматика и пунктуация должны соотвествовать общему стилю, но даже если стиль разговорный то он должен быть грамотный и без ошибок
 - Восстанавливай пунктуацию и удаляй лишние пробелы
-- Предложения должны начинаться с большой буквы и заканчиваться точкой
-
-Переведи этот текст на`;
+- Предложения должны начинаться с большой буквы и заканчиваться точкой`;
 
 const TO_CALENDAR_TASK = `
 Твоя задача распознать намерение пользователя внести дело в календарь
@@ -43,7 +41,7 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
     deepEdit: "",
     askAI: "",
   },
-  aiTasks: {
+  aiRules: {
     translate: TRANSLATION_TASK,
     completion: "",
     toCalendar: TO_CALENDAR_TASK,
@@ -94,6 +92,7 @@ export interface UserConfig {
     tags?: ModelTag[];
   }[];
 
+  // which model to use for which task
   aiModelUsage: {
     voiceRecognition: string;
 
@@ -109,8 +108,8 @@ export interface UserConfig {
     askAI: string;
   };
 
-  // Tasks contexts
-  aiTasks: {
+  // User's rules for every AI task
+  aiRules: {
     // simple translate
     translate: string;
     completion: string;

@@ -15,7 +15,6 @@
   <div @keyup="handleKeyUp">
     <div>
       <MainInput ref="mainInput"/>
-
       <TextEditToolbar/>
     </div>
 

@@ -22,6 +22,6 @@ export interface AppConfig {
 }
 
 export interface ChatMessage {
-  role: "user" | "assistant";
+  role: "user" | "assistant" | "developer";
   content: string;
 }

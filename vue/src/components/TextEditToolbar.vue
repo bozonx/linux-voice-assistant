@@ -9,8 +9,8 @@
           Голосовой ввод
         </button>
       </li>
-      <li v-for="lang in ipcStore.data?.userConfig.toTranslateLanguages" :key="lang">
-        <button class="mini-button" @click="translateAndEdit(lang)">➡️ {{ lang }}</button>
+      <li v-for="(lang, index) in ipcStore.data?.userConfig.toTranslateLanguages" :key="lang">
+        <button class="mini-button" @click="translateAndEdit(index)">➡️ {{ lang }}</button>
       </li>
     </ul>
 
@@ -19,7 +19,8 @@
         <button class="mini-button" @click="correctAndEdit">Коррекция</button>
       </li>
       <li>
-        <button class="mini-button" @click="overlayStore.showEditPresets">Редактировать</button>
+        <button class="mini-button" @click="editAndEdit(selectedEditPresetIndex - 1)">Редактировать</button>
+        <Dropdown v-model:value="selectedEditPresetIndex" :options="editPresets" />
       </li>
       <li>
         <button class="mini-button" @click="formatMdAndEdit">Beautyfy MD</button>
@@ -65,14 +66,36 @@ import { useMainInputStore } from '../stores/mainInput';
 import { useCodeFormatter } from '../composables/useCodeFormatter';
 import { useTextTransform } from '../composables/useTextTransform';
 import { useCallAi } from '../composables/useCallAi';
+import { AI_TASKS } from '../types';
+import { useAiRequest } from '../../../common/useAiRequest';
 
 const ipcStore = useIpcStore();
 const overlayStore = useOverlayStore();
 const mainInputStore = useMainInputStore();
 const { formatMdAndStyle, formatSomeCode } = useCodeFormatter();
 const { makeRusStress, doCaseTransform } = useTextTransform();
-const { aiRequest } = useCallAi();
+const { aiRequest, translateText, deepEdit } = useCallAi();
+const { prepareAiMessages } = useAiRequest();
 const router = useRouter();
+const selectedEditPresetIndex = ref(0);
+
+const editPresets = computed((): string[] => {
+  return [
+    'Ничего не выбрано',
+     ...ipcStore.data?.userConfig.aiRules[AI_TASKS.DEEP_EDIT].map((item) => item.description) || []
+    ];
+});
+
+// watch(selectedEditPresetIndex, (value, oldValue) => {
+//   if (value === oldValue) return;
+  
+//   if (value > 0) {
+//     nextTick(() => {
+//             editAndEdit(value - 1);
+//             // selectedEditPresetIndex.value = 0;      
+//     });
+//   }
+// });
 
 async function editMode(transformCb: (value: string) => Promise<string>) {
   let value = mainInputStore.value;
@@ -122,31 +145,24 @@ const transformTextAndEdit = (type: string) => editMode((value) => Promise.resol
 const correctAndEdit = () =>
   aiEditMode((value) =>
     aiRequest(
-          "correction",
-          ipcStore.data!.appConfig.aiInstructions.clearResult,
-          ipcStore.data!.userConfig.aiTasks.correction,
-          value
-        )
-      );
-
-const translateAndEdit = (to: string) =>
-  editMode((value) =>
-    aiRequest(
-      "translate",
-      ipcStore.data!.appConfig.aiInstructions.clearResult,
-      ipcStore.data!.userConfig.aiTasks.translate + " " + to,
-      value
+      AI_TASKS.CORRECTION,
+      prepareAiMessages(
+        ipcStore.data!.userConfig,
+        AI_TASKS.CORRECTION,
+        ipcStore.data!.appConfig.aiInstructions.clearResult,
+        value
+      )
     )
   );
 
-const editAndEdit = (presetNum: number) =>
-  editMode((value) =>
-    aiRequest(
-      "deepEdit",
-      ipcStore.data!.appConfig.aiInstructions.clearResult,
-      ipcStore.data!.userConfig.aiTasks.deepEdit[presetNum].context,
-      value
-    )
-  );
+const translateAndEdit = (toLangNum: number) =>
+  editMode((value) => translateText(toLangNum, value));
 
+const editAndEdit = (presetNum: number) => {
+  if (presetNum === -1) return;
+
+  return editMode((value) =>
+    deepEdit(presetNum, value)
+  );
+}
 </script>

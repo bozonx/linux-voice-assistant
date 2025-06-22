@@ -1,34 +1,52 @@
+import { APP_CONFIG } from "../electron/appConfig";
 import type { UserConfig } from "../electron/types/UserConfig";
 import { ChatMessage } from "../electron/types/types";
 
 export const useAiRequest = () => {
+  function prepareAiMessages(
+    userConfig: UserConfig,
+    taskName: string,
+    devInstructions: string,
+    userInput: string | ChatMessage[],
+    rules?: string
+  ) {
+    const resolvedRules = rules || userConfig.aiRules[taskName];
+    const messages: ChatMessage[] = [];
+
+    messages.push({
+      role: "developer",
+      content: devInstructions
+        .replace("{{LANGUAGE}}", userConfig.userLanguage)
+        .trim(),
+    });
+
+    if (resolvedRules) {
+      messages.push({
+        role: "user",
+        content: APP_CONFIG.rulePrefix + ":\n\n" + resolvedRules.trim(),
+      });
+    }
+
+    if (Array.isArray(userInput)) {
+      messages.push(...userInput);
+    } else {
+      messages.push({
+        role: "user",
+        content: APP_CONFIG.aiTasks[taskName] + ":\n\n" + userInput.trim(),
+      });
+    }
+
+    return messages;
+  }
+
   async function chatCompletion(
     userConfig: UserConfig,
-    modelUsage: string,
-    developerInstructions: string,
-    task: string,
-    userInput: string | ChatMessage[]
+    taskName: string,
+    messages: string | ChatMessage[]
   ): Promise<Record<string, any>> {
-    console.log(
-      "chatCompletion",
-      userConfig,
-      modelUsage,
-      developerInstructions,
-      task,
-      userInput
-    );
+    console.log("chatCompletion", userConfig, taskName, messages);
 
-    const preparedInstructions = developerInstructions.replace(
-      "{{LANGUAGE}}",
-      userConfig.userLanguage
-    );
-    const messages = Array.isArray(userInput)
-      ? userInput
-      : [
-          { role: "developer", content: preparedInstructions.trim() },
-          { role: "user", content: task.trim() + ":\n\n" + userInput },
-        ];
-    const modelId = (userConfig.aiModelUsage as any)[modelUsage];
+    const modelId = (userConfig.aiModelUsage as any)[taskName];
     const model = userConfig.models.find((model) => model.id === modelId);
 
     if (!model) {
@@ -39,21 +57,7 @@ export const useAiRequest = () => {
     const apiKey = model.apiKey || userConfig.openrouterDefaultApiKey;
     const modelName = model.model;
 
-    console.log(
-      1,
-      preparedInstructions,
-      2,
-      messages,
-      3,
-      modelId,
-      4,
-      modelName,
-      5,
-      baseUrl,
-      6,
-      apiKey
-    );
-    return;
+    console.log(1, messages, 2, modelId, 3, modelName, 4, baseUrl, 5, apiKey);
 
     const result = await fetch(baseUrl + "/chat/completions", {
       method: "POST",
@@ -88,5 +92,6 @@ export const useAiRequest = () => {
 
   return {
     chatCompletion,
+    prepareAiMessages,
   };
 };

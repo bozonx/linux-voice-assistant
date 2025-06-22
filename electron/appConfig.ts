@@ -21,4 +21,10 @@ export const APP_CONFIG = {
   devServerUrl: "http://localhost:3000",
   indexHtmlPath: "../../vue/dist/index.html",
   aiInstructions: { clearResult },
+  rulePrefix: "Используй следующие правила для выполнения задания",
+  aiTasks: {
+    correction: "Твоё задание - откорректируй следующий текст",
+    deepEdit: "Твоё задание - редактируй следующий текст",
+    translate: "Твоё задание - переведи следующий текст",
+  },
 };

@@ -4,19 +4,23 @@ import { createOrReadConfig } from "../electron/userConfigManager";
 import { getCommandLineArgs, typeIntoWindow } from "./helpers";
 import { useAiRequest } from "./useAiRequest";
 import { APP_CONFIG } from "../electron/appConfig";
+import { AI_TASKS } from "../vue/src/types";
 
 (async () => {
   const args = getCommandLineArgs();
   const appDir = process.env.HOME + "/.config/librnet-assistant";
   const userConfig = await createOrReadConfig(appDir);
-  const { chatCompletion } = useAiRequest();
+  const { chatCompletion, prepareAiMessages } = useAiRequest();
 
   const result = await chatCompletion(
     userConfig,
-    "correction",
-    APP_CONFIG.aiInstructions.clearResult,
-    userConfig.aiTasks.correction,
-    args.selectedText
+    AI_TASKS.CORRECTION,
+    prepareAiMessages(
+      userConfig,
+      AI_TASKS.CORRECTION,
+      APP_CONFIG.aiInstructions.clearResult,
+      args.selectedText
+    )
   );
 
   await fs.appendFile(

@@ -130,12 +130,10 @@ export const useCallApi = () => {
   const askAIShort = async (text?: string) => {
     let value = resolveText(text);
 
-    if (!value?.trim()) {
-      miniToastr.error("Текст не выбран");
-      return;
+    if (value?.trim()) {
+      routeParamsStore.setParams({ message: value });
     }
 
-    routeParamsStore.setParams({ message: value });
     router.push("/chat");
   };
 

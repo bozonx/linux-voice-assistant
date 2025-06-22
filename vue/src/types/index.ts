@@ -28,6 +28,15 @@ export enum GlobalEvents {
   KEY_UP,
 }
 
+export enum AI_TASKS {
+  TRANSLATE = "translate",
+  COMPLETION = "completion",
+  INTENTION_RECOGNITION = "intentionRecognition",
+  CORRECTION = "correction",
+  DEEP_EDIT = "deepEdit",
+  ASK_AI = "askAi",
+}
+
 export const EDIT_PRESET_KEYS = [
   "q",
   "w",
