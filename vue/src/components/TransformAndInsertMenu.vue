@@ -62,8 +62,8 @@ import { useOverlayStore } from '../stores/mainOverlay';
 
 const { formatMdAndStyle, formatSomeCode } = useCodeFormatter();
 const { makeRusStress, doCaseTransform } = useTextTransform();
-const { typeIntoWindowAndClose } = useCallApi();
-const { correctText, translateText, aIinsertMode } = useCallAi();
+const { typeIntoWindowAndClose, resolveText } = useCallApi();
+const { correctText, translateText } = useCallAi();
 const ipcStore = useIpcStore();
 const mainInputStore = useMainInputStore();
 const overlayStore = useOverlayStore();
@@ -82,6 +82,21 @@ async function insertMode(transformCb: (value: string) => Promise<string>) {
 
   await typeIntoWindowAndClose(await transformCb(value));
 }
+
+const aIinsertMode = async (
+  transformCb: (value: string) => Promise<string>,
+  text?: string
+) => {
+  let value = resolveText(text);
+
+  if (!value.trim()) return;
+
+  overlayStore.showAskingAi();
+
+  await typeIntoWindowAndClose(await transformCb(value));
+
+  overlayStore.hideOverlay();
+};
 
 const correctAndInsert = (text?: string) =>
   aIinsertMode((value) => correctText(value), text);

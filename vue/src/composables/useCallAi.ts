@@ -32,21 +32,6 @@ export const useCallAi = () => {
     return result.content;
   }
 
-  const aIinsertMode = async (
-    transformCb: (value: string) => Promise<string>,
-    text?: string
-  ) => {
-    let value = resolveText(text);
-
-    if (!value.trim()) return;
-
-    overlayStore.showAskingAi();
-
-    await typeIntoWindowAndClose(await transformCb(value));
-
-    overlayStore.hideOverlay();
-  };
-
   const voiceRecognition = () => {
     // TODO: remake
     voiceRecognitionStore.startRecognizing();
@@ -142,6 +127,5 @@ export const useCallAi = () => {
     correctText,
     translateText,
     deepEdit,
-    aIinsertMode,
   };
 };
