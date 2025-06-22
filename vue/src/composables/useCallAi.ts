@@ -1,8 +1,6 @@
 // @ts-ignore
 import miniToastr from "mini-toastr";
 import { useIpcStore } from "../stores/ipc";
-import { useMainInputStore } from "../stores/mainInput";
-import { useOverlayStore } from "../stores/mainOverlay";
 import { useVoiceRecognitionStore } from "../stores/voiceRecognition";
 import { useCallApi } from "./useCallApi";
 import { useAiRequest } from "../../../common/useAiRequest";
@@ -12,10 +10,8 @@ import { AI_TASKS } from "../types";
 export const useCallAi = () => {
   const { chatCompletion, prepareAiMessages } = useAiRequest();
   const ipcStore = useIpcStore();
-  const mainInputStore = useMainInputStore();
-  const overlayStore = useOverlayStore();
   const voiceRecognitionStore = useVoiceRecognitionStore();
-  const { typeIntoWindowAndClose, resolveText } = useCallApi();
+  const { resolveText } = useCallApi();
 
   async function aiRequest(taskName: string, messages: string | ChatMessage[]) {
     const result = await chatCompletion(
@@ -37,29 +33,6 @@ export const useCallAi = () => {
   const voiceRecognition = () => {
     // TODO: remake
     voiceRecognitionStore.startRecognizing();
-  };
-
-  const insertMode = async (
-    transformCb: (value: string) => Promise<string>,
-    text?: string
-  ) => {
-    let value;
-
-    if (text) {
-      value = text;
-    } else if (mainInputStore.selectedText) {
-      value = mainInputStore.selectedText;
-    } else {
-      value = mainInputStore.value;
-    }
-
-    if (!value.trim()) return;
-
-    overlayStore.startAskingAi();
-
-    await typeIntoWindowAndClose(await transformCb(value));
-
-    overlayStore.hideOverlay();
   };
 
   const dealToCalendar = async (text?: string) => {
@@ -152,13 +125,5 @@ export const useCallAi = () => {
     correctText,
     translateText,
     deepEdit,
-    correctAndInsert: (text?: string) =>
-      insertMode((value) => correctText(value), text),
-
-    editAndInsert: (presetNum: number, text?: string) =>
-      insertMode((value) => deepEdit(presetNum, value), text),
-
-    translateAndInsert: (toLangNum: number, text?: string) =>
-      insertMode((value) => translateText(toLangNum, value), text),
   };
 };

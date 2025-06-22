@@ -1,28 +1,15 @@
 import { defineStore } from "pinia";
-import { useHelpers } from "../composables/useHelpers";
 import { useMainInputStore } from "./mainInput";
 
 export enum OverlayMode {
-  TEXT_DO_SHORTCUTS = "text-do-shortcuts",
+  MENU = "menu",
   EDIT_PRESETS = "edit-presets",
   ASKING_AI = "asking-ai",
   NONE = "none",
 }
 
-// // Константы для статусов overlay
-// export const OVERLAY_STATUSES = {
-//   NONE: "NONE",
-//   VOICE_RECOGNITION: "VOICE_RECOGNITION",
-//   REPUNCTUATION: "REPUNCTUATION",
-//   HOTKEYS: "HOTKEYS",
-//   ASKING_AI: "ASKING_AI",
-// } as const;
-
-// type OverlayStatus = (typeof OVERLAY_STATUSES)[keyof typeof OVERLAY_STATUSES];
-
 export const useOverlayStore = defineStore("mainOverlay", () => {
   const overlayMode = ref<OverlayMode>(OverlayMode.NONE);
-  const { globalResetFocus } = useHelpers();
   const mainInputStore = useMainInputStore();
 
   // const startVoiceRecognition = () => {
@@ -36,37 +23,30 @@ export const useOverlayStore = defineStore("mainOverlay", () => {
 
   const hideOverlay = () => {
     overlayMode.value = OverlayMode.NONE;
-    // mainInputStore.focus();
+    nextTick(() => {
+      mainInputStore.focus();
+    });
   };
 
-  const startAskingAi = () => {
+  const showAskingAi = () => {
     overlayMode.value = OverlayMode.ASKING_AI;
-    // globalResetFocus();
   };
 
   const showEditPresets = () => {
     overlayMode.value = OverlayMode.EDIT_PRESETS;
-    // globalResetFocus();
   };
 
-  const showTextDoShortcuts = () => {
-    overlayMode.value = OverlayMode.TEXT_DO_SHORTCUTS;
-    // globalResetFocus();
+  const showMenu = () => {
+    overlayMode.value = OverlayMode.MENU;
   };
-
-  // const showHotkeys = () => {
-  //   status.value = OVERLAY_STATUSES.HOTKEYS;
-  //   globalResetFocus();
-  // };
 
   return {
     overlayMode,
     // startVoiceRecognition,
     // startRepunctuation,
     hideOverlay,
-    startAskingAi,
+    showAskingAi,
     showEditPresets,
-    showTextDoShortcuts,
-    // showHotkeys,
+    showMenu,
   };
 });

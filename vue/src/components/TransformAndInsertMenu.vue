@@ -51,26 +51,22 @@
 </template>
 
 <script setup lang="ts">
-import { useCallAi } from '../composables/useCallAi';
 import { useIpcStore } from '../stores/ipc';
-import { useOverlayStore } from '../stores/mainOverlay';
 import { useMainInputStore } from '../stores/mainInput';
 import { useCodeFormatter } from '../composables/useCodeFormatter';
 import { useTextTransform } from '../composables/useTextTransform';
 import { useCallApi } from '../composables/useCallApi';
+import { useCallAi } from '../composables/useCallAi';
 import miniToastr from "mini-toastr";
+import { useOverlayStore } from '../stores/mainOverlay';
 
 const { formatMdAndStyle, formatSomeCode } = useCodeFormatter();
 const { makeRusStress, doCaseTransform } = useTextTransform();
-const { typeIntoWindowAndClose } = useCallApi();
+const { typeIntoWindowAndClose, resolveText } = useCallApi();
+const { correctText, translateText } = useCallAi();
 const ipcStore = useIpcStore();
-const overlayStore = useOverlayStore();
 const mainInputStore = useMainInputStore();
-const {
-  correctAndInsert,
-  translateAndInsert,
-} = useCallAi();
-
+const overlayStore = useOverlayStore();
 
 async function insertMode(transformCb: (value: string) => Promise<string>) {
   let value = mainInputStore.value;
@@ -86,6 +82,27 @@ async function insertMode(transformCb: (value: string) => Promise<string>) {
 
   await typeIntoWindowAndClose(await transformCb(value));
 }
+
+const aIinsertMode = async (
+  transformCb: (value: string) => Promise<string>,
+  text?: string
+) => {
+  let value = resolveText(text);
+
+  if (!value.trim()) return;
+
+  overlayStore.showAskingAi();
+
+  await typeIntoWindowAndClose(await transformCb(value));
+
+  overlayStore.hideOverlay();
+};
+
+const correctAndInsert = (text?: string) =>
+  aIinsertMode((value) => correctText(value), text);
+
+const translateAndInsert = (toLangNum: number, text?: string) =>
+  aIinsertMode((value) => translateText(toLangNum, value), text);
 
 const formatMdAndInsert = () => insertMode((value) => formatMdAndStyle(value));
 const formatCodeAndInsert = () => insertMode((value) => formatSomeCode(value));

@@ -38,12 +38,6 @@ export const useCallApi = () => {
     return value || "";
   }
 
-  // const insertIntoWindow = async (text: string) => {
-  //   if (!text.trim()) return;
-
-  //   await typeIntoWindowAndClose(text);
-  // };
-
   const fastNote = async (text?: string) => {
     let value = resolveText(text);
 
@@ -66,19 +60,6 @@ export const useCallApi = () => {
     }
 
     console.log("addToKnowledgeBase");
-
-    // TODO: do it
-  };
-
-  const dealToCalendar = async (text?: string) => {
-    let value = resolveText(text);
-
-    if (!value?.trim()) {
-      miniToastr.error("Текст не выбран");
-      return;
-    }
-
-    console.log("dealToCalendar");
 
     // TODO: do it
   };
@@ -161,6 +142,5 @@ export const useCallApi = () => {
     askAIlong,
     askAIShort,
     askAItext,
-    dealToCalendar,
   };
 };
