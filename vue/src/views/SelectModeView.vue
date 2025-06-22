@@ -3,8 +3,8 @@
     <EditPresets @close="toShortcuts" :text="text" />
   </OverlayOneColumn>
 
-  <InsertShortCuts :showBackButton="false" @editPresets="toEditPresets"
-  :text="text" />
+  <InsertShortCuts :showBackButton="false" :showInsertButton="false" @editPresets="toEditPresets"
+    :text="text" />
 </template>
 
 <script setup lang="ts">

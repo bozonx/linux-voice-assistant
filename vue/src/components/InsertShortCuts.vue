@@ -4,12 +4,11 @@
   </OverlayOneColumn>
   <TextPreview :text="props.text" />
   <div @keyup.prevent="handleShortCutKeyUp" class="shortcuts-list">
-    <slot name="backButton"></slot>
     <div v-if="props.showBackButton">Esc - <button @click="emit('back')">назад</button></div>
     <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>
     <div v-if="props.showToEditor">q - <button @click="goToEditor">в редактор</button></div>
     <template v-if="props.text">
-      <div v-if="ipcStore.data?.windowId">Space - <button @click="typeIntoWindowAndClose(props.text ?? '')">вставить</button></div>
+      <div v-if="ipcStore.data?.windowId && props.showInsertButton">Space - <button @click="typeIntoWindowAndClose(props.text ?? '')">вставить</button></div>
       <!-- <div>w - </div> -->
       <!-- <div>e - </div> -->
       <div>r - <button @click="askAIShort(props.text)">быстрый вопрос к AI</button></div>
@@ -53,6 +52,10 @@ const props = defineProps({
     default: true
   },
   showToEditor: {
+    type: Boolean,
+    default: true
+  },
+  showInsertButton: {
     type: Boolean,
     default: true
   }
@@ -129,7 +132,7 @@ const handleShortCutKeyUp = (event: KeyboardEvent) => {
     closeWindow();
   }
   else if (event.code === "Space") {
-    if (!ipcStore.data?.windowId || !props.text) return;
+    if (!ipcStore.data?.windowId || !props.text || !props.showInsertButton) return;
 
     insertIntoWindow(props.text ?? '');
   }

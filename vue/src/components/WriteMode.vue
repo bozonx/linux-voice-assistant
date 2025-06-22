@@ -1,6 +1,6 @@
 <template>
   <OverlayOneColumn v-if="overlayMode === OverlayMode.SHORTCUTS">
-    <InsertShortCuts :text="inputText" @back="toWriteMode" @editPresets="toEditPresets" />
+    <InsertShortCuts :text="correctedText" @back="toWriteMode" @editPresets="toEditPresets" />
   </OverlayOneColumn>
 
   <OverlayOneColumn v-if="overlayMode === OverlayMode.EDIT_PRESETS">
@@ -87,6 +87,7 @@ async function doCorrection() {
     const result = await correctText(inputText.value);
 
     correctedText.value = result;
+    inputText.value = result;
     correctionIsActual.value = true;
   }
 
