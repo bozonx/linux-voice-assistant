@@ -33,8 +33,8 @@
 import { useRouter } from 'vue-router';
 import { useCallApi } from '../composables/useCallApi';
 import { useIpcStore } from '../stores/ipc';
-import { useCallAi } from '../composables/useCallAi';
 import { useRouteParams } from '../stores/routeParams';
+import { useCallAi } from '../composables/useCallAi';
 
 const props = defineProps({
   text: {
@@ -56,6 +56,7 @@ const emit = defineEmits<{
 }>();
 
 const inFocusButton = ref<HTMLButtonElement>();
+const { translateText, dealToCalendar, aIinsertMode } = useCallAi();
 
 onMounted(() => {
   nextTick(() => {
@@ -67,19 +68,21 @@ onMounted(() => {
 
 const router = useRouter();
 const { closeWindow,
-  typeIntoWindowAndClose, searchInInternet, fastNote, dealToCalendar,
+  typeIntoWindowAndClose, searchInInternet, fastNote, 
   addToKnowledgeBase, intoClipboardAndClose, askAIShort, insertIntoWindow
 } = useCallApi();
-const { translateAndInsert } = useCallAi();
 const ipcStore = useIpcStore();
 const routeParamsStore = useRouteParams();
 
 function toEditPresets() {
+  if (!ipcStore.data?.windowId || !props.text) return;
   emit('editPresets');
 }
 
 function translate(toLangNum: number) {
-  translateAndInsert(toLangNum, props.text);
+  if (!ipcStore.data?.windowId || !props.text) return;
+  
+  aIinsertMode((value) => translateText(toLangNum, value), props.text);  
 }
 
 function goToEditor() {
@@ -137,7 +140,6 @@ const handleShortCutKeyUp = (event: KeyboardEvent) => {
     addToKnowledgeBase(props.text);
   }
   else if (event.code === "KeyF") {
-    if (!ipcStore.data?.windowId || !props.text) return;
     toEditPresets();
   }
   else if (event.code === "KeyG") {
@@ -145,23 +147,18 @@ const handleShortCutKeyUp = (event: KeyboardEvent) => {
     searchInInternet(props.text);
   }
   else if (event.code === "KeyZ") {
-    if (!ipcStore.data?.windowId || !props.text) return;
     translate(0);
   }
   else if (event.code === "KeyX") {
-    if (!ipcStore.data?.windowId || !props.text) return;
     translate(1);
   }
   else if (event.code === "KeyC") {
-    if (!ipcStore.data?.windowId || !props.text) return;
     translate(2);
   }
   else if (event.code === "KeyV") {
-    if (!ipcStore.data?.windowId || !props.text) return;
     translate(3);
   }
   else if (event.code === "KeyB") {
-    if (!ipcStore.data?.windowId || !props.text) return;
     translate(4);
   }
 }

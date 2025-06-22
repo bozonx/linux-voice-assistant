@@ -6,12 +6,14 @@ import { useCallApi } from "./useCallApi";
 import { useAiRequest } from "../../../common/useAiRequest";
 import { ChatMessage } from "../../../electron/types/types";
 import { AI_TASKS } from "../types";
+import { useOverlayStore } from "../stores/mainOverlay";
 
 export const useCallAi = () => {
   const { chatCompletion, prepareAiMessages } = useAiRequest();
   const ipcStore = useIpcStore();
   const voiceRecognitionStore = useVoiceRecognitionStore();
-  const { resolveText } = useCallApi();
+  const { resolveText, typeIntoWindowAndClose } = useCallApi();
+  const overlayStore = useOverlayStore();
 
   async function aiRequest(taskName: string, messages: string | ChatMessage[]) {
     const result = await chatCompletion(
@@ -29,6 +31,21 @@ export const useCallAi = () => {
 
     return result.content;
   }
+
+  const aIinsertMode = async (
+    transformCb: (value: string) => Promise<string>,
+    text?: string
+  ) => {
+    let value = resolveText(text);
+
+    if (!value.trim()) return;
+
+    overlayStore.showAskingAi();
+
+    await typeIntoWindowAndClose(await transformCb(value));
+
+    overlayStore.hideOverlay();
+  };
 
   const voiceRecognition = () => {
     // TODO: remake
@@ -125,5 +142,6 @@ export const useCallAi = () => {
     correctText,
     translateText,
     deepEdit,
+    aIinsertMode,
   };
 };
