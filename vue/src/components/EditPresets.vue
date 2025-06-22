@@ -1,10 +1,16 @@
 <template>
-  <div>{{ props.text }}</div>
-  <div @keyup.prevent="handleKeyUp" class="shortcuts-list">
-    <div v-if="props.showBackButton">Esc - <button @click="close">назад</button></div>
-    <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>
-    <div v-for="(preset, index) in ipcStore.data?.userConfig.aiRules.deepEdit" :key="preset.description">
-      {{ EDIT_PRESET_KEYS[index] }} - <button @click="editAndInsert(index, props.text)">{{ preset.description }}</button>
+  <OverlayOneColumn v-if="overlayMode === OverlayMode.IN_PROGRESS">
+    <InProgressMessage :ai="true" />
+  </OverlayOneColumn>
+
+  <div>
+    <div>{{ props.text }}</div>
+    <div @keyup.prevent="handleKeyUp" class="shortcuts-list">
+      <div v-if="props.showBackButton">Esc - <button @click="close">назад</button></div>
+      <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>
+      <div v-for="(preset, index) in ipcStore.data?.userConfig.aiRules.deepEdit" :key="preset.description">
+        {{ EDIT_PRESET_KEYS[index] }} - <button @click="editAndInsert(index)">{{ preset.description }}</button>
+      </div>
     </div>
   </div>
 </template>
@@ -14,6 +20,11 @@ import { useCallApi } from '../composables/useCallApi';
 import { EDIT_PRESET_KEYS } from '../types';
 import { useIpcStore } from '../stores/ipc';
 import { useCallAi } from '../composables/useCallAi';
+
+enum OverlayMode {
+  IN_PROGRESS = "in-progress",
+  NONE = "none",
+}
 
 const props = defineProps({
   text: {
@@ -27,9 +38,10 @@ const props = defineProps({
 });
 
 const ipcStore = useIpcStore();
-const { editAndInsert } = useCallAi();
-const { closeWindow } = useCallApi();
+const { deepEdit } = useCallAi();
+const { closeWindow, typeIntoWindowAndClose } = useCallApi();
 const inFocusButton = ref<HTMLButtonElement | null>(null);
+const overlayMode = ref(OverlayMode.NONE);
 
 const emit = defineEmits<{
   (e: 'close'): void
@@ -43,6 +55,16 @@ onMounted(() => {
 
 function close() {
   emit('close');
+}
+
+async function editAndInsert(index: number) {
+  overlayMode.value = OverlayMode.IN_PROGRESS;
+
+  const text = await deepEdit(index, props.text);
+  console.log(111, text);
+  await typeIntoWindowAndClose(text);
+
+  overlayMode.value = OverlayMode.NONE;
 }
 
 function handleKeyUp(event: KeyboardEvent) {
@@ -61,7 +83,7 @@ function handleKeyUp(event: KeyboardEvent) {
   }
   
   if (codeLetter && EDIT_PRESET_KEYS.includes(codeLetter)) {
-    editAndInsert(EDIT_PRESET_KEYS.indexOf(codeLetter), props.text);
+    editAndInsert(EDIT_PRESET_KEYS.indexOf(codeLetter));
   }
 }
 </script>

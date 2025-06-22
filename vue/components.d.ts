@@ -14,6 +14,7 @@ declare module 'vue' {
     DropdownRow: typeof import('./src/components/DropdownRow.vue')['default']
     EditPresets: typeof import('./src/components/EditPresets.vue')['default']
     History: typeof import('./src/components/History.vue')['default']
+    InProgressMessage: typeof import('./src/components/InProgressMessage.vue')['default']
     InputHistory: typeof import('./src/components/InputHistory.vue')['default']
     InputRow: typeof import('./src/components/InputRow.vue')['default']
     InsertShortCuts: typeof import('./src/components/InsertShortCuts.vue')['default']
