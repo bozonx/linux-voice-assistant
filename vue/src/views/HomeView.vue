@@ -1,7 +1,7 @@
 <template>
   <OverlayOneColumn v-if="overlayMode === OverlayMode.TEXT_DO_SHORTCUTS">
     <InsertShortCuts @back="toEditor" @editPresets="overlayStore.showEditPresets"
-       :toEditor="false" :text="mainInputStore.value" />
+       :showToEditor="false" :text="mainInputStore.value" />
   </OverlayOneColumn>
 
   <OverlayOneColumn v-if="overlayMode === OverlayMode.EDIT_PRESETS">

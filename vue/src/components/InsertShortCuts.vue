@@ -3,7 +3,7 @@
     <slot name="backButton"></slot>
     <div>Esc - <button ref="backButton" @click="emit('back')">назад</button></div>
     <div>Ctrl + q - <button @click="closeWindow">закрыть программу</button></div>
-    <div v-if="props.toEditor">q - <button @click="goToEditor">в редактор</button></div>
+    <div v-if="props.showToEditor">q - <button @click="goToEditor">в редактор</button></div>
     <template v-if="props.text">
       <div v-if="ipcStore.data?.windowId">Space - <button @click="typeIntoWindowAndClose(props.text ?? '')">вставить</button></div>
       <!-- <div>w - </div> -->
@@ -39,7 +39,7 @@ const props = defineProps({
   text: {
     type: String,
   },
-  toEditor: {
+  showToEditor: {
     type: Boolean,
     default: true
   }
@@ -78,6 +78,8 @@ function translate(toLangNum: number) {
 }
 
 function goToEditor() {
+  if (!props.showToEditor) return;
+  
   if (props.text?.trim()) {
     routeParamsStore.setParams({ text: props.text });
   }
@@ -99,7 +101,7 @@ const handleShortCutKeyUp = (event: KeyboardEvent) => {
     insertIntoWindow(props.text ?? '');
   }
   else if (event.code === "KeyQ") {
-    if (props.toEditor) goToEditor();
+    goToEditor();
   }
   else if (event.code === "KeyW") {
     if (!props.text) return;
