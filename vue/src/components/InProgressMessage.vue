@@ -3,6 +3,9 @@
     <div v-if="props.ai">
       <h2>Запрос к AI...</h2>
     </div>
+    <div v-else-if="props.correction">
+      <h2>Коррекция...</h2>
+    </div>
     <div v-else>
       <h2>Выполняется...</h2>
     </div>
@@ -12,6 +15,10 @@
 <script setup lang="ts">
 const props = defineProps({
   ai: {
+    type: Boolean,
+    default: false
+  },
+  correction: {
     type: Boolean,
     default: false
   }

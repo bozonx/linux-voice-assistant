@@ -1,4 +1,5 @@
 <template>
+  <TextPreview :text="props.text" />
   <div @keyup.prevent="handleShortCutKeyUp" class="shortcuts-list">
     <slot name="backButton"></slot>
     <div v-if="props.showBackButton">Esc - <button @click="emit('back')">назад</button></div>

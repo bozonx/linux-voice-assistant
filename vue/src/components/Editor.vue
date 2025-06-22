@@ -15,7 +15,7 @@
   <div @keyup="handleKeyUp">
     <div>
       <MainInput ref="mainInput"/>
-      <p class="main-input-hint">Hint: press Esc to open menu</p>
+      <p class="main-input-hint">Hint: press Esc to open menu. можно выделить текст в инпуте, и тогда изменения будут касаться только того, что выделено.</p>
       <TextEditToolbar/>
     </div>
 

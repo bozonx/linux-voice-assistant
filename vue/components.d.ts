@@ -27,6 +27,7 @@ declare module 'vue' {
     Settings: typeof import('./src/components/Settings.vue')['default']
     TextArea: typeof import('./src/components/TextArea.vue')['default']
     TextEditToolbar: typeof import('./src/components/TextEditToolbar.vue')['default']
+    TextPreview: typeof import('./src/components/TextPreview.vue')['default']
     TransformAndInsertMenu: typeof import('./src/components/TransformAndInsertMenu.vue')['default']
     VoiceMode: typeof import('./src/components/VoiceMode.vue')['default']
     WriteMode: typeof import('./src/components/WriteMode.vue')['default']

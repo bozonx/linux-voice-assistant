@@ -8,7 +8,7 @@
   </OverlayOneColumn>
 
   <OverlayOneColumn v-if="overlayMode === OverlayMode.CORRECTION">
-    Коррекция ...
+    <InProgressMessage :correction="true" />
   </OverlayOneColumn>
 
   <div @keyup="handleWriteModeKeyUp" class="write-mode-container">

@@ -4,7 +4,7 @@
   </OverlayOneColumn>
 
   <div>
-    <div>{{ props.text }}</div>
+    <TextPreview :text="props.text" />
     <div @keyup.prevent="handleKeyUp" class="shortcuts-list">
       <div v-if="props.showBackButton">Esc - <button @click="close">назад</button></div>
       <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>
