@@ -120,7 +120,7 @@ const aiEditMode = async (transformCb: (value: string) => Promise<string>) => {
 
   if (!value.trim()) return;
 
-  overlayStore.startAskingAi();
+  overlayStore.showAskingAi();
 
   value = await transformCb(value);
 

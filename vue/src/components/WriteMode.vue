@@ -27,6 +27,8 @@
 <script setup lang="ts">
 import { useCallApi } from '../composables/useCallApi';
 import { useCallAi } from '../composables/useCallAi';
+import { DebounceCallIncreasing } from 'squidlet-lib';
+import { useMainInputHistoryStore } from '../stores/mainInputHistory';
 
 enum OverlayMode {
   CORRECTION = "correction",
@@ -35,6 +37,8 @@ enum OverlayMode {
   NONE = "none",
 }
 
+const mainInputHistoryStore = useMainInputHistoryStore()
+const debounced = new DebounceCallIncreasing()
 const { closeWindow } = useCallApi();
 const { correctText } = useCallAi();
 const overlayMode = ref(OverlayMode.NONE);
@@ -52,6 +56,10 @@ onMounted(() => {
 const handleInput = (event: Event) => {
   inputText.value = (event.target as HTMLDivElement).innerText || '';
   correctionIsActual.value = false;
+
+  debounced.invoke(() => {
+    mainInputHistoryStore.saveMainInput(inputText.value)
+  }, 1000)
 }
 
 function focusTextarea() {
