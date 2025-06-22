@@ -15,12 +15,7 @@ import { AI_TASKS } from "../vue/src/types";
   const result = await chatCompletion(
     userConfig,
     AI_TASKS.CORRECTION,
-    prepareAiMessages(
-      userConfig,
-      AI_TASKS.CORRECTION,
-      APP_CONFIG.aiInstructions.clearResult,
-      args.selectedText
-    )
+    prepareAiMessages(userConfig, AI_TASKS.CORRECTION, args.selectedText)
   );
 
   await fs.appendFile(

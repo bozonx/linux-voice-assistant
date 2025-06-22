@@ -85,13 +85,11 @@ export const useCallAi = () => {
     }
 
     const result = await aiRequest(
-      "askAiShort",
-      prepareAiMessages(
-        ipcStore.data!.userConfig,
-        "askAiShort",
-        ipcStore.data!.appConfig.aiInstructions.clearResult,
-        [...prevMessages, { role: "user", content: message }]
-      )
+      AI_TASKS.ASK_AI,
+      prepareAiMessages(ipcStore.data!.userConfig, AI_TASKS.ASK_AI, [
+        ...prevMessages,
+        { role: "user", content: message },
+      ])
     );
 
     return result;
@@ -105,12 +103,7 @@ export const useCallAi = () => {
 
     return await aiRequest(
       AI_TASKS.CORRECTION,
-      prepareAiMessages(
-        ipcStore.data!.userConfig,
-        AI_TASKS.CORRECTION,
-        ipcStore.data!.appConfig.aiInstructions.clearResult,
-        text
-      )
+      prepareAiMessages(ipcStore.data!.userConfig, AI_TASKS.CORRECTION, text)
     );
   };
 
@@ -119,25 +112,17 @@ export const useCallAi = () => {
       miniToastr.error("Текст не выбран");
       return;
     }
-
     return await aiRequest(
       AI_TASKS.TRANSLATE,
       prepareAiMessages(
         ipcStore.data!.userConfig,
         AI_TASKS.TRANSLATE,
-        ipcStore.data!.appConfig.aiInstructions.clearResult,
-        [
-          {
-            role: "developer",
-            content:
-              "Language to translate: " +
-              ipcStore.data!.userConfig.toTranslateLanguages[toLangNum],
-          },
-          {
-            role: "user",
-            content: text,
-          },
-        ]
+        text,
+        undefined,
+        {
+          TRANSLATION_LANG:
+            ipcStore.data!.userConfig.toTranslateLanguages[toLangNum],
+        }
       )
     );
   };
@@ -153,7 +138,6 @@ export const useCallAi = () => {
       prepareAiMessages(
         ipcStore.data!.userConfig,
         AI_TASKS.DEEP_EDIT,
-        ipcStore.data!.appConfig.aiInstructions.clearResult,
         text,
         ipcStore.data!.userConfig.aiRules[AI_TASKS.DEEP_EDIT][presetNum].context
       )

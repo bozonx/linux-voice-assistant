@@ -6,18 +6,23 @@ export const useAiRequest = () => {
   function prepareAiMessages(
     userConfig: UserConfig,
     taskName: string,
-    devInstructions: string,
     userInput: string | ChatMessage[],
-    rules?: string
+    rules?: string,
+    devInstructionsData?: Record<string, string>
   ) {
     const resolvedRules = rules || userConfig.aiRules[taskName];
     const messages: ChatMessage[] = [];
+    let devInstructions = APP_CONFIG.aiInstructions[taskName];
+
+    if (devInstructionsData) {
+      Object.entries(devInstructionsData).forEach(([key, value]) => {
+        devInstructions = devInstructions.replace("{{" + key + "}}", value);
+      });
+    }
 
     messages.push({
       role: "developer",
-      content: devInstructions
-        .replace("{{LANGUAGE}}", userConfig.userLanguage)
-        .trim(),
+      content: devInstructions.trim(),
     });
 
     if (resolvedRules) {
@@ -28,11 +33,16 @@ export const useAiRequest = () => {
     }
 
     if (Array.isArray(userInput)) {
-      messages.push(...userInput);
+      messages.push(
+        ...userInput.map((item) => ({
+          ...item,
+          content: item.content.trim(),
+        }))
+      );
     } else {
       messages.push({
         role: "user",
-        content: APP_CONFIG.aiTasks[taskName] + ":\n\n" + userInput.trim(),
+        content: userInput.trim(),
       });
     }
 

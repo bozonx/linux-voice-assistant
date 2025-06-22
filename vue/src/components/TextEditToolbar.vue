@@ -10,50 +10,50 @@
         </button>
       </li>
       <li v-for="(lang, index) in ipcStore.data?.userConfig.toTranslateLanguages" :key="lang">
-        <button class="mini-button" @click="translateAndEdit(index)">➡️ {{ lang }}</button>
+        <button class="mini-button" @click="translate(index)">➡️ {{ lang }}</button>
       </li>
     </ul>
 
     <ul class="small-buttons-toolbar">
       <li>
-        <button class="mini-button" @click="correctAndEdit">Коррекция</button>
+        <button class="mini-button" @click="correct">Коррекция</button>
       </li>
       <li>
-        <button class="mini-button" @click="editAndEdit(selectedEditPresetIndex - 1)">Редактировать</button>
+        <button class="mini-button" @click="edit(selectedEditPresetIndex - 1)">Редактировать</button>
         <Dropdown v-model:value="selectedEditPresetIndex" :options="editPresets" />
       </li>
       <li>
-        <button class="mini-button" @click="formatMdAndEdit">Beautyfy MD</button>
+        <button class="mini-button" @click="formatMd">Beautyfy MD</button>
       </li>
       <li>
-        <button class="mini-button" @click="formatCodeAndEdit">Формат JS/JSON/CSS/HTML/XML</button>
+        <button class="mini-button" @click="formatCode">Формат JS/JSON/CSS/HTML/XML</button>
       </li>
       <li>
-        <button class="mini-button" @click="rusStressAndEdit">Ударение рус</button>
+        <button class="mini-button" @click="rusStress">Ударение рус</button>
       </li>
     </ul>
 
     <ul class="small-buttons-toolbar">
       <li>
-        <button class="mini-button" @click="transformTextAndEdit('capitalize')">Capitalize</button>
+        <button class="mini-button" @click="transformText('capitalize')">Capitalize</button>
       </li>
       <li>
-        <button class="mini-button" @click="transformTextAndEdit('uppercase')">UPPERCASE</button>
+        <button class="mini-button" @click="transformText('uppercase')">UPPERCASE</button>
       </li>
       <li>
-        <button class="mini-button" @click="transformTextAndEdit('lowercase')">lowercase</button>
+        <button class="mini-button" @click="transformText('lowercase')">lowercase</button>
       </li>
       <li>
-        <button class="mini-button" @click="transformTextAndEdit('camelCase')">camelCase</button>
+        <button class="mini-button" @click="transformText('camelCase')">camelCase</button>
       </li>
       <li>
-        <button class="mini-button" @click="transformTextAndEdit('pascalCase')">PascalCase</button>
+        <button class="mini-button" @click="transformText('pascalCase')">PascalCase</button>
       </li>
       <li>
-        <button class="mini-button" @click="transformTextAndEdit('snakeCase')">snake_case</button>
+        <button class="mini-button" @click="transformText('snakeCase')">snake_case</button>
       </li>
       <li>
-        <button class="mini-button" @click="transformTextAndEdit('kebabCase')">kebab-case</button>
+        <button class="mini-button" @click="transformText('kebabCase')">kebab-case</button>
       </li>
     </ul>
   </div>
@@ -67,15 +67,13 @@ import { useCodeFormatter } from '../composables/useCodeFormatter';
 import { useTextTransform } from '../composables/useTextTransform';
 import { useCallAi } from '../composables/useCallAi';
 import { AI_TASKS } from '../types';
-import { useAiRequest } from '../../../common/useAiRequest';
 
 const ipcStore = useIpcStore();
 const overlayStore = useOverlayStore();
 const mainInputStore = useMainInputStore();
 const { formatMdAndStyle, formatSomeCode } = useCodeFormatter();
 const { makeRusStress, doCaseTransform } = useTextTransform();
-const { aiRequest, translateText, deepEdit } = useCallAi();
-const { prepareAiMessages } = useAiRequest();
+const { translateText, deepEdit, correctText } = useCallAi();
 const router = useRouter();
 const selectedEditPresetIndex = ref(0);
 
@@ -137,28 +135,20 @@ const voiceRecognition = () => {
   router.push('/voice');
 }
 
-const formatMdAndEdit = () => editMode((value) => formatMdAndStyle(value));
-const formatCodeAndEdit = () => editMode((value) => formatSomeCode(value));
-const rusStressAndEdit = () => editMode((value) => Promise.resolve(makeRusStress(value)));
-const transformTextAndEdit = (type: string) => editMode((value) => Promise.resolve(doCaseTransform(value, type)));
+const formatMd = () => editMode((value) => formatMdAndStyle(value));
+const formatCode = () => editMode((value) => formatSomeCode(value));
+const rusStress = () => editMode((value) => Promise.resolve(makeRusStress(value)));
+const transformText = (type: string) => editMode((value) => Promise.resolve(doCaseTransform(value, type)));
 
-const correctAndEdit = () =>
+const correct = () =>
   aiEditMode((value) =>
-    aiRequest(
-      AI_TASKS.CORRECTION,
-      prepareAiMessages(
-        ipcStore.data!.userConfig,
-        AI_TASKS.CORRECTION,
-        ipcStore.data!.appConfig.aiInstructions.clearResult,
-        value
-      )
-    )
+  correctText(value)
   );
 
-const translateAndEdit = (toLangNum: number) =>
+const translate = (toLangNum: number) =>
   editMode((value) => translateText(toLangNum, value));
 
-const editAndEdit = (presetNum: number) => {
+const edit = (presetNum: number) => {
   if (presetNum === -1) return;
 
   return editMode((value) =>

@@ -1,3 +1,5 @@
+import { APP_CONFIG } from "../appConfig";
+
 export interface CommandLineParams {
   windowId?: string;
   selectedText?: string;
@@ -10,16 +12,7 @@ export interface FunctionResult {
   error?: Error;
 }
 
-export interface AppConfig {
-  windowWidth: number;
-  windowHeight: number;
-  devServerUrl: string;
-  indexHtmlPath: string;
-  // AI instructions
-  aiInstructions: {
-    clearResult: string;
-  };
-}
+export type AppConfig = typeof APP_CONFIG;
 
 export interface ChatMessage {
   role: "user" | "assistant" | "developer";

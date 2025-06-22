@@ -74,26 +74,30 @@
       label="Ask AI"
     />
 
-    <h2>AI Tasks</h2>
+    <h2>AI rules</h2>
     <TextArea
-      v-model:value="userSettings.aiTasks.translate"
+      v-model:value="userSettings.aiRules.base"
+      label="Base"
+    />
+    <TextArea
+      v-model:value="userSettings.aiRules.translate"
       label="Translate"
     />
-    <TextArea v-model:value="userSettings.aiTasks.completion" label="Completion" />
-    <TextArea v-model:value="userSettings.aiTasks.toCalendar" label="To Calendar" />
+    <TextArea v-model:value="userSettings.aiRules.completion" label="Completion" />
+    <TextArea v-model:value="userSettings.aiRules.toCalendar" label="To Calendar" />
     <TextArea
-      v-model:value="userSettings.aiTasks.assistant"
+      v-model:value="userSettings.aiRules.assistant"
       label="Assistant"
     />
     <TextArea
-      v-model:value="userSettings.aiTasks.correction"
+      v-model:value="userSettings.aiRules.correction"
       label="Correction"
     />
     <TextArea
-      v-model:value="userSettings.aiTasks.askAiShort"
+      v-model:value="userSettings.aiRules.askAiShort"
       label="Ask AI Short"
     />
-    <TextArea v-model:value="userSettings.aiTasks.askAiForText" label="Ask AI For Text" />
+    <TextArea v-model:value="userSettings.aiRules.askAiForText" label="Ask AI For Text" />
     
     <ItemsField :items="deepEditItems" label="Deep edit" @update:items="updateDeepEdit">
       <template #item="{ item }">
@@ -123,7 +127,7 @@
   });
 
   const deepEditItems = computed(() => {
-    return userSettings.value.aiTasks.deepEdit.map((item) => ({
+    return userSettings.value.aiRules.deepEdit.map((item) => ({
       description: item.description,
       context: item.context,
     }));
@@ -150,7 +154,7 @@
   };
 
   const updateDeepEdit = (items: Record<string, any>[]) => {
-    userSettings.value.aiTasks.deepEdit = items.map((item) => ({
+    userSettings.value.aiRules.deepEdit = items.map((item) => ({
       description: item.description,
       context: item.context,
     }));
