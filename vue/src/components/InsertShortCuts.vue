@@ -2,7 +2,9 @@
   <OverlayOneColumn v-if="overlayMode === OverlayMode.IN_PROGRESS">
     <InProgressMessage :ai="true" />
   </OverlayOneColumn>
-  <TextPreview :text="props.text" />
+  <OverlayOneColumn v-if="overlayMode === OverlayMode.TRANSLATE">
+    <PreviewMenu :text="translateResult" @close="overlayMode = OverlayMode.NONE" />
+  </OverlayOneColumn>
   <div @keyup.prevent="handleShortCutKeyUp" class="shortcuts-list">
     <div v-if="props.showBackButton">Esc - <button @click="emit('back')">назад</button></div>
     <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>
@@ -40,6 +42,7 @@ import { useCallAi } from '../composables/useCallAi';
 
 enum OverlayMode {
   IN_PROGRESS = "in-progress",
+  TRANSLATE = "translate",
   NONE = "none",
 }
 
@@ -67,6 +70,7 @@ const emit = defineEmits<{
 }>();
 
 const overlayMode = ref(OverlayMode.NONE);
+const translateResult = ref<string>("");
 const inFocusButton = ref<HTMLButtonElement>();
 const { translateText, dealToCalendar } = useCallAi();
 const { resolveText } = useCallApi();
@@ -92,25 +96,18 @@ function toEditPresets() {
   emit('editPresets');
 }
 
-const aIinsertMode = async (
-  transformCb: (value: string) => Promise<string>,
-  text?: string
-) => {
-  let value = resolveText(text);
+async function translate(toLangNum: number) {
+  if (!ipcStore.data?.windowId || !props.text) return;
+
+  let value = resolveText(props.text);
 
   if (!value.trim()) return;
 
   overlayMode.value = OverlayMode.IN_PROGRESS;
 
-  await typeIntoWindowAndClose(await transformCb(value));
+  translateResult.value = await translateText(toLangNum, props.text);  
 
-  overlayMode.value = OverlayMode.NONE;
-};
-
-function translate(toLangNum: number) {
-  if (!ipcStore.data?.windowId || !props.text) return;
-
-  aIinsertMode((value) => translateText(toLangNum, value), props.text);  
+  overlayMode.value = OverlayMode.TRANSLATE;
 }
 
 function goToEditor() {

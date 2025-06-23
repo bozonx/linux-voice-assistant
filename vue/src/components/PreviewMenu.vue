@@ -1,14 +1,14 @@
 <template>
   <div class="diff-view">
-    <DiffMenu :oldText="props.oldText" :newText="props.newText" />
+    <TextPreview :text="props.text" />
   </div>
 
   <div>
     <div @keyup.prevent="handleKeyUp" class="shortcuts-list">
       <div>Esc - <button @click="close">назад</button></div>
       <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>
-      <div v-if="ipcStore.data?.windowId && props.showInsertButton">Space - <button @click="typeIntoWindowAndClose(props.newText)">вставить</button></div>
-      <div>a - <button @click="intoClipboardAndClose(props.newText)">в буфер обмена и закрыть окно</button></div>
+      <div v-if="ipcStore.data?.windowId && props.showInsertButton">Space - <button @click="typeIntoWindowAndClose(props.text)">вставить</button></div>
+      <div>a - <button @click="intoClipboardAndClose(props.text)">в буфер обмена и закрыть окно</button></div>
     </div>
   </div>
 </template>
@@ -18,11 +18,7 @@ import { useCallApi } from '../composables/useCallApi';
 import { useIpcStore } from '../stores/ipc';
 
 const props = defineProps({
-  oldText: {
-    type: String,
-    required: true,
-  },
-  newText: {
+  text: {
     type: String,
     required: true,
   },
@@ -65,18 +61,10 @@ function handleKeyUp(event: KeyboardEvent) {
   else if (event.code === "Space") {
     if (!ipcStore.data?.windowId || !props.showInsertButton) return;
 
-    insertIntoWindow(props.newText);
+    insertIntoWindow(props.text);
   }
   else if (event.code === "KeyA") {
-    intoClipboardAndClose(props.newText);
+    intoClipboardAndClose(props.text ?? '');
   }
 }
 </script>
-
-<style scoped>
-.diff-view {
-  height: 100%;
-  width: 100%;
-  overflow-y: scroll;
-}
-</style>

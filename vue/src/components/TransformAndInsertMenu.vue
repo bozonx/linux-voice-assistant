@@ -110,8 +110,17 @@ const correctAndInsert = async (text?: string) => {
   overlayStore.showDiff(newText);
 };
 
-const translateAndInsert = (toLangNum: number, text?: string) =>
-  aIinsertMode((value) => translateText(toLangNum, value), text);
+const translateAndInsert = async (toLangNum: number, text?: string) => {
+  let value = resolveText(text);
+
+  if (!value.trim()) return;
+
+  overlayStore.showAskingAi();
+  
+  const newText = await translateText(toLangNum, value);
+
+  overlayStore.showTranslatePreview(newText);
+};
 
 const formatMdAndInsert = () => insertMode((value) => formatMdAndStyle(value));
 const formatCodeAndInsert = () => insertMode((value) => formatSomeCode(value));

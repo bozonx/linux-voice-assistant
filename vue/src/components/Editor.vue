@@ -16,6 +16,10 @@
     <DiffMenu :oldText="mainInputStore.value" :newText="overlayStore.diffText" @close="overlayStore.hideOverlay" />
   </OverlayOneColumn>
 
+  <OverlayOneColumn v-if="overlayMode === OverlayMode.TRANSLATE_PREVIEW">
+    <PreviewMenu :text="overlayStore.translateResult" @close="overlayStore.hideOverlay" />
+  </OverlayOneColumn>
+
   <div @keyup="handleKeyUp">
     <div>
       <MainInput ref="mainInput"/>

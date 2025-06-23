@@ -3,6 +3,7 @@ import { useMainInputStore } from "./mainInput";
 
 export enum OverlayMode {
   DIFF = "diff",
+  TRANSLATE_PREVIEW = "translate-preview",
   MENU = "menu",
   EDIT_PRESETS = "edit-presets",
   ASKING_AI = "asking-ai",
@@ -13,7 +14,7 @@ export const useOverlayStore = defineStore("mainOverlay", () => {
   const overlayMode = ref<OverlayMode>(OverlayMode.NONE);
   const mainInputStore = useMainInputStore();
   const diffText = ref<string>("");
-
+  const translateResult = ref<string>("");
   // const startVoiceRecognition = () => {
   //   status.value = OVERLAY_STATUSES.VOICE_RECOGNITION;
   //   globalResetFocus();
@@ -43,6 +44,11 @@ export const useOverlayStore = defineStore("mainOverlay", () => {
     diffText.value = newText;
   };
 
+  const showTranslatePreview = (newText: string) => {
+    overlayMode.value = OverlayMode.TRANSLATE_PREVIEW;
+    translateResult.value = newText;
+  };
+
   const showMenu = () => {
     overlayMode.value = OverlayMode.MENU;
   };
@@ -57,5 +63,7 @@ export const useOverlayStore = defineStore("mainOverlay", () => {
     showMenu,
     showDiff,
     diffText,
+    translateResult,
+    showTranslatePreview,
   };
 });
