@@ -25,10 +25,10 @@
       <div>a - <button @click="intoClipboardAndClose(props.text)">в буфер обмена и закрыть окно</button></div>
       <div>s - <button @click="fastNote(props.text)">быстрая заметка в Obsidian</button></div>
       <div>d - <button @click="addToKnowledgeBase(props.text)">вставить в базу знаний</button></div>
-      <div v-if="ipcStore.data?.windowId">f - <button @click="toEditPresets">выбор пресета редактирования</button></div>
+      <div>f - <button @click="toEditPresets">выбор пресета редактирования</button></div>
       <div>g - <button @click="searchInInternet(props.text)">поиск в интернете</button></div>
 
-      <template v-if="ipcStore.data?.windowId">
+      <template>
         <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[0]">z - ➡️ <button @click="translate(0)">{{ipcStore.data?.userConfig.toTranslateLanguages[0]}}</button></div>
         <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[1]">x - ➡️ <button @click="translate(1)">{{ipcStore.data?.userConfig.toTranslateLanguages[1]}}</button></div>
         <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[2]">c - ➡️ <button @click="translate(2)">{{ipcStore.data?.userConfig.toTranslateLanguages[2]}}</button></div>

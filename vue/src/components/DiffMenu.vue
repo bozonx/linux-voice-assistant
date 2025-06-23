@@ -1,14 +1,14 @@
 <template>
   <div class="diff-view">
-    <DiffMenu :oldText="props.oldText" :newText="props.newText" />
+    <DiffInput :oldText="props.oldText" :newText="props.newText" @update:newText="updateNewText" />
   </div>
 
   <div>
     <div @keyup.prevent="handleKeyUp" class="shortcuts-list">
       <div>Esc - <button @click="close">назад</button></div>
       <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>
-      <div v-if="ipcStore.data?.windowId && props.showInsertButton">Space - <button @click="typeIntoWindowAndClose(props.newText)">вставить</button></div>
-      <div>a - <button @click="intoClipboardAndClose(props.newText)">в буфер обмена и закрыть окно</button></div>
+      <div v-if="ipcStore.data?.windowId && props.showInsertButton">Space - <button @click="typeIntoWindowAndClose(editedNewText)">вставить</button></div>
+      <div>a - <button @click="intoClipboardAndClose(editedNewText)">в буфер обмена и закрыть окно</button></div>
     </div>
   </div>
 </template>
@@ -34,6 +34,7 @@ const props = defineProps({
 const { closeWindow, typeIntoWindowAndClose, intoClipboardAndClose } = useCallApi();
 const inFocusButton = ref<HTMLButtonElement | null>(null);
 const ipcStore = useIpcStore();
+const editedNewText = ref(props.newText);
 
 const emit = defineEmits<{
   (e: 'close'): void
@@ -51,8 +52,8 @@ function close() {
   emit('close');
 }
 
-async function insertIntoWindow(text: string) {
-  await typeIntoWindowAndClose(text);
+function updateNewText(text: string) {
+  editedNewText.value = text;
 }
 
 function handleKeyUp(event: KeyboardEvent) {
@@ -65,10 +66,10 @@ function handleKeyUp(event: KeyboardEvent) {
   else if (event.code === "Space") {
     if (!ipcStore.data?.windowId || !props.showInsertButton) return;
 
-    insertIntoWindow(props.newText);
+    typeIntoWindowAndClose(editedNewText.value);
   }
   else if (event.code === "KeyA") {
-    intoClipboardAndClose(props.newText);
+    intoClipboardAndClose(editedNewText.value);
   }
 }
 </script>

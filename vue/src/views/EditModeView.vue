@@ -9,7 +9,7 @@ const ipcStore = useIpcStore();
 const text = ref('');
 
 onMounted(() => {
-  text.value = ipcStore.data!.selectedText || '';
+  text.value = ipcStore.data?.selectedText || '';
 });
 
 </script>
