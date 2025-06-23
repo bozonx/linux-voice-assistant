@@ -5,7 +5,6 @@
 
   <div class="diff-view">
     <Diff :oldText="props.oldText" :newText="props.newText" />
-    <DiffView :diffFile="diffFile" />
   </div>
 
   <div>
@@ -17,10 +16,6 @@
 </template>
 
 <script setup lang="ts">
-import "@git-diff-view/vue/styles/diff-view.css";
-import { DiffView } from "@git-diff-view/vue";
-import { DiffFile } from "@git-diff-view/core";
-import { generateDiffFile } from "@git-diff-view/file";
 import { useCallApi } from '../composables/useCallApi';
 import { useIpcStore } from '../stores/ipc';
 
@@ -54,22 +49,6 @@ onMounted(() => {
 function close() {
   emit('close');
 }
-    
-const file = generateDiffFile(
-  "oldFile.md",
-  props.oldText,
-  "newFile.md",
-  props.newText,
-  "Markdown",
-  "Markdown"
-);
-file.initTheme('light');
-file.init();
-file.buildSplitDiffLines();
-file.buildUnifiedDiffLines();
-
-const bundle = file.getBundle();
-const diffFile = ref(DiffFile.createInstance({}, bundle));
 
 async function insertIntoWindow(text: string) {
   overlayMode.value = OverlayMode.IN_PROGRESS;

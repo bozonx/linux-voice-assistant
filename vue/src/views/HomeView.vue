@@ -1,5 +1,5 @@
 <template>
-  <DiffMenu :oldText="oldText" :newText="newText" />
+  <DiffInput :oldText="oldText" :newText="newText" />
   <Editor />
 
   <div class="navigation">

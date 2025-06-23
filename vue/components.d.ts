@@ -13,6 +13,7 @@ declare module 'vue' {
     CheckboxRow: typeof import('./src/components/CheckboxRow.vue')['default']
     Diff: typeof import('./src/components/Diff.vue')['default']
     DiffExample: typeof import('./src/components/DiffExample.vue')['default']
+    DiffInput: typeof import('./src/components/DiffInput.vue')['default']
     DiffMenu: typeof import('./src/components/DiffMenu.vue')['default']
     DiffTest: typeof import('./src/components/DiffTest.vue')['default']
     Dropdown: typeof import('./src/components/Dropdown.vue')['default']
