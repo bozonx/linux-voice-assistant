@@ -8,9 +8,9 @@
   </OverlayOneColumn>
 
   <div>
-    <PreviewText :text="props.text" />
+    <TextPreview :text="props.text" />
   </div>
-  
+
   <div @keyup.prevent="handleShortCutKeyUp" class="shortcuts-list">
     <div v-if="props.showBackButton">Esc - <button @click="emit('back')">назад</button></div>
     <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>

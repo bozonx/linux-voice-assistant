@@ -83,7 +83,7 @@ export const useCallApi = () => {
       return;
     }
 
-    // TODO: do it
+    await ipcStore.callFunction("putIntoClipboardAndClose", [value]);
   };
 
   const insertIntoWindow = async (text?: string) => {

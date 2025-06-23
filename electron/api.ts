@@ -1,5 +1,4 @@
-//const electron = require("electron");
-import { BrowserWindow } from "electron";
+import { BrowserWindow, clipboard } from "electron";
 import { exec } from "child_process";
 import { UserConfig } from "./types/UserConfig";
 import { AppConfig } from "./types/types";
@@ -45,9 +44,18 @@ export class Api {
   }
 
   async typeIntoWindowAndClose(text: string, windowId: string): Promise<void> {
+    // TODO: не нужно получать windowId, он и так есть тут
     await typeIntoWindow(this.userConfig.xdotoolBin, text, windowId);
 
-    if (this.mainWindow) this.mainWindow.close();
+    this.closeMainWindow();
+  }
+
+  async putIntoClipboardAndClose(text: string): Promise<void> {
+    clipboard.writeText(text);
+
+    setTimeout(() => {
+      this.closeMainWindow();
+    }, 300);
   }
 
   async closeMainWindow(): Promise<void> {

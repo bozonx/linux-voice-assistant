@@ -1,5 +1,6 @@
 import { exec } from "child_process";
 import { CommandLineParams } from "../electron/types/types.js";
+import { clipboard } from "electron";
 
 export function getCommandLineArgs(): CommandLineParams {
   const args: string[] = process.argv.slice(2);
@@ -27,7 +28,10 @@ export async function typeIntoWindow(
   windowId: string
 ): Promise<void> {
   return new Promise<void>((resolve, reject) => {
-    // Сначала активируем окно
+    // put text to clipboard
+    clipboard.writeText(text);
+
+    // активируем окно
     exec(`${xdotoolBin} windowactivate ${windowId}`, (error) => {
       if (error) {
         console.error("Error activating window:", error);
@@ -35,16 +39,27 @@ export async function typeIntoWindow(
         return;
       }
 
-      // Затем вводим текст
-      exec(`${xdotoolBin} type "${text}"`, (error) => {
-        if (error) {
-          console.error("Error typing text:", error);
-          reject(error);
-          return;
-        }
+      setTimeout(() => {
+        // Затем вводим текст
+        exec(`${xdotoolBin} key ctrl+v`, (error) => {
+          if (error) {
+            console.error("Error typing text:", error);
+            reject(error);
+            return;
+          }
 
-        resolve();
-      });
+          resolve();
+        });
+      }, 500);
+      // exec(`${xdotoolBin} type "${text}"`, (error) => {
+      //   if (error) {
+      //     console.error("Error typing text:", error);
+      //     reject(error);
+      //     return;
+      //   }
+
+      //   resolve();
+      // });
     });
   });
 }
