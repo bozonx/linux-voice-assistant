@@ -11,6 +11,7 @@
     <InputRow v-model:value="userSettings.xdotoolBin" label="Xdotool Bin" />
     <InputRow v-model:value="userSettings.appLanguage" label="App Language" />
     <InputRow v-model:value="userSettings.userLanguage" label="User Language" />
+    <CheckboxRow v-model:value="userSettings.useDiffWithCorrection" label="Use Diff With Correction" />
     <ItemsField
       :items="translateLanguagesItems"
       label="To Translate Languages"

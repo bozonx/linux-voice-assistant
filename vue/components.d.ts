@@ -10,6 +10,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     ActionsMenu: typeof import('./src/components/ActionsMenu.vue')['default']
     AiChat: typeof import('./src/components/AiChat.vue')['default']
+    CheckboxRow: typeof import('./src/components/CheckboxRow.vue')['default']
     Diff: typeof import('./src/components/Diff.vue')['default']
     Dropdown: typeof import('./src/components/Dropdown.vue')['default']
     DropdownRow: typeof import('./src/components/DropdownRow.vue')['default']
