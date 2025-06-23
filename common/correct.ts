@@ -3,7 +3,6 @@ import fs from "fs/promises";
 import { createOrReadConfig } from "../electron/userConfigManager";
 import { getCommandLineArgs, typeIntoWindow } from "./helpers";
 import { useAiRequest } from "./useAiRequest";
-import { APP_CONFIG } from "../electron/appConfig";
 import { AI_TASKS } from "../vue/src/types";
 
 (async () => {

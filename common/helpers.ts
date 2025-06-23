@@ -28,38 +28,50 @@ export async function typeIntoWindow(
   windowId: string
 ): Promise<void> {
   return new Promise<void>((resolve, reject) => {
-    // put text to clipboard
-    clipboard.writeText(text);
+    // TODO: экранировать кавычки
+    // TODO: брать bash из конфига
+    exec(
+      `/usr/bin/bash -c 'echo "${text}" | xclip -selection clipboard'`,
+      (error) => {
+        if (error) {
+          console.error("Error putting text to clipboard:", error);
+          reject(error);
+          return;
+        }
 
-    // активируем окно
-    exec(`${xdotoolBin} windowactivate ${windowId}`, (error) => {
-      if (error) {
-        console.error("Error activating window:", error);
-        reject(error);
-        return;
-      }
-
-      setTimeout(() => {
-        // Затем вводим текст
-        exec(`${xdotoolBin} key ctrl+v`, (error) => {
+        // активируем окно
+        exec(`${xdotoolBin} windowactivate ${windowId}`, (error) => {
           if (error) {
-            console.error("Error typing text:", error);
+            console.error("Error activating window:", error);
             reject(error);
             return;
           }
 
-          resolve();
-        });
-      }, 500);
-      // exec(`${xdotoolBin} type "${text}"`, (error) => {
-      //   if (error) {
-      //     console.error("Error typing text:", error);
-      //     reject(error);
-      //     return;
-      //   }
+          setTimeout(() => {
+            // Затем вводим текст
+            exec(`${xdotoolBin} key ctrl+v`, (error) => {
+              if (error) {
+                console.error("Error typing text:", error);
+                reject(error);
+                return;
+              }
 
-      //   resolve();
-      // });
-    });
+              resolve();
+            });
+          }, 500);
+
+          // exec(`${xdotoolBin} type "${text}"`, (error) => {
+          //   if (error) {
+          //     console.error("Error typing text:", error);
+          //     reject(error);
+          //     return;
+          //   }
+
+          //   resolve();
+          // });
+        });
+      }
+    );
   });
+
 }
