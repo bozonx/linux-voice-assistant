@@ -3,13 +3,17 @@
     <InProgressMessage :ai="true" />
   </OverlayOneColumn>
 
+  <OverlayOneColumn v-if="overlayMode === OverlayMode.DIFF">
+    <Diff :oldText="text" :newText="newText" />
+  </OverlayOneColumn>
+
   <div>
     <TextPreview :text="props.text" />
     <div @keyup.prevent="handleKeyUp" class="shortcuts-list">
       <div v-if="props.showBackButton">Esc - <button @click="close">назад</button></div>
       <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>
       <div v-for="(preset, index) in ipcStore.data?.userConfig.aiRules.deepEdit" :key="preset.description">
-        {{ EDIT_PRESET_KEYS[index] }} - <button @click="editAndInsert(index)">{{ preset.description }}</button>
+        {{ EDIT_PRESET_KEYS[index] }} - <button @click="makeDiff(index)">{{ preset.description }}</button>
       </div>
     </div>
   </div>
@@ -22,6 +26,7 @@ import { useIpcStore } from '../stores/ipc';
 import { useCallAi } from '../composables/useCallAi';
 
 enum OverlayMode {
+  DIFF = "diff",
   IN_PROGRESS = "in-progress",
   NONE = "none",
 }
@@ -39,9 +44,10 @@ const props = defineProps({
 
 const ipcStore = useIpcStore();
 const { deepEdit } = useCallAi();
-const { closeWindow, typeIntoWindowAndClose } = useCallApi();
+const { closeWindow } = useCallApi();
 const inFocusButton = ref<HTMLButtonElement | null>(null);
 const overlayMode = ref(OverlayMode.NONE);
+const newText = ref('');
 
 const emit = defineEmits<{
   (e: 'close'): void
@@ -57,14 +63,13 @@ function close() {
   emit('close');
 }
 
-async function editAndInsert(index: number) {
+async function makeDiff(index: number) {
   overlayMode.value = OverlayMode.IN_PROGRESS;
 
   const text = await deepEdit(index, props.text);
-  console.log(111, text);
-  await typeIntoWindowAndClose(text);
-
-  overlayMode.value = OverlayMode.NONE;
+  
+  newText.value = text;
+  overlayMode.value = OverlayMode.DIFF;
 }
 
 function handleKeyUp(event: KeyboardEvent) {
@@ -83,7 +88,7 @@ function handleKeyUp(event: KeyboardEvent) {
   }
   
   if (codeLetter && EDIT_PRESET_KEYS.includes(codeLetter)) {
-    editAndInsert(EDIT_PRESET_KEYS.indexOf(codeLetter));
+    makeDiff(EDIT_PRESET_KEYS.indexOf(codeLetter));
   }
 }
 </script>
