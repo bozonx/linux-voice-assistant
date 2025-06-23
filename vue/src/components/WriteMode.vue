@@ -29,6 +29,7 @@ import { useCallApi } from '../composables/useCallApi';
 import { useCallAi } from '../composables/useCallAi';
 import { DebounceCallIncreasing } from 'squidlet-lib';
 import { useMainInputHistoryStore } from '../stores/mainInputHistory';
+import miniToastr from "mini-toastr";
 
 enum OverlayMode {
   CORRECTION = "correction",
@@ -37,6 +38,7 @@ enum OverlayMode {
   NONE = "none",
 }
 
+const MIN_CORRECTION_LENGTH = 20;
 const mainInputHistoryStore = useMainInputHistoryStore()
 const debounced = new DebounceCallIncreasing()
 const { closeWindow } = useCallApi();
@@ -89,15 +91,29 @@ function toWriteMode() {
 }
 
 async function doCorrection() {
-  if (!correctionIsActual.value || !inputText.value) {
-    overlayMode.value = OverlayMode.CORRECTION;
+  if (!inputText.value?.trim()) {
+    miniToastr.warn('Введите текст для коррекции');
 
-    const result = await correctText(inputText.value);
-
-    correctedText.value = result;
-    inputText.value = result;
-    correctionIsActual.value = true;
+    return;
   }
+  else if (inputText.value.length < MIN_CORRECTION_LENGTH) {
+    miniToastr.warn('Слишком короткий текст для коррекции');
+
+    return;
+  }
+  else if (correctionIsActual.value) {
+    miniToastr.warn('Текст уже корректирован');
+
+    return;
+  }
+
+  overlayMode.value = OverlayMode.CORRECTION;
+
+  const result = await correctText(inputText.value);
+
+  correctedText.value = result;
+  inputText.value = result;
+  correctionIsActual.value = true;
 
   toShortcuts();
 }

@@ -2,9 +2,15 @@
   <OverlayOneColumn v-if="overlayMode === OverlayMode.IN_PROGRESS">
     <InProgressMessage :ai="true" />
   </OverlayOneColumn>
+
   <OverlayOneColumn v-if="overlayMode === OverlayMode.TRANSLATE">
     <PreviewMenu :text="translateResult" @close="overlayMode = OverlayMode.NONE" />
   </OverlayOneColumn>
+
+  <div>
+    <PreviewText :text="props.text" />
+  </div>
+  
   <div @keyup.prevent="handleShortCutKeyUp" class="shortcuts-list">
     <div v-if="props.showBackButton">Esc - <button @click="emit('back')">назад</button></div>
     <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>
