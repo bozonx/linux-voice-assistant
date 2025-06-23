@@ -1,4 +1,5 @@
 <template>
+  <DiffMenu :oldText="oldText" :newText="newText" />
   <Editor />
 
   <div class="navigation">
@@ -12,6 +13,8 @@
 </template>
 
 <script setup lang="ts">
+const newText = ref('Можно вести список продуктов. Он будет запоминать, какие из них закончились, и примерно рассчитывать их потребление.');
+const oldText = ref('можно вести список продуктов. Он может запоминать какие продукты уже закончились. Примерно прикидывать потребление');
 </script>
 
 <style scoped>

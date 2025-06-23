@@ -4,7 +4,7 @@
   </OverlayOneColumn>
 
   <OverlayOneColumn v-if="overlayMode === OverlayMode.DIFF">
-    <Diff :oldText="text" :newText="newText" />
+    <DiffMenu :oldText="props.text" :newText="newText" @close="overlayMode = OverlayMode.NONE" />
   </OverlayOneColumn>
 
   <div>
@@ -65,10 +65,7 @@ function close() {
 
 async function makeDiff(index: number) {
   overlayMode.value = OverlayMode.IN_PROGRESS;
-
-  const text = await deepEdit(index, props.text);
-  
-  newText.value = text;
+  newText.value = await deepEdit(index, props.text);
   overlayMode.value = OverlayMode.DIFF;
 }
 
