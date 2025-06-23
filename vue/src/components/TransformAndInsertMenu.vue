@@ -98,8 +98,17 @@ const aIinsertMode = async (
   overlayStore.hideOverlay();
 };
 
-const correctAndInsert = (text?: string) =>
-  aIinsertMode((value) => correctText(value), text);
+const correctAndInsert = async (text?: string) => {
+  let value = resolveText(text);
+
+  if (!value.trim()) return;
+
+  overlayStore.showAskingAi();
+  
+  const newText = await correctText(value); 
+
+  overlayStore.showDiff(newText);
+};
 
 const translateAndInsert = (toLangNum: number, text?: string) =>
   aIinsertMode((value) => translateText(toLangNum, value), text);

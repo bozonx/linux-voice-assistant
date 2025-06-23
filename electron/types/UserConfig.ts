@@ -44,7 +44,6 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
   userLanguage: "ru_RU",
   toTranslateLanguages: ["en_US", "ru_RU", "es_AR", "tr_TR"],
   internetSearchUrl: "https://duckduckgo.com/?q=",
-  useDiffWithCorrection: true,
   models: [],
   aiModelUsage: {
     voiceRecognition: "",
@@ -97,7 +96,6 @@ export interface UserConfig {
   userLanguage: string;
   toTranslateLanguages: string[];
   internetSearchUrl: string;
-  useDiffWithCorrection: boolean;
 
   models: {
     id: string;

@@ -12,6 +12,10 @@
     <InProgressMessage :ai="true" />
   </OverlayOneColumn>
 
+  <OverlayOneColumn v-if="overlayMode === OverlayMode.DIFF">
+    <DiffMenu :oldText="mainInputStore.value" :newText="overlayStore.diffText" @close="overlayStore.hideOverlay" />
+  </OverlayOneColumn>
+
   <div @keyup="handleKeyUp">
     <div>
       <MainInput ref="mainInput"/>
