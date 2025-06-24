@@ -50,9 +50,9 @@
       label="Translate"
     />
     <DropdownRow
-      v-model:value="userSettings.aiModelUsage.completion"
+      v-model:value="userSettings.aiModelUsage.voiceCorrection"
       :options="models.map((model) => model.model)"
-      label="Completion"
+      label="Voice Correction"
     />
     <DropdownRow
       v-model:value="userSettings.aiModelUsage.intentionRecognition"
@@ -76,34 +76,34 @@
     />
 
     <h2>AI rules</h2>
-    <TextArea
+    <TextAreaRow
       v-model:value="userSettings.aiRules.base"
       label="Base"
     />
-    <TextArea
+    <TextAreaRow
       v-model:value="userSettings.aiRules.translate"
       label="Translate"
     />
-    <TextArea v-model:value="userSettings.aiRules.voiceCorrection" label="Voice Correction" />
-    <TextArea v-model:value="userSettings.aiRules.toCalendar" label="To Calendar" />
-    <TextArea
+    <TextAreaRow v-model:value="userSettings.aiRules.voiceCorrection" label="Voice Correction" />
+    <TextAreaRow v-model:value="userSettings.aiRules.toCalendar" label="To Calendar" />
+    <TextAreaRow
       v-model:value="userSettings.aiRules.assistant"
       label="Assistant"
     />
-    <TextArea
+    <TextAreaRow
       v-model:value="userSettings.aiRules.correction"
       label="Correction"
     />
-    <TextArea
+    <TextAreaRow
       v-model:value="userSettings.aiRules.askAiShort"
       label="Ask AI Short"
     />
-    <TextArea v-model:value="userSettings.aiRules.askAiForText" label="Ask AI For Text" />
+    <TextAreaRow v-model:value="userSettings.aiRules.askAiForText" label="Ask AI For Text" />
     
     <ItemsField :items="deepEditItems" label="Deep edit" @update:items="updateDeepEdit">
       <template #item="{ item }">
         <InputRow v-model:value="item.description" label="Description" />
-        <TextArea v-model:value="item.context" label="Context" />
+        <TextAreaRow v-model:value="item.context" label="Context" />
       </template>
     </ItemsField>
 

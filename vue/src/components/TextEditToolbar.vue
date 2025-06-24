@@ -18,10 +18,10 @@
       <li>
         <button class="mini-button" @click="correct">Коррекция</button>
       </li>
-      <li>
+      <!-- <li>
         <button class="mini-button" @click="edit(selectedEditPresetIndex - 1)">Редактировать</button>
         <Dropdown v-model:value="selectedEditPresetIndex" :options="editPresets" />
-      </li>
+      </li> -->
       <li>
         <button class="mini-button" @click="formatMd">Beautyfy MD</button>
       </li>
