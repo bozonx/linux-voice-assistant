@@ -37,10 +37,10 @@ const CORRECTION_TASK = `
  `;
 
 const VOICE_CORRECTION_TASK = `
-- Этот текст после распознования голоса
 - Убери повторения слов изза запинок и заиканий
 - Убери запутанность речи и сделай текст более точным и понятным
-- Восстанови пунктуацию и сделай текст граматически верным
+- Если какие-то слова не знаешь то не придумывай им синонимы, оставь их как есть
+- Если смысл не понял то не придумывай его, оставь как есть
  `;
 
 export const DEFAULT_USER_CONFIG: UserConfig = {
@@ -55,7 +55,7 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
   aiModelUsage: {
     voiceRecognition: "",
     translate: "",
-    completion: "",
+    voiceCorrection: "",
     intentionRecognition: "",
     correction: "",
     deepEdit: "",
@@ -119,7 +119,7 @@ export interface UserConfig {
 
     ////// simple models //////
     translate: string;
-    completion: string;
+    voiceCorrection: string;
     intentionRecognition: string;
     // correction of the text and restorastion after voice recognition
     correction: string;

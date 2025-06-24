@@ -44,6 +44,16 @@ const DEEP_EDIT_TASK = `
 - Исправляй логические ошибки, запутанность речи, косноязычие
 `;
 
+const VOICE_CORRECTION_TASK = `
+## Что возвращать
+
+- Возвращай только результат, без комментариев и объяснений и без какой либо дополнительной информации
+
+## Твоё задание
+- в последнем сообщении с ролью "user" находится текст после распознования голоса тебе нужно из него сделать нормальный текст
+- Восстанови пунктуацию и сделай текст граматически верным
+`;
+
 export const APP_CONFIG = {
   windowWidth: 800,
   windowHeight: 600,
@@ -55,5 +65,6 @@ export const APP_CONFIG = {
     correction: CORRECTION_TASK,
     deepEdit: DEEP_EDIT_TASK,
     translate: TRANSLATION_TASK,
+    voiceCorrection: VOICE_CORRECTION_TASK,
   },
 };
