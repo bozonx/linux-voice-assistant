@@ -1,6 +1,5 @@
 import { exec } from "child_process";
 import { CommandLineParams } from "../electron/types/types.js";
-import { clipboard } from "electron";
 
 export function getCommandLineArgs(): CommandLineParams {
   const args: string[] = process.argv.slice(2);
@@ -60,7 +59,7 @@ export async function typeIntoWindow(
 
               resolve();
             });
-          }, 500);
+          }, 300);
 
           // exec(`${xdotoolBin} type "${text}"`, (error) => {
           //   if (error) {
@@ -75,5 +74,4 @@ export async function typeIntoWindow(
       }
     );
   });
-
 }

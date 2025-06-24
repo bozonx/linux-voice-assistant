@@ -11,23 +11,39 @@ import { AI_TASKS } from "../vue/src/types";
   const userConfig = await createOrReadConfig(appDir);
   const { chatCompletion, prepareAiMessages } = useAiRequest();
 
-  const result = await chatCompletion(
-    userConfig,
-    AI_TASKS.CORRECTION,
-    prepareAiMessages(userConfig, AI_TASKS.CORRECTION, args.selectedText)
-  );
+  let result;
 
-  await fs.appendFile(
-    path.join(appDir, "correctionCall.log"),
-    new Date().toISOString() +
-      " " +
-      JSON.stringify({
-        content: result.content,
-        windowId: args.windowId,
-        selectedText: args.selectedText,
-      }) +
-      "\n"
-  );
+  try {
+    result = await chatCompletion(
+      userConfig,
+      AI_TASKS.CORRECTION,
+      prepareAiMessages(userConfig, AI_TASKS.CORRECTION, args.selectedText)
+    );
+
+    await fs.appendFile(
+      path.join(appDir, "correctionCall.log"),
+      new Date().toISOString() +
+        " " +
+        JSON.stringify({
+          content: result.content,
+          windowId: args.windowId,
+          selectedText: args.selectedText,
+        }) +
+        "\n"
+    );
+  } catch (error) {
+    await fs.appendFile(
+      path.join(appDir, "correctionCall.log"),
+      new Date().toISOString() +
+        " " +
+        JSON.stringify({
+          error: error,
+          windowId: args.windowId,
+          selectedText: args.selectedText,
+        }) +
+        "\n"
+    );
+  }
 
   await typeIntoWindow(userConfig.xdotoolBin, result.content, args.windowId);
 })();
