@@ -12,7 +12,7 @@
   </div>
 
   <div @keyup.prevent="handleShortCutKeyUp" class="shortcuts-list">
-    <div>Esc - <button @click="cancel">прервать</button></div>
+    <div v-if="props.showBackButton">Esc - <button @click="cancel">прервать</button></div>
     <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>
     <div>Space - <button @click="finish">закончить распознавание</button></div>
   </div>
@@ -28,6 +28,15 @@ enum OverlayMode {
   NONE = "none",
 }
 
+const MIN_CORRECTION_LENGTH = 30;
+
+const props = defineProps({
+  showBackButton: {
+    type: Boolean,
+    default: true,
+  },
+});
+
 const overlayMode = ref<OverlayMode>(OverlayMode.NONE);
 const { startVoiceRecognition, stopVoiceRecognition, voiceCorrection } = useCallAi();
 const { closeWindow } = useCallApi();
@@ -39,6 +48,8 @@ let listenerIndex = -1;
 
 const handleShortCutKeyUp = async (event: KeyboardEvent) => {
   if (event.key === "Escape") {
+    if (!props.showBackButton) return;
+    
     await cancel();
   }
   else if (event.code === "KeyQ" && event.ctrlKey) {
@@ -47,6 +58,9 @@ const handleShortCutKeyUp = async (event: KeyboardEvent) => {
     setTimeout(async () => {
       await closeWindow();
     }, 500);
+  }
+  else if (event.code === "Space") {
+    await finish();
   }
 };
 
@@ -58,12 +72,17 @@ const cancel = async () => {
 
 const finish = async () => {
   globalEvents.removeListener(listenerIndex);
+
   await stopVoiceRecognition();
   
   overlayMode.value = OverlayMode.CORRECTING;
 
-  const correctedText = await voiceCorrection(recognizedText.value);
+  let correctedText = recognizedText.value;
   
+  if (recognizedText.value.trim().length > MIN_CORRECTION_LENGTH) {
+    correctedText = await voiceCorrection(recognizedText.value);
+  }
+
   emit("corrected", correctedText);
 
   overlayMode.value = OverlayMode.NONE;

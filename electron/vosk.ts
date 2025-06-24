@@ -76,6 +76,7 @@ class VoskVoiceRecognition {
   stop(): void {
     this.parts = [];
     this.micInstance.stop();
+
     if (this.ws) {
       this.ws.close();
     }

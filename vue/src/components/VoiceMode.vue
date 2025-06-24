@@ -1,73 +1,38 @@
 <template>
-  <Overlay v-if="overlayMode === OverlayMode.RECOGNITION">
-    
+  <Overlay v-if="overlayMode === OverlayMode.INSERT_MENU">
+    <InsertMenu :text="correctedText" :showBackButton="false" @editPresets="toEditPresets" />
   </Overlay>
   
   <Overlay v-if="overlayMode === OverlayMode.EDIT_PRESETS">
-    <EditPresetsMenu @close="toShortcuts" :text="inputText" />
+    <EditPresetsMenu @close="toInsertMenu" :text="correctedText" />
   </Overlay>
 
   <div>
-    <textarea ref="textareaRef" v-model="inputText" @keyup="handleVoiceModeKeyUp" class="textarea"></textarea>
-  </div>
-
-  <div>
-    <InsertShortCuts :text="inputText" @back="toVoiceMode" @editPresets="toEditPresets" />
+    <VoiceRecognitionMenu :showBackButton="false" @corrected="handleCorrected" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { useCallApi } from '../composables/useCallApi';
-
 enum OverlayMode {
-  RECOGNITION = "recognition",
+  INSERT_MENU = "insert-menu",
   EDIT_PRESETS = "edit-presets",
   NONE = "none",
 }
 
-const { closeWindow } = useCallApi();
-const inputText = ref('');
-const textareaRef = ref<HTMLTextAreaElement>();
+const correctedText = ref('');
 const overlayMode = ref(OverlayMode.NONE);
 
-onMounted(() => {
-    if (textareaRef.value) {
-      focusTextarea();
-    }
-})
-
-function focusTextarea() {
-  nextTick(() => {
-    textareaRef.value?.focus();
-  })
-}
-
-function toShortcuts() {
-  overlayMode.value = OverlayMode.SHORTCUTS;
+function toInsertMenu() {
+  overlayMode.value = OverlayMode.INSERT_MENU;
 }
 
 function toEditPresets() {
   overlayMode.value = OverlayMode.EDIT_PRESETS;
 }
 
-function toVoiceMode() {
-  overlayMode.value = OverlayMode.NONE;
-  focusTextarea();
+function handleCorrected(text: string) {
+  correctedText.value = text;
+  toInsertMenu();
 }
 
-const handleVoiceModeKeyUp = (event: KeyboardEvent) => {
-  if (event.code === "Escape") {
-    toShortcuts();
-  }
-  else if (event.code === "KeyQ" && event.ctrlKey) {
-    closeWindow();
-  }
-}
 </script>
-
-<style scoped>
-.textarea {
-  width: 100%;
-  height: 150px;
-}
-</style>

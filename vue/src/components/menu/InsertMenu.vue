@@ -16,7 +16,7 @@
     <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>
     <div v-if="props.showToEditor">q - <button @click="goToEditor">в редактор</button></div>
     <template v-if="props.text">
-      <div v-if="ipcStore.data?.windowId && props.showInsertButton">Space - <button @click="typeIntoWindowAndClose(props.text ?? '')">вставить</button></div>
+      <div v-if="props.showInsertButton">Space - <button @click="typeIntoWindowAndClose(props.text ?? '')">вставить</button></div>
       <!-- <div>w - </div> -->
       <!-- <div>e - </div> -->
       <div>r - <button @click="askAIShort(props.text)">быстрый вопрос к AI</button></div>
@@ -28,13 +28,11 @@
       <div>f - <button @click="toEditPresets">выбор пресета редактирования</button></div>
       <div>g - <button @click="searchInInternet(props.text)">поиск в интернете</button></div>
 
-      <template>
-        <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[0]">z - ➡️ <button @click="translate(0)">{{ipcStore.data?.userConfig.toTranslateLanguages[0]}}</button></div>
-        <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[1]">x - ➡️ <button @click="translate(1)">{{ipcStore.data?.userConfig.toTranslateLanguages[1]}}</button></div>
-        <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[2]">c - ➡️ <button @click="translate(2)">{{ipcStore.data?.userConfig.toTranslateLanguages[2]}}</button></div>
-        <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[3]">v - ➡️ <button @click="translate(3)">{{ipcStore.data?.userConfig.toTranslateLanguages[3]}}</button></div>
-        <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[4]">b - ➡️ <button @click="translate(4)">{{ipcStore.data?.userConfig.toTranslateLanguages[4]}}</button></div>
-      </template>
+      <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[0]">z - ➡️ <button @click="translate(0)">{{ipcStore.data?.userConfig.toTranslateLanguages[0]}}</button></div>
+      <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[1]">x - ➡️ <button @click="translate(1)">{{ipcStore.data?.userConfig.toTranslateLanguages[1]}}</button></div>
+      <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[2]">c - ➡️ <button @click="translate(2)">{{ipcStore.data?.userConfig.toTranslateLanguages[2]}}</button></div>
+      <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[3]">v - ➡️ <button @click="translate(3)">{{ipcStore.data?.userConfig.toTranslateLanguages[3]}}</button></div>
+      <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[4]">b - ➡️ <button @click="translate(4)">{{ipcStore.data?.userConfig.toTranslateLanguages[4]}}</button></div>
     </template>
   </div>
 </template>
