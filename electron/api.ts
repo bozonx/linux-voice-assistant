@@ -5,11 +5,14 @@ import { AppConfig } from "./types/types";
 import { typeIntoWindow } from "../common/helpers";
 import { saveUserConfig } from "./userConfigManager";
 import { mainInputStore, mainInputHistoryStore } from "./history";
+import VoskVoiceRecognition from "./vosk";
 
 export class Api {
   private readonly appConfig: AppConfig;
   userConfig: UserConfig;
+  vosk: VoskVoiceRecognition;
   private readonly mainWindow: BrowserWindow;
+  private voskHandler: (text: string) => void;
 
   constructor(
     appConfig: AppConfig,
@@ -19,9 +22,16 @@ export class Api {
     this.appConfig = appConfig;
     this.userConfig = userConfig;
     this.mainWindow = mainWindow;
+
+    // TODO: брать из конфига
+    this.vosk = new VoskVoiceRecognition("ws://localhost:2700");
   }
 
   async init() {}
+
+  $setVoskHandler(handler: (text: string) => void): void {
+    this.voskHandler = handler;
+  }
 
   // Функция для открытия URL в браузере
   async openInBrowserAndClose(url: string): Promise<void> {
@@ -60,6 +70,16 @@ export class Api {
 
   async closeMainWindow(): Promise<void> {
     if (this.mainWindow) this.mainWindow.close();
+  }
+
+  async startVoiceRecognition(): Promise<void> {
+    this.vosk.start((text) => {
+      this.voskHandler(text);
+    });
+  }
+
+  async stopVoiceRecognition(): Promise<void> {
+    this.vosk.stop();
   }
 
   async saveUserConfig(userConfig: string): Promise<void> {

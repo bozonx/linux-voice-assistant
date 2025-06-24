@@ -1,19 +1,15 @@
 // @ts-ignore
 import miniToastr from "mini-toastr";
 import { useIpcStore } from "../stores/ipc";
-import { useVoiceRecognitionStore } from "../stores/voiceRecognition";
 import { useCallApi } from "./useCallApi";
 import { useAiRequest } from "../../../common/useAiRequest";
 import { ChatMessage } from "../../../electron/types/types";
 import { AI_TASKS } from "../types";
-import { useOverlayStore } from "../stores/mainOverlay";
 
 export const useCallAi = () => {
   const { chatCompletion, prepareAiMessages } = useAiRequest();
   const ipcStore = useIpcStore();
-  const voiceRecognitionStore = useVoiceRecognitionStore();
-  const { resolveText, typeIntoWindowAndClose } = useCallApi();
-  const overlayStore = useOverlayStore();
+  const { resolveText } = useCallApi();
 
   async function aiRequest(taskName: string, messages: string | ChatMessage[]) {
     const result = await chatCompletion(
@@ -32,9 +28,12 @@ export const useCallAi = () => {
     return result.content;
   }
 
-  const voiceRecognition = () => {
-    // TODO: remake
-    voiceRecognitionStore.startRecognizing();
+  const startVoiceRecognition = async () => {
+    await ipcStore.callFunction("startVoiceRecognition");
+  };
+
+  const stopVoiceRecognition = async () => {
+    await ipcStore.callFunction("stopVoiceRecognition");
   };
 
   const dealToCalendar = async (text?: string) => {
@@ -121,7 +120,8 @@ export const useCallAi = () => {
 
   return {
     aiRequest,
-    voiceRecognition,
+    startVoiceRecognition,
+    stopVoiceRecognition,
     dealToCalendar,
     sendChatMessage,
     correctText,

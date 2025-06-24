@@ -6,6 +6,9 @@
     <div v-else-if="props.correction">
       <h2>Коррекция...</h2>
     </div>
+    <div v-else-if="props.recognition">
+      <h2>Распознавание...</h2>
+    </div>
     <div v-else>
       <h2>Выполняется...</h2>
     </div>
@@ -19,6 +22,10 @@ const props = defineProps({
     default: false
   },
   correction: {
+    type: Boolean,
+    default: false
+  },
+  recognition: {
     type: Boolean,
     default: false
   }

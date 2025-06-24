@@ -68,6 +68,10 @@ async function createWindow() {
       }
     }
   );
+
+  api.$setVoskHandler((text) => {
+    mainWindow?.webContents.send("vosk-text", text);
+  });
 }
 
 app.on("window-all-closed", () => {
