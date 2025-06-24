@@ -1,7 +1,7 @@
 <template>
-  <OverlayOneColumn v-if="overlayMode === OverlayMode.CORRECTING">
+  <Overlay v-if="overlayMode === OverlayMode.CORRECTING">
     <InProgressMessage :correction="true" />
-  </OverlayOneColumn>
+  </Overlay>
 
   <div>
     <InProgressMessage :recognition="true" />

@@ -1,11 +1,11 @@
 <template>
-  <OverlayOneColumn v-if="overlayMode === OverlayMode.RECOGNITION">
+  <Overlay v-if="overlayMode === OverlayMode.RECOGNITION">
     
-  </OverlayOneColumn>
+  </Overlay>
   
-  <OverlayOneColumn v-if="overlayMode === OverlayMode.EDIT_PRESETS">
+  <Overlay v-if="overlayMode === OverlayMode.EDIT_PRESETS">
     <EditPresetsMenu @close="toShortcuts" :text="inputText" />
-  </OverlayOneColumn>
+  </Overlay>
 
   <div>
     <textarea ref="textareaRef" v-model="inputText" @keyup="handleVoiceModeKeyUp" class="textarea"></textarea>

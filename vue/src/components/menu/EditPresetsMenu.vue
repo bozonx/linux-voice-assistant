@@ -1,11 +1,11 @@
 <template>
-  <OverlayOneColumn v-if="overlayMode === OverlayMode.IN_PROGRESS">
+  <Overlay v-if="overlayMode === OverlayMode.IN_PROGRESS">
     <InProgressMessage :ai="true" />
-  </OverlayOneColumn>
+  </Overlay>
 
-  <OverlayOneColumn v-if="overlayMode === OverlayMode.DIFF">
+  <Overlay v-if="overlayMode === OverlayMode.DIFF">
     <DiffMenu :oldText="props.text" :newText="newText" @close="overlayMode = OverlayMode.NONE" />
-  </OverlayOneColumn>
+  </Overlay>
 
   <div>
     <TextPreview :text="props.text" />

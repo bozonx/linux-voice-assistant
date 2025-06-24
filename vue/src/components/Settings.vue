@@ -12,7 +12,7 @@
     <InputRow v-model:value="userSettings.appLanguage" label="App Language" />
     <InputRow v-model:value="userSettings.userLanguage" label="User Language" />
     <!-- <CheckboxRow v-model:value="userSettings.useDiffWithCorrection" label="Use Diff With Correction" /> -->
-    <ItemsField
+    <ItemsFieldRow
       :items="translateLanguagesItems"
       label="To Translate Languages"
       @update:items="updateTranslateLanguages"
@@ -20,14 +20,14 @@
       <template #item="{ item }">
         <InputRow v-model:value="item.value" />
       </template>
-    </ItemsField>
+    </ItemsFieldRow>
     <InputRow
       v-model:value="userSettings.internetSearchUrl"
       label="Internet Search URL"
     />
 
     <h2>Models</h2>
-    <ItemsField :items="models" label="Models" @update:items="updateModels">
+    <ItemsFieldRow :items="models" label="Models" @update:items="updateModels">
       <template #item="{ item }">
         <InputRow v-model:value="item.id" label="Id" />
         <InputRow v-model:value="item.model" label="Model" />
@@ -36,7 +36,7 @@
         <InputRow v-model:value="item.apiKey" label="API Key" />
         <InputRow v-model:value="item.tags" label="Tags" />
       </template>
-    </ItemsField>
+    </ItemsFieldRow>
 
     <h2>AI Model Usage</h2>
     <DropdownRow
@@ -100,12 +100,12 @@
     />
     <TextAreaRow v-model:value="userSettings.aiRules.askAiForText" label="Ask AI For Text" />
     
-    <ItemsField :items="deepEditItems" label="Deep edit" @update:items="updateDeepEdit">
+    <ItemsFieldRow :items="deepEditItems" label="Deep edit" @update:items="updateDeepEdit">
       <template #item="{ item }">
         <InputRow v-model:value="item.description" label="Description" />
         <TextAreaRow v-model:value="item.context" label="Context" />
       </template>
-    </ItemsField>
+    </ItemsFieldRow>
 
     <div class="buttons">
       <button @click="back">Back</button>

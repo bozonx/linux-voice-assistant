@@ -1,15 +1,15 @@
 <template>
-  <OverlayOneColumn v-if="overlayMode === OverlayMode.SHORTCUTS">
+  <Overlay v-if="overlayMode === OverlayMode.SHORTCUTS">
     <InsertMenu :text="correctedText" @back="toWriteMode" @editPresets="toEditPresets" />
-  </OverlayOneColumn>
+  </Overlay>
 
-  <OverlayOneColumn v-if="overlayMode === OverlayMode.EDIT_PRESETS">
+  <Overlay v-if="overlayMode === OverlayMode.EDIT_PRESETS">
     <EditPresetsMenu @close="toShortcuts" :text="correctedText" />
-  </OverlayOneColumn>
+  </Overlay>
 
-  <OverlayOneColumn v-if="overlayMode === OverlayMode.CORRECTION">
+  <Overlay v-if="overlayMode === OverlayMode.CORRECTION">
     <InProgressMessage :correction="true" />
-  </OverlayOneColumn>
+  </Overlay>
 
   <div @keyup="handleWriteModeKeyUp" class="write-mode-container">
     <div class="hint">

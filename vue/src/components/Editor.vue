@@ -1,28 +1,28 @@
 <template>
-  <OverlayOneColumn v-if="overlayMode === OverlayMode.MENU">
+  <Overlay v-if="overlayMode === OverlayMode.MENU">
     <InsertMenu @back="overlayStore.hideOverlay" @editPresets="overlayStore.showMenu"
        :showToEditor="false" :text="mainInputStore.value" />
-  </OverlayOneColumn>
+  </Overlay>
 
-  <OverlayOneColumn v-if="overlayMode === OverlayMode.EDIT_PRESETS">
+  <Overlay v-if="overlayMode === OverlayMode.EDIT_PRESETS">
     <EditPresetsMenu @close="overlayStore.hideOverlay" :text="mainInputStore.value" />
-  </OverlayOneColumn>
+  </Overlay>
 
-  <OverlayOneColumn v-if="overlayMode === OverlayMode.ASKING_AI">
+  <Overlay v-if="overlayMode === OverlayMode.ASKING_AI">
     <InProgressMessage :ai="true" />
-  </OverlayOneColumn>
+  </Overlay>
 
-  <OverlayOneColumn v-if="overlayMode === OverlayMode.DIFF">
+  <Overlay v-if="overlayMode === OverlayMode.DIFF">
     <DiffMenu :oldText="mainInputStore.value" :newText="overlayStore.diffText" @close="overlayStore.hideOverlay" />
-  </OverlayOneColumn>
+  </Overlay>
 
-  <OverlayOneColumn v-if="overlayMode === OverlayMode.TRANSLATE_PREVIEW">
+  <Overlay v-if="overlayMode === OverlayMode.TRANSLATE_PREVIEW">
     <PreviewMenu :text="overlayStore.translateResult" @close="overlayStore.hideOverlay" />
-  </OverlayOneColumn>
+  </Overlay>
 
-  <OverlayOneColumn v-if="overlayMode === OverlayMode.VOICE_RECOGNITION">
+  <Overlay v-if="overlayMode === OverlayMode.VOICE_RECOGNITION">
     <VoiceRecognitionMenu @close="overlayStore.hideOverlay" @corrected="handleCorrected" />
-  </OverlayOneColumn>
+  </Overlay>
 
   <div @keyup="handleKeyUp">
     <div>

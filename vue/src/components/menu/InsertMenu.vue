@@ -1,11 +1,11 @@
 <template>
-  <OverlayOneColumn v-if="overlayMode === OverlayMode.IN_PROGRESS">
+  <Overlay v-if="overlayMode === OverlayMode.IN_PROGRESS">
     <InProgressMessage :ai="true" />
-  </OverlayOneColumn>
+  </Overlay>
 
-  <OverlayOneColumn v-if="overlayMode === OverlayMode.TRANSLATE">
+  <Overlay v-if="overlayMode === OverlayMode.TRANSLATE">
     <PreviewMenu :text="translateResult" @close="overlayMode = OverlayMode.NONE" />
-  </OverlayOneColumn>
+  </Overlay>
 
   <div>
     <TextPreview :text="props.text" />
