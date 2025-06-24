@@ -20,10 +20,10 @@
 </template>
 
 <script setup lang="ts">
-import { useCallApi } from '../composables/useCallApi';
-import { EDIT_PRESET_KEYS } from '../types';
-import { useIpcStore } from '../stores/ipc';
-import { useCallAi } from '../composables/useCallAi';
+import { useCallApi } from '../../composables/useCallApi';
+import { EDIT_PRESET_KEYS } from '../../types';
+import { useIpcStore } from '../../stores/ipc';
+import { useCallAi } from '../../composables/useCallAi';
 
 enum OverlayMode {
   DIFF = "diff",

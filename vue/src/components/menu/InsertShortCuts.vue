@@ -41,10 +41,10 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import { useCallApi } from '../composables/useCallApi';
-import { useIpcStore } from '../stores/ipc';
-import { useRouteParams } from '../stores/routeParams';
-import { useCallAi } from '../composables/useCallAi';
+import { useCallApi } from '../../composables/useCallApi';
+import { useIpcStore } from '../../stores/ipc';
+import { useRouteParams } from '../../stores/routeParams';
+import { useCallAi } from '../../composables/useCallAi';
 
 enum OverlayMode {
   IN_PROGRESS = "in-progress",

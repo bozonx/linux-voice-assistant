@@ -1,28 +1,24 @@
 <template>
   <div class="diff-view">
-    <DiffInput :oldText="props.oldText" :newText="props.newText" @update:newText="updateNewText" />
+    <TextPreview :text="props.text" />
   </div>
 
   <div>
     <div @keyup.prevent="handleKeyUp" class="shortcuts-list">
       <div>Esc - <button @click="close">назад</button></div>
       <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>
-      <div v-if="ipcStore.data?.windowId && props.showInsertButton">Space - <button @click="typeIntoWindowAndClose(editedNewText)">вставить</button></div>
-      <div>a - <button @click="intoClipboardAndClose(editedNewText)">в буфер обмена и закрыть окно</button></div>
+      <div v-if="ipcStore.data?.windowId && props.showInsertButton">Space - <button @click="typeIntoWindowAndClose(props.text)">вставить</button></div>
+      <div>a - <button @click="intoClipboardAndClose(props.text)">в буфер обмена и закрыть окно</button></div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useCallApi } from '../composables/useCallApi';
-import { useIpcStore } from '../stores/ipc';
+import { useCallApi } from '../../composables/useCallApi';
+import { useIpcStore } from '../../stores/ipc';
 
 const props = defineProps({
-  oldText: {
-    type: String,
-    required: true,
-  },
-  newText: {
+  text: {
     type: String,
     required: true,
   },
@@ -34,7 +30,6 @@ const props = defineProps({
 const { closeWindow, typeIntoWindowAndClose, intoClipboardAndClose } = useCallApi();
 const inFocusButton = ref<HTMLButtonElement | null>(null);
 const ipcStore = useIpcStore();
-const editedNewText = ref(props.newText);
 
 const emit = defineEmits<{
   (e: 'close'): void
@@ -52,8 +47,8 @@ function close() {
   emit('close');
 }
 
-function updateNewText(text: string) {
-  editedNewText.value = text;
+async function insertIntoWindow(text: string) {
+  await typeIntoWindowAndClose(text);
 }
 
 function handleKeyUp(event: KeyboardEvent) {
@@ -66,18 +61,10 @@ function handleKeyUp(event: KeyboardEvent) {
   else if (event.code === "Space") {
     if (!ipcStore.data?.windowId || !props.showInsertButton) return;
 
-    typeIntoWindowAndClose(editedNewText.value);
+    insertIntoWindow(props.text);
   }
   else if (event.code === "KeyA") {
-    intoClipboardAndClose(editedNewText.value);
+    intoClipboardAndClose(props.text ?? '');
   }
 }
 </script>
-
-<style scoped>
-.diff-view {
-  height: 100%;
-  width: 100%;
-  overflow-y: scroll;
-}
-</style>

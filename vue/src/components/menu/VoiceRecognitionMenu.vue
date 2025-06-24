@@ -19,9 +19,9 @@
 </template>
 
 <script setup lang="ts">
-import { useCallAi } from "../composables/useCallAi";
-import { useCallApi } from "../composables/useCallApi";
-import { GlobalEvents, useGlobalEvents } from "../composables/useGlobalEvents";
+import { useCallAi } from '../../composables/useCallAi';
+import { useCallApi } from '../../composables/useCallApi';
+import { GlobalEvents, useGlobalEvents } from '../../composables/useGlobalEvents';
 
 enum OverlayMode {
   CORRECTING = "correcting",
