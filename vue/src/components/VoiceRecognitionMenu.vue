@@ -1,6 +1,6 @@
 <template>
   <OverlayOneColumn v-if="overlayMode === OverlayMode.CORRECTING">
-    <InProgressMessage :correcting="true" />
+    <InProgressMessage :correction="true" />
   </OverlayOneColumn>
 
   <div>
@@ -29,9 +29,9 @@ enum OverlayMode {
 }
 
 const overlayMode = ref<OverlayMode>(OverlayMode.NONE);
-const { startVoiceRecognition, stopVoiceRecognition } = useCallAi();
+const { startVoiceRecognition, stopVoiceRecognition, voiceCorrection } = useCallAi();
 const { closeWindow } = useCallApi();
-const emit = defineEmits(["close"]);
+const emit = defineEmits(["close", "corrected"]);
 const inFocusButton = ref<HTMLButtonElement | null>(null);
 const { globalEvents } = useGlobalEvents();
 const recognizedText = ref<string>(""); 
@@ -62,7 +62,11 @@ const finish = async () => {
   
   overlayMode.value = OverlayMode.CORRECTING;
 
+  const correctedText = await voiceCorrection(recognizedText.value);
   
+  emit("corrected", correctedText);
+
+  overlayMode.value = OverlayMode.NONE;
 };
 
 onMounted(async () => {

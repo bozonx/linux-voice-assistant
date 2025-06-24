@@ -84,7 +84,7 @@
       v-model:value="userSettings.aiRules.translate"
       label="Translate"
     />
-    <TextArea v-model:value="userSettings.aiRules.completion" label="Completion" />
+    <TextArea v-model:value="userSettings.aiRules.voiceCorrection" label="Voice Correction" />
     <TextArea v-model:value="userSettings.aiRules.toCalendar" label="To Calendar" />
     <TextArea
       v-model:value="userSettings.aiRules.assistant"

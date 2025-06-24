@@ -36,6 +36,13 @@ const CORRECTION_TASK = `
 - Учитывай что пользователь мог забыть переключить раскладку и писать на одном языке в раскладке другого языке
  `;
 
+const VOICE_CORRECTION_TASK = `
+- Этот текст после распознования голоса
+- Убери повторения слов изза запинок и заиканий
+- Убери запутанность речи и сделай текст более точным и понятным
+- Восстанови пунктуацию и сделай текст граматически верным
+ `;
+
 export const DEFAULT_USER_CONFIG: UserConfig = {
   openrouterDefaultApiKey: "",
   openrouterDefaultBaseUrl: "https://openrouter.ai/api/v1",
@@ -57,7 +64,7 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
   aiRules: {
     base: BASE_TASK,
     translate: TRANSLATION_TASK,
-    completion: "",
+    voiceCorrection: VOICE_CORRECTION_TASK,
     toCalendar: TO_CALENDAR_TASK,
     assistant: "",
     correction: CORRECTION_TASK,
@@ -127,7 +134,7 @@ export interface UserConfig {
     base: string;
     // simple translate
     translate: string;
-    completion: string;
+    voiceCorrection: string;
     // intention recognition
     toCalendar: string;
     // intention recognition

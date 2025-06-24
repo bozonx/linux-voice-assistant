@@ -14,6 +14,13 @@ export const useMainInputStore = defineStore("mainInput", () => {
     value.value = newText;
   };
 
+  const setValueAtCursor = (newText: string): void => {
+    value.value =
+      value.value.substring(0, selectionStart.value) +
+      newText +
+      value.value.substring(selectionEnd.value);
+  };
+
   const focus = (): void => {
     focusCount.value++;
   };
@@ -52,6 +59,7 @@ export const useMainInputStore = defineStore("mainInput", () => {
     selectionStart,
     selectionEnd,
     setValue,
+    setValueAtCursor,
     focus,
     // selectAll,
     setSelection,

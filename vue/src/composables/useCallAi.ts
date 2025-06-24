@@ -36,6 +36,17 @@ export const useCallAi = () => {
     await ipcStore.callFunction("stopVoiceRecognition");
   };
 
+  const voiceCorrection = async (text: string) => {
+    return await aiRequest(
+      AI_TASKS.VOICE_CORRECTION,
+      prepareAiMessages(
+        ipcStore.data!.userConfig,
+        AI_TASKS.VOICE_CORRECTION,
+        text
+      )
+    );
+  };
+
   const dealToCalendar = async (text?: string) => {
     let value = resolveText(text);
 
@@ -122,6 +133,7 @@ export const useCallAi = () => {
     aiRequest,
     startVoiceRecognition,
     stopVoiceRecognition,
+    voiceCorrection,
     dealToCalendar,
     sendChatMessage,
     correctText,

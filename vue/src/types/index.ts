@@ -30,7 +30,7 @@ export enum GlobalEvents {
 
 export enum AI_TASKS {
   TRANSLATE = "translate",
-  COMPLETION = "completion",
+  VOICE_CORRECTION = "voiceCorrection",
   INTENTION_RECOGNITION = "intentionRecognition",
   CORRECTION = "correction",
   DEEP_EDIT = "deepEdit",

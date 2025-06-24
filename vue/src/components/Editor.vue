@@ -21,7 +21,7 @@
   </OverlayOneColumn>
 
   <OverlayOneColumn v-if="overlayMode === OverlayMode.VOICE_RECOGNITION">
-    <VoiceRecognitionMenu @close="overlayStore.hideOverlay" />
+    <VoiceRecognitionMenu @close="overlayStore.hideOverlay" @corrected="handleCorrected" />
   </OverlayOneColumn>
 
   <div @keyup="handleKeyUp">
@@ -68,6 +68,11 @@ function handleKeyUp(event: KeyboardEvent) {
   if (event.code === "Escape") {
     overlayStore.showMenu();
   }
+}
+
+function handleCorrected(text: string) {
+  mainInputStore.setValueAtCursor(text);
+  overlayStore.hideOverlay();
 }
 </script>
 
