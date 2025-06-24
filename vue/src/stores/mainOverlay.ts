@@ -7,6 +7,7 @@ export enum OverlayMode {
   MENU = "menu",
   EDIT_PRESETS = "edit-presets",
   ASKING_AI = "asking-ai",
+  VOICE_RECOGNITION = "voice-recognition",
   NONE = "none",
 }
 
@@ -53,6 +54,10 @@ export const useOverlayStore = defineStore("mainOverlay", () => {
     overlayMode.value = OverlayMode.MENU;
   };
 
+  const showVoiceRecognition = () => {
+    overlayMode.value = OverlayMode.VOICE_RECOGNITION;
+  };
+
   return {
     overlayMode,
     // startVoiceRecognition,
@@ -65,5 +70,6 @@ export const useOverlayStore = defineStore("mainOverlay", () => {
     diffText,
     translateResult,
     showTranslatePreview,
+    showVoiceRecognition,
   };
 });

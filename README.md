@@ -28,7 +28,7 @@ npm run build
 ## Install external dependencies
 
 - xdotool
-- xclip
+- xsel
 - pyenv
 
 ### argostranslate

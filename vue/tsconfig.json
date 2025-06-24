@@ -35,6 +35,7 @@
     "auto-imports.d.ts",
     "../common/useAiRequest.ts",
     "src/components/DropdownRow",
-    "../_old/Overlays.vue"
+    "../_old/Overlays.vue",
+    "../_old/voiceRecognition.ts"
   ]
 }

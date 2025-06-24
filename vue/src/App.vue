@@ -6,16 +6,16 @@
 
 <script setup lang="ts">
 import { useIpcStore } from './stores/ipc';
-import { GlobalEvents, InitParams, START_MODES } from './types';
+import { InitParams, START_MODES } from './types';
 import { useRouter } from 'vue-router';
-import { useGlobalEvents } from './composables/useGlobalEvents';
+import { GlobalEvents, useGlobalEvents } from './composables/useGlobalEvents';
 
 const ipcStore = useIpcStore();
 const router = useRouter();
 const { globalEvents } = useGlobalEvents();
 
 onMounted(() => {
-  window.addEventListener('keyup', handleKeyUp)
+  // window.addEventListener('keyup', handleKeyUp)
 
   window.electron.ipcRenderer.on('init-params', async (params: InitParams) => {
     console.log("Received params:", params);
@@ -37,18 +37,18 @@ onMounted(() => {
     // Else just show the editor
   });
 
-    // window.electron.ipcRenderer.on('voice-recognition', (data: string) => {
-    //   mainInputStore.setValue(data);
-    // });
+  window.electron.ipcRenderer.on('vosk-text', (data: string) => {
+    globalEvents.emit(GlobalEvents.VOICE_RECOGNITION, data);
+  });
 });
 
 onUnmounted(() => {
-  window.removeEventListener('keyup', handleKeyUp);
+  // window.removeEventListener('keyup', handleKeyUp);
 });
 
-const handleKeyUp = (event: KeyboardEvent) => {
-    globalEvents.emit(GlobalEvents.KEY_UP, event);
-};
+// const handleKeyUp = (event: KeyboardEvent) => {
+//     globalEvents.emit(GlobalEvents.KEY_UP, event);
+// };
 
 </script>
 

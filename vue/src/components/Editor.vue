@@ -20,6 +20,10 @@
     <PreviewMenu :text="overlayStore.translateResult" @close="overlayStore.hideOverlay" />
   </OverlayOneColumn>
 
+  <OverlayOneColumn v-if="overlayMode === OverlayMode.VOICE_RECOGNITION">
+    <VoiceRecognitionMenu @close="overlayStore.hideOverlay" />
+  </OverlayOneColumn>
+
   <div @keyup="handleKeyUp">
     <div>
       <MainInput ref="mainInput"/>

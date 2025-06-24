@@ -1,10 +1,10 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { useIpcStore } from "./ipc";
-import { useOverlayStore } from "./mainOverlay";
-import { useKeysStore } from "./keys";
-import { useMainInputStore } from "./mainInput";
-import { useCallApi } from "../composables/useCallApi";
+import { useIpcStore } from "../vue/src/stores/ipc";
+import { useOverlayStore } from "../vue/src/stores/mainOverlay";
+import { useKeysStore } from "../vue/src/stores/keys";
+import { useMainInputStore } from "../vue/src/stores/mainInput";
+import { useCallApi } from "../vue/src/composables/useCallApi";
 
 const VOICE_RECOGNITION_STATES = {
   INACTIVE: "INACTIVE",

@@ -74,7 +74,6 @@ const mainInputStore = useMainInputStore();
 const { formatMdAndStyle, formatSomeCode } = useCodeFormatter();
 const { makeRusStress, doCaseTransform } = useTextTransform();
 const { translateText, deepEdit, correctText } = useCallAi();
-const router = useRouter();
 const selectedEditPresetIndex = ref(0);
 
 const editPresets = computed((): string[] => {
@@ -132,7 +131,7 @@ const aiEditMode = async (transformCb: (value: string) => Promise<string>) => {
 };
 
 const voiceRecognition = () => {
-  router.push('/voice');
+  overlayStore.showVoiceRecognition();
 }
 
 const formatMd = () => editMode((value) => formatMdAndStyle(value));
