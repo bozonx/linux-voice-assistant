@@ -25,7 +25,7 @@ export const useCallApi = () => {
   }
 
   function resolveText(text?: string): string {
-    let value;
+    let value = "";
 
     if (text) {
       value = text;

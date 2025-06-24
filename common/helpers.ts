@@ -28,16 +28,18 @@ export async function typeIntoWindow(
   windowId: string
 ): Promise<void> {
   return new Promise<void>((resolve, reject) => {
-    // TODO: экранировать кавычки
-    // TODO: брать bash из конфига
+    const escapedText = text.replace(/'/g, "'\"'\"'");
+
     exec(
-      `/usr/bin/bash -c 'echo "${text}" | xclip -selection clipboard'`,
+      `echo '${escapedText}' | xsel --clipboard --input --trim`,
+      // `echo '${escapedText}' | xclip -selection clipboard`,
+      // `/usr/bin/bash -c 'echo "${text}" | xclip -selection clipboard'`,
       (error) => {
-        if (error) {
-          console.error("Error putting text to clipboard:", error);
-          reject(error);
-          return;
-        }
+        // if (error) {
+        //   console.error("Error putting text to clipboard:", error);
+        //   reject(error);
+        //   return;
+        // }
 
         // активируем окно
         exec(`${xdotoolBin} windowactivate ${windowId}`, (error) => {

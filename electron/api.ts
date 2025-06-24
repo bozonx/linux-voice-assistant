@@ -26,7 +26,6 @@ export class Api {
   // Функция для открытия URL в браузере
   async openInBrowserAndClose(url: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      // TODO: экранировать кавычки
       exec(
         `xdg-open "${this.userConfig.internetSearchUrl}${encodeURIComponent(
           url
