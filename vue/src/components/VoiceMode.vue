@@ -4,7 +4,7 @@
   </OverlayOneColumn>
   
   <OverlayOneColumn v-if="overlayMode === OverlayMode.EDIT_PRESETS">
-    <EditPresets @close="toShortcuts" :text="inputText" />
+    <EditPresetsMenu @close="toShortcuts" :text="inputText" />
   </OverlayOneColumn>
 
   <div>

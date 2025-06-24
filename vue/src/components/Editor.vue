@@ -1,11 +1,11 @@
 <template>
   <OverlayOneColumn v-if="overlayMode === OverlayMode.MENU">
-    <InsertShortCuts @back="overlayStore.hideOverlay" @editPresets="overlayStore.showMenu"
+    <InsertMenu @back="overlayStore.hideOverlay" @editPresets="overlayStore.showMenu"
        :showToEditor="false" :text="mainInputStore.value" />
   </OverlayOneColumn>
 
   <OverlayOneColumn v-if="overlayMode === OverlayMode.EDIT_PRESETS">
-    <EditPresets @close="overlayStore.hideOverlay" :text="mainInputStore.value" />
+    <EditPresetsMenu @close="overlayStore.hideOverlay" :text="mainInputStore.value" />
   </OverlayOneColumn>
 
   <OverlayOneColumn v-if="overlayMode === OverlayMode.ASKING_AI">

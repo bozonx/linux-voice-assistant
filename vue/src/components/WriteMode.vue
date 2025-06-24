@@ -1,10 +1,10 @@
 <template>
   <OverlayOneColumn v-if="overlayMode === OverlayMode.SHORTCUTS">
-    <InsertShortCuts :text="correctedText" @back="toWriteMode" @editPresets="toEditPresets" />
+    <InsertMenu :text="correctedText" @back="toWriteMode" @editPresets="toEditPresets" />
   </OverlayOneColumn>
 
   <OverlayOneColumn v-if="overlayMode === OverlayMode.EDIT_PRESETS">
-    <EditPresets @close="toShortcuts" :text="correctedText" />
+    <EditPresetsMenu @close="toShortcuts" :text="correctedText" />
   </OverlayOneColumn>
 
   <OverlayOneColumn v-if="overlayMode === OverlayMode.CORRECTION">
