@@ -1,6 +1,6 @@
 <template>
-  <OverlayOneColumn v-if="overlayMode === OverlayMode.SHORTCUTS">
-    <InsertShortCuts :text="inputText" @back="toVoiceMode" @editPresets="toEditPresets" />
+  <OverlayOneColumn v-if="overlayMode === OverlayMode.RECOGNITION">
+    
   </OverlayOneColumn>
   
   <OverlayOneColumn v-if="overlayMode === OverlayMode.EDIT_PRESETS">
@@ -10,13 +10,17 @@
   <div>
     <textarea ref="textareaRef" v-model="inputText" @keyup="handleVoiceModeKeyUp" class="textarea"></textarea>
   </div>
+
+  <div>
+    <InsertShortCuts :text="inputText" @back="toVoiceMode" @editPresets="toEditPresets" />
+  </div>
 </template>
 
 <script setup lang="ts">
 import { useCallApi } from '../composables/useCallApi';
 
 enum OverlayMode {
-  SHORTCUTS = "shortcuts",
+  RECOGNITION = "recognition",
   EDIT_PRESETS = "edit-presets",
   NONE = "none",
 }
@@ -60,3 +64,10 @@ const handleVoiceModeKeyUp = (event: KeyboardEvent) => {
   }
 }
 </script>
+
+<style scoped>
+.textarea {
+  width: 100%;
+  height: 150px;
+}
+</style>
