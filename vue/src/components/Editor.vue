@@ -28,17 +28,17 @@
     <div>
       <MainInput ref="mainInput"/>
       <p class="main-input-hint">Hint: press Esc to open menu. можно выделить текст в инпуте, и тогда изменения будут касаться только того, что выделено.</p>
-      <TextEditToolbar/>
+      <EditorTextToolbar/>
     </div>
 
     <div>
       <h2 class="section-title">Действия</h2>
-      <ActionsMenu />
+      <EditorActions />
     </div>
 
     <div v-if="ipcStore.data?.windowId">
       <h2 class="section-title">Трансформирование и вставка</h2>
-      <TransformAndInsertMenu />
+      <EditorInsertToolbar />
     </div>
   </div>
 </template>
