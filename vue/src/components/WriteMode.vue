@@ -1,10 +1,6 @@
 <template>
   <Overlay v-if="overlayMode === OverlayMode.SHORTCUTS">
-    <InsertMenu :text="correctedText" @back="toWriteMode" @editPresets="toEditPresets" />
-  </Overlay>
-
-  <Overlay v-if="overlayMode === OverlayMode.EDIT_PRESETS">
-    <EditPresetsMenu @close="toShortcuts" :text="correctedText" />
+    <InsertMenu :text="correctedText" @back="toWriteMode" />
   </Overlay>
 
   <Overlay v-if="overlayMode === OverlayMode.CORRECTION">
@@ -34,11 +30,10 @@ import miniToastr from "mini-toastr";
 enum OverlayMode {
   CORRECTION = "correction",
   SHORTCUTS = "shortcuts",
-  EDIT_PRESETS = "edit-presets",
   NONE = "none",
 }
 
-const MIN_CORRECTION_LENGTH = 20;
+const MIN_CORRECTION_LENGTH = 30;
 const mainInputHistoryStore = useMainInputHistoryStore()
 const debounced = new DebounceCallIncreasing()
 const { closeWindow } = useCallApi();
@@ -80,10 +75,6 @@ function toShortcuts() {
   overlayMode.value = OverlayMode.SHORTCUTS;
 }
 
-function toEditPresets() {
-  overlayMode.value = OverlayMode.EDIT_PRESETS;
-}
-
 function toWriteMode() {
   overlayMode.value = OverlayMode.NONE;
 
@@ -96,23 +87,25 @@ async function doCorrection() {
 
     return;
   }
-  else if (inputText.value.length < MIN_CORRECTION_LENGTH) {
-    miniToastr.warn('Слишком короткий текст для коррекции');
-
-    return;
-  }
   else if (correctionIsActual.value) {
     miniToastr.warn('Текст уже корректирован');
 
     return;
   }
 
-  overlayMode.value = OverlayMode.CORRECTION;
+  if (inputText.value.length < MIN_CORRECTION_LENGTH) {
+    miniToastr.warn('Слишком короткий текст для коррекции');
+    correctedText.value = inputText.value;
+  }
+  else {
+    overlayMode.value = OverlayMode.CORRECTION;
 
-  const result = await correctText(inputText.value);
+    const result = await correctText(inputText.value);
 
-  correctedText.value = result;
-  inputText.value = result;
+    correctedText.value = result;
+    inputText.value = result;
+  }
+
   correctionIsActual.value = true;
 
   toShortcuts();

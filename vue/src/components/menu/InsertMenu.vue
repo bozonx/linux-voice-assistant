@@ -112,7 +112,6 @@ const ipcStore = useIpcStore();
 const routeParamsStore = useRouteParams();
 
 function toEditPresets() {
-  if (!ipcStore.data?.windowId || !props.text) return;
   overlayMode.value = OverlayMode.EDIT_PRESETS;
 }
 
