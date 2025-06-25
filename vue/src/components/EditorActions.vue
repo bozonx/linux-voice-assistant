@@ -11,6 +11,14 @@
         <button class="mini-button" @click="translate(index)">➡️ {{ lang }}</button>
       </li> -->
       <li>
+        <button class="button" @click="intoClipboardAndClose()">В буфер обмена</button>
+      </li>
+      <li v-if="ipcStore.data?.windowId">
+        <button class="button" @click="insertIntoWindow()">Вставить в окно</button>
+      </li>
+    </ul>
+    <ul class="big-buttons-toolbar">
+      <li>
         <button class="button" @click="fastNote()">Быстрая заметка</button>
       </li>
       <li>
@@ -18,12 +26,6 @@
       </li>
       <li>
         <button class="button" @click="dealToCalendar()">Дело в календарь</button>
-      </li>
-      <li>
-        <button class="button" @click="intoClipboardAndClose()">В буфер обмена</button>
-      </li>
-      <li v-if="ipcStore.data?.windowId">
-        <button class="button" @click="insertIntoWindow()">Вставить в окно</button>
       </li>
     </ul>
     <ul class="big-buttons-toolbar">

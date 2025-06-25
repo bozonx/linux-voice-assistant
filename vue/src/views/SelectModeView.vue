@@ -1,9 +1,9 @@
 <template>
-  <OverlayOneColumn v-if="overlayMode === OverlayMode.EDIT_PRESETS">
-    <EditPresets @close="toShortcuts" :text="text" />
-  </OverlayOneColumn>
+  <Overlay v-if="overlayMode === OverlayMode.EDIT_PRESETS">
+    <EditPresetsMenu @close="toShortcuts" :text="text" />
+  </Overlay>
 
-  <InsertShortCuts :showBackButton="false" 
+  <InsertMenu :showBackButton="false" 
     :showInsertButton="false"
     @editPresets="toEditPresets"
     :text="text" />
