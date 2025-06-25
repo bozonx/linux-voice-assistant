@@ -1,12 +1,6 @@
 <template>
   <div>
     <ul class="big-buttons-toolbar">
-      <li v-for="(lang, index) in ipcStore.data?.userConfig.toTranslateLanguages" :key="lang">
-        <button class="button" @click="translateAndInsert(index)">➡️ {{ lang }}</button>
-      </li>
-    </ul>
-
-    <ul class="big-buttons-toolbar">
       <li>
         <button class="button" @click="formatMdAndInsert()">Beautyfy MD</button>
       </li>
@@ -45,22 +39,16 @@
 </template>
 
 <script setup lang="ts">
-import { useIpcStore } from '../stores/ipc';
 import { useMainInputStore } from '../stores/mainInput';
 import { useCodeFormatter } from '../composables/useCodeFormatter';
 import { useTextTransform } from '../composables/useTextTransform';
 import { useCallApi } from '../composables/useCallApi';
-import { useCallAi } from '../composables/useCallAi';
 import miniToastr from "mini-toastr";
-import { useOverlayStore } from '../stores/mainOverlay';
 
 const { formatMdAndStyle, formatSomeCode } = useCodeFormatter();
 const { makeRusStress, doCaseTransform } = useTextTransform();
 const { typeIntoWindowAndClose, resolveText } = useCallApi();
-const { translateText } = useCallAi();
-const ipcStore = useIpcStore();
 const mainInputStore = useMainInputStore();
-const overlayStore = useOverlayStore();
 
 async function insertMode(transformCb: (value: string) => Promise<string>) {
   let value = mainInputStore.value;
@@ -76,18 +64,6 @@ async function insertMode(transformCb: (value: string) => Promise<string>) {
 
   await typeIntoWindowAndClose(await transformCb(value));
 }
-
-const translateAndInsert = async (toLangNum: number, text?: string) => {
-  let value = resolveText(text);
-
-  if (!value.trim()) return;
-
-  overlayStore.showAskingAi();
-  
-  const newText = await translateText(toLangNum, value);
-
-  overlayStore.showTranslatePreview(newText);
-};
 
 const formatMdAndInsert = () => insertMode((value) => formatMdAndStyle(value));
 const formatCodeAndInsert = () => insertMode((value) => formatSomeCode(value));

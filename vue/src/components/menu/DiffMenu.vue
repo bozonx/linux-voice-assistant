@@ -18,6 +18,8 @@
 import { useCallApi } from '../../composables/useCallApi';
 import { useIpcStore } from '../../stores/ipc';
 import { useRouteParams } from '../../stores/routeParams';
+import { useOverlayStore } from '../../stores/mainOverlay';
+import { useMainInputStore } from '../../stores/mainInput';
 
 const props = defineProps({
   oldText: {
@@ -43,6 +45,8 @@ const ipcStore = useIpcStore();
 const editedNewText = ref(props.newText);
 const routeParamsStore = useRouteParams();
 const router = useRouter();
+const overlayStore = useOverlayStore();
+const mainInputStore = useMainInputStore();
 
 const emit = defineEmits<{
   (e: 'close'): void
@@ -65,8 +69,11 @@ function goToEditor() {
   
   if (editedNewText.value?.trim()) {
     routeParamsStore.setParams({ text: editedNewText.value });
+    mainInputStore.setValue(editedNewText.value);
   }
-  
+
+  overlayStore.hideOverlay();
+
   router.push("/");
 }
 
@@ -85,6 +92,9 @@ function handleKeyUp(event: KeyboardEvent) {
     if (!ipcStore.data?.windowId || !props.showInsertButton) return;
 
     typeIntoWindowAndClose(editedNewText.value);
+  }
+  else if (event.code === "KeyQ") {
+    goToEditor();
   }
   else if (event.code === "KeyA") {
     intoClipboardAndClose(editedNewText.value);

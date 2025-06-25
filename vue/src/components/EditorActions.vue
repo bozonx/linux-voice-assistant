@@ -7,9 +7,9 @@
       <li>
         <button class="button" @click="edit()">Редактировать</button>
       </li>
-      <!-- <li v-for="(lang, index) in ipcStore.data?.userConfig.toTranslateLanguages" :key="lang">
-        <button class="mini-button" @click="translate(index)">➡️ {{ lang }}</button>
-      </li> -->
+      <li v-for="(lang, index) in ipcStore.data?.userConfig.toTranslateLanguages" :key="lang">
+        <button class="button" @click="translate(index)">➡️ {{ lang }}</button>
+      </li>
       <li>
         <button class="button" @click="intoClipboardAndClose()">В буфер обмена</button>
       </li>
@@ -69,6 +69,7 @@ const {
 const {
   dealToCalendar,
   correctText,
+  translateText,
 } = useCallAi();
 
 
@@ -98,8 +99,16 @@ const edit = () => {
   overlayStore.showEditPresets();
 }
 
+const translate = async (toLangNum: number) => {
+  if (!mainInputStore.value.trim()) return;
 
-// const { translateText, deepEdit, correctText } = useCallAi();
+  overlayStore.showAskingAi();
+  
+  const newText = await translateText(toLangNum, mainInputStore.value);
+
+  overlayStore.showTranslatePreview(newText);
+};
+
 // const selectedEditPresetIndex = ref(0);
 
 // const editPresets = computed((): string[] => {
@@ -119,42 +128,6 @@ const edit = () => {
 //     });
 //   }
 // });
-
-
-// const aiEditMode = async (transformCb: (value: string) => Promise<string>) => {
-//   let value = mainInputStore.value;
-
-//   if (mainInputStore.selectedText) {
-//     value = mainInputStore.selectedText;
-//   }
-
-//   if (!value.trim()) return;
-
-//   overlayStore.showAskingAi();
-
-//   value = await transformCb(value);
-
-//   mainInputStore.selectedText
-//     ? mainInputStore.replaceSelection(value)
-//     : mainInputStore.setValue(value);
-
-//   overlayStore.hideOverlay();
-// };
-// const correct = () =>
-//   aiEditMode((value) =>
-//   correctText(value)
-//   );
-
-// const translate = (toLangNum: number) =>
-//   aiEditMode((value) => translateText(toLangNum, value));
-
-// const edit = (presetNum: number) => {
-//   if (presetNum === -1) return;
-
-//   return aiEditMode((value) =>
-//     deepEdit(presetNum, value)
-//   );
-// }
 </script>
 
 <style scoped>

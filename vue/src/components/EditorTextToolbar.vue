@@ -2,12 +2,7 @@
   <div>
     <ul class="small-buttons-toolbar">
       <li>
-        <button
-          class="mini-button"
-          @click="voiceRecognition"
-        >
-          Голосовой ввод
-        </button>
+        <button class="mini-button" @click="voiceRecognition">Голосовой ввод</button>
       </li>
       <li>
         <button class="mini-button" @click="clear">Очистить</button>
