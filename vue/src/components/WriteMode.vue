@@ -1,6 +1,6 @@
 <template>
   <Overlay v-if="overlayMode === OverlayMode.SHORTCUTS">
-    <InsertMenu :text="correctedText" @back="toWriteMode" />
+    <InsertMenu :text="correctedText" :oldText="inputText" @back="toWriteMode" @update:newText="handleNewText" />
   </Overlay>
 
   <Overlay v-if="overlayMode === OverlayMode.CORRECTION">
@@ -49,6 +49,10 @@ onMounted(() => {
     focusTextarea();
   }
 })
+
+function handleNewText(newText: string) {
+  correctedText.value = newText;
+}
 
 const handleInput = (event: Event) => {
   inputText.value = (event.target as HTMLDivElement).innerText || '';

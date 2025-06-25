@@ -20,7 +20,8 @@
   </Overlay>
 
   <div>
-    <TextPreview :text="props.text" />
+    <DiffInput v-if="props.oldText" :oldText="props.oldText" :newText="props.text" @update:newText="handleNewText" />
+    <TextPreview v-else :text="props.text" />
   </div>
 
   <div @keyup.prevent="handleShortCutKeyUp" class="shortcuts-list">
@@ -70,6 +71,11 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  // if set then diff will be shown
+  oldText: {
+    type: String,
+    default: "",
+  },
   showBackButton: {
     type: Boolean,
     default: true
@@ -87,6 +93,7 @@ const props = defineProps({
 const emit = defineEmits<{
   (e: 'back'): void;
   (e: 'editPresets'): void;
+  (e: 'update:newText', value: string): void;
 }>();
 
 const overlayMode = ref(OverlayMode.NONE);
@@ -110,6 +117,10 @@ const { closeWindow,
 } = useCallApi();
 const ipcStore = useIpcStore();
 const routeParamsStore = useRouteParams();
+
+function handleNewText(newText: string) {
+  emit('update:newText', newText);
+}
 
 function toEditPresets() {
   overlayMode.value = OverlayMode.EDIT_PRESETS;
