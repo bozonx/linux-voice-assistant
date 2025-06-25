@@ -1,17 +1,12 @@
 <template>
   <div>
-    <div v-if="props.ai">
-      <h2>Запрос к AI...</h2>
-    </div>
-    <div v-else-if="props.correction">
-      <h2>Коррекция...</h2>
-    </div>
-    <div v-else-if="props.recognition">
-      <h2>Распознавание...</h2>
-    </div>
-    <div v-else>
-      <h2>Выполняется...</h2>
-    </div>
+      <h2>
+        <span v-if="props.ai">Запрос к AI </span>
+        <span v-else-if="props.correction">Коррекция </span>
+        <span v-else-if="props.recognition">Распознавание </span>
+        <span v-else>Выполняется </span>
+        <button ref="pendingButton">...</button>
+      </h2>
   </div>
 </template>
 
@@ -30,6 +25,16 @@ const props = defineProps({
     default: false
   }
 });
+
+const pendingButton = ref<HTMLButtonElement>();
+
+onMounted(() => {
+  nextTick(() => {
+    if (pendingButton.value) {
+      pendingButton.value.focus();
+    }
+  })
+})
 </script>
 
 <style scoped>

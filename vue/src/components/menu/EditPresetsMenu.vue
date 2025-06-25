@@ -10,7 +10,10 @@
   <div>
     <TextPreview :text="props.text" />
     <div @keyup.prevent="handleKeyUp" class="shortcuts-list">
-      <div v-if="props.showBackButton">Esc - <button @click="close">назад</button></div>
+      <div v-if="props.showBackButton">Esc - <button @click="close">
+        <span v-if="props.escToEditor">в редактор</span>
+        <span v-else>назад</span>
+      </button></div>
       <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>
       <div v-for="(preset, index) in ipcStore.data?.userConfig.aiRules.deepEdit" :key="preset.description">
         {{ EDIT_PRESET_KEYS[index] }} - <button @click="makeDiff(index)">{{ preset.description }}</button>
@@ -24,6 +27,9 @@ import { useCallApi } from '../../composables/useCallApi';
 import { EDIT_PRESET_KEYS } from '../../types';
 import { useIpcStore } from '../../stores/ipc';
 import { useCallAi } from '../../composables/useCallAi';
+import { useRouteParams } from '../../stores/routeParams';
+import { useMainInputStore } from '../../stores/mainInput';
+import { useOverlayStore } from '../../stores/mainOverlay';
 
 enum OverlayMode {
   DIFF = "diff",
@@ -36,12 +42,20 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  escToEditor: {
+    type: Boolean,
+    default: false
+  },
   showBackButton: {
     type: Boolean,
     default: true
   },
 });
 
+const routeParamsStore = useRouteParams();
+const router = useRouter();
+const mainInputStore = useMainInputStore();
+const overlayStore = useOverlayStore();
 const ipcStore = useIpcStore();
 const { deepEdit } = useCallAi();
 const { closeWindow } = useCallApi();
@@ -63,6 +77,16 @@ function close() {
   emit('close');
 }
 
+function goToEditor() {
+  if (props.text?.trim()) {
+    routeParamsStore.setParams({ text: props.text });
+    mainInputStore.setValue(props.text);
+  }
+
+  overlayStore.hideOverlay();
+  router.push("/");
+}
+
 async function makeDiff(index: number) {
   overlayMode.value = OverlayMode.IN_PROGRESS;
   newText.value = await deepEdit(index, props.text);
@@ -73,7 +97,12 @@ function handleKeyUp(event: KeyboardEvent) {
   if (event.code === "Escape") {
     if (!props.showBackButton) return;
 
-    close();
+    if (props.escToEditor) {
+      goToEditor();
+    }
+    else {
+      close();
+    }
   }
   else if (event.code === "KeyQ" && event.ctrlKey) {
     closeWindow();

@@ -1,5 +1,5 @@
 <template>
-  <EditPresetsMenu :text="text" :showBackButton="false" />
+  <EditPresetsMenu :text="text" :escToEditor="true" />
 </template>
 
 <script setup lang="ts">

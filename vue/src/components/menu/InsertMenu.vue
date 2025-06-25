@@ -3,16 +3,16 @@
     <InProgressMessage :ai="true" />
   </Overlay>
 
-  <Overlay v-if="overlayMode === OverlayMode.TRANSLATE_PREVIEW">
-    <PreviewMenu :text="resultText" @close="overlayMode = OverlayMode.NONE" />
-  </Overlay>
-
   <Overlay v-if="overlayMode === OverlayMode.CORRECTION">
     <InProgressMessage :correction="true" />
   </Overlay>
 
+  <Overlay v-if="overlayMode === OverlayMode.TRANSLATE_PREVIEW">
+    <PreviewMenu :text="resultText" @close="toInsertMenu" />
+  </Overlay>
+
   <Overlay v-if="overlayMode === OverlayMode.DIFF">
-    <DiffMenu :oldText="props.text" :newText="resultText" @close="toEditPresets" />
+    <DiffMenu :oldText="props.text" :newText="resultText" @close="toInsertMenu" />
   </Overlay>
 
   <div>
@@ -109,6 +109,15 @@ const routeParamsStore = useRouteParams();
 function toEditPresets() {
   if (!ipcStore.data?.windowId || !props.text) return;
   emit('editPresets');
+}
+
+function toInsertMenu() {
+  overlayMode.value = OverlayMode.NONE;
+  nextTick(() => {
+    if (inFocusButton.value) {
+      inFocusButton.value.focus();
+    }
+  })
 }
 
 async function translate(toLangNum: number) {
