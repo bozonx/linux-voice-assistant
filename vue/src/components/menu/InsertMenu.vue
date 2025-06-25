@@ -7,6 +7,10 @@
     <InProgressMessage :correction="true" />
   </Overlay>
 
+  <Overlay v-if="overlayMode === OverlayMode.EDIT_PRESETS">
+    <EditPresetsMenu @close="toInsertMenu" :text="text" />
+  </Overlay>
+
   <Overlay v-if="overlayMode === OverlayMode.TRANSLATE_PREVIEW">
     <PreviewMenu :text="resultText" @close="toInsertMenu" />
   </Overlay>
@@ -54,6 +58,7 @@ import { useCallAi } from '../../composables/useCallAi';
 
 enum OverlayMode {
   IN_PROGRESS = "in-progress",
+  EDIT_PRESETS = "edit-presets",
   TRANSLATE_PREVIEW = "translate-preview",
   CORRECTION = "correction",
   DIFF = "diff",
@@ -108,7 +113,7 @@ const routeParamsStore = useRouteParams();
 
 function toEditPresets() {
   if (!ipcStore.data?.windowId || !props.text) return;
-  emit('editPresets');
+  overlayMode.value = OverlayMode.EDIT_PRESETS;
 }
 
 function toInsertMenu() {

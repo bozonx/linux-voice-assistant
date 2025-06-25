@@ -1,6 +1,6 @@
 <template>
   <Overlay v-if="overlayMode === OverlayMode.MENU">
-    <InsertMenu @back="overlayStore.hideOverlay" @editPresets="overlayStore.showMenu"
+    <InsertMenu @back="overlayStore.hideOverlay"
        :showToEditor="false" :text="mainInputStore.value" />
   </Overlay>
 
