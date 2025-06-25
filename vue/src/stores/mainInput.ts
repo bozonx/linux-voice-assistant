@@ -4,7 +4,7 @@ import { ref } from "vue";
 export const useMainInputStore = defineStore("mainInput", () => {
   const value = ref<string>("");
   const focusCount = ref<number>(0);
-  // const selectAllCount = ref<number>(0);
+  const selectAllCount = ref<number>(0);
   const selectedText = ref<string>("");
   const selectionStart = ref<number>(0);
   const selectionEnd = ref<number>(0);
@@ -25,9 +25,13 @@ export const useMainInputStore = defineStore("mainInput", () => {
     focusCount.value++;
   };
 
-  // const selectAll = (): void => {
-  //   selectAllCount.value++;
-  // };
+  const selectAll = (): void => {
+    selectAllCount.value++;
+  };
+
+  const clear = (): void => {
+    value.value = "";
+  };
 
   const setSelection = (text: string, start: number, end: number): void => {
     selectedText.value = text;
@@ -54,15 +58,16 @@ export const useMainInputStore = defineStore("mainInput", () => {
   return {
     value,
     focusCount,
-    // selectAllCount,
+    selectAllCount,
     selectedText,
     selectionStart,
     selectionEnd,
     setValue,
     setValueAtCursor,
     focus,
-    // selectAll,
+    selectAll,
     setSelection,
     replaceSelection,
+    clear,
   };
 });

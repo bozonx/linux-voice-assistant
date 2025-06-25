@@ -7,6 +7,7 @@ export enum OverlayMode {
   MENU = "menu",
   EDIT_PRESETS = "edit-presets",
   ASKING_AI = "asking-ai",
+  CORRECTION = "correction",
   VOICE_RECOGNITION = "voice-recognition",
   NONE = "none",
 }
@@ -34,6 +35,10 @@ export const useOverlayStore = defineStore("mainOverlay", () => {
 
   const showAskingAi = () => {
     overlayMode.value = OverlayMode.ASKING_AI;
+  };
+
+  const showCorrection = () => {
+    overlayMode.value = OverlayMode.CORRECTION;
   };
 
   const showEditPresets = () => {
@@ -64,6 +69,7 @@ export const useOverlayStore = defineStore("mainOverlay", () => {
     // startRepunctuation,
     hideOverlay,
     showAskingAi,
+    showCorrection,
     showEditPresets,
     showMenu,
     showDiff,

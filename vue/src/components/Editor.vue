@@ -12,6 +12,10 @@
     <InProgressMessage :ai="true" />
   </Overlay>
 
+  <Overlay v-if="overlayMode === OverlayMode.CORRECTION">
+    <InProgressMessage :correction="true" />
+  </Overlay>
+
   <Overlay v-if="overlayMode === OverlayMode.DIFF">
     <DiffMenu :oldText="mainInputStore.value" :newText="overlayStore.diffText" @close="overlayStore.hideOverlay" />
   </Overlay>

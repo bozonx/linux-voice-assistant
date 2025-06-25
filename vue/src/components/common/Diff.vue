@@ -126,7 +126,7 @@ watch(diff, (newDiff) => {
 }
 
 /* Улучшенные стили для лучшей читаемости */
-.added::before {
+/* .added::before {
   content: '+';
   margin-right: 2px;
   font-weight: bold;
@@ -136,5 +136,5 @@ watch(diff, (newDiff) => {
   content: '-';
   margin-right: 2px;
   font-weight: bold;
-}
+} */
 </style>

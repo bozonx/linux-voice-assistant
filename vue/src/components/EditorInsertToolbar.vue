@@ -8,12 +8,6 @@
 
     <ul class="big-buttons-toolbar">
       <li>
-        <button class="button" @click="correctAndInsert()">Коррекция</button>
-      </li>
-      <li>
-        <button class="button" @click="overlayStore.showEditPresets()">Редактировать</button>
-      </li>
-      <li>
         <button class="button" @click="formatMdAndInsert()">Beautyfy MD</button>
       </li>
       <li>
@@ -63,7 +57,7 @@ import { useOverlayStore } from '../stores/mainOverlay';
 const { formatMdAndStyle, formatSomeCode } = useCodeFormatter();
 const { makeRusStress, doCaseTransform } = useTextTransform();
 const { typeIntoWindowAndClose, resolveText } = useCallApi();
-const { correctText, translateText } = useCallAi();
+const { translateText } = useCallAi();
 const ipcStore = useIpcStore();
 const mainInputStore = useMainInputStore();
 const overlayStore = useOverlayStore();
@@ -82,18 +76,6 @@ async function insertMode(transformCb: (value: string) => Promise<string>) {
 
   await typeIntoWindowAndClose(await transformCb(value));
 }
-
-const correctAndInsert = async (text?: string) => {
-  let value = resolveText(text);
-
-  if (!value.trim()) return;
-
-  overlayStore.showAskingAi();
-  
-  const newText = await correctText(value); 
-
-  overlayStore.showDiff(newText);
-};
 
 const translateAndInsert = async (toLangNum: number, text?: string) => {
   let value = resolveText(text);

@@ -34,11 +34,11 @@ watch(() => store.focusCount, (newValue, oldValue) => {
   }
 })
 
-// watch(() => store.selectAllCount, (newValue, oldValue) => {
-//   if (newValue > oldValue) {
-//     textareaRef.value?.select()
-//   }
-// })
+watch(() => store.selectAllCount, (newValue, oldValue) => {
+  if (newValue > oldValue) {
+    textareaRef.value?.select()
+  }
+})
 
 // Следим за изменениями выделения в store
 watch(
