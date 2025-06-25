@@ -73,18 +73,6 @@ const {
 } = useCallAi();
 
 
-// const correctAndInsert = async (text?: string) => {
-//   let value = resolveText(text);
-
-//   if (!value.trim()) return;
-
-//   overlayStore.showAskingAi();
-  
-//   const newText = await correctText(value); 
-
-//   overlayStore.showDiff(newText);
-// };
-
 const correct = async () => {
   if (!mainInputStore.value.trim()) return;
 

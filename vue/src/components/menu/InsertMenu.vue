@@ -3,8 +3,16 @@
     <InProgressMessage :ai="true" />
   </Overlay>
 
-  <Overlay v-if="overlayMode === OverlayMode.TRANSLATE">
-    <PreviewMenu :text="translateResult" @close="overlayMode = OverlayMode.NONE" />
+  <Overlay v-if="overlayMode === OverlayMode.TRANSLATE_PREVIEW">
+    <PreviewMenu :text="resultText" @close="overlayMode = OverlayMode.NONE" />
+  </Overlay>
+
+  <Overlay v-if="overlayMode === OverlayMode.CORRECTION">
+    <InProgressMessage :correction="true" />
+  </Overlay>
+
+  <Overlay v-if="overlayMode === OverlayMode.DIFF">
+    <DiffMenu :oldText="props.text" :newText="resultText" @close="toEditPresets" />
   </Overlay>
 
   <div>
@@ -17,12 +25,12 @@
     <div v-if="props.showToEditor">q - <button @click="goToEditor">в редактор</button></div>
     <template v-if="props.text">
       <div v-if="ipcStore.data?.windowId && props.showInsertButton">Space - <button @click="typeIntoWindowAndClose(props.text ?? '')">вставить</button></div>
-      <!-- <div>w - </div> -->
+      <div>w - <button @click="intoClipboardAndClose(props.text)">в буфер обмена и закрыть окно</button></div>
       <!-- <div>e - </div> -->
       <div>r - <button @click="askAIShort(props.text)">быстрый вопрос к AI</button></div>
       <div>t - <button @click="dealToCalendar(props.text)">добавить дело в календарь</button></div>
       
-      <div>a - <button @click="intoClipboardAndClose(props.text)">в буфер обмена и закрыть окно</button></div>
+      <div>a - <button @click="correct()">коррекция</button></div>
       <div>s - <button @click="fastNote(props.text)">быстрая заметка в Obsidian</button></div>
       <div>d - <button @click="addToKnowledgeBase(props.text)">вставить в базу знаний</button></div>
       <div>f - <button @click="toEditPresets">выбор пресета редактирования</button></div>
@@ -46,13 +54,16 @@ import { useCallAi } from '../../composables/useCallAi';
 
 enum OverlayMode {
   IN_PROGRESS = "in-progress",
-  TRANSLATE = "translate",
+  TRANSLATE_PREVIEW = "translate-preview",
+  CORRECTION = "correction",
+  DIFF = "diff",
   NONE = "none",
 }
 
 const props = defineProps({
   text: {
     type: String,
+    default: "",
   },
   showBackButton: {
     type: Boolean,
@@ -74,9 +85,9 @@ const emit = defineEmits<{
 }>();
 
 const overlayMode = ref(OverlayMode.NONE);
-const translateResult = ref<string>("");
+const resultText = ref<string>("");
 const inFocusButton = ref<HTMLButtonElement>();
-const { translateText, dealToCalendar } = useCallAi();
+const { translateText, dealToCalendar, correctText } = useCallAi();
 const { resolveText } = useCallApi();
 
 onMounted(() => {
@@ -109,9 +120,9 @@ async function translate(toLangNum: number) {
 
   overlayMode.value = OverlayMode.IN_PROGRESS;
 
-  translateResult.value = await translateText(toLangNum, props.text);  
+  resultText.value = await translateText(toLangNum, props.text);  
 
-  overlayMode.value = OverlayMode.TRANSLATE;
+  overlayMode.value = OverlayMode.TRANSLATE_PREVIEW;
 }
 
 function goToEditor() {
@@ -124,6 +135,16 @@ function goToEditor() {
   router.push("/");
 }
 
+async function correct() {
+  if (!props.text.trim()) return;
+
+  overlayMode.value = OverlayMode.IN_PROGRESS;
+
+  const newText = await correctText(props.text); 
+
+  resultText.value = newText;
+  overlayMode.value = OverlayMode.DIFF;
+}
 
 const handleShortCutKeyUp = (event: KeyboardEvent) => {
   if (event.code === "Escape") {
@@ -142,12 +163,12 @@ const handleShortCutKeyUp = (event: KeyboardEvent) => {
   }
   else if (event.code === "KeyW") {
     if (!props.text) return;
-    console.log("w");
+    intoClipboardAndClose(props.text ?? '');
   }
-  else if (event.code === "KeyE") {
-    if (!props.text) return;
-    console.log("e");
-  }
+  // else if (event.code === "KeyE") {
+  //   if (!props.text) return;
+  //   console.log("e");
+  // }
   else if (event.code === "KeyR") {
     if (!props.text) return;
     askAIShort(props.text);
@@ -157,8 +178,7 @@ const handleShortCutKeyUp = (event: KeyboardEvent) => {
     dealToCalendar(props.text);
   }
   else if (event.code === "KeyA") {
-    if (!props.text) return;
-    intoClipboardAndClose(props.text ?? '');
+    correct();
   }
   else if (event.code === "KeyS") {
     if (!props.text) return;
