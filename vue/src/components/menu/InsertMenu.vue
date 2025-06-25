@@ -16,7 +16,7 @@
     <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>
     <div v-if="props.showToEditor">q - <button @click="goToEditor">в редактор</button></div>
     <template v-if="props.text">
-      <div v-if="props.showInsertButton">Space - <button @click="typeIntoWindowAndClose(props.text ?? '')">вставить</button></div>
+      <div v-if="ipcStore.data?.windowId && props.showInsertButton">Space - <button @click="typeIntoWindowAndClose(props.text ?? '')">вставить</button></div>
       <!-- <div>w - </div> -->
       <!-- <div>e - </div> -->
       <div>r - <button @click="askAIShort(props.text)">быстрый вопрос к AI</button></div>
