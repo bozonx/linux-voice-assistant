@@ -8,13 +8,5 @@
 import { useIpcStore } from '../stores/ipc';
 
 const ipcStore = useIpcStore();
-const text = ref('');
-
-onMounted(() => {
-  text.value = ipcStore.data!.selectedText || '';
-});
-
+const text = computed(() => ipcStore.data!.selectedText || '');
 </script>
-
-<style scoped>
-</style>

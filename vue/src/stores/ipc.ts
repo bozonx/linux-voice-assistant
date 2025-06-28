@@ -29,7 +29,7 @@ export const useIpcStore = defineStore("ipc", () => {
   };
 
   const setInitialData = (incomingData: InitParams) => {
-    data.value = incomingData;
+    data.value = { ...data.value, ...incomingData };
   };
 
   const saveUserConfig = async (userConfig: UserConfig) => {
