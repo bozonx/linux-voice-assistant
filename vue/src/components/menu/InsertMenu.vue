@@ -29,7 +29,7 @@
     <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>
     <div v-if="props.showToEditor">q - <button @click="goToEditor">в редактор</button></div>
     <template v-if="props.text">
-      <div v-if="ipcStore.data?.windowId && props.showInsertButton">Space - <button @click="typeIntoWindowAndClose(props.text ?? '')">вставить</button></div>
+      <div v-if="ipcStore.params?.windowId && props.showInsertButton">Space - <button @click="typeIntoWindowAndClose(props.text ?? '')">вставить</button></div>
       <div>w - <button @click="intoClipboardAndClose(props.text)">в буфер обмена и закрыть окно</button></div>
       <!-- <div>e - </div> -->
       <div>r - <button @click="askAIShort(props.text)">быстрый вопрос к AI</button></div>
@@ -56,6 +56,7 @@ import { useCallApi } from '../../composables/useCallApi';
 import { useIpcStore } from '../../stores/ipc';
 import { useRouteParams } from '../../stores/routeParams';
 import { useCallAi } from '../../composables/useCallAi';
+import miniToastr from "mini-toastr";
 
 enum OverlayMode {
   IN_PROGRESS = "in-progress",
@@ -117,6 +118,7 @@ const { closeWindow,
 } = useCallApi();
 const ipcStore = useIpcStore();
 const routeParamsStore = useRouteParams();
+const appConfig = ipcStore.params!.appConfig;
 
 function handleNewText(newText: string) {
   emit('update:newText', newText);
@@ -161,6 +163,12 @@ function goToEditor() {
 
 async function correct() {
   if (!props.text.trim()) return;
+
+  if (props.text.length < appConfig.minCorrectionLength) {
+    miniToastr.warn('Слишком короткий текст для коррекции');
+
+    return;
+  }
 
   overlayMode.value = OverlayMode.IN_PROGRESS;
 

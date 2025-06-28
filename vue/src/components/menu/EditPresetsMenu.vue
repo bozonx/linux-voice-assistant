@@ -30,6 +30,7 @@ import { useCallAi } from '../../composables/useCallAi';
 import { useRouteParams } from '../../stores/routeParams';
 import { useMainInputStore } from '../../stores/mainInput';
 import { useOverlayStore } from '../../stores/mainOverlay';
+import miniToastr from "mini-toastr";
 
 enum OverlayMode {
   DIFF = "diff",
@@ -62,6 +63,7 @@ const { closeWindow } = useCallApi();
 const inFocusButton = ref<HTMLButtonElement | null>(null);
 const overlayMode = ref(OverlayMode.NONE);
 const newText = ref('');
+const appConfig = ipcStore.params!.appConfig;
 
 const emit = defineEmits<{
   (e: 'close'): void
@@ -88,6 +90,12 @@ function goToEditor() {
 }
 
 async function makeDiff(index: number) {
+  if (props.text.length < appConfig.minCorrectionLength) {
+    miniToastr.warn('Слишком короткий текст для коррекции');
+
+    return;
+  }
+
   overlayMode.value = OverlayMode.IN_PROGRESS;
   newText.value = await deepEdit(index, props.text);
   overlayMode.value = OverlayMode.DIFF;

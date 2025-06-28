@@ -23,15 +23,13 @@
 import { useCallAi } from '../../composables/useCallAi';
 import { useCallApi } from '../../composables/useCallApi';
 import { GlobalEvents, useGlobalEvents } from '../../composables/useGlobalEvents';
+import { useIpcStore } from '../../stores/ipc';
 import miniToastr from "mini-toastr";
 
 enum OverlayMode {
   CORRECTING = "correcting",
   NONE = "none",
 }
-
-const MIN_CORRECTION_LENGTH = 30;
-const RECOGNITIONS_WAIT_TIME_SEC = 5;
 
 const props = defineProps({
   showBackButton: {
@@ -48,6 +46,8 @@ const inFocusButton = ref<HTMLButtonElement | null>(null);
 const { globalEvents } = useGlobalEvents();
 const recognizedText = ref<string>("");
 const lastRecognizedTextMs = ref<number>(0);
+const ipcStore = useIpcStore();
+const appConfig = ipcStore.params!.appConfig;
 let listenerIndex = -1;
 
 const handleShortCutKeyUp = async (event: KeyboardEvent) => {
@@ -81,7 +81,7 @@ const finish = async () => {
     return;
   }
 
-  if (Date.now() - lastRecognizedTextMs.value < RECOGNITIONS_WAIT_TIME_SEC * 1000) {
+  if (Date.now() - lastRecognizedTextMs.value < appConfig.recognitionWaitTimeSec * 1000) {
     const currentText = recognizedText.value;
     
     await new Promise<void>((resolve) => {
@@ -89,7 +89,7 @@ const finish = async () => {
         console.log("Recognition wait time passed, no changes detected");
         resolve();
         unwatch();
-      }, RECOGNITIONS_WAIT_TIME_SEC * 1000);
+      }, appConfig.recognitionWaitTimeSec * 1000);
 
       const unwatch = watch(recognizedText, (newText) => {
         if (newText !== currentText) {
@@ -108,10 +108,10 @@ const finish = async () => {
   overlayMode.value = OverlayMode.CORRECTING;
   let correctedText = recognizedText.value;
 
-  if (recognizedText.value.trim().length > MIN_CORRECTION_LENGTH) {
+  if (recognizedText.value.trim().length > appConfig.minCorrectionLength) {
     correctedText = await voiceCorrection(recognizedText.value);
   }
-  
+
   emit("corrected", correctedText);
 
   overlayMode.value = OverlayMode.NONE;

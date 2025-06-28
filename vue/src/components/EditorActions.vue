@@ -51,10 +51,12 @@ import { useCallAi } from '../composables/useCallAi';
 import { useIpcStore } from '../stores/ipc';
 import { useOverlayStore } from '../stores/mainOverlay';
 import { useMainInputStore } from '../stores/mainInput';
+import miniToastr from "mini-toastr";
 
 const ipcStore = useIpcStore();
 const overlayStore = useOverlayStore();
 const mainInputStore = useMainInputStore();
+const appConfig = ipcStore.params!.appConfig;
 
 const {
   searchInInternet,
@@ -76,6 +78,12 @@ const {
 const correct = async () => {
   if (!mainInputStore.value.trim()) return;
 
+  if (mainInputStore.value.length < appConfig.minCorrectionLength) {
+    miniToastr.warn('Слишком короткий текст для коррекции');
+
+    return;
+  }
+
   overlayStore.showCorrection();
 
   const newText = await correctText(mainInputStore.value); 
@@ -89,6 +97,12 @@ const edit = () => {
 
 const translate = async (toLangNum: number) => {
   if (!mainInputStore.value.trim()) return;
+
+  if (mainInputStore.value.length < appConfig.minCorrectionLength) {
+    miniToastr.warn('Слишком короткий текст для перевода');
+
+    return;
+  }
 
   overlayStore.showAskingAi();
   

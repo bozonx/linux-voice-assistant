@@ -34,7 +34,6 @@ enum OverlayMode {
   NONE = "none",
 }
 
-const MIN_CORRECTION_LENGTH = 30;
 const mainInputHistoryStore = useMainInputHistoryStore()
 const ipcStore = useIpcStore();
 const debounced = new DebounceCallIncreasing()
@@ -45,6 +44,7 @@ const textareaRef = ref<HTMLDivElement>();
 const inputText = ref('');
 const correctedText = ref('');
 const correctionIsActual = ref(true);
+const appConfig = ipcStore.params!.appConfig;
 
 onMounted(() => {
   if (textareaRef.value) {
@@ -116,7 +116,7 @@ async function doCorrection() {
     return;
   }
 
-  if (inputText.value.length < MIN_CORRECTION_LENGTH) {
+  if (inputText.value.length < appConfig.minCorrectionLength) {
     miniToastr.warn('Слишком короткий текст для коррекции');
     correctedText.value = inputText.value;
   }
