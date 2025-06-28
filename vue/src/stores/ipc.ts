@@ -8,7 +8,6 @@ import { UserConfig } from "../../../electron/types/UserConfig";
 
 export const useIpcStore = defineStore("ipc", () => {
   const params = ref<InitParams>();
-  const receiveParamsCounter = ref(0);
 
   const callFunction = async (
     functionName: string,
@@ -31,7 +30,6 @@ export const useIpcStore = defineStore("ipc", () => {
 
   const setParams = (incomingData: InitParams) => {
     params.value = { ...params.value, ...incomingData };
-    receiveParamsCounter.value++;
   };
 
   const saveUserConfig = async (userConfig: UserConfig) => {
@@ -41,7 +39,6 @@ export const useIpcStore = defineStore("ipc", () => {
 
   return {
     params,
-    receiveParamsCounter,
     callFunction,
     setParams,
     saveUserConfig,

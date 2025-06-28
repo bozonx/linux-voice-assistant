@@ -52,6 +52,7 @@ async function configure() {
       NODE_ENV: process.env.NODE_ENV,
       appConfig: APP_CONFIG,
       userConfig,
+      isWindowShown: true,
     });
   });
 

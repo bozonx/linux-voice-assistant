@@ -3,7 +3,7 @@
       <h2>
         <span v-if="props.ai">Запрос к AI </span>
         <span v-else-if="props.correction">Коррекция </span>
-        <span v-else-if="props.recognition">Распознавание </span>
+        <!-- <span v-else-if="props.recognition">Распознавание </span> -->
         <span v-else>Выполняется </span>
         <button ref="pendingButton">...</button>
       </h2>
@@ -20,10 +20,10 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  recognition: {
-    type: Boolean,
-    default: false
-  }
+  // recognition: {
+  //   type: Boolean,
+  //   default: false
+  // }
 });
 
 const pendingButton = ref<HTMLButtonElement>();

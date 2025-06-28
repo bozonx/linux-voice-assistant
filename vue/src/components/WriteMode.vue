@@ -52,7 +52,11 @@ onMounted(() => {
   }
 })
 
-watch(() => ipcStore.receiveParamsCounter, () => {
+watch(() => ipcStore.params?.isWindowShown, (isWindowShown) => {
+  if (!isWindowShown) {
+    return;
+  }
+
   inputText.value = '';
   correctedText.value = '';
   correctionIsActual.value = true;
@@ -64,13 +68,6 @@ watch(() => ipcStore.receiveParamsCounter, () => {
 
   focusTextarea();
 });
-
-watch(() => ipcStore.params?.isWindowShown, (isWindowShown) => {
-  console.log("isWindowShown", isWindowShown);
-  if (isWindowShown) {
-    // toWriteMode();
-  }
-})
 
 function handleNewText(newText: string) {
   correctedText.value = newText;

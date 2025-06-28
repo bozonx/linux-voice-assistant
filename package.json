@@ -7,6 +7,7 @@
     "build:electron": "NODE_ENV=production tsc && electron-builder",
     "watch": "NODE_ENV=development tsc -w",
     "dev": "npm run build && NODE_ENV=development electron ./",
+    "prod": "npm run build && NODE_ENV=production electron ./",
     "build": "tsc && cp -r ./electron/assets ./dist/electron/assets"
   },
   "author": "Kozyrin Ivan",

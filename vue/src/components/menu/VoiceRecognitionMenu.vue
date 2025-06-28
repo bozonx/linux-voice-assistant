@@ -4,7 +4,8 @@
   </Overlay>
 
   <div>
-    <InProgressMessage :recognition="true" />
+    Распознавание...
+    <!-- <InProgressMessage :recognition="true" /> -->
   </div>
 
   <div>
@@ -22,6 +23,7 @@
 import { useCallAi } from '../../composables/useCallAi';
 import { useCallApi } from '../../composables/useCallApi';
 import { GlobalEvents, useGlobalEvents } from '../../composables/useGlobalEvents';
+import miniToastr from "mini-toastr";
 
 enum OverlayMode {
   CORRECTING = "correcting",
@@ -29,6 +31,7 @@ enum OverlayMode {
 }
 
 const MIN_CORRECTION_LENGTH = 30;
+const RECOGNITIONS_WAIT_TIME_SEC = 5;
 
 const props = defineProps({
   showBackButton: {
@@ -43,7 +46,8 @@ const { closeWindow } = useCallApi();
 const emit = defineEmits(["close", "corrected"]);
 const inFocusButton = ref<HTMLButtonElement | null>(null);
 const { globalEvents } = useGlobalEvents();
-const recognizedText = ref<string>(""); 
+const recognizedText = ref<string>("");
+const lastRecognizedTextMs = ref<number>(0);
 let listenerIndex = -1;
 
 const handleShortCutKeyUp = async (event: KeyboardEvent) => {
@@ -71,6 +75,19 @@ const cancel = async () => {
 };
 
 const finish = async () => {
+  if (!lastRecognizedTextMs.value) {
+    miniToastr.warn("Ничего не распознано");
+
+    return;
+  }
+  else if (Date.now() - lastRecognizedTextMs.value < RECOGNITIONS_WAIT_TIME_SEC * 1000) {
+    console.log("Recognition wait time not passed");
+    
+    return;
+  }
+
+  console.log("Recognition wait time passed");
+
   globalEvents.removeListener(listenerIndex);
 
   await stopVoiceRecognition();
@@ -91,6 +108,7 @@ const finish = async () => {
 onMounted(async () => {
   listenerIndex = globalEvents.addListener(GlobalEvents.VOICE_RECOGNITION, (text: string) => {
     recognizedText.value = text;
+    lastRecognizedTextMs.value = Date.now();
   });
 
   nextTick(() => {

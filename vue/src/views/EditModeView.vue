@@ -6,5 +6,5 @@
 import { useIpcStore } from '../stores/ipc';
 
 const ipcStore = useIpcStore();
-const text = computed(() => ipcStore.data!.selectedText || '');
+const text = computed(() => ipcStore.params!.selectedText || '');
 </script>

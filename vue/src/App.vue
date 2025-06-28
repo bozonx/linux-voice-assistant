@@ -15,7 +15,9 @@ const router = useRouter();
 const { globalEvents } = useGlobalEvents();
 
 onMounted(() => {
-  // window.addEventListener('keyup', handleKeyUp)
+  // window.addEventListener('keyup', (event) => {
+  //   console.log("Key up:", event);
+  // })
 
   window.electron.ipcRenderer.on('params', async (params: InitParams) => {
     console.log("Received params:", params);
@@ -23,7 +25,7 @@ onMounted(() => {
     ipcStore.setParams(params);
 
     if (ipcStore.params!.mode) {
-      router.push(`/${params.mode}`);
+      router.push(`/${ipcStore.params!.mode}`);
     }
     else {
       router.push('/');
