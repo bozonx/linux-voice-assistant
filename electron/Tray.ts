@@ -6,7 +6,7 @@ export function manageTray(app, mainWindow, tray) {
     { label: "Выход", click: () => app.quit() },
   ]);
 
-  tray.setToolTip("Мое приложение");
+  tray.setToolTip("Ваш помощник");
   tray.setContextMenu(contextMenu);
 
   // Сворачивание в трей при закрытии окна
@@ -27,19 +27,11 @@ export function manageTray(app, mainWindow, tray) {
   });
   // Показ окна при клике на иконку в трее
   tray.on("click", () => {
-    mainWindow.show();
-  });
-
-  // Обработка полного выхода из приложения
-  app.on("before-quit", () => {
-    // @ts-ignore
-    app.isQuitting = true;
-  });
-
-  app.on("window-all-closed", () => {
-    if (process.platform !== "darwin") {
-      app.quit();
-      mainWindow = null;
+    if (mainWindow.isVisible()) {
+      mainWindow.hide();
+    } else {
+      mainWindow.show();
     }
   });
+
 }

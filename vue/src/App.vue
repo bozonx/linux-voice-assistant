@@ -17,28 +17,26 @@ const { globalEvents } = useGlobalEvents();
 onMounted(() => {
   // window.addEventListener('keyup', handleKeyUp)
 
-  window.electron.ipcRenderer.on('init-params', async (params: InitParams) => {
+  window.electron.ipcRenderer.on('params', async (params: InitParams) => {
     console.log("Received params:", params);
 
     ipcStore.setInitialData(params);
 
-    if (ipcStore.data!.mode === START_MODES.SELECT) {
-      router.push('/select');
+    if (ipcStore.data!.mode) {
+      router.push(`/${params.mode}`);
     }
-    else if (ipcStore.data!.mode === START_MODES.EDIT) {
-      router.push('/edit');
+    else {
+      router.push('/');
     }
-    else if (ipcStore.data!.mode === START_MODES.VOICE) {
-      router.push('/voice');
-    }
-    else if (ipcStore.data!.mode === START_MODES.WRITE) {
-      router.push('/write');
-    }
-    // Else just show the editor
   });
 
   window.electron.ipcRenderer.on('vosk-text', (data: string) => {
     globalEvents.emit(GlobalEvents.VOICE_RECOGNITION, data);
+  });
+
+  window.electron.ipcRenderer.on('incoming-command', (data: { mode: START_MODES }) => {
+    console.log("Received command:", data);
+    router.push(`/${data.mode}`);
   });
 });
 
