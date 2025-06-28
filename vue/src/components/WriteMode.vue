@@ -107,18 +107,15 @@ function toWriteMode() {
 async function doCorrection() {
   if (!inputText.value?.trim()) {
     miniToastr.warn('Введите текст для коррекции');
-
-    return;
   }
   else if (correctionIsActual.value) {
     miniToastr.warn('Текст уже корректирован');
-
-    return;
   }
-
-  if (inputText.value.length < appConfig.minCorrectionLength) {
+  else if (inputText.value.length < appConfig.minCorrectionLength) {
     miniToastr.warn('Слишком короткий текст для коррекции');
+
     correctedText.value = inputText.value;
+    correctionIsActual.value = true;
   }
   else {
     overlayMode.value = OverlayMode.CORRECTION;
@@ -126,10 +123,8 @@ async function doCorrection() {
     const result = await correctText(inputText.value);
 
     correctedText.value = result;
-    inputText.value = result;
+    correctionIsActual.value = true;
   }
-
-  correctionIsActual.value = true;
 
   toShortcuts();
 }

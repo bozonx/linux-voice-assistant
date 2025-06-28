@@ -1,5 +1,5 @@
 <template>
-  <Editor />
+  <Editor v-if="ipcStore.params" />
 
   <div class="navigation">
     <RouterLink to="/history">История</RouterLink>
@@ -12,7 +12,9 @@
 </template>
 
 <script setup lang="ts">
+import { useIpcStore } from '../stores/ipc';
 
+const ipcStore = useIpcStore();
 </script>
 
 <style scoped>

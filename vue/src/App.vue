@@ -35,11 +35,6 @@ onMounted(() => {
   window.electron.ipcRenderer.on('vosk-text', (data: string) => {
     globalEvents.emit(GlobalEvents.VOICE_RECOGNITION, data);
   });
-
-  // window.electron.ipcRenderer.on('incoming-command', (data: { mode: START_MODES }) => {
-  //   console.log("Received command:", data);
-  //   router.push(`/${data.mode}`);
-  // });
 });
 
 onUnmounted(() => {

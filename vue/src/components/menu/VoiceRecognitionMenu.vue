@@ -75,13 +75,7 @@ const cancel = async () => {
 };
 
 const finish = async () => {
-  if (!lastRecognizedTextMs.value) {
-    miniToastr.warn("Ничего не распознано");
-
-    return;
-  }
-
-  if (Date.now() - lastRecognizedTextMs.value < appConfig.recognitionWaitTimeSec * 1000) {
+  if (!lastRecognizedTextMs.value || Date.now() - lastRecognizedTextMs.value < appConfig.recognitionWaitTimeSec * 1000) {
     const currentText = recognizedText.value;
     
     await new Promise<void>((resolve) => {
@@ -102,6 +96,12 @@ const finish = async () => {
     });
   }
 
+  if (!recognizedText.value.trim().length) {
+    miniToastr.warn("Ничего не распознано");
+
+    return;
+  }
+
   // stop voice recognition and make correction
   globalEvents.removeListener(listenerIndex);
   await stopVoiceRecognition();
@@ -110,6 +110,9 @@ const finish = async () => {
 
   if (recognizedText.value.trim().length > appConfig.minCorrectionLength) {
     correctedText = await voiceCorrection(recognizedText.value);
+  }
+  else {
+    miniToastr.warn("Слишком короткий текст для коррекции");
   }
 
   emit("corrected", correctedText);
