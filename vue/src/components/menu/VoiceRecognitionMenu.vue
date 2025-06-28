@@ -80,26 +80,38 @@ const finish = async () => {
 
     return;
   }
-  else if (Date.now() - lastRecognizedTextMs.value < RECOGNITIONS_WAIT_TIME_SEC * 1000) {
-    console.log("Recognition wait time not passed");
+
+  if (Date.now() - lastRecognizedTextMs.value < RECOGNITIONS_WAIT_TIME_SEC * 1000) {
+    const currentText = recognizedText.value;
     
-    return;
+    await new Promise<void>((resolve) => {
+      const timeout = setTimeout(() => {
+        console.log("Recognition wait time passed, no changes detected");
+        resolve();
+        unwatch();
+      }, RECOGNITIONS_WAIT_TIME_SEC * 1000);
+
+      const unwatch = watch(recognizedText, (newText) => {
+        if (newText !== currentText) {
+          console.log("Text changed during wait time");
+          clearTimeout(timeout);
+          unwatch();
+          resolve();
+        }
+      });
+    });
   }
 
-  console.log("Recognition wait time passed");
-
+  // stop voice recognition and make correction
   globalEvents.removeListener(listenerIndex);
-
   await stopVoiceRecognition();
-  
   overlayMode.value = OverlayMode.CORRECTING;
-
   let correctedText = recognizedText.value;
-  
+
   if (recognizedText.value.trim().length > MIN_CORRECTION_LENGTH) {
     correctedText = await voiceCorrection(recognizedText.value);
   }
-
+  
   emit("corrected", correctedText);
 
   overlayMode.value = OverlayMode.NONE;
