@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, Tray } from "electron";
 import path from "path";
 import { Api } from "./api";
 import { getCommandLineArgs } from "../common/helpers";
@@ -6,8 +6,10 @@ import { CommandLineParams, FunctionResult } from "./types/types.js";
 import { APP_CONFIG } from "./appConfig.js";
 import { createOrReadConfig } from "./userConfigManager";
 import { makeInputHistoryOnStart } from "./history";
+import { manageTray } from "./Tray";
 
-let mainWindow: BrowserWindow | null = null;
+// let mainWindow: BrowserWindow | null = null;
+// let tray: Tray | null = null;
 
 // Отключаем предупреждения о безопасности
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "true";
@@ -17,17 +19,7 @@ process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "true";
 //   ? process.env.DIST
 //   : path.join(process.env.DIST, "public");
 
-async function createWindow() {
-  mainWindow = new BrowserWindow({
-    width: APP_CONFIG.windowWidth,
-    height: APP_CONFIG.windowHeight,
-    webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: true,
-      preload: path.join(__dirname, "preload.js"),
-    },
-  });
-
+async function configure(app, mainWindow: BrowserWindow) {
   const args: CommandLineParams = getCommandLineArgs();
   const userConfig = await createOrReadConfig(app.getPath("userData"));
   const api = new Api(APP_CONFIG, userConfig, mainWindow);
@@ -74,19 +66,47 @@ async function createWindow() {
   });
 }
 
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    app.quit();
-    mainWindow = null;
-  }
-});
-
 app.whenReady().then(() => {
-  createWindow();
+  const mainWindow = new BrowserWindow({
+    width: APP_CONFIG.windowWidth,
+    height: APP_CONFIG.windowHeight,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: true,
+      preload: path.join(__dirname, "preload.js"),
+    },
+  });
+
+  // Создаем иконку в трее
+  // tray = new Tray(path.join(__dirname, "icon.png"));
+  const tray = new Tray(
+    "/mnt/disk2/workspace/linux-voice-assistant/electron/icon.png"
+  );
+
+  configure(app, mainWindow);
+  manageTray(app, mainWindow, tray);
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
+      configure(app, mainWindow);
+      manageTray(app, mainWindow, tray);
     }
   });
 });
+
+app.on("open-url", (event, urlString) => {
+  event.preventDefault();
+  const parsedUrl = new URL(urlString);
+  const page = parsedUrl.searchParams.get("page"); // Извлекаем параметр page
+
+  console.log("urlString", urlString, page, parsedUrl);
+  // if (mainWindow) {
+  //   mainWindow.show(); // Показываем окно
+  //   if (page) {
+  //     // Загружаем нужную страницу
+  //     mainWindow.loadURL(`file://${path.join(__dirname, 'index.html')}#${page}`);
+  //   }
+  // }
+});
+
+// xdg-open myapp://open?page=aa
