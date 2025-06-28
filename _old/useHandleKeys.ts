@@ -1,7 +1,10 @@
-import { useIpcStore } from "../stores/ipc";
-import { OVERLAY_STATUSES, useOverlayStore } from "../stores/mainOverlay";
-import { useCallApi } from "./useCallApi";
-import { useCallAi } from "./useCallAi";
+import { useIpcStore } from "../vue/src/stores/ipc";
+import {
+  OVERLAY_STATUSES,
+  useOverlayStore,
+} from "../vue/src/stores/mainOverlay";
+import { useCallApi } from "../vue/src/composables/useCallApi";
+import { useCallAi } from "../vue/src/composables/useCallAi";
 
 export const useHandleKeys = () => {
   const overlayStore = useOverlayStore();

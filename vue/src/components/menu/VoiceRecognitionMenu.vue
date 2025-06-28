@@ -102,5 +102,6 @@ onMounted(async () => {
 
 onUnmounted(() => {
   globalEvents.removeListener(listenerIndex);
+  stopVoiceRecognition();
 });
-</script>   
+</script>

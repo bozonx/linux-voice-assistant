@@ -13,7 +13,7 @@ export const useCallAi = () => {
 
   async function aiRequest(taskName: string, messages: string | ChatMessage[]) {
     const result = await chatCompletion(
-      ipcStore.data!.userConfig,
+      ipcStore.params!.userConfig,
       taskName,
       messages
     );
@@ -40,7 +40,7 @@ export const useCallAi = () => {
     return await aiRequest(
       AI_TASKS.VOICE_CORRECTION,
       prepareAiMessages(
-        ipcStore.data!.userConfig,
+        ipcStore.params!.userConfig,
         AI_TASKS.VOICE_CORRECTION,
         text
       )
@@ -71,7 +71,7 @@ export const useCallAi = () => {
 
     const result = await aiRequest(
       AI_TASKS.ASK_AI,
-      prepareAiMessages(ipcStore.data!.userConfig, AI_TASKS.ASK_AI, [
+      prepareAiMessages(ipcStore.params!.userConfig, AI_TASKS.ASK_AI, [
         ...prevMessages,
         { role: "user", content: message },
       ])
@@ -88,7 +88,7 @@ export const useCallAi = () => {
 
     return await aiRequest(
       AI_TASKS.CORRECTION,
-      prepareAiMessages(ipcStore.data!.userConfig, AI_TASKS.CORRECTION, text)
+      prepareAiMessages(ipcStore.params!.userConfig, AI_TASKS.CORRECTION, text)
     );
   };
 
@@ -100,13 +100,13 @@ export const useCallAi = () => {
     return await aiRequest(
       AI_TASKS.TRANSLATE,
       prepareAiMessages(
-        ipcStore.data!.userConfig,
+        ipcStore.params!.userConfig,
         AI_TASKS.TRANSLATE,
         text,
         undefined,
         {
           TRANSLATION_LANG:
-            ipcStore.data!.userConfig.toTranslateLanguages[toLangNum],
+            ipcStore.params!.userConfig.toTranslateLanguages[toLangNum],
         }
       )
     );
@@ -121,10 +121,10 @@ export const useCallAi = () => {
     return await aiRequest(
       AI_TASKS.DEEP_EDIT,
       prepareAiMessages(
-        ipcStore.data!.userConfig,
+        ipcStore.params!.userConfig,
         AI_TASKS.DEEP_EDIT,
         text,
-        ipcStore.data!.userConfig.aiRules[AI_TASKS.DEEP_EDIT][presetNum].context
+        ipcStore.params!.userConfig.aiRules[AI_TASKS.DEEP_EDIT][presetNum].context
       )
     );
   };

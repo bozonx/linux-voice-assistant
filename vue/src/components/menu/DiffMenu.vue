@@ -8,7 +8,7 @@
       <div>Esc - <button @click="close">назад</button></div>
       <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>
       <div v-if="props.showToEditor">q - <button @click="goToEditor">в редактор</button></div>
-      <div v-if="ipcStore.data?.windowId && props.showInsertButton">Space - <button @click="typeIntoWindowAndClose(editedNewText)">вставить</button></div>
+      <div v-if="ipcStore.params?.windowId && props.showInsertButton">Space - <button @click="typeIntoWindowAndClose(editedNewText)">вставить</button></div>
       <div>a - <button @click="intoClipboardAndClose(editedNewText)">в буфер обмена и закрыть окно</button></div>
     </div>
   </div>
@@ -89,7 +89,7 @@ function handleKeyUp(event: KeyboardEvent) {
     closeWindow();
   }
   else if (event.code === "Space") {
-    if (!ipcStore.data?.windowId || !props.showInsertButton) return;
+    if (!ipcStore.params?.windowId || !props.showInsertButton) return;
 
     typeIntoWindowAndClose(editedNewText.value);
   }

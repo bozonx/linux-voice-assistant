@@ -7,6 +7,7 @@ import WriteModeView from "../views/WriteModeView.vue";
 import VoiceView from "../views/VoiceView.vue";
 import EditModeView from "../views/EditModeView.vue";
 import SelectModeView from "../views/SelectModeView.vue";
+import EmojiView from "../views/Emoji.vue";
 
 const router = createRouter({
   history: createMemoryHistory(),
@@ -53,6 +54,11 @@ const router = createRouter({
       path: "/select",
       name: "select",
       component: SelectModeView,
+    },
+    {
+      path: "/emoji",
+      name: "emoji",
+      component: EmojiView,
     },
   ],
 });

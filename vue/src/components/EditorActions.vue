@@ -7,13 +7,13 @@
       <li>
         <button class="button" @click="edit()">Редактировать</button>
       </li>
-      <li v-for="(lang, index) in ipcStore.data?.userConfig.toTranslateLanguages" :key="lang">
+      <li v-for="(lang, index) in ipcStore.params?.userConfig.toTranslateLanguages" :key="lang">
         <button class="button" @click="translate(index)">➡️ {{ lang }}</button>
       </li>
       <li>
         <button class="button" @click="intoClipboardAndClose()">В буфер обмена</button>
       </li>
-      <li v-if="ipcStore.data?.windowId">
+      <li v-if="ipcStore.params?.windowId">
         <button class="button" @click="insertIntoWindow()">Вставить в окно</button>
       </li>
     </ul>

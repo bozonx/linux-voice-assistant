@@ -20,7 +20,7 @@ export const useCallApi = () => {
 
     await ipcStore.callFunction("typeIntoWindowAndClose", [
       text,
-      ipcStore.data?.windowId,
+      ipcStore.params?.windowId,
     ]);
   }
 

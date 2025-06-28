@@ -12,12 +12,14 @@ import { handleExternalCommands } from "./ExternalCommands";
 // Отключаем предупреждения о безопасности
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "true";
 
+let mainWindow: BrowserWindow | null = null;
+
 if (!app.requestSingleInstanceLock()) {
   app.quit();
 }
 
 async function configure() {
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: APP_CONFIG.windowWidth,
     height: APP_CONFIG.windowHeight,
     webPreferences: {
@@ -73,6 +75,18 @@ async function configure() {
 
   api.$setVoskHandler((text) => {
     mainWindow?.webContents.send("vosk-text", text);
+  });
+
+  mainWindow.on("show", () => {
+    mainWindow?.webContents.send("params", {
+      isWindowShown: true,
+    });
+  });
+
+  mainWindow.on("hide", () => {
+    mainWindow?.webContents.send("params", {
+      isWindowShown: false,
+    });
   });
 
   manageTray(app, mainWindow, tray);

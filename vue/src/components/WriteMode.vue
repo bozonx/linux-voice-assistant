@@ -26,6 +26,7 @@ import { useCallAi } from '../composables/useCallAi';
 import { DebounceCallIncreasing } from 'squidlet-lib';
 import { useMainInputHistoryStore } from '../stores/mainInputHistory';
 import miniToastr from "mini-toastr";
+import { useIpcStore } from '../stores/ipc';
 
 enum OverlayMode {
   CORRECTION = "correction",
@@ -35,6 +36,7 @@ enum OverlayMode {
 
 const MIN_CORRECTION_LENGTH = 30;
 const mainInputHistoryStore = useMainInputHistoryStore()
+const ipcStore = useIpcStore();
 const debounced = new DebounceCallIncreasing()
 const { closeWindow } = useCallApi();
 const { correctText } = useCallAi();
@@ -47,6 +49,26 @@ const correctionIsActual = ref(true);
 onMounted(() => {
   if (textareaRef.value) {
     focusTextarea();
+  }
+})
+
+watch(() => ipcStore.receiveParamsCounter, () => {
+  inputText.value = '';
+  correctedText.value = '';
+  correctionIsActual.value = true;
+  overlayMode.value = OverlayMode.NONE;
+
+  if (textareaRef.value) {
+    textareaRef.value.innerText = '';
+  }
+
+  focusTextarea();
+});
+
+watch(() => ipcStore.params?.isWindowShown, (isWindowShown) => {
+  console.log("isWindowShown", isWindowShown);
+  if (isWindowShown) {
+    // toWriteMode();
   }
 })
 

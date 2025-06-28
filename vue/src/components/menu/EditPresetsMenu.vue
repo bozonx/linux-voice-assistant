@@ -15,7 +15,7 @@
         <span v-else>назад</span>
       </button></div>
       <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>
-      <div v-for="(preset, index) in ipcStore.data?.userConfig.aiRules.deepEdit" :key="preset.description">
+      <div v-for="(preset, index) in ipcStore.params?.userConfig.aiRules.deepEdit" :key="preset.description">
         {{ EDIT_PRESET_KEYS[index] }} - <button @click="makeDiff(index)">{{ preset.description }}</button>
       </div>
     </div>

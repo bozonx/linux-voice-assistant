@@ -20,9 +20,9 @@ onMounted(() => {
   window.electron.ipcRenderer.on('params', async (params: InitParams) => {
     console.log("Received params:", params);
 
-    ipcStore.setInitialData(params);
+    ipcStore.setParams(params);
 
-    if (ipcStore.data!.mode) {
+    if (ipcStore.params!.mode) {
       router.push(`/${params.mode}`);
     }
     else {
@@ -34,10 +34,10 @@ onMounted(() => {
     globalEvents.emit(GlobalEvents.VOICE_RECOGNITION, data);
   });
 
-  window.electron.ipcRenderer.on('incoming-command', (data: { mode: START_MODES }) => {
-    console.log("Received command:", data);
-    router.push(`/${data.mode}`);
-  });
+  // window.electron.ipcRenderer.on('incoming-command', (data: { mode: START_MODES }) => {
+  //   console.log("Received command:", data);
+  //   router.push(`/${data.mode}`);
+  // });
 });
 
 onUnmounted(() => {

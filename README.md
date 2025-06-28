@@ -91,5 +91,5 @@ python install_model.py
 ## Vosk
 
 ```bash
-docker run -p 2700:2700 alphacep/kaldi-ru:latest
+docker run --name vosk-ru -p 2700:2700 alphacep/kaldi-ru:latest
 ```

@@ -41,11 +41,11 @@
       <div>f - <button @click="toEditPresets">выбор пресета редактирования</button></div>
       <div>g - <button @click="searchInInternet(props.text)">поиск в интернете</button></div>
 
-      <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[0]">z - ➡️ <button @click="translate(0)">{{ipcStore.data?.userConfig.toTranslateLanguages[0]}}</button></div>
-      <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[1]">x - ➡️ <button @click="translate(1)">{{ipcStore.data?.userConfig.toTranslateLanguages[1]}}</button></div>
-      <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[2]">c - ➡️ <button @click="translate(2)">{{ipcStore.data?.userConfig.toTranslateLanguages[2]}}</button></div>
-      <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[3]">v - ➡️ <button @click="translate(3)">{{ipcStore.data?.userConfig.toTranslateLanguages[3]}}</button></div>
-      <div v-if="ipcStore.data?.userConfig.toTranslateLanguages[4]">b - ➡️ <button @click="translate(4)">{{ipcStore.data?.userConfig.toTranslateLanguages[4]}}</button></div>
+      <div v-if="ipcStore.params?.userConfig.toTranslateLanguages[0]">z - ➡️ <button @click="translate(0)">{{ipcStore.params?.userConfig.toTranslateLanguages[0]}}</button></div>
+      <div v-if="ipcStore.params?.userConfig.toTranslateLanguages[1]">x - ➡️ <button @click="translate(1)">{{ipcStore.params?.userConfig.toTranslateLanguages[1]}}</button></div>
+      <div v-if="ipcStore.params?.userConfig.toTranslateLanguages[2]">c - ➡️ <button @click="translate(2)">{{ipcStore.params?.userConfig.toTranslateLanguages[2]}}</button></div>
+      <div v-if="ipcStore.params?.userConfig.toTranslateLanguages[3]">v - ➡️ <button @click="translate(3)">{{ipcStore.params?.userConfig.toTranslateLanguages[3]}}</button></div>
+      <div v-if="ipcStore.params?.userConfig.toTranslateLanguages[4]">b - ➡️ <button @click="translate(4)">{{ipcStore.params?.userConfig.toTranslateLanguages[4]}}</button></div>
     </template>
   </div>
 </template>
@@ -136,7 +136,7 @@ function toInsertMenu() {
 }
 
 async function translate(toLangNum: number) {
-  if (!ipcStore.data?.windowId || !props.text) return;
+  if (!ipcStore.params?.windowId || !props.text) return;
 
   let value = resolveText(props.text);
 
@@ -178,7 +178,7 @@ const handleShortCutKeyUp = (event: KeyboardEvent) => {
     closeWindow();
   }
   else if (event.code === "Space") {
-    if (!ipcStore.data?.windowId || !props.text || !props.showInsertButton) return;
+    if (!ipcStore.params?.windowId || !props.text || !props.showInsertButton) return;
 
     insertIntoWindow(props.text ?? '');
   }

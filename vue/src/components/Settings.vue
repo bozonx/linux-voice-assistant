@@ -121,7 +121,7 @@
   const ipcStore = useIpcStore();
   const router = useRouter();
 
-  const userSettings = ref(ipcStore.data!.userConfig);
+  const userSettings = ref(ipcStore.params!.userConfig);
 
   const models = computed(() => {
     return userSettings.value.models;

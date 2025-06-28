@@ -24,7 +24,7 @@ export function handleExternalCommands(mainWindow: BrowserWindow) {
     if (message.member === MESSAGE_METHOD && message.body.length > 0) {
       const [mode, windowId, ...selectedText] = message.body[0].split("|");
 
-      console.log("message", message);
+      console.log("DBUS message received", message);
 
       mainWindow.webContents.send("params", {
         mode,

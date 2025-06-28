@@ -83,7 +83,7 @@ function handleKeyUp(event: KeyboardEvent) {
     closeWindow();
   }
   else if (event.code === "Space") {
-    if (!ipcStore.data?.windowId || !props.showInsertButton) return;
+    if (!ipcStore.params?.windowId || !props.showInsertButton) return;
 
     insertIntoWindow(props.text);
   }

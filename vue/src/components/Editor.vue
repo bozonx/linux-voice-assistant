@@ -40,7 +40,7 @@
       <EditorActions />
     </div>
 
-    <div v-if="ipcStore.data?.windowId">
+    <div v-if="ipcStore.params?.windowId">
       <h2 class="section-title">Трансформирование и вставка</h2>
       <EditorInsertToolbar />
     </div>

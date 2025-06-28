@@ -36,6 +36,7 @@
     "../common/useAiRequest.ts",
     "src/components/DropdownRow",
     "../_old/Overlays.vue",
-    "../_old/voiceRecognition.ts"
+    "../_old/voiceRecognition.ts",
+    "../_old/useHandleKeys.ts"
   ]
 }

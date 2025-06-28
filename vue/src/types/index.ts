@@ -6,6 +6,7 @@ export enum START_MODES {
   VOICE = "voice",
   EDIT = "edit",
   WRITE = "write",
+  EMOJI = "emoji",
 }
 
 export interface InitParams {
@@ -15,6 +16,7 @@ export interface InitParams {
   userConfig: UserConfig;
   appConfig: AppConfig;
   NODE_ENV: string;
+  isWindowShown: boolean;
 }
 
 export interface IpcResult {
