@@ -37,6 +37,7 @@
     "src/components/DropdownRow",
     "../_old/Overlays.vue",
     "../_old/voiceRecognition.ts",
-    "../_old/useHandleKeys.ts"
+    "../_old/useHandleKeys.ts",
+    "../_old/EditorInsertToolbar.vue"
   ]
 }

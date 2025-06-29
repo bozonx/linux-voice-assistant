@@ -35,21 +35,14 @@
       <h2 class="section-title">Действия</h2>
       <EditorActions />
     </div>
-
-    <div v-if="ipcStore.params?.windowId">
-      <h2 class="section-title">Трансформирование и вставка</h2>
-      <EditorInsertToolbar />
-    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useIpcStore } from '../stores/ipc';
 import { useRouteParams } from '../stores/routeParams';
 import { useMainInputStore } from '../stores/mainInput';
 import { OverlayMode, useOverlayStore } from '../stores/mainOverlay';
 
-const ipcStore = useIpcStore();
 const routeParamsStore = useRouteParams();
 const mainInputStore = useMainInputStore();
 const overlayStore = useOverlayStore();

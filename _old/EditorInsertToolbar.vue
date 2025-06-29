@@ -39,10 +39,10 @@
 </template>
 
 <script setup lang="ts">
-import { useMainInputStore } from '../stores/mainInput';
-import { useCodeFormatter } from '../composables/useCodeFormatter';
-import { useTextTransform } from '../composables/useTextTransform';
-import { useCallApi } from '../composables/useCallApi';
+import { useMainInputStore } from '../vue/src/stores/mainInput';
+import { useCodeFormatter } from '../vue/src/composables/useCodeFormatter';
+import { useTextTransform } from '../vue/src/composables/useTextTransform';
+import { useCallApi } from '../vue/src/composables/useCallApi';
 import miniToastr from "mini-toastr";
 
 const { formatMdAndStyle, formatSomeCode } = useCodeFormatter();
