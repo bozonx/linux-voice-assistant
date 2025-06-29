@@ -54,5 +54,6 @@ onUnmounted(() => {
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
+  /* @apply h-screen w-screen p-5 flex flex-col; */
 }
 </style>

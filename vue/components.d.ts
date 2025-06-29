@@ -31,6 +31,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Settings: typeof import('./src/components/Settings.vue')['default']
+    TailwindDemo: typeof import('./src/components/TailwindDemo.vue')['default']
     TextAreaRow: typeof import('./src/components/common/TextAreaRow.vue')['default']
     TextPreview: typeof import('./src/components/common/TextPreview.vue')['default']
     TranslateMenu: typeof import('./src/components/menu/TranslateMenu.vue')['default']
