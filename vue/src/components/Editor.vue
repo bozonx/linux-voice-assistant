@@ -26,24 +26,30 @@
 
   <div @keyup="handleKeyUp">
     <div>
-      <div>
-        <div>
+      <div class="flex gap-4">
+        <div class="flex-1">
           <MainInput ref="mainInput"/>
         </div>
-        <div>
-          <button class="mini-button" @click="overlayStore.showVoiceRecognition">Голосовой ввод</button>
-          <button class="mini-button" @click="mainInputStore.clear">Очистить</button>
-          <button class="mini-button" @click="mainInputStore.selectAll">Выбрать всё</button>
+        <div class="flex gap-2 flex-col">
+          <Button small primary @click="overlayStore.showVoiceRecognition">Голосовой ввод</Button>
+          <Button small primary @click="mainInputStore.clear">Очистить</Button>
+          <Button small primary @click="mainInputStore.selectAll">Выбрать всё</Button>
         </div>
       </div>
       
       <p class="main-input-hint">Hint: press Esc to open menu. можно выделить текст в инпуте, и тогда изменения будут касаться только того, что выделено.</p>
-      <EditorTextToolbar/>
+
+      <div class="flex gap-1 w-full flex-wrap">
+        <Button v-for="item in menuStore.getEditMenu()" :key="item.name" small secondary :icon="item.icon" @click="item.action(mainInputStore.value)">{{ item.name }}</Button>
+      </div>
     </div>
 
     <div>
       <h2 class="section-title">Действия</h2>
-      <EditorActions />
+
+      <div class="flex gap-1 w-full flex-wrap">
+        <Button  v-for="item in menuStore.getActionsMenu()" :key="item.name" big primary :icon="item.icon" @click="item.action(mainInputStore.value)">{{ item.name }}</Button>
+      </div>
     </div>
   </div>
 </template>
@@ -52,11 +58,13 @@
 import { useRouteParams } from '../stores/routeParams';
 import { useMainInputStore } from '../stores/mainInput';
 import { OverlayMode, useOverlayStore } from '../stores/mainOverlay';
+import { useMenuStore } from '../stores/menu';
 
 const routeParamsStore = useRouteParams();
 const mainInputStore = useMainInputStore();
 const overlayStore = useOverlayStore();
 const overlayMode = computed(() => overlayStore.overlayMode);
+const menuStore = useMenuStore();
 
 onMounted(() => {
   if (routeParamsStore.params.text) {
@@ -80,4 +88,11 @@ function handleCorrected(text: string) {
 </script>
 
 <style scoped>
+
+.section-title {
+  margin-top: 8px;
+  margin-bottom: 2px;
+  font-size: 14px;
+}
+
 </style>

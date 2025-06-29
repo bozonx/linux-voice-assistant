@@ -70,21 +70,29 @@ export const DEFAULT_EDIT_ITEMS: MenuItem[] = [
 ];
 
 export const useMenuStore = defineStore("menu", () => {
-  const actionsMenu = ref<MenuItem[]>([]);
-  const editMenu = ref<MenuItem[]>([]);
+  const registeredActionsMenu = ref<MenuItem[]>([]);
+  const registeredEditMenu = ref<MenuItem[]>([]);
 
-  const addActionsItems = (actions: MenuItem[]) => {
-    actionsMenu.value.push(...actions);
+  const getActionsMenu = () => {
+    return [...DEFAULT_ACTIONS, ...registeredActionsMenu.value];
   };
 
-  const addEditItems = (edit: MenuItem[]) => {
-    editMenu.value.push(...edit);
+  const getEditMenu = () => {
+    return [...DEFAULT_EDIT_ITEMS, ...registeredEditMenu.value];
+  };
+
+  const registerActionsItems = (actions: MenuItem[]) => {
+    registeredActionsMenu.value.push(...actions);
+  };
+
+  const registerEditItems = (edit: MenuItem[]) => {
+    registeredEditMenu.value.push(...edit);
   };
 
   return {
-    actionsMenu,
-    editMenu,
-    addActionsItems,
-    addEditItems,
+    getActionsMenu,
+    getEditMenu,
+    registerActionsItems,
+    registerEditItems,
   };
 });
