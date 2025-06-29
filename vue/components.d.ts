@@ -17,7 +17,6 @@ declare module 'vue' {
     DropdownRow: typeof import('./src/components/common/DropdownRow.vue')['default']
     Editor: typeof import('./src/components/Editor.vue')['default']
     EditorActions: typeof import('./src/components/EditorActions.vue')['default']
-    EditorInsertToolbar: typeof import('./src/components/EditorInsertToolbar.vue')['default']
     EditorTextToolbar: typeof import('./src/components/EditorTextToolbar.vue')['default']
     EditPresetsMenu: typeof import('./src/components/menu/EditPresetsMenu.vue')['default']
     History: typeof import('./src/components/History.vue')['default']

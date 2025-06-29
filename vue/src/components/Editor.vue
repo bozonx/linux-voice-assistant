@@ -26,7 +26,17 @@
 
   <div @keyup="handleKeyUp">
     <div>
-      <MainInput ref="mainInput"/>
+      <div>
+        <div>
+          <MainInput ref="mainInput"/>
+        </div>
+        <div>
+          <button class="mini-button" @click="overlayStore.showVoiceRecognition">Голосовой ввод</button>
+          <button class="mini-button" @click="mainInputStore.clear">Очистить</button>
+          <button class="mini-button" @click="mainInputStore.selectAll">Выбрать всё</button>
+        </div>
+      </div>
+      
       <p class="main-input-hint">Hint: press Esc to open menu. можно выделить текст в инпуте, и тогда изменения будут касаться только того, что выделено.</p>
       <EditorTextToolbar/>
     </div>
