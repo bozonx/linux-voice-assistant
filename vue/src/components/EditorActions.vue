@@ -7,8 +7,8 @@
       <li>
         <button class="button" @click="edit()">Редактировать</button>
       </li>
-      <li v-for="(lang, index) in ipcStore.params?.userConfig.toTranslateLanguages" :key="lang">
-        <button class="button" @click="translate(index)">➡️ {{ lang }}</button>
+      <li>
+        <button class="button" @click="translate()">Перевод</button>
       </li>
       <li>
         <button class="button" @click="intoClipboardAndClose()">В буфер обмена</button>
@@ -71,7 +71,6 @@ const {
 const {
   dealToCalendar,
   correctText,
-  translateText,
 } = useCallAi();
 
 
@@ -95,20 +94,8 @@ const edit = () => {
   overlayStore.showEditPresets();
 }
 
-const translate = async (toLangNum: number) => {
-  if (!mainInputStore.value.trim()) return;
-
-  if (mainInputStore.value.length < appConfig.minCorrectionLength) {
-    miniToastr.warn('Слишком короткий текст для перевода');
-
-    return;
-  }
-
-  overlayStore.showAskingAi();
-  
-  const newText = await translateText(toLangNum, mainInputStore.value);
-
-  overlayStore.showTranslatePreview(newText);
+const translate = async () => {
+  overlayStore.showTranslate();
 };
 
 // const selectedEditPresetIndex = ref(0);

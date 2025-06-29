@@ -34,6 +34,7 @@ declare module 'vue' {
     Settings: typeof import('./src/components/Settings.vue')['default']
     TextAreaRow: typeof import('./src/components/common/TextAreaRow.vue')['default']
     TextPreview: typeof import('./src/components/common/TextPreview.vue')['default']
+    TranslateMenu: typeof import('./src/components/menu/TranslateMenu.vue')['default']
     VoiceMode: typeof import('./src/components/VoiceMode.vue')['default']
     VoiceRecognitionMenu: typeof import('./src/components/menu/VoiceRecognitionMenu.vue')['default']
     WriteMode: typeof import('./src/components/WriteMode.vue')['default']

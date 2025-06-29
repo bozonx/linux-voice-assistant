@@ -8,10 +8,6 @@
     <EditPresetsMenu @close="overlayStore.hideOverlay" :text="mainInputStore.value" />
   </Overlay>
 
-  <Overlay v-if="overlayMode === OverlayMode.ASKING_AI">
-    <InProgressMessage :ai="true" />
-  </Overlay>
-
   <Overlay v-if="overlayMode === OverlayMode.CORRECTION">
     <InProgressMessage :correction="true" />
   </Overlay>
@@ -20,12 +16,12 @@
     <DiffMenu :oldText="mainInputStore.value" :newText="overlayStore.diffText" @close="overlayStore.hideOverlay" />
   </Overlay>
 
-  <Overlay v-if="overlayMode === OverlayMode.TRANSLATE_PREVIEW">
-    <PreviewMenu :text="overlayStore.translateResult" @close="overlayStore.hideOverlay" />
-  </Overlay>
-
   <Overlay v-if="overlayMode === OverlayMode.VOICE_RECOGNITION">
     <VoiceRecognitionMenu @close="overlayStore.hideOverlay" @corrected="handleCorrected" />
+  </Overlay>
+
+  <Overlay v-if="overlayMode === OverlayMode.TRANSLATE">
+    <TranslateMenu :text="mainInputStore.value" @back="overlayStore.hideOverlay" />
   </Overlay>
 
   <div @keyup="handleKeyUp">

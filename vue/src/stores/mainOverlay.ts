@@ -3,12 +3,11 @@ import { useMainInputStore } from "./mainInput";
 
 export enum OverlayMode {
   DIFF = "diff",
-  TRANSLATE_PREVIEW = "translate-preview",
   MENU = "menu",
   EDIT_PRESETS = "edit-presets",
-  ASKING_AI = "asking-ai",
   CORRECTION = "correction",
   VOICE_RECOGNITION = "voice-recognition",
+  TRANSLATE = "translate",
   NONE = "none",
 }
 
@@ -16,7 +15,7 @@ export const useOverlayStore = defineStore("mainOverlay", () => {
   const overlayMode = ref<OverlayMode>(OverlayMode.NONE);
   const mainInputStore = useMainInputStore();
   const diffText = ref<string>("");
-  const translateResult = ref<string>("");
+  // const translateResult = ref<string>("");
   // const startVoiceRecognition = () => {
   //   status.value = OVERLAY_STATUSES.VOICE_RECOGNITION;
   //   globalResetFocus();
@@ -33,9 +32,9 @@ export const useOverlayStore = defineStore("mainOverlay", () => {
     });
   };
 
-  const showAskingAi = () => {
-    overlayMode.value = OverlayMode.ASKING_AI;
-  };
+  // const showAskingAi = () => {
+  //   overlayMode.value = OverlayMode.ASKING_AI;
+  // };
 
   const showCorrection = () => {
     overlayMode.value = OverlayMode.CORRECTION;
@@ -50,10 +49,10 @@ export const useOverlayStore = defineStore("mainOverlay", () => {
     diffText.value = newText;
   };
 
-  const showTranslatePreview = (newText: string) => {
-    overlayMode.value = OverlayMode.TRANSLATE_PREVIEW;
-    translateResult.value = newText;
-  };
+  // const showTranslatePreview = (newText: string) => {
+  //   overlayMode.value = OverlayMode.TRANSLATE_PREVIEW;
+  //   translateResult.value = newText;
+  // };
 
   const showMenu = () => {
     overlayMode.value = OverlayMode.MENU;
@@ -63,19 +62,19 @@ export const useOverlayStore = defineStore("mainOverlay", () => {
     overlayMode.value = OverlayMode.VOICE_RECOGNITION;
   };
 
+  const showTranslate = () => {
+    overlayMode.value = OverlayMode.TRANSLATE;
+  };
+
   return {
     overlayMode,
-    // startVoiceRecognition,
-    // startRepunctuation,
     hideOverlay,
-    showAskingAi,
     showCorrection,
     showEditPresets,
     showMenu,
     showDiff,
     diffText,
-    translateResult,
-    showTranslatePreview,
     showVoiceRecognition,
+    showTranslate,
   };
 });

@@ -38,7 +38,7 @@ export enum AI_TASKS {
   ASK_AI = "askAi",
 }
 
-export const EDIT_PRESET_KEYS = [
+export const PRESETS_KEYS = [
   "q",
   "w",
   "e",

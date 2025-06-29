@@ -10,6 +10,10 @@
   <Overlay v-if="overlayMode === OverlayMode.EDIT_PRESETS">
     <EditPresetsMenu @close="toInsertMenu" :text="text" />
   </Overlay>
+  
+  <Overlay v-if="overlayMode === OverlayMode.TRANSLATE">
+    <TranslateMenu :text="props.text" @back="toInsertMenu" />
+  </Overlay>
 
   <Overlay v-if="overlayMode === OverlayMode.TRANSLATE_PREVIEW">
     <PreviewMenu :text="resultText" @close="toInsertMenu" />
@@ -31,7 +35,7 @@
     <template v-if="props.text">
       <div v-if="ipcStore.params?.windowId && props.showInsertButton">Space - <button @click="typeIntoWindowAndClose(props.text ?? '')">вставить</button></div>
       <div>w - <button @click="intoClipboardAndClose(props.text)">в буфер обмена и закрыть окно</button></div>
-      <!-- <div>e - </div> -->
+      <div>e - <button @click="translate()">перевод</button></div>
       <div>r - <button @click="askAIShort(props.text)">быстрый вопрос к AI</button></div>
       <div>t - <button @click="dealToCalendar(props.text)">добавить дело в календарь</button></div>
       
@@ -41,11 +45,11 @@
       <div>f - <button @click="toEditPresets">выбор пресета редактирования</button></div>
       <div>g - <button @click="searchInInternet(props.text)">поиск в интернете</button></div>
 
-      <div v-if="ipcStore.params?.userConfig.toTranslateLanguages[0]">z - ➡️ <button @click="translate(0)">{{ipcStore.params?.userConfig.toTranslateLanguages[0]}}</button></div>
+      <!-- <div v-if="ipcStore.params?.userConfig.toTranslateLanguages[0]">z - ➡️ <button @click="translate(0)">{{ipcStore.params?.userConfig.toTranslateLanguages[0]}}</button></div>
       <div v-if="ipcStore.params?.userConfig.toTranslateLanguages[1]">x - ➡️ <button @click="translate(1)">{{ipcStore.params?.userConfig.toTranslateLanguages[1]}}</button></div>
       <div v-if="ipcStore.params?.userConfig.toTranslateLanguages[2]">c - ➡️ <button @click="translate(2)">{{ipcStore.params?.userConfig.toTranslateLanguages[2]}}</button></div>
       <div v-if="ipcStore.params?.userConfig.toTranslateLanguages[3]">v - ➡️ <button @click="translate(3)">{{ipcStore.params?.userConfig.toTranslateLanguages[3]}}</button></div>
-      <div v-if="ipcStore.params?.userConfig.toTranslateLanguages[4]">b - ➡️ <button @click="translate(4)">{{ipcStore.params?.userConfig.toTranslateLanguages[4]}}</button></div>
+      <div v-if="ipcStore.params?.userConfig.toTranslateLanguages[4]">b - ➡️ <button @click="translate(4)">{{ipcStore.params?.userConfig.toTranslateLanguages[4]}}</button></div> -->
     </template>
   </div>
 </template>
@@ -64,6 +68,7 @@ enum OverlayMode {
   TRANSLATE_PREVIEW = "translate-preview",
   CORRECTION = "correction",
   DIFF = "diff",
+  TRANSLATE = "translate",
   NONE = "none",
 }
 
@@ -100,8 +105,7 @@ const emit = defineEmits<{
 const overlayMode = ref(OverlayMode.NONE);
 const resultText = ref<string>("");
 const inFocusButton = ref<HTMLButtonElement>();
-const { translateText, dealToCalendar, correctText } = useCallAi();
-const { resolveText } = useCallApi();
+const { dealToCalendar, correctText } = useCallAi();
 
 onMounted(() => {
   nextTick(() => {
@@ -137,18 +141,15 @@ function toInsertMenu() {
   })
 }
 
-async function translate(toLangNum: number) {
-  if (!ipcStore.params?.windowId || !props.text) return;
-
-  let value = resolveText(props.text);
-
-  if (!value.trim()) return;
-
-  overlayMode.value = OverlayMode.IN_PROGRESS;
-
-  resultText.value = await translateText(toLangNum, props.text);  
-
-  overlayMode.value = OverlayMode.TRANSLATE_PREVIEW;
+async function translate() {
+  overlayMode.value = OverlayMode.TRANSLATE;
+  
+  // if (!ipcStore.params?.windowId || !props.text) return;
+  // let value = resolveText(props.text);
+  // if (!value.trim()) return;
+  // overlayMode.value = OverlayMode.IN_PROGRESS;
+  // resultText.value = await translateText(toLangNum, props.text);  
+  // overlayMode.value = OverlayMode.TRANSLATE_PREVIEW;
 }
 
 function goToEditor() {
@@ -197,10 +198,9 @@ const handleShortCutKeyUp = (event: KeyboardEvent) => {
     if (!props.text) return;
     intoClipboardAndClose(props.text ?? '');
   }
-  // else if (event.code === "KeyE") {
-  //   if (!props.text) return;
-  //   console.log("e");
-  // }
+  else if (event.code === "KeyE") {
+    translate();
+  }
   else if (event.code === "KeyR") {
     if (!props.text) return;
     askAIShort(props.text);
@@ -227,20 +227,20 @@ const handleShortCutKeyUp = (event: KeyboardEvent) => {
     if (!props.text) return;
     searchInInternet(props.text);
   }
-  else if (event.code === "KeyZ") {
-    translate(0);
-  }
-  else if (event.code === "KeyX") {
-    translate(1);
-  }
-  else if (event.code === "KeyC") {
-    translate(2);
-  }
-  else if (event.code === "KeyV") {
-    translate(3);
-  }
-  else if (event.code === "KeyB") {
-    translate(4);
-  }
+  // else if (event.code === "KeyZ") {
+  //   translate(0);
+  // }
+  // else if (event.code === "KeyX") {
+  //   translate(1);
+  // }
+  // else if (event.code === "KeyC") {
+  //   translate(2);
+  // }
+  // else if (event.code === "KeyV") {
+  //   translate(3);
+  // }
+  // else if (event.code === "KeyB") {
+  //   translate(4);
+  // }
 }
 </script>

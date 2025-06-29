@@ -16,7 +16,7 @@
       </button></div>
       <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>
       <div v-for="(preset, index) in ipcStore.params?.userConfig.aiRules.deepEdit" :key="preset.description">
-        {{ EDIT_PRESET_KEYS[index] }} - <button @click="makeDiff(index)">{{ preset.description }}</button>
+        {{ PRESETS_KEYS[index] }} - <button @click="makeDiff(index)">{{ preset.description }}</button>
       </div>
     </div>
   </div>
@@ -24,7 +24,7 @@
 
 <script setup lang="ts">
 import { useCallApi } from '../../composables/useCallApi';
-import { EDIT_PRESET_KEYS } from '../../types';
+import { PRESETS_KEYS } from '../../types';
 import { useIpcStore } from '../../stores/ipc';
 import { useCallAi } from '../../composables/useCallAi';
 import { useRouteParams } from '../../stores/routeParams';
@@ -121,8 +121,8 @@ function handleKeyUp(event: KeyboardEvent) {
     codeLetter = event.code.slice(3).toLowerCase();
   }
   
-  if (codeLetter && EDIT_PRESET_KEYS.includes(codeLetter)) {
-    makeDiff(EDIT_PRESET_KEYS.indexOf(codeLetter));
+  if (codeLetter && PRESETS_KEYS.includes(codeLetter)) {
+    makeDiff(PRESETS_KEYS.indexOf(codeLetter));
   }
 }
 </script>
