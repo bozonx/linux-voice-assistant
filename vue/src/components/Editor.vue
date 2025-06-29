@@ -120,11 +120,9 @@ async function doEdit(cb: (text: string) => Promise<string>): Promise<void> {
 </script>
 
 <style scoped>
-
 .section-title {
   margin-top: 8px;
   margin-bottom: 2px;
   font-size: 14px;
 }
-
 </style>

@@ -1,12 +1,4 @@
 <template>
-  <Overlay v-if="overlayMode === OverlayMode.SHORTCUTS">
-    <InsertMenu :text="correctedText" :oldText="inputText" @back="toWriteMode" @update:newText="handleNewText" />
-  </Overlay>
-
-  <Overlay v-if="overlayMode === OverlayMode.CORRECTION">
-    <InProgressMessage :correction="true" />
-  </Overlay>
-
   <div @keyup="handleWriteModeKeyUp" class="write-mode-container">
     <div class="hint">
       <div class="hint-text">
@@ -27,6 +19,7 @@ import { DebounceCallIncreasing } from 'squidlet-lib';
 import { useMainInputHistoryStore } from '../stores/mainInputHistory';
 import miniToastr from "mini-toastr";
 import { useIpcStore } from '../stores/ipc';
+import { MenuModals, useMenuModalsStore } from '../stores/menuModals';
 
 enum OverlayMode {
   CORRECTION = "correction",
@@ -39,7 +32,7 @@ const ipcStore = useIpcStore();
 const debounced = new DebounceCallIncreasing()
 const { closeWindow } = useCallApi();
 const { correctText } = useCallAi();
-const overlayMode = ref(OverlayMode.NONE);
+const menuModalsStore = useMenuModalsStore();
 const textareaRef = ref<HTMLDivElement>();
 const inputText = ref('');
 const correctedText = ref('');
@@ -60,7 +53,6 @@ watch(() => ipcStore.params?.isWindowShown, (isWindowShown) => {
   inputText.value = '';
   correctedText.value = '';
   correctionIsActual.value = true;
-  overlayMode.value = OverlayMode.NONE;
 
   if (textareaRef.value) {
     textareaRef.value.innerText = '';
@@ -95,14 +87,17 @@ function focusTextarea() {
 }
 
 function toShortcuts() {
-  overlayMode.value = OverlayMode.SHORTCUTS;
+  menuModalsStore.nextModal(MenuModals.INSERT, {
+    text: correctedText.value,
+    oldText: inputText.value,
+  });
 }
 
-function toWriteMode() {
-  overlayMode.value = OverlayMode.NONE;
+// function toWriteMode() {
+//   overlayMode.value = OverlayMode.NONE;
 
-  focusTextarea();
-}
+//   focusTextarea();
+// }
 
 async function doCorrection() {
   if (!inputText.value?.trim()) {
@@ -118,12 +113,20 @@ async function doCorrection() {
     correctionIsActual.value = true;
   }
   else {
-    overlayMode.value = OverlayMode.CORRECTION;
+    menuModalsStore.setPendingModal({
+      correction: true,
+    });
 
     const result = await correctText(inputText.value);
 
     correctedText.value = result;
     correctionIsActual.value = true;
+
+    menuModalsStore.clearPendingModal();
+    menuModalsStore.nextModal(MenuModals.INSERT, {
+      text: result,
+      oldText: inputText.value,
+    });
   }
 
   toShortcuts();

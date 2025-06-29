@@ -6,7 +6,6 @@ export enum START_MODES {
   VOICE = "voice",
   EDIT = "edit",
   WRITE = "write",
-  EMOJI = "emoji",
 }
 
 export interface InitParams {

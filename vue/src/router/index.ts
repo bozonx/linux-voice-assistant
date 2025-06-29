@@ -55,11 +55,6 @@ const router = createRouter({
       name: "select",
       component: SelectModeView,
     },
-    {
-      path: "/emoji",
-      name: "emoji",
-      component: EmojiView,
-    },
   ],
 });
 
