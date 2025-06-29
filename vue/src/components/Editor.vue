@@ -57,19 +57,25 @@ onMounted(() => {
 
 function handleKeyUp(event: KeyboardEvent) {
   if (event.code === "Escape") {
-    menuModalsStore.showModal(MenuModals.INSERT, {
+    menuModalsStore.nextModal(MenuModals.INSERT, {
       text: mainInputStore.value,
-      onBack: () => menuModalsStore.hideModal(),
+      onBack: () => {
+        menuModalsStore.back();
+        mainInputStore.focus();
+      },
     });
   }
 }
 
 function voiceRecognition() {
-  menuModalsStore.showModal(MenuModals.VOICE_RECOGNITION, {
-    onBack: () => menuModalsStore.hideModal(),
+  menuModalsStore.nextModal(MenuModals.VOICE_RECOGNITION, {
+    onBack: () => {
+      menuModalsStore.back();
+      mainInputStore.focus();
+    },
     onCorrected: (text: string) => {
       mainInputStore.setValueAtCursor(text);
-      menuModalsStore.hideModal();
+      menuModalsStore.closeAll();
     },
   });
 }

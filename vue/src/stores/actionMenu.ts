@@ -20,8 +20,28 @@ export const useActionMenuStore = defineStore("actionMenu", () => {
 
   const DEFAULT_ACTIONS: ActionItem[] = [
     {
+      name: "Вставить в окно",
+      action: async (text: string) => typeIntoWindowAndClose(text),
+    },
+    {
+      name: "В буфер обмена",
+      action: async (text: string) => {
+        await ipcStore.callFunction("putIntoClipboardAndClose", [text]);
+      },
+    },
+    {
+      name: "Редактировать",
+      action: async (text: string) =>
+        menuModalsStore.nextModal(MenuModals.EDIT_PRESETS, {
+          text,
+        }),
+    },
+    {
       name: "Коррекция",
       action: async (text: string) => {
+        menuModalsStore.nextModal(MenuModals.CORRECTION, {
+          text,
+        });
         // if (!text?.trim()) return;
         // if (text.length < appConfig.minCorrectionLength) {
         //   miniToastr.warn("Слишком короткий текст для коррекции");
@@ -33,28 +53,11 @@ export const useActionMenuStore = defineStore("actionMenu", () => {
       },
     },
     {
-      name: "Редактировать",
-      action: async (text: string) =>
-        menuModalsStore.showModal(MenuModals.EDIT_PRESETS, {
-          text,
-        }),
-    },
-    {
       name: "Перевод",
       action: async (text: string) =>
-        menuModalsStore.showModal(MenuModals.TRANSLATE, {
+        menuModalsStore.nextModal(MenuModals.TRANSLATE, {
           text,
         }),
-    },
-    {
-      name: "В буфер обмена",
-      action: async (text: string) => {
-        await ipcStore.callFunction("putIntoClipboardAndClose", [text]);
-      },
-    },
-    {
-      name: "Вставить в окно",
-      action: async (text: string) => typeIntoWindowAndClose(text),
     },
   ];
 

@@ -11,6 +11,7 @@ declare module 'vue' {
     AiChat: typeof import('./src/components/AiChat.vue')['default']
     Button: typeof import('./src/components/common/Button.vue')['default']
     CheckboxRow: typeof import('./src/components/common/CheckboxRow.vue')['default']
+    CorrectionMenu: typeof import('./src/components/menu/CorrectionMenu.vue')['default']
     Diff: typeof import('./src/components/common/Diff.vue')['default']
     DiffInput: typeof import('./src/components/common/DiffInput.vue')['default']
     DiffMenu: typeof import('./src/components/menu/DiffMenu.vue')['default']

@@ -1,17 +1,18 @@
 <template>
   <Overlay v-if="currentModal !== MenuModals.NONE">
     <div>
-      <div v-for="breadcrumb in currentBreadcrumbs" :key="breadcrumb">
+     br <div v-for="breadcrumb in currentBreadcrumbs" :key="breadcrumb">
         {{ breadcrumb }}
       </div>
     </div>
 
-    <InsertMenu v-if="currentModal === MenuModals.INSERT" v-bind="currentModalParams" :onBack="onBack" :showBackButton="showBackButton" />
-    <EditPresetsMenu v-else-if="currentModal === MenuModals.EDIT_PRESETS" v-bind="currentModalParams" :onBack="onBack" :showBackButton="showBackButton" />
-    <InProgressMessage v-else-if="currentModal === MenuModals.PENDING" v-bind="currentModalParams" :onBack="onBack" :showBackButton="showBackButton" />
-    <DiffMenu v-else-if="currentModal === MenuModals.DIFF" v-bind="currentModalParams" :onBack="onBack" :showBackButton="showBackButton" />
-    <VoiceRecognitionMenu v-else-if="currentModal === MenuModals.VOICE_RECOGNITION" v-bind="currentModalParams" :onBack="onBack" :showBackButton="showBackButton" />
-    <TranslateMenu v-else-if="currentModal === MenuModals.TRANSLATE" v-bind="currentModalParams" :onBack="onBack" :showBackButton="showBackButton" />
+    <InsertMenu v-if="currentModal === MenuModals.INSERT" v-bind="currentModalParams" />
+    <EditPresetsMenu v-else-if="currentModal === MenuModals.EDIT_PRESETS" v-bind="currentModalParams" />
+    <CorrectionMenu v-else-if="currentModal === MenuModals.CORRECTION" v-bind="currentModalParams" />
+    <InProgressMessage v-else-if="currentModal === MenuModals.PENDING" v-bind="currentModalParams" />
+    <DiffMenu v-else-if="currentModal === MenuModals.DIFF" v-bind="currentModalParams" />
+    <VoiceRecognitionMenu v-else-if="currentModal === MenuModals.VOICE_RECOGNITION" v-bind="currentModalParams" />
+    <TranslateMenu v-else-if="currentModal === MenuModals.TRANSLATE" v-bind="currentModalParams" />
   </Overlay>
 </template>
 
@@ -21,19 +22,13 @@ import { MenuModals, useMenuModalsStore } from '../../stores/menuModals';
 const menuModalsStore = useMenuModalsStore();
 
 const currentModal = computed(() => menuModalsStore.currentModal);
-const currentModalParams = computed(() => menuModalsStore.currentModalParams);
-const currentBreadcrumbs = computed(() => menuModalsStore.currentBreadcrumbs);
-const showBackButton = computed(() => currentBreadcrumbs.value.length > 1);
-
-onMounted(() => {
-  menuModalsStore.clearBreadcrumbs();
+const currentModalParams = computed(() => {
+  return {
+    onBack: menuModalsStore.back,
+    ...menuModalsStore.currentModalParams,
+  };
 });
 
-const onBack = () => {
-  menuModalsStore.popBreadcrumb();
+const currentBreadcrumbs = computed(() => menuModalsStore.currentBreadcrumbs);
 
-  if (currentBreadcrumbs.value.length === 0) {
-    menuModalsStore.hideModal();
-  }
-};
 </script>

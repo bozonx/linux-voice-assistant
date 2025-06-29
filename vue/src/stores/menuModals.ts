@@ -4,6 +4,7 @@ import { ref } from "vue";
 export enum MenuModals {
   INSERT = "insert",
   EDIT_PRESETS = "edit-presets",
+  CORRECTION = "correction",
   PENDING = "pending",
   DIFF = "diff",
   VOICE_RECOGNITION = "voice-recognition",
@@ -16,29 +17,28 @@ export const useMenuModalsStore = defineStore("menuModals", () => {
   const currentModalParams = ref<Record<string, any>>({});
   const currentBreadcrumbs = ref<string[]>([]);
 
-  const showModal = (modal: MenuModals, params: Record<string, any>) => {
-    pushBreadcrumb(currentModal.value);
+  const nextModal = (modal: MenuModals, params: Record<string, any>) => {
+    currentBreadcrumbs.value.push(modal);
 
     currentModal.value = modal;
     currentModalParams.value = params;
   };
 
-  const hideModal = () => {
-    popBreadcrumb();
+  const back = () => {
+    currentBreadcrumbs.value.pop();
 
+    if (currentBreadcrumbs.value.length > 0) {
+      currentModal.value = currentBreadcrumbs.value[
+        currentBreadcrumbs.value.length - 1
+      ] as MenuModals;
+    } else {
+      closeAll();
+    }
+  };
+
+  const closeAll = () => {
     currentModal.value = MenuModals.NONE;
     currentModalParams.value = {};
-  };
-
-  const pushBreadcrumb = (breadcrumb: string) => {
-    currentBreadcrumbs.value.push(breadcrumb);
-  };
-
-  const popBreadcrumb = () => {
-    currentBreadcrumbs.value.pop();
-  };
-
-  const clearBreadcrumbs = () => {
     currentBreadcrumbs.value = [];
   };
 
@@ -46,10 +46,8 @@ export const useMenuModalsStore = defineStore("menuModals", () => {
     currentModal,
     currentModalParams,
     currentBreadcrumbs,
-    showModal,
-    hideModal,
-    pushBreadcrumb,
-    popBreadcrumb,
-    clearBreadcrumbs,
+    nextModal,
+    back,
+    closeAll,
   };
 });

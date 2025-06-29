@@ -3,18 +3,6 @@
     <InProgressMessage :ai="true" />
   </Overlay>
 
-  <Overlay v-if="overlayMode === OverlayMode.CORRECTION">
-    <InProgressMessage :correction="true" />
-  </Overlay>
-
-  <Overlay v-if="overlayMode === OverlayMode.EDIT_PRESETS">
-    <EditPresetsMenu @close="toInsertMenu" :text="text" />
-  </Overlay>
-  
-  <Overlay v-if="overlayMode === OverlayMode.TRANSLATE">
-    <TranslateMenu :text="props.text" @back="toInsertMenu" />
-  </Overlay>
-
   <Overlay v-if="overlayMode === OverlayMode.TRANSLATE_PREVIEW">
     <PreviewMenu :text="resultText" @close="toInsertMenu" />
   </Overlay>
@@ -32,41 +20,34 @@
     <div v-if="props.showBackButton">Esc - <button @click="props.onBack()">назад</button></div>
     <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>
     <div v-if="props.showToEditor">Tab - <button @click="goToEditor">в редактор</button></div>
-    <div v-if="ipcStore.params?.windowId && props.showInsertButton">Space - <button @click="typeIntoWindowAndClose(props.text ?? '')">вставить</button></div>
+    <div v-if="ipcStore.params?.windowId && props.showInsertButton">Space - <button @click="insertIntoWindowItem.action(props.text ?? '')">{{ insertIntoWindowItem.name }}</button></div>
 
-    <template>
-      <div>q - <button @click="intoClipboardAndClose(props.text)">в буфер обмена и закрыть окно</button></div>
-      <div>w - <button @click="correct()">коррекция</button></div>
-      <div>e - <button @click="toEditPresets">выбор пресета редактирования</button></div>
-      <div>r - </div>
-      <div>t - <button @click="translate()">перевод</button></div>
-      
-      <div>a - </div>
-      <div>s - </div>
-      <div>d - </div>
-      <div>f - </div>
-      <div>g - </div>
-    </template>
+    <div class="flex flex-row w-full gap-4 mt-4">
+      <div class="flex flex-col gap-1">
+        <div v-for="item in col1" :key="item.name">
+          {{ item.key }} - <Button v-if="item.name" small secondary :icon="item.icon" @click="item.action(props.text)">{{ item.name }}</Button>
+        </div>
+      </div>
+      <div class="flex flex-col gap-1">
+        <div v-for="item in col2" :key="item.name">
+          {{ item.key }} - <Button v-if="item.name" small secondary :icon="item.icon" @click="item.action(props.text)">{{ item.name }}</Button>
+        </div>
+      </div>
+      <div class="flex flex-col gap-1">
+        <div v-for="item in col3" :key="item.name">
+          {{ item.key }} - <Button v-if="item.name" small secondary :icon="item.icon" @click="item.action(props.text)">{{ item.name }}</Button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import { useCallApi } from '../../composables/useCallApi';
 import { useIpcStore } from '../../stores/ipc';
 import { useRouteParams } from '../../stores/routeParams';
-import { useCallAi } from '../../composables/useCallAi';
-import miniToastr from "mini-toastr";
-
-enum OverlayMode {
-  IN_PROGRESS = "in-progress",
-  EDIT_PRESETS = "edit-presets",
-  TRANSLATE_PREVIEW = "translate-preview",
-  CORRECTION = "correction",
-  DIFF = "diff",
-  TRANSLATE = "translate",
-  NONE = "none",
-}
+import { useActionMenuStore } from '../../stores/actionMenu';
+import { PRESETS_KEYS } from '../../types';
 
 const props = defineProps({
   text: {
@@ -100,10 +81,16 @@ const emit = defineEmits<{
   (e: 'update:newText', value: string): void;
 }>();
 
-const overlayMode = ref(OverlayMode.NONE);
-const resultText = ref<string>("");
 const inFocusButton = ref<HTMLButtonElement>();
-const { dealToCalendar, correctText } = useCallAi();
+const actionMenuStore = useActionMenuStore();
+const insertIntoWindowItem = actionMenuStore.getActionsMenu()[0]
+const actionsMenu = computed(() => [
+  { key: "q" },
+  ...actionMenuStore.getActionsMenu().slice(1)
+] as any[]);
+const col1 = computed(() => PRESETS_KEYS.slice(0, 5).map((key, index) => ({ key, ...actionsMenu.value[index] })));
+const col2 = computed(() => PRESETS_KEYS.slice(5, 10).map((key, index) => ({ key, ...actionsMenu.value[index + 5] })));
+const col3 = computed(() => PRESETS_KEYS.slice(10, 15).map((key, index) => ({ key, ...actionsMenu.value[index + 10] })));
 
 onMounted(() => {
   nextTick(() => {
@@ -111,42 +98,14 @@ onMounted(() => {
       inFocusButton.value.focus();
     }
   })
-})  
+})
 
 const router = useRouter();
-const { closeWindow,
-  typeIntoWindowAndClose, searchInInternet, intoClipboardAndClose, askAIShort, insertIntoWindow
-} = useCallApi();
 const ipcStore = useIpcStore();
 const routeParamsStore = useRouteParams();
-const appConfig = ipcStore.params!.appConfig;
 
 function handleNewText(newText: string) {
   emit('update:newText', newText);
-}
-
-function toEditPresets() {
-  overlayMode.value = OverlayMode.EDIT_PRESETS;
-}
-
-function toInsertMenu() {
-  overlayMode.value = OverlayMode.NONE;
-  nextTick(() => {
-    if (inFocusButton.value) {
-      inFocusButton.value.focus();
-    }
-  })
-}
-
-async function translate() {
-  overlayMode.value = OverlayMode.TRANSLATE;
-  
-  // if (!ipcStore.params?.windowId || !props.text) return;
-  // let value = resolveText(props.text);
-  // if (!value.trim()) return;
-  // overlayMode.value = OverlayMode.IN_PROGRESS;
-  // resultText.value = await translateText(toLangNum, props.text);  
-  // overlayMode.value = OverlayMode.TRANSLATE_PREVIEW;
 }
 
 function goToEditor() {
@@ -159,80 +118,29 @@ function goToEditor() {
   router.push("/");
 }
 
-async function correct() {
-  if (!props.text.trim()) return;
-
-  if (props.text.length < appConfig.minCorrectionLength) {
-    miniToastr.warn('Слишком короткий текст для коррекции');
-
-    return;
-  }
-
-  overlayMode.value = OverlayMode.IN_PROGRESS;
-
-  const newText = await correctText(props.text); 
-
-  resultText.value = newText;
-  overlayMode.value = OverlayMode.DIFF;
-}
-
 const handleShortCutKeyUp = (event: KeyboardEvent) => {
   if (event.code === "Escape") {
     props.onBack?.();
   }
   else if (event.code === "KeyQ" && event.ctrlKey) {
-    closeWindow();
+    // closeWindow();
   }
   else if (event.code === "Space") {
     if (!ipcStore.params?.windowId || !props.text || !props.showInsertButton) return;
 
-    insertIntoWindow(props.text ?? '');
+    insertIntoWindowItem.action(props.text ?? '');
   }
-  else if (event.code === "KeyQ") {
+  else if (event.code === "Tab") {
     goToEditor();
   }
-  else if (event.code === "KeyW") {
-    if (!props.text) return;
-    intoClipboardAndClose(props.text ?? '');
+
+  let codeLetter;
+  if (event.code.length === 4 && event.code.startsWith("Key")) {
+    codeLetter = event.code.slice(3).toLowerCase();
   }
-  else if (event.code === "KeyE") {
-    translate();
+  
+  if (codeLetter && PRESETS_KEYS.includes(codeLetter)) {
+    actionsMenu.value[PRESETS_KEYS.indexOf(codeLetter)]?.action(props.text ?? '');
   }
-  else if (event.code === "KeyR") {
-    if (!props.text) return;
-  }
-  else if (event.code === "KeyT") {
-    if (!props.text) return;
-  }
-  else if (event.code === "KeyA") {
-    correct();
-  }
-  else if (event.code === "KeyS") {
-    if (!props.text) return;
-  }
-  else if (event.code === "KeyD") {
-    if (!props.text) return;
-  }
-  else if (event.code === "KeyF") {
-    toEditPresets();
-  }
-  else if (event.code === "KeyG") {
-    if (!props.text) return;
-  }
-  // else if (event.code === "KeyZ") {
-  //   translate(0);
-  // }
-  // else if (event.code === "KeyX") {
-  //   translate(1);
-  // }
-  // else if (event.code === "KeyC") {
-  //   translate(2);
-  // }
-  // else if (event.code === "KeyV") {
-  //   translate(3);
-  // }
-  // else if (event.code === "KeyB") {
-  //   translate(4);
-  // }
 }
 </script>
