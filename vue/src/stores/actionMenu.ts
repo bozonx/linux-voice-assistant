@@ -37,7 +37,6 @@ export const useActionMenuStore = defineStore("actionMenu", () => {
       action: async (text: string) =>
         menuModalsStore.showModal(MenuModals.EDIT_PRESETS, {
           text,
-          onBack: () => menuModalsStore.hideModal(),
         }),
     },
     {
@@ -45,7 +44,6 @@ export const useActionMenuStore = defineStore("actionMenu", () => {
       action: async (text: string) =>
         menuModalsStore.showModal(MenuModals.TRANSLATE, {
           text,
-          onBack: () => menuModalsStore.hideModal(),
         }),
     },
     {

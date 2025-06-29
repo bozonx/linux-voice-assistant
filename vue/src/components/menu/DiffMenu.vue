@@ -5,7 +5,7 @@
 
   <div>
     <div @keyup.prevent="handleKeyUp" class="shortcuts-list">
-      <div>Esc - <button @click="props.onBack()">назад</button></div>
+      <div>Esc - <button v-if="props.showBackButton" @click="props.onBack()">назад</button></div>
       <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>
       <div v-if="props.showToEditor">q - <button @click="goToEditor">в редактор</button></div>
       <div v-if="ipcStore.params?.windowId && props.showInsertButton">Space - <button @click="typeIntoWindowAndClose(editedNewText)">вставить</button></div>
@@ -29,6 +29,10 @@ const props = defineProps({
   newText: {
     type: String,
     required: true,
+  },
+  showBackButton: {
+    type: Boolean,
+    default: true,
   },
   showInsertButton: {
     type: Boolean,

@@ -15,7 +15,7 @@
     </div>
 
     <div class="shortcuts-list" @keyup="handleShortCutKeyUp">
-      <div>Esc - <button @click="props.onBack()">назад</button></div>
+      <div>Esc - <button v-if="props.showBackButton" @click="props.onBack()">назад</button></div>
       <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>
       <div v-for="(lang, index) in ipcStore.params?.userConfig.toTranslateLanguages" :key="lang">
         {{ PRESETS_KEYS[index] }} - <button @click="translate(index)">➡️ {{ lang }}</button>
@@ -49,6 +49,7 @@ const translateResult = ref<string>("");
 
 const props = defineProps<{
   text: string;
+  showBackButton: boolean;
   onBack: () => void;
 }>();
 
