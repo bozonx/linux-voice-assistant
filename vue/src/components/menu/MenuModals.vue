@@ -25,7 +25,4 @@ const currentModalParams = computed(() => {
     ...menuModalsStore.currentModalParams,
   };
 });
-
-const currentBreadcrumbs = computed(() => menuModalsStore.currentBreadcrumbs);
-
 </script>

@@ -1,7 +1,6 @@
 <template>
   <div>
     Распознавание...
-    <!-- <InProgressMessage :recognition="true" /> -->
   </div>
 
   <div>
@@ -21,7 +20,7 @@ import { useCallApi } from '../../composables/useCallApi';
 import { GlobalEvents, useGlobalEvents } from '../../composables/useGlobalEvents';
 import { useIpcStore } from '../../stores/ipc';
 import miniToastr from "mini-toastr";
-import { MenuModals, useMenuModalsStore } from '../../stores/menuModals';
+import { useMenuModalsStore } from '../../stores/menuModals';
 
 const props = defineProps({
   showBackButton: {

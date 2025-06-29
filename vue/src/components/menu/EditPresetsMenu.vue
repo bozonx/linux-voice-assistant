@@ -1,12 +1,4 @@
 <template>
-  <Overlay v-if="overlayMode === OverlayMode.IN_PROGRESS">
-    <InProgressMessage :ai="true" />
-  </Overlay>
-
-  <Overlay v-if="overlayMode === OverlayMode.DIFF">
-    <DiffMenu :oldText="props.text" :newText="newText" @close="overlayMode = OverlayMode.NONE" />
-  </Overlay>
-
   <div>
     <TextPreview :text="props.text" />
     <div @keyup.prevent="handleKeyUp" class="shortcuts-list">
@@ -30,13 +22,8 @@ import { useCallAi } from '../../composables/useCallAi';
 import { useRouteParams } from '../../stores/routeParams';
 import { useMainInputStore } from '../../stores/mainInput';
 import { useOverlayStore } from '../../stores/mainOverlay';
+import { MenuModals, useMenuModalsStore } from '../../stores/menuModals';
 import miniToastr from "mini-toastr";
-
-enum OverlayMode {
-  DIFF = "diff",
-  IN_PROGRESS = "in-progress",
-  NONE = "none",
-}
 
 const props = defineProps({
   text: {
@@ -61,11 +48,11 @@ const routeParamsStore = useRouteParams();
 const router = useRouter();
 const mainInputStore = useMainInputStore();
 const overlayStore = useOverlayStore();
+const menuModalsStore = useMenuModalsStore();
 const ipcStore = useIpcStore();
 const { deepEdit } = useCallAi();
 const { closeWindow } = useCallApi();
 const inFocusButton = ref<HTMLButtonElement | null>(null);
-const overlayMode = ref(OverlayMode.NONE);
 const newText = ref('');
 const appConfig = ipcStore.params!.appConfig;
 
@@ -92,9 +79,18 @@ async function makeDiff(index: number) {
     return;
   }
 
-  overlayMode.value = OverlayMode.IN_PROGRESS;
+  menuModalsStore.setPendingModal({
+    ai: true,
+  });
+
   newText.value = await deepEdit(index, props.text);
-  overlayMode.value = OverlayMode.DIFF;
+
+  menuModalsStore.clearPendingModal();
+
+  menuModalsStore.nextModal(MenuModals.DIFF, {
+    oldText: props.text,
+    newText: newText.value,
+  });
 }
 
 function handleKeyUp(event: KeyboardEvent) {
