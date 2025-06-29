@@ -1,16 +1,4 @@
 <template>
-  <!-- <Overlay v-if="overlayMode === OverlayMode.IN_PROGRESS">
-    <InProgressMessage :ai="true" />
-  </Overlay>
-
-  <Overlay v-if="overlayMode === OverlayMode.TRANSLATE_PREVIEW">
-    <PreviewMenu :text="resultText" @close="toInsertMenu" />
-  </Overlay>
-
-  <Overlay v-if="overlayMode === OverlayMode.DIFF">
-    <DiffMenu :oldText="props.text" :newText="resultText" @close="toInsertMenu" />
-  </Overlay> -->
-
   <div>
     <DiffInput v-if="props.oldText" :oldText="props.oldText" :newText="props.text" @update:newText="handleNewText" />
     <TextPreview v-else :text="props.text" />

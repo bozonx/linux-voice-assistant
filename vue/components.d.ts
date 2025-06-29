@@ -22,7 +22,7 @@ declare module 'vue' {
     EditorTextToolbar: typeof import('./src/components/EditorTextToolbar.vue')['default']
     EditPresetsMenu: typeof import('./src/components/menu/EditPresetsMenu.vue')['default']
     History: typeof import('./src/components/History.vue')['default']
-    InProgressMessage: typeof import('./src/components/common/InProgressMessage.vue')['default']
+    InProgressMessage: typeof import('./src/components/menu/InProgressMessage.vue')['default']
     InputHistory: typeof import('./src/components/InputHistory.vue')['default']
     InputRow: typeof import('./src/components/common/InputRow.vue')['default']
     InsertMenu: typeof import('./src/components/menu/InsertMenu.vue')['default']

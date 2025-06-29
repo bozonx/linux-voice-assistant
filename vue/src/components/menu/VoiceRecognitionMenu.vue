@@ -1,8 +1,4 @@
 <template>
-  <Overlay v-if="overlayMode === OverlayMode.CORRECTING">
-    <InProgressMessage :correction="true" />
-  </Overlay>
-
   <div>
     Распознавание...
     <!-- <InProgressMessage :recognition="true" /> -->
@@ -25,11 +21,7 @@ import { useCallApi } from '../../composables/useCallApi';
 import { GlobalEvents, useGlobalEvents } from '../../composables/useGlobalEvents';
 import { useIpcStore } from '../../stores/ipc';
 import miniToastr from "mini-toastr";
-
-enum OverlayMode {
-  CORRECTING = "correcting",
-  NONE = "none",
-}
+import { MenuModals, useMenuModalsStore } from '../../stores/menuModals';
 
 const props = defineProps({
   showBackButton: {
@@ -46,7 +38,6 @@ const props = defineProps({
   }
 });
 
-const overlayMode = ref<OverlayMode>(OverlayMode.NONE);
 const { startVoiceRecognition, stopVoiceRecognition, voiceCorrection } = useCallAi();
 const { closeWindow } = useCallApi();
 const inFocusButton = ref<HTMLButtonElement | null>(null);
@@ -55,6 +46,7 @@ const recognizedText = ref<string>("");
 const lastRecognizedTextMs = ref<number>(0);
 const ipcStore = useIpcStore();
 const appConfig = ipcStore.params!.appConfig;
+const menuModalsStore = useMenuModalsStore();
 let listenerIndex = -1;
 
 const handleShortCutKeyUp = async (event: KeyboardEvent) => {
@@ -112,19 +104,24 @@ const finish = async () => {
   // stop voice recognition and make correction
   globalEvents.removeListener(listenerIndex);
   await stopVoiceRecognition();
-  overlayMode.value = OverlayMode.CORRECTING;
+
   let correctedText = recognizedText.value;
 
   if (recognizedText.value.trim().length > appConfig.minCorrectionLength) {
+    menuModalsStore.setPendingModal({
+      correction: true,
+    });
+  
     correctedText = await voiceCorrection(recognizedText.value);
+
+    menuModalsStore.clearPendingModal();
   }
   else {
     miniToastr.warn("Слишком короткий текст для коррекции");
   }
 
   props.onCorrected(correctedText);
-
-  overlayMode.value = OverlayMode.NONE;
+  
 };
 
 onMounted(async () => {

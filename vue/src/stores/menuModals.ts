@@ -5,7 +5,6 @@ export enum MenuModals {
   INSERT = "insert",
   EDIT_PRESETS = "edit-presets",
   CORRECTION = "correction",
-  PENDING = "pending",
   DIFF = "diff",
   VOICE_RECOGNITION = "voice-recognition",
   TRANSLATE = "translate",
@@ -13,6 +12,7 @@ export enum MenuModals {
 }
 
 export const useMenuModalsStore = defineStore("menuModals", () => {
+  const pendingModal = ref<Record<string, any> | null>(null);
   const currentModal = ref(MenuModals.NONE);
   const currentModalParams = ref<Record<string, any>>({});
   const currentBreadcrumbs = ref<string[]>([]);
@@ -42,12 +42,23 @@ export const useMenuModalsStore = defineStore("menuModals", () => {
     currentBreadcrumbs.value = [];
   };
 
+  const setPendingModal = (params: Record<string, any>) => {
+    pendingModal.value = params;
+  };
+
+  const clearPendingModal = () => {
+    pendingModal.value = null;
+  };
+
   return {
+    pendingModal,
     currentModal,
     currentModalParams,
     currentBreadcrumbs,
     nextModal,
     back,
     closeAll,
+    setPendingModal,
+    clearPendingModal,
   };
 });
