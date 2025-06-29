@@ -1,29 +1,4 @@
 <template>
-  <!-- <Overlay v-if="overlayMode === OverlayMode.MENU">
-    <InsertMenu @back="overlayStore.hideOverlay"
-       :showToEditor="false" :text="mainInputStore.value" />
-  </Overlay>
-
-  <Overlay v-if="overlayMode === OverlayMode.EDIT_PRESETS">
-    <EditPresetsMenu @close="overlayStore.hideOverlay" :text="mainInputStore.value" />
-  </Overlay>
-
-  <Overlay v-if="overlayMode === OverlayMode.CORRECTION">
-    <InProgressMessage :correction="true" />
-  </Overlay>
-
-  <Overlay v-if="overlayMode === OverlayMode.DIFF">
-    <DiffMenu :oldText="mainInputStore.value" :newText="overlayStore.diffText" @close="overlayStore.hideOverlay" />
-  </Overlay>
-
-  <Overlay v-if="overlayMode === OverlayMode.VOICE_RECOGNITION">
-    <VoiceRecognitionMenu @close="overlayStore.hideOverlay" @corrected="handleCorrected" />
-  </Overlay>
-
-  <Overlay v-if="overlayMode === OverlayMode.TRANSLATE">
-    <TranslateMenu :text="mainInputStore.value" @back="overlayStore.hideOverlay" />
-  </Overlay> -->
-
   <div @keyup="handleKeyUp">
     <div>
       <div class="flex gap-4">
@@ -31,7 +6,7 @@
           <MainInput ref="mainInput"/>
         </div>
         <div class="flex gap-2 flex-col">
-          <Button small primary @click="overlayStore.showVoiceRecognition">Голосовой ввод</Button>
+          <Button small primary @click="voiceRecognition">Голосовой ввод</Button>
           <Button small primary @click="mainInputStore.clear">Очистить</Button>
           <Button small primary @click="mainInputStore.selectAll">Выбрать всё</Button>
         </div>
@@ -40,15 +15,18 @@
       <p class="main-input-hint">Hint: press Esc to open menu. можно выделить текст в инпуте, и тогда изменения будут касаться только того, что выделено.</p>
 
       <div class="flex gap-1 w-full flex-wrap">
-        <Button v-for="item in editMenuStore.getEditMenu()" :key="item.name" small secondary :icon="item.icon" @click="editMode(item.action)">{{ item.name }}</Button>
+        <Button v-for="item in editMenuStore.getEditMenu()"
+          :key="item.name" small secondary :icon="item.icon"
+          @click="doEdit(item.action)">{{ item.name }}</Button>
       </div>
     </div>
 
     <div>
       <h2 class="section-title">Действия</h2>
-
       <div class="flex gap-1 w-full flex-wrap">
-        <Button  v-for="item in actionMenuStore.getActionsMenu()" :key="item.name" big primary :icon="item.icon" @click="prepareActionText(item.action)">{{ item.name }}</Button>
+        <Button v-for="item in actionMenuStore.getActionsMenu()"
+          :key="item.name" big primary :icon="item.icon"
+          @click="doAction(item.action)">{{ item.name }}</Button>
       </div>
     </div>
   </div>
@@ -57,17 +35,16 @@
 <script setup lang="ts">
 import { useRouteParams } from '../stores/routeParams';
 import { useMainInputStore } from '../stores/mainInput';
-import { OverlayMode, useOverlayStore } from '../stores/mainOverlay';
 import { useActionMenuStore } from '../stores/actionMenu';
 import { useEditMenuStore } from '../stores/edditMenu';
+import { MenuModals, useMenuModalsStore } from '../stores/menuModals';
 import miniToastr from "mini-toastr";
 
 const routeParamsStore = useRouteParams();
 const mainInputStore = useMainInputStore();
-const overlayStore = useOverlayStore();
-const overlayMode = computed(() => overlayStore.overlayMode);
 const actionMenuStore = useActionMenuStore();
 const editMenuStore = useEditMenuStore();
+const menuModalsStore = useMenuModalsStore();
 
 onMounted(() => {
   if (routeParamsStore.params.text) {
@@ -80,16 +57,24 @@ onMounted(() => {
 
 function handleKeyUp(event: KeyboardEvent) {
   if (event.code === "Escape") {
-    overlayStore.showMenu();
+    menuModalsStore.showModal(MenuModals.INSERT, {
+      text: mainInputStore.value,
+      onBack: () => menuModalsStore.hideModal(),
+    });
   }
 }
 
-function handleCorrected(text: string) {
-  mainInputStore.setValueAtCursor(text);
-  overlayStore.hideOverlay();
+function voiceRecognition() {
+  menuModalsStore.showModal(MenuModals.VOICE_RECOGNITION, {
+    onBack: () => menuModalsStore.hideModal(),
+    onCorrected: (text: string) => {
+      mainInputStore.setValueAtCursor(text);
+      menuModalsStore.hideModal();
+    },
+  });
 }
 
-const prepareActionText = async (cb: (text: string) => Promise<void>): Promise<void> => {
+const doAction = async (cb: (text: string) => Promise<void>): Promise<void> => {
   let value = mainInputStore.value;
 
   if (mainInputStore.selectedText) {
@@ -106,7 +91,7 @@ const prepareActionText = async (cb: (text: string) => Promise<void>): Promise<v
   return cb(value);
 };
 
-async function editMode(cb: (text: string) => Promise<string>): Promise<void> {
+async function doEdit(cb: (text: string) => Promise<string>): Promise<void> {
   let value = mainInputStore.value;
 
   if (mainInputStore.selectedText) {

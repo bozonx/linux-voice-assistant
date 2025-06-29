@@ -29,7 +29,7 @@
   </div>
 
   <div @keyup.prevent="handleShortCutKeyUp" class="shortcuts-list">
-    <div v-if="props.showBackButton">Esc - <button @click="emit('back')">назад</button></div>
+    <div v-if="props.showBackButton">Esc - <button @click="props.onBack()">назад</button></div>
     <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>
     <div v-if="props.showToEditor">q - <button @click="goToEditor">в редактор</button></div>
     <template v-if="props.text">
@@ -93,12 +93,14 @@ const props = defineProps({
   showInsertButton: {
     type: Boolean,
     default: true
+  },
+  onBack: {
+    type: Function,
+    default: () => {}
   }
 });
 
 const emit = defineEmits<{
-  (e: 'back'): void;
-  (e: 'editPresets'): void;
   (e: 'update:newText', value: string): void;
 }>();
 
@@ -117,8 +119,7 @@ onMounted(() => {
 
 const router = useRouter();
 const { closeWindow,
-  typeIntoWindowAndClose, searchInInternet, fastNote, 
-  addToKnowledgeBase, intoClipboardAndClose, askAIShort, insertIntoWindow
+  typeIntoWindowAndClose, searchInInternet, intoClipboardAndClose, askAIShort, insertIntoWindow
 } = useCallApi();
 const ipcStore = useIpcStore();
 const routeParamsStore = useRouteParams();

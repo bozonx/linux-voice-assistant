@@ -36,12 +36,19 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  onBack: {
+    type: Function,
+    default: () => {}
+  },
+  onCorrected: {
+    type: Function,
+    default: () => {}
+  }
 });
 
 const overlayMode = ref<OverlayMode>(OverlayMode.NONE);
 const { startVoiceRecognition, stopVoiceRecognition, voiceCorrection } = useCallAi();
 const { closeWindow } = useCallApi();
-const emit = defineEmits(["close", "corrected"]);
 const inFocusButton = ref<HTMLButtonElement | null>(null);
 const { globalEvents } = useGlobalEvents();
 const recognizedText = ref<string>("");
@@ -71,7 +78,7 @@ const handleShortCutKeyUp = async (event: KeyboardEvent) => {
 const cancel = async () => {
   globalEvents.removeListener(listenerIndex);
   await stopVoiceRecognition();
-  emit("close");
+  props.onBack();
 };
 
 const finish = async () => {
@@ -115,7 +122,7 @@ const finish = async () => {
     miniToastr.warn("Слишком короткий текст для коррекции");
   }
 
-  emit("corrected", correctedText);
+  props.onCorrected(correctedText);
 
   overlayMode.value = OverlayMode.NONE;
 };

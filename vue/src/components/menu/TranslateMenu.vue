@@ -15,7 +15,7 @@
     </div>
 
     <div class="shortcuts-list" @keyup="handleShortCutKeyUp">
-      <div>Esc - <button @click="back">назад</button></div>
+      <div>Esc - <button @click="props.onBack()">назад</button></div>
       <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>
       <div v-for="(lang, index) in ipcStore.params?.userConfig.toTranslateLanguages" :key="lang">
         {{ PRESETS_KEYS[index] }} - <button @click="translate(index)">➡️ {{ lang }}</button>
@@ -26,7 +26,6 @@
 
 <script setup lang="ts">
 import { useIpcStore } from '../../stores/ipc';
-import { useMainInputStore } from '../../stores/mainInput';
 import { useOverlayStore } from '../../stores/mainOverlay';
 import { useCallAi } from '../../composables/useCallAi';
 import { useCallApi } from '../../composables/useCallApi';
@@ -50,15 +49,8 @@ const translateResult = ref<string>("");
 
 const props = defineProps<{
   text: string;
+  onBack: () => void;
 }>();
-
-const emit = defineEmits<{
-  (e: 'back'): void;
-}>();
-
-const back = () => {
-  emit('back');
-};
 
 onMounted(() => {
   nextTick(() => {
@@ -92,7 +84,7 @@ const translate = async (toLangNum: number) => {
 
 const handleShortCutKeyUp = (event: KeyboardEvent) => {
   if (event.code === "Escape") {
-    back();
+    props.onBack();
   }
   else if (event.code === "KeyQ" && event.ctrlKey) {
     closeWindow();

@@ -10,7 +10,7 @@
   <div>
     <TextPreview :text="props.text" />
     <div @keyup.prevent="handleKeyUp" class="shortcuts-list">
-      <div v-if="props.showBackButton">Esc - <button @click="close">
+      <div v-if="props.showBackButton">Esc - <button @click="props.onBack()">
         <span v-if="props.escToEditor">в редактор</span>
         <span v-else>назад</span>
       </button></div>
@@ -51,6 +51,10 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
+  onBack: {
+    type: Function,
+    default: () => {}
+  }
 });
 
 const routeParamsStore = useRouteParams();
@@ -65,19 +69,11 @@ const overlayMode = ref(OverlayMode.NONE);
 const newText = ref('');
 const appConfig = ipcStore.params!.appConfig;
 
-const emit = defineEmits<{
-  (e: 'close'): void
-}>();
-
 onMounted(() => {
   nextTick(() => {
     inFocusButton.value?.focus();
   })
 })
-
-function close() {
-  emit('close');
-}
 
 function goToEditor() {
   if (props.text?.trim()) {
@@ -109,7 +105,7 @@ function handleKeyUp(event: KeyboardEvent) {
       goToEditor();
     }
     else {
-      close();
+      props.onBack();
     }
   }
   else if (event.code === "KeyQ" && event.ctrlKey) {

@@ -5,7 +5,7 @@
 
   <div>
     <div @keyup.prevent="handleKeyUp" class="shortcuts-list">
-      <div>Esc - <button @click="close">отмена</button></div>
+      <div>Esc - <button @click="props.onBack()">отмена</button></div>
       <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>
       <div v-if="props.showToEditor">q - <button @click="goToEditor">вставить в редактор</button></div>
       <div v-if="ipcStore.params?.windowId && props.showInsertButton">Space - <button @click="typeIntoWindowAndClose(props.text)">вставить</button></div>
@@ -34,6 +34,10 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  onBack: {
+    type: Function,
+    default: () => {}
+  }
 });
 const { closeWindow, typeIntoWindowAndClose, intoClipboardAndClose } = useCallApi();
 const inFocusButton = ref<HTMLButtonElement | null>(null);
@@ -43,10 +47,6 @@ const router = useRouter();
 const overlayStore = useOverlayStore();
 const mainInputStore = useMainInputStore();
 
-const emit = defineEmits<{
-  (e: 'close'): void
-}>();
-
 onMounted(() => {
   nextTick(() => {
     if (inFocusButton.value) {
@@ -54,10 +54,6 @@ onMounted(() => {
     }
   })
 })  
-
-function close() {
-  emit('close');
-}
 
 function goToEditor() {
   if (!props.showToEditor) return;
@@ -77,7 +73,7 @@ async function insertIntoWindow(text: string) {
 
 function handleKeyUp(event: KeyboardEvent) {
   if (event.code === "Escape") {
-    close();
+    props.onBack();
   }
   else if (event.code === "KeyQ" && event.ctrlKey) {
     closeWindow();

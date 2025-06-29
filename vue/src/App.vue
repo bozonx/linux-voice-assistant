@@ -1,5 +1,6 @@
 <template>
   <div class="layout">
+    <MenuModals />
     <RouterView />
   </div>
 </template>

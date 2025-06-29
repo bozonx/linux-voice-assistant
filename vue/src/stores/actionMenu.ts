@@ -1,8 +1,8 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useCallApi } from "../composables/useCallApi";
-import { useOverlayStore } from "./mainOverlay";
 import { useIpcStore } from "./ipc";
+import { MenuModals, useMenuModalsStore } from "./menuModals";
 
 export interface ActionItem {
   name: string;
@@ -13,7 +13,10 @@ export interface ActionItem {
 export const useActionMenuStore = defineStore("actionMenu", () => {
   const { typeIntoWindowAndClose } = useCallApi();
   const ipcStore = useIpcStore();
-  const overlayStore = useOverlayStore();
+  const menuModalsStore = useMenuModalsStore();
+
+  const registeredActionsMenu = ref<ActionItem[]>([]);
+
 
   const DEFAULT_ACTIONS: ActionItem[] = [
     {
@@ -31,11 +34,19 @@ export const useActionMenuStore = defineStore("actionMenu", () => {
     },
     {
       name: "Редактировать",
-      action: async (text: string) => overlayStore.showEditPresets(),
+      action: async (text: string) =>
+        menuModalsStore.showModal(MenuModals.EDIT_PRESETS, {
+          text,
+          onBack: () => menuModalsStore.hideModal(),
+        }),
     },
     {
       name: "Перевод",
-      action: async (text: string) => overlayStore.showTranslate(),
+      action: async (text: string) =>
+        menuModalsStore.showModal(MenuModals.TRANSLATE, {
+          text,
+          onBack: () => menuModalsStore.hideModal(),
+        }),
     },
     {
       name: "В буфер обмена",
@@ -48,8 +59,6 @@ export const useActionMenuStore = defineStore("actionMenu", () => {
       action: async (text: string) => typeIntoWindowAndClose(text),
     },
   ];
-
-  const registeredActionsMenu = ref<ActionItem[]>([]);
 
   const getActionsMenu = () => {
     return [...DEFAULT_ACTIONS, ...registeredActionsMenu.value];

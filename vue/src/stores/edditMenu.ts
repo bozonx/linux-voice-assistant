@@ -13,6 +13,8 @@ export const useEditMenuStore = defineStore("editMenu", () => {
   const { doCaseTransform } = useTextTransform();
   const { formatMdAndStyle, formatSomeCode } = useCodeFormatter();
 
+  const registeredEditMenu = ref<EditItem[]>([]);
+
   const DEFAULT_EDIT_ITEMS: EditItem[] = [
     {
       name: "Beautyfy MD",
@@ -51,8 +53,6 @@ export const useEditMenuStore = defineStore("editMenu", () => {
       action: async (text: string) => doCaseTransform(text, "kebabCase"),
     },
   ];
-
-  const registeredEditMenu = ref<EditItem[]>([]);
 
   const getEditMenu = () => {
     return [...DEFAULT_EDIT_ITEMS, ...registeredEditMenu.value];
