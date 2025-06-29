@@ -6,6 +6,7 @@
     <DiffMenu v-else-if="currentModal === MenuModals.DIFF" v-bind="currentModalParams" />
     <VoiceRecognitionMenu v-else-if="currentModal === MenuModals.VOICE_RECOGNITION" v-bind="currentModalParams" />
     <TranslateMenu v-else-if="currentModal === MenuModals.TRANSLATE" v-bind="currentModalParams" />
+    <PreviewMenu v-else-if="currentModal === MenuModals.PREVIEW" v-bind="currentModalParams" />
   </Overlay>
 
   <Overlay v-if="menuModalsStore.pendingModal">

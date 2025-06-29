@@ -1,12 +1,4 @@
 <template>
-  <Overlay v-if="overlayMode === OverlayMode.IN_PROGRESS">
-    <InProgressMessage :ai="true" />
-  </Overlay>
-
-  <Overlay v-if="overlayMode === OverlayMode.TRANSLATE_PREVIEW">
-    <PreviewMenu :text="translateResult" @close="overlayStore.hideOverlay" />
-  </Overlay>
-
   <div>
     <h1>Translate Menu</h1>
 
@@ -31,21 +23,15 @@ import { useCallAi } from '../../composables/useCallAi';
 import { useCallApi } from '../../composables/useCallApi';
 import miniToastr from "mini-toastr";
 import { PRESETS_KEYS } from '../../types';
-
-enum OverlayMode {
-  IN_PROGRESS = "in-progress",
-  TRANSLATE_PREVIEW = "translate-preview",
-  NONE = "none",
-}
+import { MenuModals, useMenuModalsStore } from '../../stores/menuModals';
 
 const ipcStore = useIpcStore();
-const overlayMode = ref(OverlayMode.NONE);
-const overlayStore = useOverlayStore();
 const appConfig = ipcStore.params!.appConfig;
 const { translateText } = useCallAi();
 const { closeWindow } = useCallApi();
 const inFocusButton = ref<HTMLButtonElement>();
 const translateResult = ref<string>("");
+const menuModalsStore = useMenuModalsStore();
 
 const props = defineProps<{
   text: string;
@@ -74,12 +60,22 @@ const translate = async (toLangNum: number) => {
     return;
   }
 
-  overlayMode.value = OverlayMode.IN_PROGRESS;
+  menuModalsStore.setPendingModal({
+    ai: true,
+  });
   
   const newText = await translateText(toLangNum, trimmedText);
 
   translateResult.value = newText;
-  overlayMode.value = OverlayMode.TRANSLATE_PREVIEW;
+
+  menuModalsStore.clearPendingModal();
+
+  menuModalsStore.nextModal(MenuModals.PREVIEW, {
+    text: newText,
+    onBack: () => {
+      menuModalsStore.back();
+    },
+  });
 };
 
 

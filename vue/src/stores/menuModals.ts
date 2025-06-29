@@ -8,6 +8,7 @@ export enum MenuModals {
   DIFF = "diff",
   VOICE_RECOGNITION = "voice-recognition",
   TRANSLATE = "translate",
+  PREVIEW = "preview",
   NONE = "none",
 }
 
