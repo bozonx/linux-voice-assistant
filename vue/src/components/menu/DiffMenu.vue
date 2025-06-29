@@ -18,7 +18,6 @@
 import { useCallApi } from '../../composables/useCallApi';
 import { useIpcStore } from '../../stores/ipc';
 import { useRouteParams } from '../../stores/routeParams';
-import { useOverlayStore } from '../../stores/mainOverlay';
 import { useMainInputStore } from '../../stores/mainInput';
 
 const props = defineProps({
@@ -53,7 +52,6 @@ const ipcStore = useIpcStore();
 const editedNewText = ref(props.newText);
 const routeParamsStore = useRouteParams();
 const router = useRouter();
-const overlayStore = useOverlayStore();
 const mainInputStore = useMainInputStore();
 
 onMounted(() => {
@@ -71,8 +69,6 @@ function goToEditor() {
     routeParamsStore.setParams({ text: editedNewText.value });
     mainInputStore.setValue(editedNewText.value);
   }
-
-  overlayStore.hideOverlay();
 
   router.push("/");
 }

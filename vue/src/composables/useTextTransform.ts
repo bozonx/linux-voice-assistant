@@ -1,52 +1,28 @@
-export function useTextTransform() {
-  const capitalizeFirstLetter = (text: string): string => {
-    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
-  };
+import {
+  toCamelCase,
+  toPascalCase,
+  toSnakeCase,
+  toKebabCase,
+  normalizeText,
+} from "squidlet-lib";
 
-  const toUppercase = (text: string): string => {
+export function useTextTransform() {
+  const toUppercase = (text?: string): string => {
+    if (!text) return "";
+
     return text.toUpperCase();
   };
 
-  const toLowercase = (text: string): string => {
+  const toLowercase = (text?: string): string => {
+    if (!text) return "";
+
     return text.toLowerCase();
-  };
-
-  const toCamelCase = (text: string): string => {
-    return text
-      .split(/[\s-_]+/)
-      .map((word, index) =>
-        index === 0
-          ? word.toLowerCase()
-          : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-      )
-      .join("");
-  };
-
-  const toPascalCase = (text: string): string => {
-    return text
-      .split(/[\s-_]+/)
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join("");
-  };
-
-  const toSnakeCase = (text: string): string => {
-    return text
-      .split(/[\s-_]+/)
-      .map((word) => word.toLowerCase())
-      .join("_");
-  };
-
-  const toKebabCase = (text: string): string => {
-    return text
-      .split(/[\s-_]+/)
-      .map((word) => word.toLowerCase())
-      .join("-");
   };
 
   const doCaseTransform = (text: string, caseType: string): string => {
     switch (caseType) {
-      case "capitalize":
-        return capitalizeFirstLetter(text);
+      case "normalize":
+        return normalizeText(text);
       case "uppercase":
         return toUppercase(text);
       case "lowercase":

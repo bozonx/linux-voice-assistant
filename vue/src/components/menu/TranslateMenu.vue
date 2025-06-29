@@ -18,7 +18,6 @@
 
 <script setup lang="ts">
 import { useIpcStore } from '../../stores/ipc';
-import { useOverlayStore } from '../../stores/mainOverlay';
 import { useCallAi } from '../../composables/useCallAi';
 import { useCallApi } from '../../composables/useCallApi';
 import miniToastr from "mini-toastr";

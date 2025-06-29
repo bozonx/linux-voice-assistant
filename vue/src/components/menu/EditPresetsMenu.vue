@@ -21,7 +21,6 @@ import { useIpcStore } from '../../stores/ipc';
 import { useCallAi } from '../../composables/useCallAi';
 import { useRouteParams } from '../../stores/routeParams';
 import { useMainInputStore } from '../../stores/mainInput';
-import { useOverlayStore } from '../../stores/mainOverlay';
 import { MenuModals, useMenuModalsStore } from '../../stores/menuModals';
 import miniToastr from "mini-toastr";
 
@@ -47,7 +46,6 @@ const props = defineProps({
 const routeParamsStore = useRouteParams();
 const router = useRouter();
 const mainInputStore = useMainInputStore();
-const overlayStore = useOverlayStore();
 const menuModalsStore = useMenuModalsStore();
 const ipcStore = useIpcStore();
 const { deepEdit } = useCallAi();
@@ -68,7 +66,6 @@ function goToEditor() {
     mainInputStore.setValue(props.text);
   }
 
-  overlayStore.hideOverlay();
   router.push("/");
 }
 

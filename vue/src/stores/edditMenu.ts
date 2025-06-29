@@ -25,8 +25,8 @@ export const useEditMenuStore = defineStore("editMenu", () => {
       action: async (text: string) => formatSomeCode(text),
     },
     {
-      name: "Capitalize",
-      action: async (text: string) => doCaseTransform(text, "capitalize"),
+      name: "Normalize",
+      action: async (text: string) => doCaseTransform(text, "normalize"),
     },
     {
       name: "UPPERCASE",

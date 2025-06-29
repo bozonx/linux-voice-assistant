@@ -49,35 +49,6 @@ export const useCallApi = () => {
     await ipcStore.callFunction("openInBrowserAndClose", [value]);
   };
 
-  const intoClipboardAndClose = async (text?: string) => {
-    // let value = resolveText(text);
-    // if (!value?.trim()) {
-    //   miniToastr.error("Текст не выбран");
-    //   return;
-    // }
-    // await ipcStore.callFunction("putIntoClipboardAndClose", [value]);
-  };
-
-  const insertIntoWindow = async (text?: string) => {
-    // let value = resolveText(text);
-    // if (!value?.trim()) {
-    //   miniToastr.error("Текст не выбран");
-    //   return;
-    // }
-    // await typeIntoWindowAndClose(value);
-  };
-
-  const askAIlong = async (text?: string) => {
-    let value = resolveText(text);
-
-    if (!value?.trim()) {
-      miniToastr.error("Текст не выбран");
-      return;
-    }
-
-    // TODO: open in browser
-  };
-
   const askAIShort = async (text?: string) => {
     let value = resolveText(text);
 
@@ -105,9 +76,6 @@ export const useCallApi = () => {
     closeWindow,
     typeIntoWindowAndClose,
     searchInInternet,
-    intoClipboardAndClose,
-    insertIntoWindow,
-    askAIlong,
     askAIShort,
     askAItext,
   };

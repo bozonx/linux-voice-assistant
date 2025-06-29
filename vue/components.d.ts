@@ -28,6 +28,7 @@ declare module 'vue' {
     InsertMenu: typeof import('./src/components/menu/InsertMenu.vue')['default']
     ItemsFieldRow: typeof import('./src/components/common/ItemsFieldRow.vue')['default']
     MainInput: typeof import('./src/components/MainInput.vue')['default']
+    MenuCommonButtons: typeof import('./src/components/common/MenuCommonButtons.vue')['default']
     MenuModals: typeof import('./src/components/menu/MenuModals.vue')['default']
     Overlay: typeof import('./src/components/common/Overlay.vue')['default']
     PreviewMenu: typeof import('./src/components/menu/PreviewMenu.vue')['default']

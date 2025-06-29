@@ -42,14 +42,6 @@ export const useActionMenuStore = defineStore("actionMenu", () => {
         menuModalsStore.nextModal(MenuModals.CORRECTION, {
           text,
         });
-        // if (!text?.trim()) return;
-        // if (text.length < appConfig.minCorrectionLength) {
-        //   miniToastr.warn("Слишком короткий текст для коррекции");
-        //   return;
-        // }
-        // overlayStore.showCorrection();
-        // const newText = await correctText(mainInputStore.value);
-        // overlayStore.showDiff(newText);
       },
     },
     {

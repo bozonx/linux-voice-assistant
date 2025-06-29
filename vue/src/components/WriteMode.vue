@@ -21,12 +21,6 @@ import miniToastr from "mini-toastr";
 import { useIpcStore } from '../stores/ipc';
 import { MenuModals, useMenuModalsStore } from '../stores/menuModals';
 
-enum OverlayMode {
-  CORRECTION = "correction",
-  SHORTCUTS = "shortcuts",
-  NONE = "none",
-}
-
 const mainInputHistoryStore = useMainInputHistoryStore()
 const ipcStore = useIpcStore();
 const debounced = new DebounceCallIncreasing()
@@ -61,10 +55,6 @@ watch(() => ipcStore.params?.isWindowShown, (isWindowShown) => {
   focusTextarea();
 });
 
-function handleNewText(newText: string) {
-  correctedText.value = newText;
-}
-
 const handleInput = (event: Event) => {
   inputText.value = (event.target as HTMLDivElement).innerText || '';
   correctionIsActual.value = false;
@@ -92,12 +82,6 @@ function toShortcuts() {
     oldText: inputText.value,
   });
 }
-
-// function toWriteMode() {
-//   overlayMode.value = OverlayMode.NONE;
-
-//   focusTextarea();
-// }
 
 async function doCorrection() {
   if (!inputText.value?.trim()) {

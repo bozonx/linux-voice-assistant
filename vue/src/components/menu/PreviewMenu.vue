@@ -18,7 +18,6 @@
 import { useCallApi } from '../../composables/useCallApi';
 import { useIpcStore } from '../../stores/ipc';
 import { useRouteParams } from '../../stores/routeParams';
-import { useOverlayStore } from '../../stores/mainOverlay';
 import { useMainInputStore } from '../../stores/mainInput';
 
 const props = defineProps({
@@ -48,7 +47,6 @@ const inFocusButton = ref<HTMLButtonElement | null>(null);
 const ipcStore = useIpcStore();
 const routeParamsStore = useRouteParams();
 const router = useRouter();
-const overlayStore = useOverlayStore();
 const mainInputStore = useMainInputStore();
 
 onMounted(() => {
@@ -67,7 +65,6 @@ function goToEditor() {
     mainInputStore.setValue(props.text);
   }
 
-  overlayStore.hideOverlay();
   router.push("/");
 }
 
