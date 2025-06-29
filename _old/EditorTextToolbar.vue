@@ -51,10 +51,10 @@
 </template>
 
 <script setup lang="ts">
-import { useMainInputStore } from '../stores/mainInput';
-import { useCodeFormatter } from '../composables/useCodeFormatter';
-import { useTextTransform } from '../composables/useTextTransform';
-import { useOverlayStore } from '../stores/mainOverlay';
+import { useMainInputStore } from '../vue/src/stores/mainInput';
+import { useCodeFormatter } from '../vue/src/composables/useCodeFormatter';
+import { useTextTransform } from '../vue/src/composables/useTextTransform';
+import { useOverlayStore } from '../vue/src/stores/mainOverlay';
 
 const overlayStore = useOverlayStore();
 const mainInputStore = useMainInputStore();

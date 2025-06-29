@@ -4,6 +4,7 @@ import { useCallApi } from "../composables/useCallApi";
 import { useOverlayStore } from "./mainOverlay";
 import { useTextTransform } from "../composables/useTextTransform";
 import { useCodeFormatter } from "../composables/useCodeFormatter";
+import { useIpcStore } from "./ipc";
 
 export interface ActionItem {
   name: string;
@@ -18,7 +19,8 @@ export interface EditItem {
 }
 
 export const useMenuStore = defineStore("menu", () => {
-  const { intoClipboardAndClose, insertIntoWindow, correction } = useCallApi();
+  const { typeIntoWindowAndClose } = useCallApi();
+  const ipcStore = useIpcStore();
   const { doCaseTransform } = useTextTransform();
   const { formatMdAndStyle, formatSomeCode } = useCodeFormatter();
   const overlayStore = useOverlayStore();
@@ -26,7 +28,16 @@ export const useMenuStore = defineStore("menu", () => {
   const DEFAULT_ACTIONS: ActionItem[] = [
     {
       name: "Коррекция",
-      action: async (text: string) => correction(text),
+      action: async (text: string) => {
+        // if (!text?.trim()) return;
+        // if (text.length < appConfig.minCorrectionLength) {
+        //   miniToastr.warn("Слишком короткий текст для коррекции");
+        //   return;
+        // }
+        // overlayStore.showCorrection();
+        // const newText = await correctText(mainInputStore.value);
+        // overlayStore.showDiff(newText);
+      },
     },
     {
       name: "Редактировать",
@@ -38,11 +49,13 @@ export const useMenuStore = defineStore("menu", () => {
     },
     {
       name: "В буфер обмена",
-      action: (text: string) => intoClipboardAndClose(text),
+      action: async (text: string) => {
+        await ipcStore.callFunction("putIntoClipboardAndClose", [text]);
+      },
     },
     {
       name: "Вставить в окно",
-      action: (text: string) => insertIntoWindow(text),
+      action: async (text: string) => typeIntoWindowAndClose(text),
     },
   ];
 

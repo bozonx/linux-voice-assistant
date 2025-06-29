@@ -38,43 +38,6 @@ export const useCallApi = () => {
     return value || "";
   }
 
-  const correction = async (text?: string) => {
-    // if (!text?.trim()) return;
-    // if (text.length < appConfig.minCorrectionLength) {
-    //   miniToastr.warn("Слишком короткий текст для коррекции");
-    //   return;
-    // }
-    // overlayStore.showCorrection();
-    // const newText = await correctText(mainInputStore.value);
-    // overlayStore.showDiff(newText);
-  };
-
-  const fastNote = async (text?: string) => {
-    let value = resolveText(text);
-
-    if (!value?.trim()) {
-      miniToastr.error("Текст не выбран");
-      return;
-    }
-
-    console.log("fastNoteInObsidian");
-
-    // TODO: do it
-  };
-
-  const addToKnowledgeBase = async (text?: string) => {
-    let value = resolveText(text);
-
-    if (!value?.trim()) {
-      miniToastr.error("Текст не выбран");
-      return;
-    }
-
-    console.log("addToKnowledgeBase");
-
-    // TODO: do it
-  };
-
   const searchInInternet = async (text?: string) => {
     let value = resolveText(text);
 
@@ -87,25 +50,21 @@ export const useCallApi = () => {
   };
 
   const intoClipboardAndClose = async (text?: string) => {
-    let value = resolveText(text);
-
-    if (!value?.trim()) {
-      miniToastr.error("Текст не выбран");
-      return;
-    }
-
-    await ipcStore.callFunction("putIntoClipboardAndClose", [value]);
+    // let value = resolveText(text);
+    // if (!value?.trim()) {
+    //   miniToastr.error("Текст не выбран");
+    //   return;
+    // }
+    // await ipcStore.callFunction("putIntoClipboardAndClose", [value]);
   };
 
   const insertIntoWindow = async (text?: string) => {
-    let value = resolveText(text);
-
-    if (!value?.trim()) {
-      miniToastr.error("Текст не выбран");
-      return;
-    }
-
-    await typeIntoWindowAndClose(value);
+    // let value = resolveText(text);
+    // if (!value?.trim()) {
+    //   miniToastr.error("Текст не выбран");
+    //   return;
+    // }
+    // await typeIntoWindowAndClose(value);
   };
 
   const askAIlong = async (text?: string) => {
@@ -143,12 +102,9 @@ export const useCallApi = () => {
 
   return {
     resolveText,
-    correction,
     closeWindow,
     typeIntoWindowAndClose,
-    fastNote,
     searchInInternet,
-    addToKnowledgeBase,
     intoClipboardAndClose,
     insertIntoWindow,
     askAIlong,

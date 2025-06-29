@@ -59,6 +59,7 @@ import { useRouteParams } from '../stores/routeParams';
 import { useMainInputStore } from '../stores/mainInput';
 import { OverlayMode, useOverlayStore } from '../stores/mainOverlay';
 import { useMenuStore } from '../stores/menu';
+import miniToastr from "mini-toastr";
 
 const routeParamsStore = useRouteParams();
 const mainInputStore = useMainInputStore();
@@ -93,7 +94,14 @@ const prepareActionText = async (cb: (text: string) => Promise<void>): Promise<v
     value = mainInputStore.selectedText;
   }
 
-  return cb(value.trim());
+  value = value.trim();
+
+  if (!value) {
+    miniToastr.error("Текст не выбран");
+    return;
+  }
+
+  return cb(value);
 };
 
 async function editMode(cb: (text: string) => Promise<string>): Promise<void> {
@@ -101,9 +109,16 @@ async function editMode(cb: (text: string) => Promise<string>): Promise<void> {
 
   if (mainInputStore.selectedText) {
     value = mainInputStore.selectedText;
+  }   
+
+  value = value.trim();
+
+  if (!value) {
+    miniToastr.error("Текст не выбран");
+    return;
   }
 
-  const result = await cb(value.trim());
+  const result = await cb(value);
 
   mainInputStore.selectedText
     ? mainInputStore.replaceSelection(result)

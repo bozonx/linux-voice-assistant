@@ -39,6 +39,7 @@
     "../_old/voiceRecognition.ts",
     "../_old/useHandleKeys.ts",
     "../_old/EditorInsertToolbar.vue",
-    "../_old/EditorActions.vue"
+    "../_old/EditorActions.vue",
+    "../_old/EditorTextToolbar.vue"
   ]
 }
