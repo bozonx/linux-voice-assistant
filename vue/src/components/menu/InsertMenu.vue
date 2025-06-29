@@ -1,5 +1,5 @@
 <template>
-  <Overlay v-if="overlayMode === OverlayMode.IN_PROGRESS">
+  <!-- <Overlay v-if="overlayMode === OverlayMode.IN_PROGRESS">
     <InProgressMessage :ai="true" />
   </Overlay>
 
@@ -21,7 +21,7 @@
 
   <Overlay v-if="overlayMode === OverlayMode.DIFF">
     <DiffMenu :oldText="props.text" :newText="resultText" @close="toInsertMenu" />
-  </Overlay>
+  </Overlay> -->
 
   <div>
     <DiffInput v-if="props.oldText" :oldText="props.oldText" :newText="props.text" @update:newText="handleNewText" />
@@ -31,25 +31,21 @@
   <div @keyup.prevent="handleShortCutKeyUp" class="shortcuts-list">
     <div v-if="props.showBackButton">Esc - <button @click="props.onBack()">назад</button></div>
     <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>
-    <div v-if="props.showToEditor">q - <button @click="goToEditor">в редактор</button></div>
-    <template v-if="props.text">
-      <div v-if="ipcStore.params?.windowId && props.showInsertButton">Space - <button @click="typeIntoWindowAndClose(props.text ?? '')">вставить</button></div>
-      <div>w - <button @click="intoClipboardAndClose(props.text)">в буфер обмена и закрыть окно</button></div>
-      <div>e - <button @click="translate()">перевод</button></div>
-      <div>r - <button @click="askAIShort(props.text)">быстрый вопрос к AI</button></div>
-      <div>t - <button @click="dealToCalendar(props.text)">добавить дело в календарь</button></div>
-      
-      <div>a - <button @click="correct()">коррекция</button></div>
-      <div>s - <button @click="fastNote(props.text)">быстрая заметка в Obsidian</button></div>
-      <div>d - <button @click="addToKnowledgeBase(props.text)">вставить в базу знаний</button></div>
-      <div>f - <button @click="toEditPresets">выбор пресета редактирования</button></div>
-      <div>g - <button @click="searchInInternet(props.text)">поиск в интернете</button></div>
+    <div v-if="props.showToEditor">Tab - <button @click="goToEditor">в редактор</button></div>
+    <div v-if="ipcStore.params?.windowId && props.showInsertButton">Space - <button @click="typeIntoWindowAndClose(props.text ?? '')">вставить</button></div>
 
-      <!-- <div v-if="ipcStore.params?.userConfig.toTranslateLanguages[0]">z - ➡️ <button @click="translate(0)">{{ipcStore.params?.userConfig.toTranslateLanguages[0]}}</button></div>
-      <div v-if="ipcStore.params?.userConfig.toTranslateLanguages[1]">x - ➡️ <button @click="translate(1)">{{ipcStore.params?.userConfig.toTranslateLanguages[1]}}</button></div>
-      <div v-if="ipcStore.params?.userConfig.toTranslateLanguages[2]">c - ➡️ <button @click="translate(2)">{{ipcStore.params?.userConfig.toTranslateLanguages[2]}}</button></div>
-      <div v-if="ipcStore.params?.userConfig.toTranslateLanguages[3]">v - ➡️ <button @click="translate(3)">{{ipcStore.params?.userConfig.toTranslateLanguages[3]}}</button></div>
-      <div v-if="ipcStore.params?.userConfig.toTranslateLanguages[4]">b - ➡️ <button @click="translate(4)">{{ipcStore.params?.userConfig.toTranslateLanguages[4]}}</button></div> -->
+    <template>
+      <div>q - <button @click="intoClipboardAndClose(props.text)">в буфер обмена и закрыть окно</button></div>
+      <div>w - <button @click="correct()">коррекция</button></div>
+      <div>e - <button @click="toEditPresets">выбор пресета редактирования</button></div>
+      <div>r - </div>
+      <div>t - <button @click="translate()">перевод</button></div>
+      
+      <div>a - </div>
+      <div>s - </div>
+      <div>d - </div>
+      <div>f - </div>
+      <div>g - </div>
     </template>
   </div>
 </template>
@@ -182,7 +178,7 @@ async function correct() {
 
 const handleShortCutKeyUp = (event: KeyboardEvent) => {
   if (event.code === "Escape") {
-    emit('back');
+    props.onBack?.();
   }
   else if (event.code === "KeyQ" && event.ctrlKey) {
     closeWindow();
@@ -204,29 +200,24 @@ const handleShortCutKeyUp = (event: KeyboardEvent) => {
   }
   else if (event.code === "KeyR") {
     if (!props.text) return;
-    askAIShort(props.text);
   }
   else if (event.code === "KeyT") {
     if (!props.text) return;
-    dealToCalendar(props.text);
   }
   else if (event.code === "KeyA") {
     correct();
   }
   else if (event.code === "KeyS") {
     if (!props.text) return;
-    fastNote(props.text);
   }
   else if (event.code === "KeyD") {
     if (!props.text) return;
-    addToKnowledgeBase(props.text);
   }
   else if (event.code === "KeyF") {
     toEditPresets();
   }
   else if (event.code === "KeyG") {
     if (!props.text) return;
-    searchInInternet(props.text);
   }
   // else if (event.code === "KeyZ") {
   //   translate(0);
