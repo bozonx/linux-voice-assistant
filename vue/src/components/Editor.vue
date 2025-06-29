@@ -40,7 +40,7 @@
       <p class="main-input-hint">Hint: press Esc to open menu. можно выделить текст в инпуте, и тогда изменения будут касаться только того, что выделено.</p>
 
       <div class="flex gap-1 w-full flex-wrap">
-        <Button v-for="item in menuStore.getEditMenu()" :key="item.name" small secondary :icon="item.icon" @click="item.action(mainInputStore.value)">{{ item.name }}</Button>
+        <Button v-for="item in menuStore.getEditMenu()" :key="item.name" small secondary :icon="item.icon" @click="editMode(item.action)">{{ item.name }}</Button>
       </div>
     </div>
 
@@ -48,7 +48,7 @@
       <h2 class="section-title">Действия</h2>
 
       <div class="flex gap-1 w-full flex-wrap">
-        <Button  v-for="item in menuStore.getActionsMenu()" :key="item.name" big primary :icon="item.icon" @click="item.action(mainInputStore.value)">{{ item.name }}</Button>
+        <Button  v-for="item in menuStore.getActionsMenu()" :key="item.name" big primary :icon="item.icon" @click="prepareActionText(item.action)">{{ item.name }}</Button>
       </div>
     </div>
   </div>
@@ -84,6 +84,30 @@ function handleKeyUp(event: KeyboardEvent) {
 function handleCorrected(text: string) {
   mainInputStore.setValueAtCursor(text);
   overlayStore.hideOverlay();
+}
+
+const prepareActionText = async (cb: (text: string) => Promise<void>): Promise<void> => {
+  let value = mainInputStore.value;
+
+  if (mainInputStore.selectedText) {
+    value = mainInputStore.selectedText;
+  }
+
+  return cb(value.trim());
+};
+
+async function editMode(cb: (text: string) => Promise<string>): Promise<void> {
+  let value = mainInputStore.value;
+
+  if (mainInputStore.selectedText) {
+    value = mainInputStore.selectedText;
+  }
+
+  const result = await cb(value.trim());
+
+  mainInputStore.selectedText
+    ? mainInputStore.replaceSelection(result)
+    : mainInputStore.setValue(result);
 }
 </script>
 

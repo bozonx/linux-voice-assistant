@@ -46,11 +46,11 @@
 </template>
 
 <script setup lang="ts">
-import { useCallApi } from '../composables/useCallApi';
-import { useCallAi } from '../composables/useCallAi';
-import { useIpcStore } from '../stores/ipc';
-import { useOverlayStore } from '../stores/mainOverlay';
-import { useMainInputStore } from '../stores/mainInput';
+import { useCallApi } from '../vue/src/composables/useCallApi';
+import { useCallAi } from '../vue/src/composables/useCallAi';
+import { useIpcStore } from '../vue/src/stores/ipc';
+import { useOverlayStore } from '../vue/src/stores/mainOverlay';
+import { useMainInputStore } from '../vue/src/stores/mainInput';
 import miniToastr from "mini-toastr";
 
 const ipcStore = useIpcStore();
@@ -58,20 +58,7 @@ const overlayStore = useOverlayStore();
 const mainInputStore = useMainInputStore();
 const appConfig = ipcStore.params!.appConfig;
 
-const {
-  searchInInternet,
-  fastNote,
-  addToKnowledgeBase,
-  intoClipboardAndClose,
-  askAIShort,
-  askAItext,
-  insertIntoWindow,
-} = useCallApi();
 
-const {
-  dealToCalendar,
-  correctText,
-} = useCallAi();
 
 
 const correct = async () => {

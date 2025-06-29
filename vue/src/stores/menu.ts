@@ -1,77 +1,92 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
+import { useCallApi } from "../composables/useCallApi";
+import { useOverlayStore } from "./mainOverlay";
+import { useTextTransform } from "../composables/useTextTransform";
+import { useCodeFormatter } from "../composables/useCodeFormatter";
 
-export interface MenuItem {
+export interface ActionItem {
   name: string;
   icon?: string;
   action: (text: string) => Promise<void>;
 }
 
-export const DEFAULT_ACTIONS: MenuItem[] = [
-  {
-    name: "Коррекция",
-    action: (text: string) => Promise.resolve(),
-  },
-  {
-    name: "Редактировать",
-    action: (text: string) => Promise.resolve(),
-  },
-  {
-    name: "Перевод",
-    action: (text: string) => Promise.resolve(),
-  },
-  {
-    name: "В буфер обмена",
-    action: (text: string) => Promise.resolve(),
-  },
-  {
-    name: "Вставить в окно",
-    action: (text: string) => Promise.resolve(),
-  },
-];
-
-export const DEFAULT_EDIT_ITEMS: MenuItem[] = [
-  {
-    name: "Beautyfy MD",
-    action: (text: string) => Promise.resolve(),
-  },
-  {
-    name: "Формат JS/JSON/CSS/HTML/XML",
-    action: (text: string) => Promise.resolve(),
-  },
-  {
-    name: "Capitalize",
-    action: (text: string) => Promise.resolve(),
-  },
-  {
-    name: "UPPERCASE",
-    action: (text: string) => Promise.resolve(),
-  },
-  {
-    name: "lowercase",
-    action: (text: string) => Promise.resolve(),
-  },
-  {
-    name: "camelCase",
-    action: (text: string) => Promise.resolve(),
-  },
-  {
-    name: "PascalCase",
-    action: (text: string) => Promise.resolve(),
-  },
-  {
-    name: "kebab-case",
-    action: (text: string) => Promise.resolve(),
-  },
-  {
-    name: "snake_case",
-    action: (text: string) => Promise.resolve(),
-  },
-];
+export interface EditItem {
+  name: string;
+  icon?: string;
+  action: (text: string) => Promise<string>;
+}
 
 export const useMenuStore = defineStore("menu", () => {
-  const registeredActionsMenu = ref<MenuItem[]>([]);
-  const registeredEditMenu = ref<MenuItem[]>([]);
+  const { intoClipboardAndClose, insertIntoWindow, correction } = useCallApi();
+  const { doCaseTransform } = useTextTransform();
+  const { formatMdAndStyle, formatSomeCode } = useCodeFormatter();
+  const overlayStore = useOverlayStore();
+
+  const DEFAULT_ACTIONS: ActionItem[] = [
+    {
+      name: "Коррекция",
+      action: async (text: string) => correction(text),
+    },
+    {
+      name: "Редактировать",
+      action: async (text: string) => overlayStore.showEditPresets(),
+    },
+    {
+      name: "Перевод",
+      action: async (text: string) => overlayStore.showTranslate(),
+    },
+    {
+      name: "В буфер обмена",
+      action: (text: string) => intoClipboardAndClose(text),
+    },
+    {
+      name: "Вставить в окно",
+      action: (text: string) => insertIntoWindow(text),
+    },
+  ];
+
+  const DEFAULT_EDIT_ITEMS: EditItem[] = [
+    {
+      name: "Beautyfy MD",
+      action: async (text: string) => formatMdAndStyle(text),
+    },
+    {
+      name: "Формат JS/JSON/CSS/HTML/XML",
+      action: async (text: string) => formatSomeCode(text),
+    },
+    {
+      name: "Capitalize",
+      action: async (text: string) => doCaseTransform(text, "capitalize"),
+    },
+    {
+      name: "UPPERCASE",
+      action: async (text: string) => doCaseTransform(text, "uppercase"),
+    },
+    {
+      name: "lowercase",
+      action: async (text: string) => doCaseTransform(text, "lowercase"),
+    },
+    {
+      name: "camelCase",
+      action: async (text: string) => doCaseTransform(text, "camelCase"),
+    },
+    {
+      name: "PascalCase",
+      action: async (text: string) => doCaseTransform(text, "pascalCase"),
+    },
+    {
+      name: "snake_case",
+      action: async (text: string) => doCaseTransform(text, "snakeCase"),
+    },
+    {
+      name: "kebab-case",
+      action: async (text: string) => doCaseTransform(text, "kebabCase"),
+    },
+  ];
+
+  const registeredActionsMenu = ref<ActionItem[]>([]);
+  const registeredEditMenu = ref<EditItem[]>([]);
 
   const getActionsMenu = () => {
     return [...DEFAULT_ACTIONS, ...registeredActionsMenu.value];
@@ -81,11 +96,11 @@ export const useMenuStore = defineStore("menu", () => {
     return [...DEFAULT_EDIT_ITEMS, ...registeredEditMenu.value];
   };
 
-  const registerActionsItems = (actions: MenuItem[]) => {
+  const registerActionsItems = (actions: ActionItem[]) => {
     registeredActionsMenu.value.push(...actions);
   };
 
-  const registerEditItems = (edit: MenuItem[]) => {
+  const registerEditItems = (edit: EditItem[]) => {
     registeredEditMenu.value.push(...edit);
   };
 

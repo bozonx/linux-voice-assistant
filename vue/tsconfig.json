@@ -38,6 +38,7 @@
     "../_old/Overlays.vue",
     "../_old/voiceRecognition.ts",
     "../_old/useHandleKeys.ts",
-    "../_old/EditorInsertToolbar.vue"
+    "../_old/EditorInsertToolbar.vue",
+    "../_old/EditorActions.vue"
   ]
 }

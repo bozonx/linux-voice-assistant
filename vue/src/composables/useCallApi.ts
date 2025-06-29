@@ -38,6 +38,17 @@ export const useCallApi = () => {
     return value || "";
   }
 
+  const correction = async (text?: string) => {
+    // if (!text?.trim()) return;
+    // if (text.length < appConfig.minCorrectionLength) {
+    //   miniToastr.warn("Слишком короткий текст для коррекции");
+    //   return;
+    // }
+    // overlayStore.showCorrection();
+    // const newText = await correctText(mainInputStore.value);
+    // overlayStore.showDiff(newText);
+  };
+
   const fastNote = async (text?: string) => {
     let value = resolveText(text);
 
@@ -132,6 +143,7 @@ export const useCallApi = () => {
 
   return {
     resolveText,
+    correction,
     closeWindow,
     typeIntoWindowAndClose,
     fastNote,
