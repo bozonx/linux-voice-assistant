@@ -1,5 +1,5 @@
 <template>
-  <Overlay v-if="overlayMode === OverlayMode.MENU">
+  <!-- <Overlay v-if="overlayMode === OverlayMode.MENU">
     <InsertMenu @back="overlayStore.hideOverlay"
        :showToEditor="false" :text="mainInputStore.value" />
   </Overlay>
@@ -22,7 +22,7 @@
 
   <Overlay v-if="overlayMode === OverlayMode.TRANSLATE">
     <TranslateMenu :text="mainInputStore.value" @back="overlayStore.hideOverlay" />
-  </Overlay>
+  </Overlay> -->
 
   <div @keyup="handleKeyUp">
     <div>
@@ -40,7 +40,7 @@
       <p class="main-input-hint">Hint: press Esc to open menu. можно выделить текст в инпуте, и тогда изменения будут касаться только того, что выделено.</p>
 
       <div class="flex gap-1 w-full flex-wrap">
-        <Button v-for="item in menuStore.getEditMenu()" :key="item.name" small secondary :icon="item.icon" @click="editMode(item.action)">{{ item.name }}</Button>
+        <Button v-for="item in editMenuStore.getEditMenu()" :key="item.name" small secondary :icon="item.icon" @click="editMode(item.action)">{{ item.name }}</Button>
       </div>
     </div>
 
@@ -48,7 +48,7 @@
       <h2 class="section-title">Действия</h2>
 
       <div class="flex gap-1 w-full flex-wrap">
-        <Button  v-for="item in menuStore.getActionsMenu()" :key="item.name" big primary :icon="item.icon" @click="prepareActionText(item.action)">{{ item.name }}</Button>
+        <Button  v-for="item in actionMenuStore.getActionsMenu()" :key="item.name" big primary :icon="item.icon" @click="prepareActionText(item.action)">{{ item.name }}</Button>
       </div>
     </div>
   </div>
@@ -58,14 +58,16 @@
 import { useRouteParams } from '../stores/routeParams';
 import { useMainInputStore } from '../stores/mainInput';
 import { OverlayMode, useOverlayStore } from '../stores/mainOverlay';
-import { useMenuStore } from '../stores/menu';
+import { useActionMenuStore } from '../stores/actionMenu';
+import { useEditMenuStore } from '../stores/edditMenu';
 import miniToastr from "mini-toastr";
 
 const routeParamsStore = useRouteParams();
 const mainInputStore = useMainInputStore();
 const overlayStore = useOverlayStore();
 const overlayMode = computed(() => overlayStore.overlayMode);
-const menuStore = useMenuStore();
+const actionMenuStore = useActionMenuStore();
+const editMenuStore = useEditMenuStore();
 
 onMounted(() => {
   if (routeParamsStore.params.text) {
