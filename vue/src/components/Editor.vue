@@ -56,38 +56,30 @@ onMounted(() => {
   init();
 });
 
-function init() {
-  menuModalsStore.closeAll();
+watch(() => menuModalsStore.anyModalOpen, (value) => {
+  if (!value) init()
+});
 
-  nextTick(() => {
-    navPanelStore.setParams({
-      showEscBtn: true,
-      escBtnText: "Меню",
-      escBtnAction: () => {
-        menuModalsStore.nextModal(MenuModals.INSERT, {
-          text: mainInputStore.value,
-          onBack: () => {
-            console.log(111111)
-            init();
-          },
-        });
-      },
-    });
-    mainInputStore.focus();
+async function init() {
+  await nextTick();
+
+  navPanelStore.setParams({
+    escBtnText: "Меню",
+    escBtnAction: () => {
+      menuModalsStore.nextModal(MenuModals.INSERT, {
+        text: mainInputStore.value,
+      });
+    },
   });
+  
+  mainInputStore.focus();
 }
-
 
 function voiceRecognition() {
   menuModalsStore.nextModal(MenuModals.VOICE_RECOGNITION, {
-    onBack: () => {
-      menuModalsStore.back();
-      init();
-    },
     onCorrected: (text: string) => {
       mainInputStore.setValueAtCursor(text);
-      
-      init();
+      menuModalsStore.closeAll();
     },
   });
 }

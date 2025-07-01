@@ -42,22 +42,10 @@ const props = defineProps({
     type: String,
     default: "",
   },
-  showBackButton: {
-    type: Boolean,
-    default: true
-  },
-  showToEditor: {
-    type: Boolean,
-    default: true
-  },
   showInsertButton: {
     type: Boolean,
     default: true
   },
-  onBack: {
-    type: Function,
-    default: () => {}
-  }
 });
 
 const emit = defineEmits<{
