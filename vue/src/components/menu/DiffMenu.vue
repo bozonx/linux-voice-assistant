@@ -5,9 +5,6 @@
 
   <div>
     <div @keyup.prevent="handleKeyUp" class="shortcuts-list">
-      <div>Esc - <button v-if="props.showBackButton" @click="props.onBack()">назад</button></div>
-      <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>
-      <div v-if="props.showToEditor">q - <button @click="goToEditor">в редактор</button></div>
       <div v-if="ipcStore.params?.windowId && props.showInsertButton">Space - <button @click="typeIntoWindowAndClose(editedNewText)">вставить</button></div>
       <div>a - <button @click="intoClipboardAndClose(editedNewText)">в буфер обмена и закрыть окно</button></div>
     </div>
@@ -17,8 +14,6 @@
 <script setup lang="ts">
 import { useCallApi } from '../../composables/useCallApi';
 import { useIpcStore } from '../../stores/ipc';
-import { useRouteParams } from '../../stores/routeParams';
-import { useMainInputStore } from '../../stores/mainInput';
 
 const props = defineProps({
   oldText: {
@@ -46,13 +41,10 @@ const props = defineProps({
     default: () => {}
   }
 });
-const { closeWindow, typeIntoWindowAndClose, intoClipboardAndClose } = useCallApi();
+const { typeIntoWindowAndClose } = useCallApi();
 const inFocusButton = ref<HTMLButtonElement | null>(null);
 const ipcStore = useIpcStore();
 const editedNewText = ref(props.newText);
-const routeParamsStore = useRouteParams();
-const router = useRouter();
-const mainInputStore = useMainInputStore();
 
 onMounted(() => {
   nextTick(() => {
@@ -62,35 +54,15 @@ onMounted(() => {
   })
 })  
 
-function goToEditor() {
-  if (!props.showToEditor) return;
-  
-  if (editedNewText.value?.trim()) {
-    routeParamsStore.setParams({ text: editedNewText.value });
-    mainInputStore.setValue(editedNewText.value);
-  }
-
-  router.push("/");
-}
-
 function updateNewText(text: string) {
   editedNewText.value = text;
 }
 
 function handleKeyUp(event: KeyboardEvent) {
-  if (event.code === "Escape") {
-    props.onBack();
-  }
-  else if (event.code === "KeyQ" && event.ctrlKey) {
-    closeWindow();
-  }
-  else if (event.code === "Space") {
+  if (event.code === "Space") {
     if (!ipcStore.params?.windowId || !props.showInsertButton) return;
 
     typeIntoWindowAndClose(editedNewText.value);
-  }
-  else if (event.code === "KeyQ") {
-    goToEditor();
   }
   else if (event.code === "KeyA") {
     intoClipboardAndClose(editedNewText.value);

@@ -21,6 +21,7 @@ declare module 'vue' {
     EditorActions: typeof import('./src/components/EditorActions.vue')['default']
     EditorTextToolbar: typeof import('./src/components/EditorTextToolbar.vue')['default']
     EditPresetsMenu: typeof import('./src/components/menu/EditPresetsMenu.vue')['default']
+    GlobalShortcutsPanel: typeof import('./src/components/GlobalShortcutsPanel.vue')['default']
     History: typeof import('./src/components/History.vue')['default']
     InProgressMessage: typeof import('./src/components/menu/InProgressMessage.vue')['default']
     InputHistory: typeof import('./src/components/InputHistory.vue')['default']

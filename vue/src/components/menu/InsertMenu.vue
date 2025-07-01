@@ -5,9 +5,6 @@
   </div>
 
   <div @keyup.prevent="handleShortCutKeyUp" class="shortcuts-list">
-    <div v-if="props.showBackButton">Esc - <button @click="props.onBack()">назад</button></div>
-    <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>
-    <div v-if="props.showToEditor">Tab - <button @click="goToEditor">в редактор</button></div>
     <div v-if="ipcStore.params?.windowId && props.showInsertButton">Space - <button @click="insertIntoWindowItem.action(props.text ?? '')">{{ insertIntoWindowItem.name }}</button></div>
 
     <div class="flex flex-row w-full gap-4 mt-4">
@@ -31,9 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
 import { useIpcStore } from '../../stores/ipc';
-import { useRouteParams } from '../../stores/routeParams';
 import { useActionMenuStore } from '../../stores/actionMenu';
 import { PRESETS_KEYS } from '../../types';
 
@@ -88,38 +83,17 @@ onMounted(() => {
   })
 })
 
-const router = useRouter();
 const ipcStore = useIpcStore();
-const routeParamsStore = useRouteParams();
 
 function handleNewText(newText: string) {
   emit('update:newText', newText);
 }
 
-function goToEditor() {
-  if (!props.showToEditor) return;
-  
-  if (props.text?.trim()) {
-    routeParamsStore.setParams({ text: props.text });
-  }
-  
-  router.push("/");
-}
-
 const handleShortCutKeyUp = (event: KeyboardEvent) => {
-  if (event.code === "Escape") {
-    props.onBack?.();
-  }
-  else if (event.code === "KeyQ" && event.ctrlKey) {
-    // closeWindow();
-  }
-  else if (event.code === "Space") {
+  if (event.code === "Space") {
     if (!ipcStore.params?.windowId || !props.text || !props.showInsertButton) return;
 
     insertIntoWindowItem.action(props.text ?? '');
-  }
-  else if (event.code === "Tab") {
-    goToEditor();
   }
 
   let codeLetter;

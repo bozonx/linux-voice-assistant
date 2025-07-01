@@ -7,8 +7,6 @@
     </div>
 
     <div class="shortcuts-list" @keyup="handleShortCutKeyUp">
-      <div>Esc - <button v-if="props.showBackButton" @click="props.onBack()">назад</button></div>
-      <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>
       <div v-for="(lang, index) in ipcStore.params?.userConfig.toTranslateLanguages" :key="lang">
         {{ PRESETS_KEYS[index] }} - <button @click="translate(index)">➡️ {{ lang }}</button>
       </div>
@@ -19,7 +17,6 @@
 <script setup lang="ts">
 import { useIpcStore } from '../../stores/ipc';
 import { useCallAi } from '../../composables/useCallAi';
-import { useCallApi } from '../../composables/useCallApi';
 import miniToastr from "mini-toastr";
 import { PRESETS_KEYS } from '../../types';
 import { MenuModals, useMenuModalsStore } from '../../stores/menuModals';
@@ -27,7 +24,6 @@ import { MenuModals, useMenuModalsStore } from '../../stores/menuModals';
 const ipcStore = useIpcStore();
 const appConfig = ipcStore.params!.appConfig;
 const { translateText } = useCallAi();
-const { closeWindow } = useCallApi();
 const inFocusButton = ref<HTMLButtonElement>();
 const translateResult = ref<string>("");
 const menuModalsStore = useMenuModalsStore();
@@ -79,13 +75,7 @@ const translate = async (toLangNum: number) => {
 
 
 const handleShortCutKeyUp = (event: KeyboardEvent) => {
-  if (event.code === "Escape") {
-    props.onBack();
-  }
-  else if (event.code === "KeyQ" && event.ctrlKey) {
-    closeWindow();
-  }
-  else if (event.code === "KeyQ") {
+  if (event.code === "KeyQ") {
     translate(0);
   }
   else if (event.code === "KeyW") {

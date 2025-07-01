@@ -51,6 +51,10 @@ export const useMenuModalsStore = defineStore("menuModals", () => {
     pendingModal.value = null;
   };
 
+  const anyModalOpen = computed(() => {
+    return currentModal.value !== MenuModals.NONE;
+  });
+
   return {
     pendingModal,
     currentModal,
@@ -61,5 +65,6 @@ export const useMenuModalsStore = defineStore("menuModals", () => {
     closeAll,
     setPendingModal,
     clearPendingModal,
+    anyModalOpen,
   };
 });

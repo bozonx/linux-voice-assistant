@@ -9,7 +9,6 @@
 
   <div @keyup.prevent="handleShortCutKeyUp" class="shortcuts-list">
     <div v-if="props.showBackButton">Esc - <button @click="cancel">прервать</button></div>
-    <div>Ctrl + q - <button ref="inFocusButton" @click="closeWindow">закрыть программу</button></div>
     <div>Space - <button @click="finish">закончить распознавание</button></div>
   </div>
 </template>
@@ -54,13 +53,13 @@ const handleShortCutKeyUp = async (event: KeyboardEvent) => {
     
     await cancel();
   }
-  else if (event.code === "KeyQ" && event.ctrlKey) {
-    await stopVoiceRecognition();
+  // else if (event.code === "KeyQ" && event.ctrlKey) {
+  //   await stopVoiceRecognition();
 
-    setTimeout(async () => {
-      await closeWindow();
-    }, 500);
-  }
+  //   setTimeout(async () => {
+  //     await closeWindow();
+  //   }, 500);
+  // }
   else if (event.code === "Space") {
     await finish();
   }

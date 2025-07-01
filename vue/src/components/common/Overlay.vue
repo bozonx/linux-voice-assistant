@@ -9,11 +9,9 @@
 <style scoped>
 .overlay-one-column {
   position: fixed;
-  top: 0;
-  left: 0;
   z-index: 100;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   background-color: rgb(0 8 2 / 80%);
   color: white;
   font-size: 24px;

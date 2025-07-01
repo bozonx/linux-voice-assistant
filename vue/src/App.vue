@@ -1,13 +1,20 @@
 <template>
   <div class="layout">
-    <MenuModals />
-    <RouterView />
+    <div class="panel">
+      <GlobalShortcutsPanel />
+    </div>
+    <div class="main flex-1">
+      <MenuModals />
+      <div class="content">
+        <RouterView />
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useIpcStore } from './stores/ipc';
-import { InitParams, START_MODES } from './types';
+import { InitParams } from './types';
 import { useRouter } from 'vue-router';
 import { GlobalEvents, useGlobalEvents } from './composables/useGlobalEvents';
 
@@ -16,9 +23,7 @@ const router = useRouter();
 const { globalEvents } = useGlobalEvents();
 
 onMounted(() => {
-  // window.addEventListener('keyup', (event) => {
-  //   console.log("Key up:", event);
-  // })
+  window.addEventListener('keyup', handleKeyUp);
 
   window.electron.ipcRenderer.on('params', async (params: InitParams) => {
     console.log("Received params:", params);
@@ -39,22 +44,30 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  // window.removeEventListener('keyup', handleKeyUp);
+  window.removeEventListener('keyup', handleKeyUp);
 });
 
-// const handleKeyUp = (event: KeyboardEvent) => {
-//     globalEvents.emit(GlobalEvents.KEY_UP, event);
-// };
+const handleKeyUp = (event: KeyboardEvent) => {
+    globalEvents.emit(GlobalEvents.KEY_UP, event);
+};
 
 </script>
 
 <style scoped>
+.panel {
+  background-color: #eee;
+  border-bottom: 1px solid #ccc;
+}
+.main {
+  position: relative;
+}
+.content {
+  padding: 1.25rem;
+}
 .layout {
   height: 100dvh;
-  width: 100vw;
-  padding: 1.25rem;
+  width: 100dvw;
   display: flex;
   flex-direction: column;
-  /* @apply h-screen w-screen p-5 flex flex-col; */
 }
 </style>
