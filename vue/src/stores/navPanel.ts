@@ -1,10 +1,12 @@
 import { defineStore } from "pinia";
+import { MenuModals, useMenuModalsStore } from "./menuModals";
 
 export const useNavPanelStore = defineStore("navPanel", () => {
+  const menuModalsStore = useMenuModalsStore();
+
   const DEFAULT_PARAMS = {
-    showEscBtn: false,
-    escBtnText: "назад (Esc)",
-    escBtnAction: () => {},
+    escBtnText: "",
+    escBtnAction: undefined as (() => void) | undefined,
   };
   const params = ref(DEFAULT_PARAMS);
 
@@ -16,8 +18,40 @@ export const useNavPanelStore = defineStore("navPanel", () => {
     params.value = DEFAULT_PARAMS;
   }
 
+  // watch(
+  //   () => menuModalsStore.currentModal,
+  //   (newModal) => {
+  //     if (newModal !== MenuModals.NONE) {
+  //       resetParams();
+  //     }
+  //   }
+  // );
+
+  const escBtnVisible = computed(() => {
+    return menuModalsStore.anyModalOpen || params.value.escBtnText;
+  });
+
+  const escBtnText = computed(() => {
+    if (menuModalsStore.currentModal !== MenuModals.NONE) {
+      return "Назад";
+    }
+
+    return params.value.escBtnText;
+  });
+
+  const escBtnAction = computed(() => {
+    if (menuModalsStore.anyModalOpen) {
+      return menuModalsStore.back;
+    }
+
+    return params.value.escBtnAction;
+  });
+
   return {
     params,
+    escBtnVisible,
+    escBtnText,
+    escBtnAction,
     setParams,
     resetParams,
   };

@@ -31,6 +31,7 @@ declare module 'vue' {
     MainInput: typeof import('./src/components/MainInput.vue')['default']
     MenuCommonButtons: typeof import('./src/components/common/MenuCommonButtons.vue')['default']
     MenuModals: typeof import('./src/components/menu/MenuModals.vue')['default']
+    NavPanel: typeof import('./src/components/NavPanel.vue')['default']
     Overlay: typeof import('./src/components/common/Overlay.vue')['default']
     PreviewMenu: typeof import('./src/components/menu/PreviewMenu.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

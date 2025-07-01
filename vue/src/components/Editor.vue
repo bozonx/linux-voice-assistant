@@ -1,5 +1,5 @@
 <template>
-  <div @keyup="handleKeyUp">
+  <div>
     <div>
       <div class="flex gap-4">
         <div class="flex-1">
@@ -39,43 +39,55 @@ import { useActionMenuStore } from '../stores/actionMenu';
 import { useEditMenuStore } from '../stores/edditMenu';
 import { MenuModals, useMenuModalsStore } from '../stores/menuModals';
 import miniToastr from "mini-toastr";
+import { useNavPanelStore } from '../stores/navPanel';
 
 const routeParamsStore = useRouteParams();
 const mainInputStore = useMainInputStore();
 const actionMenuStore = useActionMenuStore();
 const editMenuStore = useEditMenuStore();
 const menuModalsStore = useMenuModalsStore();
+const navPanelStore = useNavPanelStore();
 
 onMounted(() => {
   if (routeParamsStore.params.text) {
     mainInputStore.setValue(routeParamsStore.params.text);
-    nextTick(() => {
-      mainInputStore.focus();
-    });
   }
+
+  init();
 });
 
-function handleKeyUp(event: KeyboardEvent) {
-  if (event.code === "Escape") {
-    menuModalsStore.nextModal(MenuModals.INSERT, {
-      text: mainInputStore.value,
-      onBack: () => {
-        menuModalsStore.back();
-        mainInputStore.focus();
+function init() {
+  menuModalsStore.closeAll();
+
+  nextTick(() => {
+    navPanelStore.setParams({
+      showEscBtn: true,
+      escBtnText: "Меню",
+      escBtnAction: () => {
+        menuModalsStore.nextModal(MenuModals.INSERT, {
+          text: mainInputStore.value,
+          onBack: () => {
+            console.log(111111)
+            init();
+          },
+        });
       },
     });
-  }
+    mainInputStore.focus();
+  });
 }
+
 
 function voiceRecognition() {
   menuModalsStore.nextModal(MenuModals.VOICE_RECOGNITION, {
     onBack: () => {
       menuModalsStore.back();
-      mainInputStore.focus();
+      init();
     },
     onCorrected: (text: string) => {
       mainInputStore.setValueAtCursor(text);
-      menuModalsStore.closeAll();
+      
+      init();
     },
   });
 }

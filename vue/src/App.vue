@@ -1,7 +1,7 @@
 <template>
   <div class="layout">
     <div class="panel">
-      <GlobalShortcutsPanel />
+      <NavPanel />
     </div>
     <div class="main flex-1">
       <MenuModals />
