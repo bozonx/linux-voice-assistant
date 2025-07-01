@@ -87,10 +87,10 @@ const handleMouseUp = (event: Event): void => {
 
 <style scoped>
 .main-input {
+  display: block;
   width: 100%;
   min-height: 150px;
   padding: 6px;
-  margin-bottom: 0px;
   border: 2px solid #e0e0e0;
   border-radius: 6px;
   font-size: 16px;
@@ -98,6 +98,7 @@ const handleMouseUp = (event: Event): void => {
   font-family: inherit;
   box-sizing: border-box;
   overflow-y: scroll;
+  margin: 0px;
 }
 
 .main-input:focus {

@@ -12,7 +12,7 @@
         </div>
       </div>
       
-      <p class="main-input-hint">Hint: press Esc to open menu. можно выделить текст в инпуте, и тогда изменения будут касаться только того, что выделено.</p>
+      <p class="text-xs mb-2">Подсказка: можно выделить текст, и тогда изменения будут касаться только того, что выделено.</p>
 
       <div class="flex gap-1 w-full flex-wrap">
         <Button v-for="item in editMenuStore.getEditMenu()"
@@ -22,7 +22,7 @@
     </div>
 
     <div>
-      <h2 class="section-title">Действия</h2>
+      <h2 class="mt-4 mb-1 text-sm">Действия</h2>
       <div class="flex gap-1 w-full flex-wrap">
         <Button v-for="item in actionMenuStore.getActionsMenu()"
           :key="item.name" big primary :icon="item.icon"
@@ -118,11 +118,3 @@ async function doEdit(cb: (text: string) => Promise<string>): Promise<void> {
     : mainInputStore.setValue(result);
 }
 </script>
-
-<style scoped>
-.section-title {
-  margin-top: 8px;
-  margin-bottom: 2px;
-  font-size: 14px;
-}
-</style>
