@@ -1,6 +1,6 @@
 <template>
   <div class="panel flex flex-row">
-    <div class="flex-1 flex flex-row gap-4">
+    <div class="flex-1 flex flex-row gap-2">
       <Button
         v-if="navPanelStore.escBtnVisible"
         small
@@ -13,7 +13,7 @@
       >
       <Button small secondary @click="closeWindow">закрыть (Ctrl + q)</Button>
     </div>
-    <div class="flex flex-row gap-4">
+    <div class="flex flex-row gap-2">
       <Button small secondary @click="openSettings">Настройки</Button>
       <Button small secondary @click="openHistory">История</Button>
     </div>

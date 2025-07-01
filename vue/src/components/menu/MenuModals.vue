@@ -1,12 +1,12 @@
 <template>
-  <Overlay v-if="currentModal !== MenuModals.NONE">
-    <InsertMenu v-if="currentModal === MenuModals.INSERT" v-bind="currentModalParams" />
-    <EditPresetsMenu v-else-if="currentModal === MenuModals.EDIT_PRESETS" v-bind="currentModalParams" />
-    <CorrectionMenu v-else-if="currentModal === MenuModals.CORRECTION" v-bind="currentModalParams" />
-    <DiffMenu v-else-if="currentModal === MenuModals.DIFF" v-bind="currentModalParams" />
-    <VoiceRecognitionMenu v-else-if="currentModal === MenuModals.VOICE_RECOGNITION" v-bind="currentModalParams" />
-    <TranslateMenu v-else-if="currentModal === MenuModals.TRANSLATE" v-bind="currentModalParams" />
-    <PreviewMenu v-else-if="currentModal === MenuModals.PREVIEW" v-bind="currentModalParams" />
+  <Overlay v-if="menuModalsStore.currentModal !== MenuModals.NONE">
+    <InsertMenu v-if="menuModalsStore.currentModal === MenuModals.INSERT" v-bind="menuModalsStore.currentModalParams" />
+    <EditPresetsMenu v-else-if="menuModalsStore.currentModal === MenuModals.EDIT_PRESETS" v-bind="menuModalsStore.currentModalParams" />
+    <CorrectionMenu v-else-if="menuModalsStore.currentModal === MenuModals.CORRECTION" v-bind="menuModalsStore.currentModalParams" />
+    <DiffMenu v-else-if="menuModalsStore.currentModal === MenuModals.DIFF" v-bind="menuModalsStore.currentModalParams" />
+    <VoiceRecognitionMenu v-else-if="menuModalsStore.currentModal === MenuModals.VOICE_RECOGNITION" v-bind="menuModalsStore.currentModalParams" />
+    <TranslateMenu v-else-if="menuModalsStore.currentModal === MenuModals.TRANSLATE" v-bind="menuModalsStore.currentModalParams" />
+    <PreviewMenu v-else-if="menuModalsStore.currentModal === MenuModals.PREVIEW" v-bind="menuModalsStore.currentModalParams" />
   </Overlay>
 
   <Overlay v-if="menuModalsStore.pendingModal">
@@ -18,12 +18,4 @@
 import { MenuModals, useMenuModalsStore } from '../../stores/menuModals';
 
 const menuModalsStore = useMenuModalsStore();
-
-const currentModal = computed(() => menuModalsStore.currentModal);
-const currentModalParams = computed(() => {
-  return {
-    onBack: menuModalsStore.back,
-    ...menuModalsStore.currentModalParams,
-  };
-});
 </script>

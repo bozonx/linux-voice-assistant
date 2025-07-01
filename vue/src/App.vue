@@ -57,12 +57,14 @@ const handleKeyUp = (event: KeyboardEvent) => {
 .panel {
   background-color: #eee;
   border-bottom: 1px solid #ccc;
+  height: 40px;
 }
 .main {
   position: relative;
 }
 .content {
   padding: 1.25rem;
+  height: 100%;
 }
 .layout {
   height: 100dvh;
