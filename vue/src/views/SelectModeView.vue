@@ -1,6 +1,6 @@
 <template>
   <InsertMenu :showBackButton="false" 
-    :showInsertButton="false"
+    :allowInsertButton="false"
     :text="text" />
 </template>
 

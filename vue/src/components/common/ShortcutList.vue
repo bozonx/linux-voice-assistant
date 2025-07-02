@@ -64,6 +64,7 @@
 
 <script setup lang="ts">
   import { PRESETS_KEYS } from "../../types";
+  import { useKeysStore } from "../../stores/keys";
 
   const props = defineProps<{
     spaceKey: {
@@ -80,6 +81,7 @@
     }[];
   }>();
 
+  const keysStore = useKeysStore();
   const col1 = computed(() =>
     PRESETS_KEYS.slice(0, 5).map((key, index) => ({
       key,
@@ -98,6 +100,23 @@
       ...props.leftLetterKeys[index + 10],
     }))
   );
+
+  watch(() => keysStore.keyupCode, (code) => {
+    if (!code) return;
+
+    if (code === "Space") {
+      props.spaceKey.action();
+    }
+
+    let codeLetter;
+    if (code.length === 4 && code.startsWith("Key")) {
+      codeLetter = code.slice(3).toLowerCase();
+    }
+    
+    if (codeLetter && PRESETS_KEYS.includes(codeLetter)) {
+      props.leftLetterKeys[PRESETS_KEYS.indexOf(codeLetter)]?.action();
+    }
+  });
 </script>
 
 <style scoped>

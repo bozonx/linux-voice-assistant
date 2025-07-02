@@ -22,5 +22,8 @@ pre {
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 5px;
+  border: 2px solid #000;
 }
 </style>
