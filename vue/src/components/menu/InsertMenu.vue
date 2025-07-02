@@ -5,27 +5,7 @@
     <TextPreview v-else :text="props.text" class="absolute" />
   </div>
 
-  <div class="shortcuts-list">
-    <div v-if="ipcStore.params?.windowId && props.showInsertButton">Space - <button @click="insertIntoWindowItem.action(props.text ?? '')">{{ insertIntoWindowItem.name }}</button></div>
-
-    <div class="flex flex-row w-full gap-4 mt-4">
-      <div class="flex flex-col gap-1">
-        <div v-for="item in col1" :key="item.name">
-          {{ item.key }} - <Button v-if="item.name" :disabled="item.key === 'q' && !showInsertButton()" small secondary :icon="item.icon" @click="item.action(props.text)">{{ item.name }}</Button>
-        </div>
-      </div>
-      <div class="flex flex-col gap-1">
-        <div v-for="item in col2" :key="item.name">
-          {{ item.key }} - <Button v-if="item.name" small secondary :icon="item.icon" @click="item.action(props.text)">{{ item.name }}</Button>
-        </div>
-      </div>
-      <div class="flex flex-col gap-1">
-        <div v-for="item in col3" :key="item.name">
-          {{ item.key }} - <Button v-if="item.name" small secondary :icon="item.icon" @click="item.action(props.text)">{{ item.name }}</Button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <ShortcutList :leftLetterKeys="leftLetterKeys" :spaceKey="spaceKey" />
 </div>
 
 </template>
@@ -59,14 +39,19 @@ const emit = defineEmits<{
 const actionMenuStore = useActionMenuStore();
 const keysStore = useKeysStore();
 const insertIntoWindowItem = actionMenuStore.getActionsMenu()[0]
-// const actionsMenu = computed(() => [
-//   { key: "q" },
-//   ...actionMenuStore.getActionsMenu().slice(1)
-// ] as any[]);
 const actionsMenu = actionMenuStore.getActionsMenu();
-
-
 const ipcStore = useIpcStore();
+
+const leftLetterKeys = computed(() => 
+  actionsMenu.map((item, index) => 
+    ({...item, disabled: index === 0 && !showInsertButton(), action: () => item.action(props.text ?? '')})));
+
+const spaceKey = computed(() => ({
+  name: "Insert",
+  icon: "insert",
+  disabled: !showInsertButton(),
+  action: () => insertIntoWindowItem.action(props.text ?? ''),
+}));
 
 function handleNewText(newText: string) {
   emit('update:newText', newText);

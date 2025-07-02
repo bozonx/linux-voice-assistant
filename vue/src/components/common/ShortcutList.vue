@@ -1,49 +1,64 @@
 <template>
   <div class="shortcuts-list">
-    <div class="flex flex-row w-full gap-4 mt-4">
-      <div class="flex flex-col gap-1">
-        <div v-for="item in col1" :key="item.name">
-          <span class="shortcut-item">{{ item.key }} - </span
-          ><Button
-            v-if="item.name"
-            :disabled="item.disabled"
-            small
-            secondary
-            :icon="item.icon"
-            @click="item.action"
-            >{{ item.name }}</Button
-          >
-        </div>
+    <div>
+      <div v-if="props.spaceKey" class="mb-2">
+        <span class="shortcut-item">Space - </span
+        ><Button
+          :disabled="props.spaceKey.disabled"
+          small
+          secondary
+          :icon="props.spaceKey.icon"
+          @click="props.spaceKey.action"
+          >{{ props.spaceKey.name }}</Button
+        >
       </div>
-      <div class="flex flex-col gap-1">
-        <div v-for="item in col2" :key="item.name">
-          <span class="shortcut-item">{{ item.key }} - </span
-          ><Button
-            v-if="item.name"
-            :disabled="item.disabled"
-            small
-            secondary
-            :icon="item.icon"
-            @click="item.action"
-            >{{ item.name }}</Button
-          >
+
+      <div class="flex flex-row gap-4">
+        <div class="flex flex-col gap-1">
+          <div v-for="item in col1" :key="item.name">
+            <span class="shortcut-item">{{ item.key }} - </span
+            ><Button
+              v-if="item.name"
+              :disabled="item.disabled"
+              small
+              secondary
+              :icon="item.icon"
+              @click="item.action"
+              >{{ item.name }}</Button
+            >
+          </div>
         </div>
-      </div>
-      <div class="flex flex-col gap-1">
-        <div v-for="item in col3" :key="item.name">
-          <span class="shortcut-item">{{ item.key }} - </span
-          ><Button
-            v-if="item.name"
-            :disabled="item.disabled"
-            small
-            secondary
-            :icon="item.icon"
-            @click="item.action"
-            >{{ item.name }}</Button
-          >
+        <div class="flex flex-col gap-1">
+          <div v-for="item in col2" :key="item.name">
+            <span class="shortcut-item">{{ item.key }} - </span
+            ><Button
+              v-if="item.name"
+              :disabled="item.disabled"
+              small
+              secondary
+              :icon="item.icon"
+              @click="item.action"
+              >{{ item.name }}</Button
+            >
+          </div>
+        </div>
+        <div class="flex flex-col gap-1">
+          <div v-for="item in col3" :key="item.name">
+            <span class="shortcut-item">{{ item.key }} - </span
+            ><Button
+              v-if="item.name"
+              :disabled="item.disabled"
+              small
+              secondary
+              :icon="item.icon"
+              @click="item.action"
+              >{{ item.name }}</Button
+            >
+          </div>
         </div>
       </div>
     </div>
+
   </div>
 </template>
 
@@ -51,6 +66,12 @@
   import { PRESETS_KEYS } from "../../types";
 
   const props = defineProps<{
+    spaceKey: {
+      name: string;
+      icon?: string;
+      disabled?: boolean;
+      action: () => void;
+    };
     leftLetterKeys: {
       name: string;
       icon?: string;
@@ -86,5 +107,7 @@
     font-size: 16px;
     line-height: 1.5;
     white-space: pre-wrap;
+    display: flex;
+    justify-content: center;
   }
 </style>
