@@ -1,8 +1,6 @@
 <template>
-  <div class="text-preview">
-    <p>{{ text }}</p>
-  </div>
-  </template>
+  <pre>{{ text }}</pre>
+</template>
 
 <script setup lang="ts">
 const props = defineProps<{
@@ -11,9 +9,18 @@ const props = defineProps<{
 </script>
 
 <style scoped>
-.text-preview {
+pre {
+  text-align: left;
   padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  font-size: 16px;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

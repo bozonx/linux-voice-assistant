@@ -17,10 +17,12 @@ import { useIpcStore } from './stores/ipc';
 import { InitParams } from './types';
 import { useRouter } from 'vue-router';
 import { GlobalEvents, useGlobalEvents } from './composables/useGlobalEvents';
+import { useKeysStore } from './stores/keys';
 
 const ipcStore = useIpcStore();
 const router = useRouter();
 const { globalEvents } = useGlobalEvents();
+const keysStore = useKeysStore();
 
 onMounted(() => {
   window.addEventListener('keyup', handleKeyUp);
@@ -48,7 +50,8 @@ onUnmounted(() => {
 });
 
 const handleKeyUp = (event: KeyboardEvent) => {
-    globalEvents.emit(GlobalEvents.KEY_UP, event);
+  globalEvents.emit(GlobalEvents.KEY_UP, event);
+  keysStore.setKeyup(event);
 };
 
 </script>

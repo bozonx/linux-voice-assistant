@@ -108,4 +108,9 @@ const onClick = () => {
   font-size: 14px;
 }
 
+.button:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
 </style>
