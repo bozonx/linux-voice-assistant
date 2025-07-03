@@ -1,11 +1,10 @@
 <template>
-  <div>
-    <TextPreview :text="props.text" />
-    <div @keyup.prevent="handleKeyUp" class="shortcuts-list">
-      <div v-for="(preset, index) in ipcStore.params?.userConfig.aiRules.deepEdit" :key="preset.description">
-        {{ PRESETS_KEYS[index] }} - <button @click="makeDiff(index)">{{ preset.description }}</button>
-      </div>
+  <div class="flex flex-col gap-4 w-full h-full">
+    <div class="flex-1 relative">
+      <TextPreview :text="props.text" />
     </div>
+
+    <ShortcutList :leftLetterKeys="leftLetterKeys" />
   </div>
 </template>
 
@@ -26,15 +25,7 @@ const props = defineProps({
 const menuModalsStore = useMenuModalsStore();
 const ipcStore = useIpcStore();
 const { deepEdit } = useCallAi();
-const inFocusButton = ref<HTMLButtonElement | null>(null);
-const newText = ref('');
 const appConfig = ipcStore.params!.appConfig;
-
-onMounted(() => {
-  nextTick(() => {
-    inFocusButton.value?.focus();
-  })
-})
 
 async function makeDiff(index: number) {
   if (props.text.length < appConfig.minCorrectionLength) {
@@ -47,7 +38,7 @@ async function makeDiff(index: number) {
     ai: true,
   });
 
-  newText.value = await deepEdit(index, props.text);
+ const newText = await deepEdit(index, props.text);
 
   menuModalsStore.clearPendingModal();
 
@@ -57,14 +48,7 @@ async function makeDiff(index: number) {
   });
 }
 
-function handleKeyUp(event: KeyboardEvent) {
-  let codeLetter;
-  if (event.code.length === 4 && event.code.startsWith("Key")) {
-    codeLetter = event.code.slice(3).toLowerCase();
-  }
-  
-  if (codeLetter && PRESETS_KEYS.includes(codeLetter)) {
-    makeDiff(PRESETS_KEYS.indexOf(codeLetter));
-  }
-}
+const leftLetterKeys = computed(() => 
+  ipcStore.params!.userConfig.aiRules.deepEdit.map((item, index) => 
+    ({name: item.description, action: () => makeDiff(index)})));
 </script>

@@ -67,7 +67,7 @@
   import { useKeysStore } from "../../stores/keys";
 
   const props = defineProps<{
-    spaceKey: {
+    spaceKey?: {
       name: string;
       icon?: string;
       disabled?: boolean;
@@ -105,7 +105,7 @@
     if (!code) return;
 
     if (code === "Space") {
-      props.spaceKey.action();
+      props.spaceKey?.action();
     }
 
     let codeLetter;
