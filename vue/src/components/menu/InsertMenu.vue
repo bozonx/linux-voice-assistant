@@ -8,7 +8,6 @@
 
   <ShortcutList :text="props.text" :leftLetterKeys="leftLetterKeys" :spaceKey="spaceKey" />
 </div>
-
 </template>
 
 <script setup lang="ts">
