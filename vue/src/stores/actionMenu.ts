@@ -3,6 +3,8 @@ import { ref } from "vue";
 import { useCallApi } from "../composables/useCallApi";
 import { useIpcStore } from "./ipc";
 import { MenuModals, useMenuModalsStore } from "./menuModals";
+import { useCallAi } from "../composables/useCallAi";
+import miniToastr from "mini-toastr";
 
 export interface ActionItem {
   name: string;
@@ -15,7 +17,8 @@ export const useActionMenuStore = defineStore("actionMenu", () => {
   const { typeIntoWindowAndClose } = useCallApi();
   const ipcStore = useIpcStore();
   const menuModalsStore = useMenuModalsStore();
-
+  const appConfig = ipcStore.params!.appConfig;
+  const { correctText } = useCallAi();
   const registeredActionsMenu = ref<ActionItem[]>([]);
 
   const DEFAULT_ACTIONS: ActionItem[] = [
@@ -39,8 +42,21 @@ export const useActionMenuStore = defineStore("actionMenu", () => {
     {
       name: "Коррекция",
       action: async (text: string) => {
+        if (!text?.trim()) return;
+        if (text.length < appConfig.minCorrectionLength) {
+          miniToastr.warn("Слишком короткий текст для коррекции");
+          return;
+        }
+
+        menuModalsStore.setPendingModal({ correction: true });
+
+        const newText = await correctText(text);
+
+        menuModalsStore.clearPendingModal();
+
         menuModalsStore.nextModal(MenuModals.CORRECTION, {
-          text,
+          oldText: text,
+          newText,
         });
       },
     },
