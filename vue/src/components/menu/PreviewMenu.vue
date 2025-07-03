@@ -20,6 +20,10 @@ const props = defineProps({
   },
 });
 
+const emit = defineEmits<{
+  (e: 'update:newText', value: string): void;
+}>();
+
 const actionMenuStore = useActionMenuStore();
 const DEFAULT_ACTIONS = actionMenuStore.DEFAULT_ACTIONS;
 const ipcStore = useIpcStore();

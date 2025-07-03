@@ -1,35 +1,22 @@
 <template>
-  <div>
-    Распознавание...
-  </div>
+  <div class="flex flex-col gap-4 w-full h-full">
+    <h1 class="menu-title">Распознавание</h1>
+    <div class="flex-1 relative">
+      <TextPreview :text="recognizedText" />
+    </div>
 
-  <div>
-    {{ recognizedText }}
-  </div>
-
-  <div @keyup.prevent="handleShortCutKeyUp" class="shortcuts-list">
-    <div v-if="props.showBackButton">Esc - <button @click="cancel">прервать</button></div>
-    <div>Space - <button @click="finish">закончить распознавание</button></div>
+    <ShortcutList :leftLetterKeys="leftLetterKeys" :spaceKey="spaceKey" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { useCallAi } from '../../composables/useCallAi';
-import { useCallApi } from '../../composables/useCallApi';
 import { GlobalEvents, useGlobalEvents } from '../../composables/useGlobalEvents';
 import { useIpcStore } from '../../stores/ipc';
 import miniToastr from "mini-toastr";
 import { useMenuModalsStore } from '../../stores/menuModals';
 
 const props = defineProps({
-  showBackButton: {
-    type: Boolean,
-    default: true,
-  },
-  onBack: {
-    type: Function,
-    default: () => {}
-  },
   onCorrected: {
     type: Function,
     default: () => {}
@@ -37,8 +24,6 @@ const props = defineProps({
 });
 
 const { startVoiceRecognition, stopVoiceRecognition, voiceCorrection } = useCallAi();
-const { closeWindow } = useCallApi();
-const inFocusButton = ref<HTMLButtonElement | null>(null);
 const { globalEvents } = useGlobalEvents();
 const recognizedText = ref<string>("");
 const lastRecognizedTextMs = ref<number>(0);
@@ -47,28 +32,23 @@ const appConfig = ipcStore.params!.appConfig;
 const menuModalsStore = useMenuModalsStore();
 let listenerIndex = -1;
 
-const handleShortCutKeyUp = async (event: KeyboardEvent) => {
-  if (event.key === "Escape") {
-    if (!props.showBackButton) return;
-    
-    await cancel();
-  }
-  // else if (event.code === "KeyQ" && event.ctrlKey) {
-  //   await stopVoiceRecognition();
+// TODO: поидее надо esc
+const leftLetterKeys = [
+  {
+    name: "Отмена",
+    action: () => cancel(),
+  },
+];
 
-  //   setTimeout(async () => {
-  //     await closeWindow();
-  //   }, 500);
-  // }
-  else if (event.code === "Space") {
-    await finish();
-  }
+const spaceKey = {
+  name: "Закончить",
+  action: () => finish(),
 };
 
 const cancel = async () => {
   globalEvents.removeListener(listenerIndex);
   await stopVoiceRecognition();
-  props.onBack();
+  menuModalsStore.back();
 };
 
 const finish = async () => {
@@ -119,17 +99,12 @@ const finish = async () => {
   }
 
   props.onCorrected(correctedText);
-  
 };
 
 onMounted(async () => {
   listenerIndex = globalEvents.addListener(GlobalEvents.VOICE_RECOGNITION, (text: string) => {
     recognizedText.value = text;
     lastRecognizedTextMs.value = Date.now();
-  });
-
-  nextTick(() => {
-    inFocusButton.value?.focus();
   });
 
   await startVoiceRecognition();

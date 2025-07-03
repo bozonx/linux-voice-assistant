@@ -1,5 +1,6 @@
 <template>
   <div class="flex flex-col gap-4 w-full h-full">
+    <h1 class="menu-title">Задание для AI</h1>
     <div class="flex-1 relative">
       <TextPreview :text="props.text" />
     </div>
@@ -41,7 +42,7 @@
 
     menuModalsStore.nextModal(MenuModals.DIFF, {
       oldText: props.text,
-      newText: newText.value,
+      newText,
     });
   }
 

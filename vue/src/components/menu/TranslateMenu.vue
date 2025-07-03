@@ -1,5 +1,6 @@
 <template>
   <div class="flex flex-col gap-4 w-full h-full">
+    <h1 class="menu-title">Перевести</h1>
     <div class="flex-1 relative">
       <TextPreview :text="props.text" />
     </div>

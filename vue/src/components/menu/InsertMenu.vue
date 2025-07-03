@@ -1,5 +1,6 @@
 <template>
 <div class="flex flex-col gap-4 w-full h-full"> 
+  <h1 class="menu-title">Вставить</h1>
   <div class="flex-1 relative">
     <DiffInput v-if="props.oldText" :oldText="props.oldText" :newText="props.text" @update:newText="handleNewText" />
     <TextPreview v-else :text="props.text" class="absolute" />

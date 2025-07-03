@@ -68,7 +68,7 @@
   import { ActionItem } from "../../stores/actionMenu";
 
   const props = defineProps<{
-    text: string;
+    text?: string;
     spaceKey?: ActionItem;
     leftLetterKeys: ActionItem[];
   }>();
