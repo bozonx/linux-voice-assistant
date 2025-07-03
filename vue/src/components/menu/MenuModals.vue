@@ -1,7 +1,7 @@
 <template>
   <Overlay v-if="menuModalsStore.currentModal !== MenuModals.NONE">
     <InsertMenu v-if="menuModalsStore.currentModal === MenuModals.INSERT" v-bind="menuModalsStore.currentModalParams" />
-    <EditPresetsMenu v-else-if="menuModalsStore.currentModal === MenuModals.EDIT_PRESETS" v-bind="menuModalsStore.currentModalParams" />
+    <AiTaskMenu v-else-if="menuModalsStore.currentModal === MenuModals.AI_TASK" v-bind="menuModalsStore.currentModalParams" />
     <CorrectionMenu v-else-if="menuModalsStore.currentModal === MenuModals.CORRECTION" v-bind="menuModalsStore.currentModalParams" />
     <DiffMenu v-else-if="menuModalsStore.currentModal === MenuModals.DIFF" v-bind="menuModalsStore.currentModalParams" />
     <VoiceRecognitionMenu v-else-if="menuModalsStore.currentModal === MenuModals.VOICE_RECOGNITION" v-bind="menuModalsStore.currentModalParams" />

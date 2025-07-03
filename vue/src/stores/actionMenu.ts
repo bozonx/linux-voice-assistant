@@ -7,6 +7,7 @@ import { MenuModals, useMenuModalsStore } from "./menuModals";
 export interface ActionItem {
   name: string;
   icon?: string;
+  disabled?: boolean;
   action: (text: string) => Promise<void>;
 }
 
@@ -16,7 +17,6 @@ export const useActionMenuStore = defineStore("actionMenu", () => {
   const menuModalsStore = useMenuModalsStore();
 
   const registeredActionsMenu = ref<ActionItem[]>([]);
-
 
   const DEFAULT_ACTIONS: ActionItem[] = [
     {
@@ -30,9 +30,9 @@ export const useActionMenuStore = defineStore("actionMenu", () => {
       },
     },
     {
-      name: "Редактировать",
+      name: "Задание для AI",
       action: async (text: string) =>
-        menuModalsStore.nextModal(MenuModals.EDIT_PRESETS, {
+        menuModalsStore.nextModal(MenuModals.AI_TASK, {
           text,
         }),
     },
@@ -62,6 +62,7 @@ export const useActionMenuStore = defineStore("actionMenu", () => {
   };
 
   return {
+    DEFAULT_ACTIONS,
     getActionsMenu,
     registerActionsItems,
   };

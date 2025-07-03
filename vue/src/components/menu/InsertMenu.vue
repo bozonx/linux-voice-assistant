@@ -5,7 +5,7 @@
     <TextPreview v-else :text="props.text" class="absolute" />
   </div>
 
-  <ShortcutList :leftLetterKeys="leftLetterKeys" :spaceKey="spaceKey" />
+  <ShortcutList :text="props.text" :leftLetterKeys="leftLetterKeys" :spaceKey="spaceKey" />
 </div>
 
 </template>
@@ -40,13 +40,11 @@ const actionsMenu = computed(() => actionMenuStore.getActionsMenu());
 
 const leftLetterKeys = computed(() => 
   actionsMenu.value.map((item, index) => 
-    ({...item, disabled: index === 0 && !showInsertButton(), action: () => item.action(props.text ?? '')})));
+    ({...item, disabled: index === 0 && !showInsertButton()})));
 
 const spaceKey = computed(() => ({
-  name: "Insert",
-  icon: "insert",
+  ...actionsMenu.value[0],
   disabled: !showInsertButton(),
-  action: () => showInsertButton() && actionsMenu.value[0]?.action(props.text ?? ''),
 }));
 
 function handleNewText(newText: string) {

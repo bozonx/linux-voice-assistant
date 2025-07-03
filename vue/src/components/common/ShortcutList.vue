@@ -8,7 +8,7 @@
           small
           secondary
           :icon="props.spaceKey.icon"
-          @click="props.spaceKey.action"
+          @click="props.spaceKey.action(props.text)"
           >{{ props.spaceKey.name }}</Button
         >
       </div>
@@ -23,7 +23,7 @@
               small
               secondary
               :icon="item.icon"
-              @click="item.action"
+              @click="item.action(props.text)"
               >{{ item.name }}</Button
             >
           </div>
@@ -37,7 +37,7 @@
               small
               secondary
               :icon="item.icon"
-              @click="item.action"
+              @click="item.action(props.text)"
               >{{ item.name }}</Button
             >
           </div>
@@ -51,7 +51,7 @@
               small
               secondary
               :icon="item.icon"
-              @click="item.action"
+              @click="item.action(props.text)"
               >{{ item.name }}</Button
             >
           </div>
@@ -65,20 +65,12 @@
 <script setup lang="ts">
   import { PRESETS_KEYS } from "../../types";
   import { useKeysStore } from "../../stores/keys";
+  import { ActionItem } from "../../stores/actionMenu";
 
   const props = defineProps<{
-    spaceKey?: {
-      name: string;
-      icon?: string;
-      disabled?: boolean;
-      action: () => void;
-    };
-    leftLetterKeys: {
-      name: string;
-      icon?: string;
-      disabled?: boolean;
-      action: () => void;
-    }[];
+    text: string;
+    spaceKey?: ActionItem;
+    leftLetterKeys: ActionItem[];
   }>();
 
   const keysStore = useKeysStore();

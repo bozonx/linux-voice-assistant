@@ -3,7 +3,7 @@ import { ref } from "vue";
 
 export enum MenuModals {
   INSERT = "insert",
-  EDIT_PRESETS = "edit-presets",
+  AI_TASK = "ai-task",
   CORRECTION = "correction",
   DIFF = "diff",
   VOICE_RECOGNITION = "voice-recognition",
