@@ -1,21 +1,5 @@
 @import "tailwindcss";
 
-
-
-.form-row {
-  display: flex;
-  flex-direction: row;
-  gap: 4px;
-}
-
-.form-row .form-row-label {
-  width: 200px;
-}
-
-.form-row .form-row-input {
-  flex: 1;
-}
-
 .menu-title {
   @apply text-sm text-gray-400;
   line-height: 0.5rem;

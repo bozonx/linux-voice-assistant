@@ -1,8 +1,6 @@
 <template>
   <Overlay> 
-    <InsertMenu :showBackButton="false" 
-      :allowInsertButton="false"
-      :text="text" />
+    <InsertMenu :allowInsertButton="false" :text="text" />
   </Overlay>
 </template>
 

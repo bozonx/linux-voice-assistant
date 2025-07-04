@@ -1,16 +1,12 @@
 <template>
-  <div class="form-row">
-    <div v-if="label" class="form-row-label">{{ label }}</div>
-    <div class="form-row-input">
-      <textarea v-model="value" />
-    </div>
+  <div class="form-input">
+    <input type="text" v-model="value" />
   </div>
 </template>
 
 <script setup lang="ts">
   const props = defineProps<{
     value: string;
-    label?: string;
   }>();
 
   const emit = defineEmits<{
@@ -24,8 +20,7 @@
 </script>
 
 <style scoped>
-  textarea {
+  input {
     width: 100%;
-    height: 200px;
   }
 </style>
