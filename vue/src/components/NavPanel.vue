@@ -21,7 +21,6 @@
 </template>
 
 <script setup lang="ts">
-  import { useRouteParams } from "../stores/routeParams";
   import { useRouter } from "vue-router";
   import { useMenuModalsStore } from "../stores/menuModals";
   import { useCallApi } from "../composables/useCallApi";
@@ -32,7 +31,6 @@
   import { useNavPanelStore } from "../stores/navPanel";
 
   const router = useRouter();
-  const routeParamsStore = useRouteParams();
   const menuModalsStore = useMenuModalsStore();
   const { closeWindow } = useCallApi();
   const { globalEvents } = useGlobalEvents();

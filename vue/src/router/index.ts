@@ -5,9 +5,8 @@ import ConfigView from "../views/ConfigView.vue";
 import ChatView from "../views/ChatView.vue";
 import WriteModeView from "../views/WriteModeView.vue";
 import VoiceView from "../views/VoiceView.vue";
-import EditModeView from "../views/EditModeView.vue";
 import SelectModeView from "../views/SelectModeView.vue";
-import EmojiView from "../views/Emoji.vue";
+import AiTaskView from "../views/AiTaskView.vue";
 
 const router = createRouter({
   history: createMemoryHistory(),
@@ -48,7 +47,7 @@ const router = createRouter({
     {
       path: "/edit",
       name: "edit",
-      component: EditModeView,
+      component: AiTaskView,
     },
     {
       path: "/select",

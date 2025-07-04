@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-4 w-full h-full">
     <h1 class="menu-title">Проверьте результат</h1>
     <div class="flex-1 relative">
-      <TextPreview :text="props.text" />
+      <TextPreview :text="props.text" class="absolute" />
     </div>
 
     <ShortcutList :text="props.text" :leftLetterKeys="leftLetterKeys" :spaceKey="spaceKey" />

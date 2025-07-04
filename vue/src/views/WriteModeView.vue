@@ -1,11 +1,5 @@
 <template>
-  <div @keyup="handleWriteModeKeyUp" class="write-mode-container">
-    <div class="hint">
-      <div class="hint-text">
-        <span>Escape <button @click="doCorrection">to menu</button></span>
-        <span>Ctrl + q - <button @click="closeWindow">закрыть программу</button></span>
-      </div>
-    </div>
+  <div class="write-mode-container">
     <div class="textarea-container">
       <div ref="textareaRef" @input="handleInput" class="textarea" contenteditable="true"></div>
     </div>
@@ -13,18 +7,18 @@
 </template>
 
 <script setup lang="ts">
-import { useCallApi } from '../composables/useCallApi';
 import { useCallAi } from '../composables/useCallAi';
 import { DebounceCallIncreasing } from 'squidlet-lib';
 import { useMainInputHistoryStore } from '../stores/mainInputHistory';
 import miniToastr from "mini-toastr";
 import { useIpcStore } from '../stores/ipc';
 import { MenuModals, useMenuModalsStore } from '../stores/menuModals';
+import { useNavPanelStore } from '../stores/navPanel';
 
+const navPanelStore = useNavPanelStore();
 const mainInputHistoryStore = useMainInputHistoryStore()
 const ipcStore = useIpcStore();
 const debounced = new DebounceCallIncreasing()
-const { closeWindow } = useCallApi();
 const { correctText } = useCallAi();
 const menuModalsStore = useMenuModalsStore();
 const textareaRef = ref<HTMLDivElement>();
@@ -33,11 +27,10 @@ const correctedText = ref('');
 const correctionIsActual = ref(true);
 const appConfig = ipcStore.params!.appConfig;
 
-onMounted(() => {
-  if (textareaRef.value) {
-    focusTextarea();
-  }
-})
+navPanelStore.setParams({
+  escBtnText: "Escape",
+  escBtnAction: doCorrection,
+});
 
 watch(() => ipcStore.params?.isWindowShown, (isWindowShown) => {
   if (!isWindowShown) {
@@ -116,14 +109,14 @@ async function doCorrection() {
   toShortcuts();
 }
 
-const handleWriteModeKeyUp = (event: KeyboardEvent) => {
-  if (event.code === "Escape") {
-    doCorrection();
-  }
-  else if (event.code === "KeyQ" && event.ctrlKey) {
-    closeWindow();
-  }
-}
+// const handleWriteModeKeyUp = (event: KeyboardEvent) => {
+//   if (event.code === "Escape") {
+//     doCorrection();
+//   }
+//   else if (event.code === "KeyQ" && event.ctrlKey) {
+//     closeWindow();
+//   }
+// }
 </script>
 
 <style scoped>
@@ -152,22 +145,6 @@ const handleWriteModeKeyUp = (event: KeyboardEvent) => {
   background-color: #ebfff6;
   color: #000;
   font-size: 16px;
-
-}
-
-.hint {
-  width: 100%;
-  background-color: #3a8f58;
-  color: #fff;
-  padding: 4px;
-}
-
-.hint-text {
-  font-size: 12px;
-}
-
-.hint-text span {
-  margin-right: 50px;
 }
 
 </style>

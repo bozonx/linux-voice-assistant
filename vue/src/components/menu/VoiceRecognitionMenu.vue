@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-4 w-full h-full">
     <h1 class="menu-title">Распознавание</h1>
     <div class="flex-1 relative">
-      <TextPreview :text="recognizedText" />
+      <TextPreview :text="recognizedText" class="absolute" />
     </div>
 
     <ShortcutList :leftLetterKeys="leftLetterKeys" :spaceKey="spaceKey" />
