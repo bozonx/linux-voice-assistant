@@ -1,24 +1,31 @@
 <template>
-  <div class="overlay">
+  <div class="overlay" :class="{ 'modal': modal }">
     <slot />
   </div>
 </template>
 
+<script setup lang="ts">  
+const props = defineProps<{
+  modal?: boolean;
+}>();
+</script>
+
 <style scoped>
 .overlay {
-  position: fixed;
-  padding: 1.25rem;
   z-index: 100;
   width: 100%;
-  height: calc(100% - 40px);
-  background-color: rgb(0 8 2 / 80%);
-  color: white;
-  /* font-size: 24px; */
-  /* font-weight: bold; */
-  /* text-align: center; */
+  height: 100%;
   display: flex;
   flex-direction: column;
-  /* justify-content: center; */
-  /* align-items: center; */
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  height: calc(100% - 40px);
+  position: fixed;
+  background-color: rgb(0 8 2 / 80%);
+  color: white;
+  padding: 1.25rem;
 }
 </style>

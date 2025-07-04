@@ -1,5 +1,7 @@
 <template>
-  <AiTaskMenu :text="text" :escToEditor="true" />
+  <Overlay>
+    <AiTaskMenu :text="text" :escToEditor="true" />
+  </Overlay>
 </template>
 
 <script setup lang="ts">

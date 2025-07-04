@@ -14,12 +14,16 @@ import { useIpcStore } from '../../stores/ipc';
 import { ActionItem, useActionMenuStore } from '../../stores/actionMenu';
 import { useMainInputStore } from '../../stores/mainInput';
 import { useMenuModalsStore } from '../../stores/menuModals';
+import { useRouteParams } from '../../stores/routeParams';
+import { useRouter } from 'vue-router';
 
 const ipcStore = useIpcStore();
 const actionMenuStore = useActionMenuStore();
 const DEFAULT_ACTIONS = actionMenuStore.DEFAULT_ACTIONS;
 const mainInputStore = useMainInputStore();
 const menuModalsStore = useMenuModalsStore();
+const routeParams = useRouteParams();
+const router = useRouter();
 
 const props = defineProps({
   newText: {
@@ -47,8 +51,10 @@ const leftLetterKeys = [
     name: "Вставить в редактор",
     action: () => {
       mainInputStore.setValue(props.newText);
+      routeParams.setParams({ text: props.newText });
       mainInputStore.focus();
       menuModalsStore.closeAll();
+      router.push('/');
     },
   }
 ] as ActionItem[]

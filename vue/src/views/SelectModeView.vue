@@ -1,7 +1,9 @@
 <template>
-  <InsertMenu :showBackButton="false" 
-    :allowInsertButton="false"
-    :text="text" />
+  <Overlay> 
+    <InsertMenu :showBackButton="false" 
+      :allowInsertButton="false"
+      :text="text" />
+  </Overlay>
 </template>
 
 <script setup lang="ts">

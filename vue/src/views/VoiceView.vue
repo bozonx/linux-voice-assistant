@@ -1,3 +1,28 @@
 <template>
-  <VoiceMode />
+  <Overlay>
+    <VoiceRecognitionMenu v-if="ipcStore.params?.isWindowShown" :showBackButton="false" @corrected="handleCorrected" />
+  </Overlay>
 </template>
+
+<script setup lang="ts">
+import { useIpcStore } from '../stores/ipc';
+import { MenuModals, useMenuModalsStore } from '../stores/menuModals';
+
+const correctedText = ref('');
+const ipcStore = useIpcStore();
+const menuModalsStore = useMenuModalsStore();
+
+watch(() => ipcStore.params?.isWindowShown, (isWindowShown) => {
+  if (isWindowShown) {
+    correctedText.value = '';
+  }
+})
+
+function handleCorrected(text: string) {
+  correctedText.value = text;
+  menuModalsStore.nextModal(MenuModals.INSERT, {
+    text: correctedText.value,
+  });
+}
+
+</script>

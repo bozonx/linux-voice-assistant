@@ -22,7 +22,7 @@ pre {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.25);
   border-radius: 5px;
   border: 2px solid #000;
 }

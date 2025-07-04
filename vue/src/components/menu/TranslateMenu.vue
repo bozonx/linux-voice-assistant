@@ -24,8 +24,6 @@ const props = defineProps<{
   text: string;
 }>();
 
-console.log(props.text);
-
 const translate = async (toLangNum: number) => {
   const trimmedText = props.text.trim();
   
