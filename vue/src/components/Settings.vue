@@ -35,13 +35,7 @@
 
     <div v-if="currentTab === 1"> 
       <h2>Models</h2>
-      <FormRow label="OpenRouter Default API Key">
-        <FormInput v-model:value="userSettings.openrouterDefaultApiKey" />
-      </FormRow>
-      <FormRow label="OpenRouter Default Base URL">
-        <FormInput v-model:value="userSettings.openrouterDefaultBaseUrl" />
-      </FormRow>
-      <ItemsFieldRow :items="models" label="Models" @update:items="updateModels">
+      <ItemsFieldRow :items="llmModels" label="LLM Models" @update:items="updateModels">
       <template #item="{ item }">
         <FormInput v-model:value="item.id" label="Id" />
         <FormInput v-model:value="item.model" label="Model" />
@@ -57,9 +51,14 @@
 
       <h2>AI Model Usage</h2>
         <DropdownRow
-          v-model:value="userSettings.aiModelUsage.voiceRecognition"
+          v-model:value="userSettings.aiModelUsage.stt"
           :options="llmModels.map((model) => model.model)"
-          label="Voice Recognition"
+          label="Speech to Text"
+        />
+        <DropdownRow
+          v-model:value="userSettings.aiModelUsage.tts"
+          :options="llmModels.map((model) => model.model)"
+          label="Text to Speech"
         />
         <DropdownRow
           v-model:value="userSettings.aiModelUsage.translate"

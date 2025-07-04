@@ -51,8 +51,6 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
   toTranslateLanguages: ["en_US", "ru_RU", "es_AR", "tr_TR"],
 
   // Models
-  openrouterDefaultApiKey: "",
-  openrouterDefaultBaseUrl: "https://openrouter.ai/api/v1",
   llmModels: [],
   sttModels: [],
   ttsModels: [],
@@ -82,6 +80,7 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
 
   aiTasks: [
     {
+      name: "deepEdit",
       description: "Редактирование текста",
       context:
         "убрать косноязычие , добавить местоимения где они нужны, исправление смысла и запутанности, убрать дублирование, подобрать уместные синонимы",
@@ -115,14 +114,12 @@ export interface UserConfig {
   toTranslateLanguages: string[];
 
   // Models
-  openrouterDefaultApiKey: string;
-  openrouterDefaultBaseUrl: string;
   llmModels: {
     id: string;
     model: string;
     description?: string;
-    baseUrl?: string;
-    apiKey?: string;
+    baseUrl: string;
+    apiKey: string;
     tags?: ModelTag[];
   }[];
   sttModels: {
@@ -141,7 +138,8 @@ export interface UserConfig {
   }[];
   // which model to use for which task
   aiModelUsage: {
-    voiceRecognition: string;
+    stt: string;
+    tts: string;
 
     ////// simple models //////
     translate: string;
@@ -173,6 +171,7 @@ export interface UserConfig {
 
   // Custom AI tasks
   aiTasks: {
+    name: string;
     description: string;
     context: string;
   }[];

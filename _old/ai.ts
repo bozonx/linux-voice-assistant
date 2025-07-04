@@ -14,8 +14,9 @@ export class AI {
 
   async init() {
     this.openai = new OpenAI({
-      baseURL: this.userConfig.openrouterDefaultBaseUrl,
-      apiKey: this.userConfig.openrouterDefaultApiKey,
+      // TODO: revew
+      baseURL: this.userConfig.llmModels[0].baseUrl,
+      apiKey: this.userConfig.llmModels[0].apiKey,
       defaultHeaders: {
         //"HTTP-Referer": "<YOUR_SITE_URL>", // Optional. Site URL for rankings on openrouter.ai.
         "X-Title": "Librnet assistant", // Optional. Site title for rankings on openrouter.ai.

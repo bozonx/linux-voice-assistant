@@ -63,16 +63,14 @@ export const useAiRequest = () => {
       throw new Error("Model not found");
     }
 
-    const baseUrl = model.baseUrl || userConfig.openrouterDefaultBaseUrl;
-    const apiKey = model.apiKey || userConfig.openrouterDefaultApiKey;
     const modelName = model.model;
 
-    console.log(1, messages, 2, modelId, 3, modelName, 4, baseUrl, 5, apiKey);
+    console.log(1, messages, 2, modelId, 3, modelName, 4, model.baseUrl, 5, model.apiKey);
 
-    const result = await fetch(baseUrl + "/chat/completions", {
+    const result = await fetch(model.baseUrl + "/chat/completions", {
       method: "POST",
       headers: {
-        Authorization: "Bearer " + apiKey,
+        Authorization: "Bearer " + model.apiKey,
         // "HTTP-Referer": "<YOUR_SITE_URL>", // Optional. Site URL for rankings on openrouter.ai.
         "X-Title": "Librnet assistant", // Optional. Site title for rankings on openrouter.ai.
         "Content-Type": "application/json",
