@@ -1,3 +1,5 @@
+import { AI_TASKS } from "../vue/src/types";
+
 const CORRECTION_TASK = `
 Ты опытный редактор, умеющий ректировать как художественную так и не художественную литературу.
 Ты бережно относишься к исходному тексту и стараешься не менять его смысл.
@@ -28,7 +30,7 @@ const TRANSLATION_TASK = `
 - точно следуй правилам данными пользователем
 `;
 
-const DEEP_EDIT_TASK = `
+const CUSTOM_AI_TASKS = `
 Ты опыбный редактор, умеющий ректировать как художественную так и не художественную литературу.
 Ты бережно относишься к исходному тексту и стараешься не менять его посыл и основной смысл.
 
@@ -65,7 +67,7 @@ export const APP_CONFIG = {
   rulePrefix: "Используй следующие правила для выполнения задания",
   aiInstructions: {
     correction: CORRECTION_TASK,
-    deepEdit: DEEP_EDIT_TASK,
+    aiTasks: CUSTOM_AI_TASKS,
     translate: TRANSLATION_TASK,
     voiceCorrection: VOICE_CORRECTION_TASK,
   },

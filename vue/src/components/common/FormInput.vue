@@ -22,5 +22,10 @@
 <style scoped>
   input {
     width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 4px;
+    font-size: 14px;
+    line-height: 1.5rem;
   }
 </style>

@@ -112,7 +112,7 @@ export const useCallAi = () => {
     );
   };
 
-  const deepEdit = async (presetNum: number, text?: string) => {
+  const aiTasks = async (presetNum: number, text?: string) => {
     if (!text?.trim()) {
       miniToastr.error("Текст не выбран");
       return;
@@ -138,6 +138,6 @@ export const useCallAi = () => {
     sendChatMessage,
     correctText,
     translateText,
-    deepEdit,
+    aiTasks,
   };
 };

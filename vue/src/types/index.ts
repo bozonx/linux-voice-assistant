@@ -33,7 +33,7 @@ export enum AI_TASKS {
   VOICE_CORRECTION = "voiceCorrection",
   INTENTION_RECOGNITION = "intentionRecognition",
   CORRECTION = "correction",
-  DEEP_EDIT = "deepEdit",
+  AI_TASKS = "aiTasks",
   ASK_AI = "askAi",
 }
 

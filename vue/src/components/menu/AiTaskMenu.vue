@@ -24,7 +24,7 @@
 
   const menuModalsStore = useMenuModalsStore();
   const ipcStore = useIpcStore();
-  const { deepEdit } = useCallAi();
+  const { aiTasks } = useCallAi();
   const appConfig = ipcStore.params!.appConfig;
 
   async function makeDiff(index: number) {
@@ -36,7 +36,7 @@
 
     menuModalsStore.setPendingModal({ ai: true });
 
-    const newText = await deepEdit(index, props.text);
+    const newText = await aiTasks(index, props.text);
 
     menuModalsStore.clearPendingModal();
 
@@ -47,7 +47,7 @@
   }
 
   const leftLetterKeys = computed(() =>
-    ipcStore.params!.userConfig.aiRules.deepEdit.map((item, index) => ({
+    ipcStore.params!.userConfig.aiTasks.map((item, index) => ({
       name: item.description,
       action: () => makeDiff(index),
     }))

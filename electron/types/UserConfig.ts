@@ -44,13 +44,15 @@ const VOICE_CORRECTION_TASK = `
  `;
 
 export const DEFAULT_USER_CONFIG: UserConfig = {
-  openrouterDefaultApiKey: "",
-  openrouterDefaultBaseUrl: "https://openrouter.ai/api/v1",
+  // Common
   xdotoolBin: "/usr/bin/xdotool",
   appLanguage: "ru_RU",
   userLanguage: "ru_RU",
   toTranslateLanguages: ["en_US", "ru_RU", "es_AR", "tr_TR"],
-  internetSearchUrl: "https://duckduckgo.com/?q=",
+
+  // Models
+  openrouterDefaultApiKey: "",
+  openrouterDefaultBaseUrl: "https://openrouter.ai/api/v1",
   models: [],
   aiModelUsage: {
     voiceRecognition: "",
@@ -58,9 +60,11 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
     voiceCorrection: "",
     intentionRecognition: "",
     correction: "",
-    deepEdit: "",
+    aiTasks: "",
     askAI: "",
   },
+
+  // AI rules
   aiRules: {
     base: BASE_TASK,
     translate: TRANSLATION_TASK,
@@ -70,14 +74,18 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
     correction: CORRECTION_TASK,
     askAiForText: "",
     askAiShort: "Отвечай лаконично",
-    deepEdit: [
-      {
-        description: "Редактирование текста",
-        context:
-          "убрать косноязычие , добавить местоимения где они нужны, исправление смысла и запутанности, убрать дублирование, подобрать уместные синонимы",
-      },
-    ],
   },
+
+  aiTasks: [
+    {
+      description: "Редактирование текста",
+      context:
+        "убрать косноязычие , добавить местоимения где они нужны, исправление смысла и запутанности, убрать дублирование, подобрать уместные синонимы",
+    },
+  ],
+
+  // Plugins
+  internetSearchUrl: "https://duckduckgo.com/?q=",
 };
 
 export type ModelTag =
@@ -125,7 +133,7 @@ export interface UserConfig {
     correction: string;
 
     ////// Most smart models //////
-    deepEdit: string;
+    aiTasks: string;
     askAI: string;
   };
 
@@ -142,9 +150,11 @@ export interface UserConfig {
     correction: string;
     askAiShort: string;
     askAiForText: string;
-    deepEdit: {
-      description: string;
-      context: string;
-    }[];
   };
+
+  // Custom AI tasks
+  aiTasks: {
+    description: string;
+    context: string;
+  }[];
 }

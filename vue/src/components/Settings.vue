@@ -1,7 +1,6 @@
 <template>
   <div>
-    <h1>Settings</h1>
-    <div class="flex flex-row gap-2 mb-4">
+    <div class="flex flex-row gap-1 mb-4">
       <Button @click="currentTab = 0">Основные</Button>
       <Button @click="currentTab = 1">Модели</Button>
       <Button @click="currentTab = 2">AI Model Usage</Button>
@@ -83,9 +82,9 @@
           label="Correction"
         />
         <DropdownRow
-          v-model:value="userSettings.aiModelUsage.deepEdit"
+          v-model:value="userSettings.aiModelUsage.aiTasks"
           :options="models.map((model) => model.model)"
-          label="Deep Edit"
+          label="AI Tasks"
         />
         <DropdownRow
           v-model:value="userSettings.aiModelUsage.askAI"
@@ -124,7 +123,7 @@
     </div>
 
     <div v-if="currentTab === 4"> 
-      <ItemsFieldRow :items="deepEditItems" label="Deep edit" @update:items="updateDeepEdit">
+      <ItemsFieldRow :items="aiTasksItems" label="AI Tasks" @update:items="updateAiTasks">
           <template #item="{ item }">
             <FormRow label="Description">
               <FormInput v-model:value="item.description" label="Description" />
@@ -158,8 +157,8 @@
     return userSettings.value.models;
   });
 
-  const deepEditItems = computed(() => {
-    return userSettings.value.aiRules.deepEdit.map((item) => ({
+  const aiTasksItems = computed(() => {
+    return userSettings.value.aiTasks.map((item) => ({
       description: item.description,
       context: item.context,
     }));
@@ -185,8 +184,8 @@
     userSettings.value.models = items;
   };
 
-  const updateDeepEdit = (items: Record<string, any>[]) => {
-    userSettings.value.aiRules.deepEdit = items.map((item) => ({
+  const updateAiTasks = (items: Record<string, any>[]) => {
+    userSettings.value.aiTasks = items.map((item) => ({
       description: item.description,
       context: item.context,
     }));
