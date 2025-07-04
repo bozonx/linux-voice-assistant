@@ -57,7 +57,7 @@ export const useAiRequest = () => {
     console.log("chatCompletion", userConfig, taskName, messages);
 
     const modelId = (userConfig.aiModelUsage as any)[taskName];
-    const model = userConfig.models.find((model) => model.id === modelId);
+    const model = userConfig.llmModels.find((model) => model.id === modelId);
 
     if (!model) {
       throw new Error("Model not found");

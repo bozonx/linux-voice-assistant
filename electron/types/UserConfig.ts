@@ -53,7 +53,11 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
   // Models
   openrouterDefaultApiKey: "",
   openrouterDefaultBaseUrl: "https://openrouter.ai/api/v1",
-  models: [],
+  llmModels: [],
+  sttModels: [],
+  ttsModels: [],
+
+  // AI Model Usage
   aiModelUsage: {
     voiceRecognition: "",
     translate: "",
@@ -102,17 +106,18 @@ export type ModelTag =
   | "free";
 
 export interface UserConfig {
-  openrouterDefaultApiKey: string;
-  openrouterDefaultBaseUrl: string;
+  // Common
   xdotoolBin: string;
   // Language of the UI
   appLanguage: string;
   // Language of the user for questioning AI and getting answers
   userLanguage: string;
   toTranslateLanguages: string[];
-  internetSearchUrl: string;
 
-  models: {
+  // Models
+  openrouterDefaultApiKey: string;
+  openrouterDefaultBaseUrl: string;
+  llmModels: {
     id: string;
     model: string;
     description?: string;
@@ -120,7 +125,20 @@ export interface UserConfig {
     apiKey?: string;
     tags?: ModelTag[];
   }[];
-
+  sttModels: {
+    id: string;
+    model: string;
+    description?: string;
+    baseUrl?: string;
+    apiKey?: string;
+  }[];
+  ttsModels: {
+    id: string;
+    model: string;
+    description?: string;
+    baseUrl?: string;
+    apiKey?: string;
+  }[];
   // which model to use for which task
   aiModelUsage: {
     voiceRecognition: string;
@@ -137,6 +155,7 @@ export interface UserConfig {
     askAI: string;
   };
 
+  // AI rules
   // User's rules for every AI task
   aiRules: {
     base: string;
@@ -157,4 +176,7 @@ export interface UserConfig {
     description: string;
     context: string;
   }[];
+
+  // Plugins
+  internetSearchUrl: string;
 }

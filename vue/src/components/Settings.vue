@@ -58,37 +58,37 @@
       <h2>AI Model Usage</h2>
         <DropdownRow
           v-model:value="userSettings.aiModelUsage.voiceRecognition"
-          :options="models.map((model) => model.model)"
+          :options="llmModels.map((model) => model.model)"
           label="Voice Recognition"
         />
         <DropdownRow
           v-model:value="userSettings.aiModelUsage.translate"
-          :options="models.map((model) => model.model)"
+          :options="llmModels.map((model) => model.model)"
           label="Translate"
         />
         <DropdownRow
           v-model:value="userSettings.aiModelUsage.voiceCorrection"
-          :options="models.map((model) => model.model)"
+          :options="llmModels.map((model) => model.model)"
           label="Voice Correction"
         />
         <DropdownRow
           v-model:value="userSettings.aiModelUsage.intentionRecognition"
-          :options="models.map((model) => model.model)"
+          :options="llmModels.map((model) => model.model)"
           label="Intention Recognition"
         />
         <DropdownRow
           v-model:value="userSettings.aiModelUsage.correction"
-          :options="models.map((model) => model.model)"
+          :options="llmModels.map((model) => model.model)"
           label="Correction"
         />
         <DropdownRow
           v-model:value="userSettings.aiModelUsage.aiTasks"
-          :options="models.map((model) => model.model)"
+          :options="llmModels.map((model) => model.model)"
           label="AI Tasks"
         />
         <DropdownRow
           v-model:value="userSettings.aiModelUsage.askAI"
-          :options="models.map((model) => model.model)"
+          :options="llmModels.map((model) => model.model)"
           label="Ask AI"
         />
 
@@ -153,8 +153,8 @@
 
   const currentTab = ref(0);
 
-  const models = computed(() => {
-    return userSettings.value.models;
+  const llmModels = computed(() => {
+    return userSettings.value.llmModels;
   });
 
   const aiTasksItems = computed(() => {
@@ -181,7 +181,7 @@
   };
 
   const updateModels = (items: any[]) => {
-    userSettings.value.models = items;
+    userSettings.value.llmModels = items;
   };
 
   const updateAiTasks = (items: Record<string, any>[]) => {
