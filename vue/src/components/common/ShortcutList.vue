@@ -8,7 +8,7 @@
           small
           secondary
           :icon="props.spaceKey.icon"
-          @click="props.spaceKey.action(props.text)"
+          @click="props.spaceKey.action(props.text || '')"
           >{{ props.spaceKey.name }}</Button
         >
       </div>
@@ -23,7 +23,7 @@
               small
               secondary
               :icon="item.icon"
-              @click="item.action(props.text)"
+              @click="item.action(props.text || '')"
               >{{ item.name }}</Button
             >
           </div>
@@ -37,7 +37,7 @@
               small
               secondary
               :icon="item.icon"
-              @click="item.action(props.text)"
+              @click="item.action(props.text || '')"
               >{{ item.name }}</Button
             >
           </div>
@@ -51,7 +51,7 @@
               small
               secondary
               :icon="item.icon"
-              @click="item.action(props.text)"
+              @click="item.action(props.text || '')"
               >{{ item.name }}</Button
             >
           </div>
@@ -97,7 +97,7 @@
     if (!code) return;
 
     if (code === "Space") {
-      props.spaceKey?.action();
+      props.spaceKey?.action(props.text || '');
     }
 
     let codeLetter;
@@ -106,7 +106,7 @@
     }
     
     if (codeLetter && PRESETS_KEYS.includes(codeLetter)) {
-      props.leftLetterKeys[PRESETS_KEYS.indexOf(codeLetter)]?.action();
+      props.leftLetterKeys[PRESETS_KEYS.indexOf(codeLetter)]?.action(props.text || '');
     }
   });
 </script>

@@ -62,10 +62,11 @@ export const useActionMenuStore = defineStore("actionMenu", () => {
     },
     {
       name: "Перевод",
-      action: async (text: string) =>
+      action: async (text: string) => {
         menuModalsStore.nextModal(MenuModals.TRANSLATE, {
           text,
-        }),
+        });
+      },
     },
   ];
 

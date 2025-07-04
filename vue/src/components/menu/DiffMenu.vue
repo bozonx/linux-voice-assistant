@@ -12,6 +12,8 @@
 <script setup lang="ts">
 import { useIpcStore } from '../../stores/ipc';
 import { ActionItem, useActionMenuStore } from '../../stores/actionMenu';
+import { useMainInputStore } from '../../stores/mainInput';
+import { useMenuModalsStore } from '../../stores/menuModals';
 
 const props = defineProps({
   oldText: {
@@ -29,6 +31,8 @@ const emit = defineEmits<{
 }>();
 
 const ipcStore = useIpcStore();
+const mainInputStore = useMainInputStore();
+const menuModalsStore = useMenuModalsStore();
 const editedNewText = ref(props.newText);
 const actionMenuStore = useActionMenuStore();
 const DEFAULT_ACTIONS = actionMenuStore.DEFAULT_ACTIONS;
@@ -36,6 +40,14 @@ const DEFAULT_ACTIONS = actionMenuStore.DEFAULT_ACTIONS;
 const leftLetterKeys = [
   ipcStore.params?.windowId ? DEFAULT_ACTIONS[0] : undefined,
   DEFAULT_ACTIONS[1],
+  {
+    name: "Вставить в редактор",
+    action: () => {
+      mainInputStore.setValue(props.newText);
+      mainInputStore.focus();
+      menuModalsStore.closeAll();
+    },
+  }
 ] as ActionItem[]
 
 const spaceKey = ipcStore.params?.windowId ? DEFAULT_ACTIONS[0] : undefined;
