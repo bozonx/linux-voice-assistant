@@ -57,7 +57,8 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
 
   // AI Model Usage
   aiModelUsage: {
-    voiceRecognition: "",
+    stt: "",
+    tts: "",
     translate: "",
     voiceCorrection: "",
     intentionRecognition: "",

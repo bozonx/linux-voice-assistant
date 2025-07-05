@@ -3,51 +3,107 @@
     <div class="flex flex-row gap-1 mb-4">
       <Button @click="currentTab = 0">Основные</Button>
       <Button @click="currentTab = 1">Модели</Button>
-      <Button @click="currentTab = 2">AI Model Usage</Button>
-      <Button @click="currentTab = 3">AI rules</Button>
-      <Button @click="currentTab = 4">Deep edit</Button>
+      <Button @click="currentTab = 2">AI rules</Button>
+      <Button @click="currentTab = 3">Deep edit</Button>
+      <Button @click="currentTab = 4">Plugins</Button>
     </div>
 
     <div v-if="currentTab === 0"> 
-      <FormRow label="Xdotool Bin">
-        <FormInput v-model:value="userSettings.xdotoolBin" />
-      </FormRow>
-      <FormRow label="App Language">
-        <FormInput v-model:value="userSettings.appLanguage" />
-      </FormRow>
-      <FormRow label="User Language">
-        <FormInput v-model:value="userSettings.userLanguage" />
-      </FormRow>
-      <!-- <CheckboxRow v-model:value="userSettings.useDiffWithCorrection" label="Use Diff With Correction" /> -->
-      <ItemsFieldRow
-        :items="translateLanguagesItems"
-        label="To Translate Languages"
-        @update:items="updateTranslateLanguages"
-      >
-        <template #item="{ item }">
-          <FormInput v-model:value="item.value" />
-        </template>
-      </ItemsFieldRow>
-      <FormRow label="Internet Search URL">
-        <FormInput v-model:value="userSettings.internetSearchUrl" />
-      </FormRow>
+      <FieldRow label="Xdotool Bin">
+        <FieldInput v-model:value="userSettings.xdotoolBin" />
+      </FieldRow>
+      <FieldRow label="App Language">
+        <FieldInput v-model:value="userSettings.appLanguage" />
+      </FieldRow>
+      <FieldRow label="User Language">
+        <FieldInput v-model:value="userSettings.userLanguage" />
+      </FieldRow>
+      <FieldRow label="To Translate Languages">
+        <FieldItems
+          :items="translateLanguagesItems"
+          @update:items="updateTranslateLanguages"
+        >
+          <template #item="{ item, index }">
+            <div class="flex flex-row gap-2 w-full">
+              <KeyButton :index="index" />
+              <FieldInput class="flex-1" v-model:value="item.value" />
+            </div>
+          </template>
+        </FieldItems>
+      </FieldRow>
     </div>
 
     <div v-if="currentTab === 1"> 
       <h2>Models</h2>
-      <ItemsFieldRow :items="llmModels" label="LLM Models" @update:items="updateModels">
-      <template #item="{ item }">
-        <FormInput v-model:value="item.id" label="Id" />
-        <FormInput v-model:value="item.model" label="Model" />
-        <FormInput v-model:value="item.description" label="Description" />
-        <FormInput v-model:value="item.baseUrl" label="Base URL" />
-        <FormInput v-model:value="item.apiKey" label="API Key" />
-        <FormInput v-model:value="item.tags" label="Tags" />
-      </template>
-    </ItemsFieldRow>
-    </div>
 
-    <div v-if="currentTab === 2"> 
+      <FieldRow label="LLM Models">
+        <FieldItems :items="llmModels" @update:items="updateLLMModels">
+          <template #item="{ item }">
+            <FieldRow label="Id">
+              <FieldInput v-model:value="item.id" />
+            </FieldRow>
+            <FieldRow label="Model">
+              <FieldInput v-model:value="item.model" />
+            </FieldRow>
+            <FieldRow label="Description">
+              <FieldInput v-model:value="item.description" />
+            </FieldRow>
+            <FieldRow label="Base URL">
+              <FieldInput v-model:value="item.baseUrl" />
+            </FieldRow>
+            <FieldRow label="API Key">
+              <FieldInput v-model:value="item.apiKey" />
+            </FieldRow>
+            <FieldRow label="Tags">
+              <FieldInput v-model:value="item.tags" />
+            </FieldRow>
+          </template>
+        </FieldItems>
+      </FieldRow>
+
+      <FieldRow label="STT Models">
+        <FieldItems :items="sttModels" @update:items="updateSTTModels">
+          <template #item="{ item }">
+            <FieldRow label="Id">
+              <FieldInput v-model:value="item.id" />
+            </FieldRow>
+            <FieldRow label="Model">
+              <FieldInput v-model:value="item.model" />
+            </FieldRow>
+            <FieldRow label="Description">
+              <FieldInput v-model:value="item.description" />
+            </FieldRow>
+            <FieldRow label="Base URL">
+              <FieldInput v-model:value="item.baseUrl" />
+            </FieldRow>
+            <FieldRow label="API Key">
+              <FieldInput v-model:value="item.apiKey" />
+            </FieldRow>
+          </template>
+        </FieldItems>
+      </FieldRow>
+
+      <FieldRow label="TTS Models">
+        <FieldItems :items="ttsModels" @update:items="updateTTSModels">
+          <template #item="{ item }">
+            <FieldRow label="Id">
+              <FieldInput v-model:value="item.id" />
+            </FieldRow>
+            <FieldRow label="Model">
+              <FieldInput v-model:value="item.model" />
+            </FieldRow>
+            <FieldRow label="Description">
+              <FieldInput v-model:value="item.description" />
+            </FieldRow>
+            <FieldRow label="Base URL">
+              <FieldInput v-model:value="item.baseUrl" />
+            </FieldRow>
+            <FieldRow label="API Key">
+              <FieldInput v-model:value="item.apiKey" />
+            </FieldRow> 
+          </template>
+        </FieldItems>
+      </FieldRow>
 
       <h2>AI Model Usage</h2>
         <DropdownRow
@@ -90,38 +146,25 @@
           :options="llmModels.map((model) => model.model)"
           label="Ask AI"
         />
+    </div>
 
+    <div v-if="currentTab === 2"> 
+      <h2>AI rules</h2>
+        <FieldRow label="Общие правила для всех задач">
+          <FieldTextArea v-model:value="userSettings.aiRules.base" />
+        </FieldRow>
+        <FieldRow label="Быстрый перевод">
+          <FieldTextArea v-model:value="userSettings.aiRules.translate" />
+        </FieldRow>
+        <FieldRow label="Исправление пунктуации и коррекция после распознавания голоса">
+          <FieldTextArea v-model:value="userSettings.aiRules.voiceCorrection" />
+        </FieldRow>
+        <FieldRow label="Коррекция текста">
+          <FieldTextArea v-model:value="userSettings.aiRules.correction" />
+        </FieldRow>
     </div>
 
     <div v-if="currentTab === 3"> 
-      <h2>AI rules</h2>
-        <FormRow label="Base">
-          <FormTextArea v-model:value="userSettings.aiRules.base" />
-        </FormRow>
-        <FormRow label="Translate">
-          <FormTextArea v-model:value="userSettings.aiRules.translate" />
-        </FormRow>
-        <FormRow label="Voice Correction">
-          <FormTextArea v-model:value="userSettings.aiRules.voiceCorrection" />
-        </FormRow>
-        <FormRow label="To Calendar">
-          <FormTextArea v-model:value="userSettings.aiRules.toCalendar" />
-        </FormRow>
-        <FormRow label="Assistant">
-          <FormTextArea v-model:value="userSettings.aiRules.assistant" />
-        </FormRow>
-        <FormRow label="Correction">
-          <FormTextArea v-model:value="userSettings.aiRules.correction" />
-        </FormRow>
-        <FormRow label="Ask AI Short">
-          <FormTextArea v-model:value="userSettings.aiRules.askAiShort" />
-        </FormRow>
-        <FormRow label="Ask AI For Text">
-          <FormTextArea v-model:value="userSettings.aiRules.askAiForText" />
-        </FormRow>
-    </div>
-
-    <div v-if="currentTab === 4"> 
       <ItemsFieldRow :items="aiTasksItems" label="AI Tasks" @update:items="updateAiTasks">
           <template #item="{ item }">
             <FormRow label="Description">
@@ -134,6 +177,27 @@
         </ItemsFieldRow>
     </div>
 
+    <div v-if="currentTab === 4"> 
+      <h2>Plugins</h2>
+      <FieldRow label="Internet Search URL">
+        <FieldInput v-model:value="userSettings.internetSearchUrl" />
+      </FieldRow>
+
+
+      <FieldRow label="Добавление в календарь">
+        <FieldTextArea v-model:value="userSettings.aiRules.toCalendar" />
+      </FieldRow>
+      <FieldRow label="Помощник">
+        <FieldTextArea v-model:value="userSettings.aiRules.assistant" />
+      </FieldRow>
+      <FieldRow label="Быстрый запрос к AI">
+        <FieldTextArea v-model:value="userSettings.aiRules.askAiShort" />
+      </FieldRow>
+      <FieldRow label="Запрос к AI по тексту">
+        <FieldTextArea v-model:value="userSettings.aiRules.askAiForText" />
+      </FieldRow>
+    </div>
+
     <div class="buttons">
       <button @click="back">Back</button>
       <button @click="saveSettings">Save</button>
@@ -144,6 +208,7 @@
 <script setup lang="ts">
   import { useIpcStore } from "../stores/ipc";
   import { useRouter } from "vue-router";
+  import { PRESETS_KEYS } from "../types";
 
   const ipcStore = useIpcStore();
   const router = useRouter();
@@ -154,6 +219,14 @@
 
   const llmModels = computed(() => {
     return userSettings.value.llmModels;
+  });
+
+  const sttModels = computed(() => {
+    return userSettings.value.sttModels;
+  });
+
+  const ttsModels = computed(() => {
+    return userSettings.value.ttsModels;
   });
 
   const aiTasksItems = computed(() => {
@@ -179,8 +252,16 @@
     userSettings.value.toTranslateLanguages = items.map((item: Record<string, any>) => item.value);
   };
 
-  const updateModels = (items: any[]) => {
+  const updateLLMModels = (items: any[]) => {
     userSettings.value.llmModels = items;
+  };
+
+  const updateSTTModels = (items: any[]) => {
+    userSettings.value.sttModels = items;
+  };
+
+  const updateTTSModels = (items: any[]) => {
+    userSettings.value.ttsModels = items;
   };
 
   const updateAiTasks = (items: Record<string, any>[]) => {
