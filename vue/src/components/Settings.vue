@@ -39,22 +39,22 @@
       <FieldRow label="LLM Models">
         <FieldItems :items="llmModels" @update:items="updateLLMModels">
           <template #item="{ item }">
-            <FieldRow label="Id">
+            <FieldRow label="Id" vertical>
               <FieldInput v-model:value="item.id" />
             </FieldRow>
-            <FieldRow label="Model">
+            <FieldRow label="Model" vertical>
               <FieldInput v-model:value="item.model" />
             </FieldRow>
-            <FieldRow label="Description">
+            <FieldRow label="Description" vertical>
               <FieldInput v-model:value="item.description" />
             </FieldRow>
-            <FieldRow label="Base URL">
+            <FieldRow label="Base URL" vertical>
               <FieldInput v-model:value="item.baseUrl" />
             </FieldRow>
-            <FieldRow label="API Key">
+            <FieldRow label="API Key" vertical>
               <FieldInput v-model:value="item.apiKey" />
             </FieldRow>
-            <FieldRow label="Tags">
+            <FieldRow label="Tags" vertical>
               <FieldInput v-model:value="item.tags" />
             </FieldRow>
           </template>
@@ -64,19 +64,19 @@
       <FieldRow label="STT Models">
         <FieldItems :items="sttModels" @update:items="updateSTTModels">
           <template #item="{ item }">
-            <FieldRow label="Id">
+            <FieldRow label="Id" vertical>
               <FieldInput v-model:value="item.id" />
             </FieldRow>
-            <FieldRow label="Model">
+            <FieldRow label="Model" vertical>
               <FieldInput v-model:value="item.model" />
             </FieldRow>
-            <FieldRow label="Description">
+            <FieldRow label="Description" vertical>
               <FieldInput v-model:value="item.description" />
             </FieldRow>
-            <FieldRow label="Base URL">
+            <FieldRow label="Base URL" vertical>
               <FieldInput v-model:value="item.baseUrl" />
             </FieldRow>
-            <FieldRow label="API Key">
+            <FieldRow label="API Key" vertical>
               <FieldInput v-model:value="item.apiKey" />
             </FieldRow>
           </template>
@@ -86,19 +86,19 @@
       <FieldRow label="TTS Models">
         <FieldItems :items="ttsModels" @update:items="updateTTSModels">
           <template #item="{ item }">
-            <FieldRow label="Id">
+            <FieldRow label="Id" vertical>
               <FieldInput v-model:value="item.id" />
             </FieldRow>
-            <FieldRow label="Model">
+            <FieldRow label="Model" vertical>
               <FieldInput v-model:value="item.model" />
             </FieldRow>
-            <FieldRow label="Description">
+            <FieldRow label="Description" vertical>
               <FieldInput v-model:value="item.description" />
             </FieldRow>
-            <FieldRow label="Base URL">
+            <FieldRow label="Base URL" vertical>
               <FieldInput v-model:value="item.baseUrl" />
             </FieldRow>
-            <FieldRow label="API Key">
+            <FieldRow label="API Key" vertical>
               <FieldInput v-model:value="item.apiKey" />
             </FieldRow> 
           </template>
