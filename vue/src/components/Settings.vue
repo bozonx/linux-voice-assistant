@@ -208,9 +208,8 @@
       </FieldRow>
     </div>
 
-    <div class="buttons">
-      <button @click="back">Back</button>
-      <button @click="saveSettings">Save</button>
+    <div class="flex flex-row gap-2 mt-4">
+      <Button @click="saveSettings">Save</Button>
     </div>
   </div>
 </template>
@@ -220,7 +219,6 @@
   import { useRouter } from "vue-router";
 
   const ipcStore = useIpcStore();
-  const router = useRouter();
 
   const userSettings = ref(ipcStore.params!.userConfig);
 
@@ -245,10 +243,6 @@
       context: item.context,
     }));
   });
-
-  const back = () => {
-    router.push("/");
-  };
 
   const saveSettings = () => {
     ipcStore.saveUserConfig(userSettings.value);
@@ -276,6 +270,7 @@
 
   const updateAiTasks = (items: Record<string, any>[]) => {
     userSettings.value.aiTasks = items.map((item) => ({
+      name: item.name,
       description: item.description,
       context: item.context,
     }));

@@ -8,7 +8,15 @@
       <div class="flex-1">
         <slot name="item" :item="item" :index="index" />
       </div>
-      <Button small secondary @click="removeItem(index)">Remove</Button>
+      <div class="flex flex-row gap-2">
+        <div class="flex flex-col">
+          <Button class="move-btn" :disabled="index === 0" small secondary @click="moveItemUp(index)">^</Button>
+          <Button class="move-btn" :disabled="index === localItems.length - 1" small secondary @click="moveItemDown(index)">v</Button>
+        </div>
+        <div>
+          <Button small secondary @click="removeItem(index)">X</Button>
+        </div>
+      </div>
     </div>
     <div>
       <Button small secondary @click="addItem">Add</Button>
@@ -51,4 +59,20 @@
   const removeItem = (index: number) => {
     localItems.value.splice(index, 1);
   };
+
+  const moveItemUp = (index: number) => {
+    localItems.value.splice(index - 1, 0, localItems.value.splice(index, 1)[0]);
+  };
+
+  const moveItemDown = (index: number) => {
+    localItems.value.splice(index + 1, 0, localItems.value.splice(index, 1)[0]);
+  };
 </script>
+
+<style scoped>
+  .move-btn {
+    padding-top: 0;
+    padding-bottom: 0;
+    line-height: 1rem;
+  }
+</style>
