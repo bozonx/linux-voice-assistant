@@ -26,7 +26,7 @@
   }
 
   .form-row-label {
-    width: 200px;
+    width: 160px;
     text-align: right;
     line-height: 2rem;
   }

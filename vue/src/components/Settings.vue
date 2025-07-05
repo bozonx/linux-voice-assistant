@@ -1,14 +1,14 @@
 <template>
   <div>
     <div class="flex flex-row gap-1 mb-4">
-      <Button @click="currentTab = 0">Основные</Button>
-      <Button @click="currentTab = 1">Модели</Button>
-      <Button @click="currentTab = 2">AI rules</Button>
-      <Button @click="currentTab = 3">Deep edit</Button>
-      <Button @click="currentTab = 4">Plugins</Button>
+      <Button @click="currentTab = 0" :active="currentTab === 0">Основные</Button>
+      <Button @click="currentTab = 1" :active="currentTab === 1">Модели</Button>
+      <Button @click="currentTab = 2" :active="currentTab === 2">AI rules</Button>
+      <Button @click="currentTab = 3" :active="currentTab === 3">Ваши задачи для AI</Button>
+      <Button @click="currentTab = 4" :active="currentTab === 4">Плагины</Button>
     </div>
 
-    <div v-if="currentTab === 0"> 
+    <div v-show="currentTab === 0"> 
       <FieldRow label="Xdotool Bin">
         <FieldInput v-model:value="userSettings.xdotoolBin" />
       </FieldRow>
@@ -33,9 +33,7 @@
       </FieldRow>
     </div>
 
-    <div v-if="currentTab === 1"> 
-      <h2>Models</h2>
-
+    <div v-show="currentTab === 1"> 
       <FieldRow label="LLM Models">
         <FieldItems :items="llmModels" @update:items="updateLLMModels">
           <template #item="{ item }">
@@ -106,49 +104,49 @@
       </FieldRow>
 
       <h2>AI Model Usage</h2>
-        <DropdownRow
-          v-model:value="userSettings.aiModelUsage.stt"
-          :options="llmModels.map((model) => model.model)"
-          label="Speech to Text"
-        />
-        <DropdownRow
-          v-model:value="userSettings.aiModelUsage.tts"
-          :options="llmModels.map((model) => model.model)"
-          label="Text to Speech"
-        />
-        <DropdownRow
-          v-model:value="userSettings.aiModelUsage.translate"
-          :options="llmModels.map((model) => model.model)"
-          label="Translate"
-        />
-        <DropdownRow
-          v-model:value="userSettings.aiModelUsage.voiceCorrection"
-          :options="llmModels.map((model) => model.model)"
-          label="Voice Correction"
-        />
-        <DropdownRow
-          v-model:value="userSettings.aiModelUsage.intentionRecognition"
-          :options="llmModels.map((model) => model.model)"
-          label="Intention Recognition"
-        />
-        <DropdownRow
-          v-model:value="userSettings.aiModelUsage.correction"
-          :options="llmModels.map((model) => model.model)"
-          label="Correction"
-        />
-        <DropdownRow
-          v-model:value="userSettings.aiModelUsage.aiTasks"
-          :options="llmModels.map((model) => model.model)"
-          label="AI Tasks"
-        />
-        <DropdownRow
-          v-model:value="userSettings.aiModelUsage.askAI"
-          :options="llmModels.map((model) => model.model)"
-          label="Ask AI"
-        />
+      <DropdownRow
+        v-model:value="userSettings.aiModelUsage.stt"
+        :options="llmModels.map((model) => model.model)"
+        label="Speech to Text"
+      />
+      <DropdownRow
+        v-model:value="userSettings.aiModelUsage.tts"
+        :options="llmModels.map((model) => model.model)"
+        label="Text to Speech"
+      />
+      <DropdownRow
+        v-model:value="userSettings.aiModelUsage.translate"
+        :options="llmModels.map((model) => model.model)"
+        label="Translate"
+      />
+      <DropdownRow
+        v-model:value="userSettings.aiModelUsage.voiceCorrection"
+        :options="llmModels.map((model) => model.model)"
+        label="Voice Correction"
+      />
+      <DropdownRow
+        v-model:value="userSettings.aiModelUsage.intentionRecognition"
+        :options="llmModels.map((model) => model.model)"
+        label="Intention Recognition"
+      />
+      <DropdownRow
+        v-model:value="userSettings.aiModelUsage.correction"
+        :options="llmModels.map((model) => model.model)"
+        label="Correction"
+      />
+      <DropdownRow
+        v-model:value="userSettings.aiModelUsage.aiTasks"
+        :options="llmModels.map((model) => model.model)"
+        label="AI Tasks"
+      />
+      <DropdownRow
+        v-model:value="userSettings.aiModelUsage.askAI"
+        :options="llmModels.map((model) => model.model)"
+        label="Ask AI"
+      />
     </div>
 
-    <div v-if="currentTab === 2"> 
+    <div v-show="currentTab === 2"> 
       <h2>AI rules</h2>
         <FieldRow label="Общие правила для всех задач">
           <FieldTextArea v-model:value="userSettings.aiRules.base" />
@@ -164,20 +162,32 @@
         </FieldRow>
     </div>
 
-    <div v-if="currentTab === 3"> 
-      <ItemsFieldRow :items="aiTasksItems" label="AI Tasks" @update:items="updateAiTasks">
-          <template #item="{ item }">
-            <FormRow label="Description">
-              <FormInput v-model:value="item.description" label="Description" />
-            </FormRow>
-            <FormRow label="Context">
-              <FormTextArea v-model:value="item.context" />
-            </FormRow>
+    <div v-show="currentTab === 3">
+      <FieldRow label="AI Tasks">
+        <FieldItems :items="aiTasksItems" @update:items="updateAiTasks">
+          <template #item="{ item, index }">
+            <div class="flex flex-row gap-2 w-full">
+              <div>
+                <KeyButton :index="index" />
+              </div>
+              <div class="flex-1">
+                <FieldRow label="Name" vertical>
+                  <FieldInput v-model:value="item.name" />
+                </FieldRow>
+                <FieldRow label="Description" vertical>
+                  <FieldTextArea v-model:value="item.description" />
+                </FieldRow>
+                <FieldRow label="Context" vertical>
+                  <FieldTextArea v-model:value="item.context" />
+                </FieldRow>
+              </div>
+            </div>
           </template>
-        </ItemsFieldRow>
+        </FieldItems>
+      </FieldRow>
     </div>
 
-    <div v-if="currentTab === 4"> 
+    <div v-show="currentTab === 4"> 
       <h2>Plugins</h2>
       <FieldRow label="Internet Search URL">
         <FieldInput v-model:value="userSettings.internetSearchUrl" />
@@ -208,7 +218,6 @@
 <script setup lang="ts">
   import { useIpcStore } from "../stores/ipc";
   import { useRouter } from "vue-router";
-  import { PRESETS_KEYS } from "../types";
 
   const ipcStore = useIpcStore();
   const router = useRouter();
@@ -231,6 +240,7 @@
 
   const aiTasksItems = computed(() => {
     return userSettings.value.aiTasks.map((item) => ({
+      name: item.name,
       description: item.description,
       context: item.context,
     }));

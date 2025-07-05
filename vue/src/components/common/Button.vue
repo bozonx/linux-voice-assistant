@@ -12,6 +12,7 @@ const props = defineProps<{
   big?: boolean;
   primary?: boolean;
   secondary?: boolean;
+  active?: boolean;
 }>();
 
 const buttonClass = computed(() => {
@@ -21,6 +22,7 @@ const buttonClass = computed(() => {
     'big': props.big,
     'primary': props.primary,
     'secondary': props.secondary,
+    'active': props.active,
   };
 });
 
@@ -71,6 +73,11 @@ const onClick = () => {
 
 .small-pressed {
   background-color: #19528b;
+  color: white;
+}
+
+.active {
+  background-color: #1976D2;
   color: white;
 }
 
