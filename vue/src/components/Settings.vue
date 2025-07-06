@@ -105,46 +105,19 @@
 
       <h2>AI Model Usage</h2>
       <FieldRow label="Speech to Text">
-        <Dropdown v-model:value="userSettings.aiModelUsage.stt" :options="llmModels.map((model) => model.model)" />
+        <Dropdown v-model:value="userSettings.aiModelUsage.stt" :options="sttModels.map((model) => ({ id: model.id, name: model.id }))" />
       </FieldRow>
       <FieldRow label="Text to Speech">
-        <Dropdown v-model:value="userSettings.aiModelUsage.tts" :options="llmModels.map((model) => model.model)" />
+        <Dropdown v-model:value="userSettings.aiModelUsage.tts" :options="ttsModels.map((model) => ({ id: model.id, name: model.id }))" />
       </FieldRow>
       <FieldRow label="Translate">
-        <Dropdown v-model:value="userSettings.aiModelUsage.translate" :options="llmModels.map((model) => model.model)" />
+        <Dropdown v-model:value="userSettings.aiModelUsage.translate" :options="llmModels.map((model) => ({ id: model.id, name: model.id }))" />
       </FieldRow>
       <FieldRow label="Voice Correction">
-        <Dropdown v-model:value="userSettings.aiModelUsage.voiceCorrection" :options="llmModels.map((model) => model.model)" />
-      </FieldRow>
-      <FieldRow label="Intention Recognition">
-        <Dropdown v-model:value="userSettings.aiModelUsage.intentionRecognition" :options="llmModels.map((model) => model.model)" />
+        <Dropdown v-model:value="userSettings.aiModelUsage.voiceCorrection" :options="llmModels.map((model) => ({ id: model.id, name: model.id }))" />
       </FieldRow>
       <FieldRow label="Correction">
-        <Dropdown v-model:value="userSettings.aiModelUsage.correction" :options="llmModels.map((model) => model.model)" />
-      </FieldRow>
-      <FieldRow label="AI Tasks">
-        <Dropdown v-model:value="userSettings.aiModelUsage.aiTasks" :options="llmModels.map((model) => model.model)" />
-      </FieldRow>
-      <FieldRow label="Ask AI">
-        <Dropdown v-model:value="userSettings.aiModelUsage.askAI" :options="llmModels.map((model) => model.model)" />
-      </FieldRow>
-      <FieldRow label="Translate">
-        <Dropdown v-model:value="userSettings.aiModelUsage.translate" :options="llmModels.map((model) => model.model)" />
-      </FieldRow>
-      <FieldRow label="Voice Correction">
-        <Dropdown v-model:value="userSettings.aiModelUsage.voiceCorrection" :options="llmModels.map((model) => model.model)" />
-      </FieldRow>
-      <FieldRow label="Intention Recognition">
-        <Dropdown v-model:value="userSettings.aiModelUsage.intentionRecognition" :options="llmModels.map((model) => model.model)" />
-      </FieldRow>
-      <FieldRow label="Correction">
-        <Dropdown v-model:value="userSettings.aiModelUsage.correction" :options="llmModels.map((model) => model.model)" />
-      </FieldRow>
-      <FieldRow label="AI Tasks">
-        <Dropdown v-model:value="userSettings.aiModelUsage.aiTasks" :options="llmModels.map((model) => model.model)" />
-      </FieldRow>
-      <FieldRow label="Ask AI">
-        <Dropdown v-model:value="userSettings.aiModelUsage.askAI" :options="llmModels.map((model) => model.model)" />
+        <Dropdown v-model:value="userSettings.aiModelUsage.correction" :options="llmModels.map((model) => ({ id: model.id, name: model.id }))" />
       </FieldRow>
     </div>
 
@@ -190,7 +163,6 @@
     </div>
 
     <div v-show="currentTab === 4"> 
-      <h2>Plugins</h2>
       <FieldRow label="Internet Search URL">
         <FieldInput v-model:value="userSettings.internetSearchUrl" />
       </FieldRow>
@@ -206,6 +178,16 @@
       </FieldRow>
       <FieldRow label="Запрос к AI по тексту">
         <FieldTextArea v-model:value="userSettings.aiRules.askAiForText" />
+      </FieldRow>
+
+      <FieldRow label="Intention Recognition">
+        <Dropdown v-model:value="userSettings.aiModelUsage.intentionRecognition" :options="llmModels.map((model) => ({ id: model.id, name: model.id }))" />
+      </FieldRow>
+      <FieldRow label="AI Tasks">
+        <Dropdown v-model:value="userSettings.aiModelUsage.aiTasks" :options="llmModels.map((model) => ({ id: model.id, name: model.id }))" />
+      </FieldRow>
+      <FieldRow label="Ask AI">
+        <Dropdown v-model:value="userSettings.aiModelUsage.askAI" :options="llmModels.map((model) => ({ id: model.id, name: model.id }))" />
       </FieldRow>
     </div>
 

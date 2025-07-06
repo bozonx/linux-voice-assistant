@@ -1,13 +1,13 @@
 import { defineStore } from "pinia";
 import { MenuModals, useMenuModalsStore } from "./menuModals";
 
+export const DEFAULT_PARAMS = {
+  escBtnText: "",
+  escBtnAction: undefined as (() => void) | undefined,
+};
+
 export const useNavPanelStore = defineStore("navPanel", () => {
   const menuModalsStore = useMenuModalsStore();
-
-  const DEFAULT_PARAMS = {
-    escBtnText: "",
-    escBtnAction: undefined as (() => void) | undefined,
-  };
   const params = ref(DEFAULT_PARAMS);
 
   function setParams(newParams: Partial<typeof DEFAULT_PARAMS>) {

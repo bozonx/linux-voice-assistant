@@ -48,7 +48,7 @@
 
   const leftLetterKeys = computed(() =>
     ipcStore.params!.userConfig.aiTasks.map((item, index) => ({
-      name: item.description,
+      name: item.name,
       action: () => makeDiff(index),
     }))
   );

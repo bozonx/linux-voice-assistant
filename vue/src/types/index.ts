@@ -1,5 +1,6 @@
 import { AppConfig } from "../../../electron/types/types";
 import { UserConfig } from "../../../electron/types/UserConfig";
+import { PluginContext } from "./PluginContext";
 
 export enum START_MODES {
   SELECT = "select",
@@ -56,3 +57,5 @@ export const PRESETS_KEYS = [
   "v",
   "b",
 ];
+
+export type PluginIndex = (ctx: PluginContext) => void;
