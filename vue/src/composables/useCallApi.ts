@@ -38,17 +38,6 @@ export const useCallApi = () => {
     return value || "";
   }
 
-  const searchInInternet = async (text?: string) => {
-    let value = resolveText(text);
-
-    if (!value?.trim()) {
-      miniToastr.error("Текст не выбран");
-      return;
-    }
-
-    await ipcStore.callFunction("openInBrowserAndClose", [value]);
-  };
-
   const askAIShort = async (text?: string) => {
     let value = resolveText(text);
 
@@ -75,7 +64,6 @@ export const useCallApi = () => {
     resolveText,
     closeWindow,
     typeIntoWindowAndClose,
-    searchInInternet,
     askAIShort,
     askAItext,
   };

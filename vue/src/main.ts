@@ -4,7 +4,6 @@ import router from "./router";
 import pinia from "./stores";
 import miniToastr from "mini-toastr";
 import "./assets/main.css";
-import usePlugins from "./plugins";
 
 // // Проверяем, запущено ли приложение в Electron
 // const isElectron = window.electron !== undefined;
@@ -17,8 +16,6 @@ app.use(pinia);
 app.mount("#app");
 
 miniToastr.init({ timeout: 10000 });
-
-// usePlugins();
 
 // Добавляем глобальный тип для window
 // declare global {

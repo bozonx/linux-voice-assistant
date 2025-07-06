@@ -18,6 +18,7 @@ import { InitParams } from './types';
 import { useRouter } from 'vue-router';
 import { GlobalEvents, useGlobalEvents } from './composables/useGlobalEvents';
 import { useKeysStore } from './stores/keys';
+// import usePlugins from "./plugins";
 
 const ipcStore = useIpcStore();
 const router = useRouter();
@@ -54,6 +55,7 @@ const handleKeyUp = (event: KeyboardEvent) => {
   keysStore.setKeyup(event);
 };
 
+// usePlugins();
 </script>
 
 <style scoped>

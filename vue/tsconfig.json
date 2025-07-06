@@ -34,12 +34,6 @@
     "components.d.ts",
     "auto-imports.d.ts",
     "../common/useAiRequest.ts",
-    "src/components/DropdownRow",
-    "../_old/Overlays.vue",
-    "../_old/voiceRecognition.ts",
-    "../_old/useHandleKeys.ts",
-    "../_old/EditorInsertToolbar.vue",
-    "../_old/EditorActions.vue",
-    "../_old/EditorTextToolbar.vue"
+    "src/components/DropdownRow.vue"
   ]
 }

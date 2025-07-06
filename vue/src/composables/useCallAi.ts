@@ -119,12 +119,12 @@ export const useCallAi = () => {
     }
 
     return await aiRequest(
-      AI_TASKS.DEEP_EDIT,
+      AI_TASKS.AI_TASKS,
       prepareAiMessages(
         ipcStore.params!.userConfig,
-        AI_TASKS.DEEP_EDIT,
+        AI_TASKS.AI_TASKS,
         text,
-        ipcStore.params!.userConfig.aiRules[AI_TASKS.DEEP_EDIT][presetNum].context
+        ipcStore.params!.userConfig.aiTasks[presetNum].context
       )
     );
   };

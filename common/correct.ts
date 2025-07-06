@@ -3,7 +3,6 @@ import fs from "fs/promises";
 import { createOrReadConfig } from "../electron/userConfigManager";
 import { getCommandLineArgs, typeIntoWindow } from "./helpers";
 import { useAiRequest } from "./useAiRequest";
-import { AI_TASKS } from "../vue/src/types";
 
 (async () => {
   const args = getCommandLineArgs();
@@ -16,8 +15,8 @@ import { AI_TASKS } from "../vue/src/types";
   try {
     result = await chatCompletion(
       userConfig,
-      AI_TASKS.CORRECTION,
-      prepareAiMessages(userConfig, AI_TASKS.CORRECTION, args.selectedText)
+      "correction",
+      prepareAiMessages(userConfig, "correction", args.selectedText)
     );
 
     await fs.appendFile(

@@ -1,5 +1,4 @@
 import dbus from "@homebridge/dbus-native";
-import { START_MODES } from "../vue/src/types";
 import { BrowserWindow } from "electron";
 
 // dbus-send --session --type=method_call --dest=org.librass.Service /org/librass/Object org.librass.Interface.SwitchMode string:write

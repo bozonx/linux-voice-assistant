@@ -1,3 +1,4 @@
+import miniToastr from "mini-toastr";
 import { useActionMenuStore } from "../stores/actionMenu";
 import { useEditMenuStore } from "../stores/edditMenu";
 import { useMainInputStore } from "../stores/mainInput";
@@ -6,6 +7,7 @@ import { useNavPanelStore } from "../stores/navPanel";
 import { useRouteParams } from "../stores/routeParams";
 import { PluginIndex } from "../types";
 import { PluginContext } from "../types/PluginContext";
+import { useIpcStore } from "../stores/ipc";
 
 export default function usePluginContext() {
   const actionMenuStore = useActionMenuStore();
@@ -14,6 +16,7 @@ export default function usePluginContext() {
   const menuModalsStore = useMenuModalsStore();
   const navPanelStore = useNavPanelStore();
   const routeParamsStore = useRouteParams();
+  const ipcStore = useIpcStore();
 
   const ctx: PluginContext = {
     registerActionsItems: (actions) => {
@@ -21,6 +24,12 @@ export default function usePluginContext() {
     },
     registerEditItems: (edit) => {
       editMenuStore.registerEditItems(edit);
+    },
+    getMainInputValue: () => {
+      return mainInputStore.value;
+    },
+    getMainInputSelectedText: () => {
+      return mainInputStore.selectedText;
     },
     setMainInputValue: (value) => {
       mainInputStore.setValue(value);
@@ -51,6 +60,12 @@ export default function usePluginContext() {
     },
     toEditor: (text) => {
       routeParamsStore.toEditor(text);
+    },
+    toast: (message, type = "info", timeout = 10000) => {
+      miniToastr[type](message, "top-center", timeout);
+    },
+    callApiFunction: (method, params) => {
+      return ipcStore.callFunction(method, params);
     },
   };
 
