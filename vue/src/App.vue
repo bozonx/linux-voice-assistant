@@ -40,11 +40,16 @@ onMounted(() => {
       router.push('/');
     }
 
-    usePlugins()
+    globalEvents.emit(GlobalEvents.INITED);
+    
   });
 
   window.electron.ipcRenderer.on('vosk-text', (data: string) => {
     globalEvents.emit(GlobalEvents.VOICE_RECOGNITION, data);
+  });
+
+  globalEvents.once(GlobalEvents.INITED, () => {
+    usePlugins();
   });
 });
 
@@ -56,8 +61,6 @@ const handleKeyUp = (event: KeyboardEvent) => {
   globalEvents.emit(GlobalEvents.KEY_UP, event);
   keysStore.setKeyup(event);
 };
-
-
 </script>
 
 <style scoped>
