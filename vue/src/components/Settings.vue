@@ -119,22 +119,34 @@
       <FieldRow label="Correction">
         <Dropdown v-model:value="userSettings.aiModelUsage.correction" :options="llmModels.map((model) => ({ id: model.id, name: model.id }))" />
       </FieldRow>
+      <FieldRow label="AI Tasks">
+        <Dropdown v-model:value="userSettings.aiModelUsage.aiTasks" :options="llmModels.map((model) => ({ id: model.id, name: model.id }))" />
+      </FieldRow>
+      <FieldRow label="Ask AI">
+        <Dropdown v-model:value="userSettings.aiModelUsage.askAI" :options="llmModels.map((model) => ({ id: model.id, name: model.id }))" />
+      </FieldRow>
     </div>
 
     <div v-show="currentTab === 2"> 
       <h2>AI rules</h2>
-        <FieldRow label="Общие правила для всех задач">
-          <FieldTextArea v-model:value="userSettings.aiRules.base" />
-        </FieldRow>
-        <FieldRow label="Быстрый перевод">
-          <FieldTextArea v-model:value="userSettings.aiRules.translate" />
-        </FieldRow>
-        <FieldRow label="Исправление пунктуации и коррекция после распознавания голоса">
-          <FieldTextArea v-model:value="userSettings.aiRules.voiceCorrection" />
-        </FieldRow>
-        <FieldRow label="Коррекция текста">
-          <FieldTextArea v-model:value="userSettings.aiRules.correction" />
-        </FieldRow>
+      <FieldRow label="Общие правила для всех задач">
+        <FieldTextArea v-model:value="userSettings.aiRules.base" />
+      </FieldRow>
+      <FieldRow label="Быстрый перевод">
+        <FieldTextArea v-model:value="userSettings.aiRules.translate" />
+      </FieldRow>
+      <FieldRow label="Исправление пунктуации и коррекция после распознавания голоса">
+        <FieldTextArea v-model:value="userSettings.aiRules.voiceCorrection" />
+      </FieldRow>
+      <FieldRow label="Коррекция текста">
+        <FieldTextArea v-model:value="userSettings.aiRules.correction" />
+      </FieldRow>
+      <FieldRow label="Быстрый запрос к AI">
+        <FieldTextArea v-model:value="userSettings.aiRules.askAiShort" />
+      </FieldRow>
+      <FieldRow label="Запрос к AI по тексту">
+        <FieldTextArea v-model:value="userSettings.aiRules.askAiForText" />
+      </FieldRow>
     </div>
 
     <div v-show="currentTab === 3">
@@ -162,10 +174,14 @@
       </FieldRow>
     </div>
 
-    <div v-show="currentTab === 4"> 
-      <FieldRow label="Internet Search URL">
+    <div v-show="currentTab === 4">
+      <!-- <FieldRow label="Internet Search URL">
         <FieldInput v-model:value="userSettings.internetSearchUrl" />
-      </FieldRow>
+      </FieldRow> -->
+      <template v-for="pluginCfg in pluginsStore.pluginConfig">
+        <h2>{{ pluginCfg.pluginName }}</h2>
+        <FieldsByCfg :config="pluginCfg.fields" />
+      </template>
 
       <FieldRow label="Добавление в календарь">
         <FieldTextArea v-model:value="userSettings.aiRules.toCalendar" />
@@ -173,21 +189,9 @@
       <FieldRow label="Помощник">
         <FieldTextArea v-model:value="userSettings.aiRules.assistant" />
       </FieldRow>
-      <FieldRow label="Быстрый запрос к AI">
-        <FieldTextArea v-model:value="userSettings.aiRules.askAiShort" />
-      </FieldRow>
-      <FieldRow label="Запрос к AI по тексту">
-        <FieldTextArea v-model:value="userSettings.aiRules.askAiForText" />
-      </FieldRow>
 
       <FieldRow label="Intention Recognition">
         <Dropdown v-model:value="userSettings.aiModelUsage.intentionRecognition" :options="llmModels.map((model) => ({ id: model.id, name: model.id }))" />
-      </FieldRow>
-      <FieldRow label="AI Tasks">
-        <Dropdown v-model:value="userSettings.aiModelUsage.aiTasks" :options="llmModels.map((model) => ({ id: model.id, name: model.id }))" />
-      </FieldRow>
-      <FieldRow label="Ask AI">
-        <Dropdown v-model:value="userSettings.aiModelUsage.askAI" :options="llmModels.map((model) => ({ id: model.id, name: model.id }))" />
       </FieldRow>
     </div>
 
@@ -199,8 +203,10 @@
 
 <script setup lang="ts">
   import { useIpcStore } from "../stores/ipc";
+  import { usePluginsStore } from "../stores/plugins";
 
   const ipcStore = useIpcStore();
+  const pluginsStore = usePluginsStore();
   const userSettings = ref(ipcStore.params!.userConfig);
   const currentTab = ref(0);
   const llmModels = computed(() => {

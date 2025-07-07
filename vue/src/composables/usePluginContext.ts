@@ -6,8 +6,9 @@ import { useMenuModalsStore } from "../stores/menuModals";
 import { useNavPanelStore } from "../stores/navPanel";
 import { useRouteParams } from "../stores/routeParams";
 import { PluginIndex } from "../types";
-import { PluginContext } from "../types/PluginContext";
+import { PluginConfig, PluginContext } from "../types/PluginContext";
 import { useIpcStore } from "../stores/ipc";
+import { usePluginsStore } from "../stores/plugins";
 
 export default function usePluginContext() {
   const actionMenuStore = useActionMenuStore();
@@ -17,6 +18,7 @@ export default function usePluginContext() {
   const navPanelStore = useNavPanelStore();
   const routeParamsStore = useRouteParams();
   const ipcStore = useIpcStore();
+  const pluginsStore = usePluginsStore();
 
   const ctx: PluginContext = {
     registerActionsItems: (actions) => {
@@ -66,6 +68,9 @@ export default function usePluginContext() {
     },
     callApiFunction: (method, params) => {
       return ipcStore.callFunction(method, params);
+    },
+    registerPluginConfig: (config: PluginConfig) => {
+      pluginsStore.registerPluginConfig(config);
     },
   };
 

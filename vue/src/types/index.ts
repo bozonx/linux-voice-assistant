@@ -59,3 +59,14 @@ export const PRESETS_KEYS = [
 ];
 
 export type PluginIndex = (ctx: PluginContext) => void;
+
+export interface InputConfigItem {
+  type: "text" | "textarea" | "select" | "checkbox";
+  name: string;
+  label: string;
+  defaultValue: any;
+  options?: {
+    id: string;
+    name: string;
+  }[];
+}

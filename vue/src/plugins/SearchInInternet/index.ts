@@ -5,20 +5,21 @@ export default function pluginIndex(ctx: PluginContext) {
   ctx.registerActionsItems([
     {
       name: "Search in Internet",
-      action: async () => {
-        let value = ctx.getMainInputValue();
-
-        if (ctx.getMainInputSelectedText()) {
-          value = ctx.getMainInputSelectedText();
-        }
-
-        if (!value?.trim()) {
-          ctx.toast("Текст не выбран", "warn");
-          return;
-        }
-
-        await ctx.callApiFunction("openInBrowserAndClose", [value]);
+      action: async (text: string) => {
+        await ctx.callApiFunction("openInBrowserAndClose", [text]);
       },
     },
   ]);
+
+  ctx.registerPluginConfig({
+    pluginName: "SearchInInternet",
+    fields: [
+      {
+        type: "text",
+        name: "url",
+        label: "Internet Search URL",
+        defaultValue: "https://duckduckgo.com/?q=",
+      },
+    ],
+  });
 }
