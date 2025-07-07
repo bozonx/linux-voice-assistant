@@ -21,6 +21,10 @@ const props = defineProps({
   onCorrected: {
     type: Function,
     default: () => {}
+  },
+  escToMenu: {
+    type: Boolean,
+    default: false
   }
 });
 
@@ -35,13 +39,17 @@ const { toast } = useToast();
 const navPanelStore = useNavPanelStore();
 let listenerIndex = -1;
 
-navPanelStore.resetNavParams({
-  escBtnAction: () => {
-    globalEvents.removeListener(listenerIndex);
-    stopVoiceRecognition();
-    menuModalsStore.back();
-  }
-});
+if (props.escToMenu) {
+  navPanelStore.resetNavParams({
+    escBtnText: "Меню",
+    escBtnAction: () => finish()
+  });
+}
+else {
+  navPanelStore.resetNavParams({
+    escBtnAction: () => cancel(),
+  });
+}
 
 // TODO: поидее надо esc
 const leftLetterKeys = [

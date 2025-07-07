@@ -1,6 +1,10 @@
 <template>
   <Overlay>
-    <VoiceRecognitionMenu v-if="ipcStore.params?.isWindowShown" :showBackButton="false" @corrected="handleCorrected" />
+    <VoiceRecognitionMenu 
+      v-if="ipcStore.params?.isWindowShown"
+      :showBackButton="false"
+      :escToMenu="true"
+       @corrected="handleCorrected" />
   </Overlay>
 </template>
 
