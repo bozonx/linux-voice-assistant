@@ -72,6 +72,9 @@ export default function usePluginContext() {
     registerPluginConfig: (config: PluginConfig) => {
       pluginsStore.registerPluginConfig(config);
     },
+    getUserConfig: () => {
+      return ipcStore.params!.userConfig;
+    },
   };
 
   function use(plugin: PluginIndex) {

@@ -6,13 +6,23 @@ export default function pluginIndex(ctx: PluginContext) {
     {
       name: "Search in Internet",
       action: async (text: string) => {
-        await ctx.callApiFunction("openInBrowserAndClose", [text]);
+        const baseUrl = ctx.getUserConfig().plugins?.SearchInInternet?.url;
+
+        if (!baseUrl) {
+          ctx.toast("No base URL for search in internet", "warn");
+          return;
+        }
+
+        const url = baseUrl + encodeURIComponent(text);
+
+        await ctx.callApiFunction("openInBrowserAndClose", [url]);
       },
     },
   ]);
 
   ctx.registerPluginConfig({
     pluginName: "SearchInInternet",
+    label: "Search in Internet",
     fields: [
       {
         type: "text",

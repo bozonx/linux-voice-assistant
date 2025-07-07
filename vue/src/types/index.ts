@@ -64,7 +64,8 @@ export interface InputConfigItem {
   type: "text" | "textarea" | "select" | "checkbox";
   name: string;
   label: string;
-  defaultValue: any;
+  value?: any;
+  defaultValue?: any;
   options?: {
     id: string;
     name: string;

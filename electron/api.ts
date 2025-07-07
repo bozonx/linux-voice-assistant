@@ -36,20 +36,15 @@ export class Api {
   // Функция для открытия URL в браузере
   async openInBrowserAndClose(url: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      exec(
-        `xdg-open "${this.userConfig.internetSearchUrl}${encodeURIComponent(
-          url
-        )}"`,
-        (error) => {
-          if (error) {
-            console.error("Error opening browser:", error);
-            reject(error);
-            return;
-          }
-          resolve();
-          this.mainWindow.close();
+      exec(`xdg-open "${url}"`, (error) => {
+        if (error) {
+          console.error("Error opening browser:", error);
+          reject(error);
+          return;
         }
-      );
+        resolve();
+        this.mainWindow.close();
+      });
     });
   }
 

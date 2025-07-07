@@ -18,18 +18,18 @@ const TRANSLATION_TASK = `
 - Восстанавливай пунктуацию и удаляй лишние пробелы
 - Предложения должны начинаться с большой буквы и заканчиваться точкой`;
 
-const TO_CALENDAR_TASK = `
-Твоя задача распознать намерение пользователя внести дело в календарь
-- Дата может быть сказана как завтра, после завтра, через неделю
-- Время так же может быть сказана в свободном формате, постарайся понять про какое время говорит пользователь
-- Для даты используй часовой пояс -03:00 UTC
-- Если не распознал ничего то ничего не выводи
-- Если распознал намерение внести дело в календарь то выводи JSON объект с полями:
-  - date - дата в формате YYYY-MM-DD
-  - time - время в формате HH:MM
-  - content - то что пользователь хочет внести в календарь как задачу или заметку
-- Не выводи ничего лишнего, только JSON в указанном формате
-`;
+// const TO_CALENDAR_TASK = `
+// Твоя задача распознать намерение пользователя внести дело в календарь
+// - Дата может быть сказана как завтра, после завтра, через неделю
+// - Время так же может быть сказана в свободном формате, постарайся понять про какое время говорит пользователь
+// - Для даты используй часовой пояс -03:00 UTC
+// - Если не распознал ничего то ничего не выводи
+// - Если распознал намерение внести дело в календарь то выводи JSON объект с полями:
+//   - date - дата в формате YYYY-MM-DD
+//   - time - время в формате HH:MM
+//   - content - то что пользователь хочет внести в календарь как задачу или заметку
+// - Не выводи ничего лишнего, только JSON в указанном формате
+// `;
 
 const CORRECTION_TASK = `
 - Исправь этот текст и восстановь пунктуацию
@@ -61,7 +61,6 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
     tts: "",
     translate: "",
     voiceCorrection: "",
-    intentionRecognition: "",
     correction: "",
     aiTasks: "",
     askAI: "",
@@ -72,8 +71,6 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
     base: BASE_TASK,
     translate: TRANSLATION_TASK,
     voiceCorrection: VOICE_CORRECTION_TASK,
-    toCalendar: TO_CALENDAR_TASK,
-    assistant: "",
     correction: CORRECTION_TASK,
     askAiForText: "",
     askAiShort: "Отвечай лаконично",
@@ -89,7 +86,7 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
   ],
 
   // Plugins
-  internetSearchUrl: "https://duckduckgo.com/?q=",
+  plugins: [],
 };
 
 export type ModelTag =
@@ -145,7 +142,6 @@ export interface UserConfig {
     ////// simple models //////
     translate: string;
     voiceCorrection: string;
-    intentionRecognition: string;
     // correction of the text and restorastion after voice recognition
     correction: string;
 
@@ -161,10 +157,6 @@ export interface UserConfig {
     // simple translate
     translate: string;
     voiceCorrection: string;
-    // intention recognition
-    toCalendar: string;
-    // intention recognition
-    assistant: string;
     correction: string;
     askAiShort: string;
     askAiForText: string;
@@ -178,5 +170,5 @@ export interface UserConfig {
   }[];
 
   // Plugins
-  internetSearchUrl: string;
+  plugins: Record<string, any>;
 }

@@ -10,13 +10,13 @@
 
     <div v-show="currentTab === 0"> 
       <FieldRow label="Xdotool Bin">
-        <FieldInput v-model:value="userSettings.xdotoolBin" />
+        <FieldInput v-model:value="userConfig.xdotoolBin" />
       </FieldRow>
       <FieldRow label="App Language">
-        <FieldInput v-model:value="userSettings.appLanguage" />
+        <FieldInput v-model:value="userConfig.appLanguage" />
       </FieldRow>
       <FieldRow label="User Language">
-        <FieldInput v-model:value="userSettings.userLanguage" />
+        <FieldInput v-model:value="userConfig.userLanguage" />
       </FieldRow>
       <FieldRow label="To Translate Languages">
         <FieldItems
@@ -35,7 +35,7 @@
 
     <div v-show="currentTab === 1"> 
       <FieldRow label="LLM Models">
-        <FieldItems :items="llmModels" @update:items="updateLLMModels">
+        <FieldItems :items="userConfig.llmModels" @update:items="updateLLMModels">
           <template #item="{ item }">
             <FieldRow label="Id" vertical>
               <FieldInput v-model:value="item.id" />
@@ -60,7 +60,7 @@
       </FieldRow>
 
       <FieldRow label="STT Models">
-        <FieldItems :items="sttModels" @update:items="updateSTTModels">
+        <FieldItems :items="userConfig.sttModels" @update:items="updateSTTModels">
           <template #item="{ item }">
             <FieldRow label="Id" vertical>
               <FieldInput v-model:value="item.id" />
@@ -82,7 +82,7 @@
       </FieldRow>
 
       <FieldRow label="TTS Models">
-        <FieldItems :items="ttsModels" @update:items="updateTTSModels">
+        <FieldItems :items="userConfig.ttsModels" @update:items="updateTTSModels">
           <template #item="{ item }">
             <FieldRow label="Id" vertical>
               <FieldInput v-model:value="item.id" />
@@ -105,53 +105,53 @@
 
       <h2>AI Model Usage</h2>
       <FieldRow label="Speech to Text">
-        <Dropdown v-model:value="userSettings.aiModelUsage.stt" :options="sttModels.map((model) => ({ id: model.id, name: model.id }))" />
+        <Dropdown v-model:value="userConfig.aiModelUsage.stt" :options="userConfig.sttModels.map((model) => ({ id: model.id, name: model.id }))" />
       </FieldRow>
       <FieldRow label="Text to Speech">
-        <Dropdown v-model:value="userSettings.aiModelUsage.tts" :options="ttsModels.map((model) => ({ id: model.id, name: model.id }))" />
+        <Dropdown v-model:value="userConfig.aiModelUsage.tts" :options="userConfig.ttsModels.map((model) => ({ id: model.id, name: model.id }))" />
       </FieldRow>
       <FieldRow label="Translate">
-        <Dropdown v-model:value="userSettings.aiModelUsage.translate" :options="llmModels.map((model) => ({ id: model.id, name: model.id }))" />
+        <Dropdown v-model:value="userConfig.aiModelUsage.translate" :options="userConfig.llmModels.map((model) => ({ id: model.id, name: model.id }))" />
       </FieldRow>
       <FieldRow label="Voice Correction">
-        <Dropdown v-model:value="userSettings.aiModelUsage.voiceCorrection" :options="llmModels.map((model) => ({ id: model.id, name: model.id }))" />
+        <Dropdown v-model:value="userConfig.aiModelUsage.voiceCorrection" :options="userConfig.llmModels.map((model) => ({ id: model.id, name: model.id }))" />
       </FieldRow>
       <FieldRow label="Correction">
-        <Dropdown v-model:value="userSettings.aiModelUsage.correction" :options="llmModels.map((model) => ({ id: model.id, name: model.id }))" />
+        <Dropdown v-model:value="userConfig.aiModelUsage.correction" :options="userConfig.llmModels.map((model) => ({ id: model.id, name: model.id }))" />
       </FieldRow>
       <FieldRow label="AI Tasks">
-        <Dropdown v-model:value="userSettings.aiModelUsage.aiTasks" :options="llmModels.map((model) => ({ id: model.id, name: model.id }))" />
+        <Dropdown v-model:value="userConfig.aiModelUsage.aiTasks" :options="userConfig.llmModels.map((model) => ({ id: model.id, name: model.id }))" />
       </FieldRow>
       <FieldRow label="Ask AI">
-        <Dropdown v-model:value="userSettings.aiModelUsage.askAI" :options="llmModels.map((model) => ({ id: model.id, name: model.id }))" />
+        <Dropdown v-model:value="userConfig.aiModelUsage.askAI" :options="userConfig.llmModels.map((model) => ({ id: model.id, name: model.id }))" />
       </FieldRow>
     </div>
 
     <div v-show="currentTab === 2"> 
       <h2>AI rules</h2>
       <FieldRow label="Общие правила для всех задач">
-        <FieldTextArea v-model:value="userSettings.aiRules.base" />
+        <FieldTextArea v-model:value="userConfig.aiRules.base" />
       </FieldRow>
       <FieldRow label="Быстрый перевод">
-        <FieldTextArea v-model:value="userSettings.aiRules.translate" />
+        <FieldTextArea v-model:value="userConfig.aiRules.translate" />
       </FieldRow>
       <FieldRow label="Исправление пунктуации и коррекция после распознавания голоса">
-        <FieldTextArea v-model:value="userSettings.aiRules.voiceCorrection" />
+        <FieldTextArea v-model:value="userConfig.aiRules.voiceCorrection" />
       </FieldRow>
       <FieldRow label="Коррекция текста">
-        <FieldTextArea v-model:value="userSettings.aiRules.correction" />
+        <FieldTextArea v-model:value="userConfig.aiRules.correction" />
       </FieldRow>
       <FieldRow label="Быстрый запрос к AI">
-        <FieldTextArea v-model:value="userSettings.aiRules.askAiShort" />
+        <FieldTextArea v-model:value="userConfig.aiRules.askAiShort" />
       </FieldRow>
       <FieldRow label="Запрос к AI по тексту">
-        <FieldTextArea v-model:value="userSettings.aiRules.askAiForText" />
+        <FieldTextArea v-model:value="userConfig.aiRules.askAiForText" />
       </FieldRow>
     </div>
 
     <div v-show="currentTab === 3">
       <FieldRow label="AI Tasks">
-        <FieldItems :items="aiTasksItems" @update:items="updateAiTasks">
+        <FieldItems :items="userConfig.aiTasks" @update:items="updateAiTasks">
           <template #item="{ item, index }">
             <div class="flex flex-row gap-2 w-full">
               <div>
@@ -175,24 +175,10 @@
     </div>
 
     <div v-show="currentTab === 4">
-      <!-- <FieldRow label="Internet Search URL">
-        <FieldInput v-model:value="userSettings.internetSearchUrl" />
-      </FieldRow> -->
-      <template v-for="pluginCfg in pluginsStore.pluginConfig">
-        <h2>{{ pluginCfg.pluginName }}</h2>
-        <FieldsByCfg :config="pluginCfg.fields" />
+      <template v-for="plugin of plugins" :key="plugin.pluginName">
+        <h2>{{ plugin.label }}</h2>
+        <FieldsByCfg :config="plugin.fields" @update:values="updatePluginConfig(plugin.pluginName, $event)" />
       </template>
-
-      <FieldRow label="Добавление в календарь">
-        <FieldTextArea v-model:value="userSettings.aiRules.toCalendar" />
-      </FieldRow>
-      <FieldRow label="Помощник">
-        <FieldTextArea v-model:value="userSettings.aiRules.assistant" />
-      </FieldRow>
-
-      <FieldRow label="Intention Recognition">
-        <Dropdown v-model:value="userSettings.aiModelUsage.intentionRecognition" :options="llmModels.map((model) => ({ id: model.id, name: model.id }))" />
-      </FieldRow>
     </div>
 
     <div class="flex flex-row gap-2 mt-4">
@@ -204,57 +190,77 @@
 <script setup lang="ts">
   import { useIpcStore } from "../stores/ipc";
   import { usePluginsStore } from "../stores/plugins";
+  import useToast from "../composables/useToast";
 
   const ipcStore = useIpcStore();
   const pluginsStore = usePluginsStore();
-  const userSettings = ref(ipcStore.params!.userConfig);
+  const {toast} = useToast();
+  
+  const userConfig = ref(ipcStore.params!.userConfig);
   const currentTab = ref(0);
-  const llmModels = computed(() => {
-    return userSettings.value.llmModels;
+
+  onMounted(() => {
+    userConfig.value = ipcStore.params!.userConfig;
+    // fill default values for plugins which are not in userConfig.plugins
+    for (const pluginCfg of pluginsStore.pluginConfig) {
+      if (!userConfig.value.plugins[pluginCfg.pluginName]) {
+        userConfig.value.plugins[pluginCfg.pluginName] = {};
+
+        for (const field of pluginCfg.fields) {
+          userConfig.value.plugins[pluginCfg.pluginName][field.name] = field.defaultValue;
+        }
+      }
+    }
   });
-  const sttModels = computed(() => {
-    return userSettings.value.sttModels;
-  });
-  const ttsModels = computed(() => {
-    return userSettings.value.ttsModels;
-  });
-  const aiTasksItems = computed(() => {
-    return userSettings.value.aiTasks.map((item) => ({
-      name: item.name,
-      description: item.description,
-      context: item.context,
-    }));
+
+  const plugins = computed(() => {
+    return Object.keys(userConfig.value.plugins || {}).map((pluginName) => {
+      const pluginCfg = pluginsStore.pluginConfig.find((plugin) => plugin.pluginName === pluginName);
+      
+      if (!pluginCfg) {
+        return null;
+      }
+
+      return {
+        ...pluginCfg,
+        fields: pluginCfg.fields.map((field) => ({
+          ...field,
+          value: userConfig.value.plugins[pluginName][field.name],
+        })),
+      }
+    }).filter((plugin) => plugin !== null);
   });
 
   const saveSettings = () => {
-    ipcStore.saveUserConfig(userSettings.value);
+    ipcStore.saveUserConfig(userConfig.value);
+    toast("Settings saved", "success");
   };
 
   const translateLanguagesItems = computed(() => {
-    return (userSettings.value.toTranslateLanguages || []).map((lang) => ({ value: lang }));
+    return (userConfig.value.toTranslateLanguages || []).map((lang) => ({ value: lang }));
   });
 
   const updateTranslateLanguages = (items: Record<string, any>[]) => {
-    userSettings.value.toTranslateLanguages = items.map((item: Record<string, any>) => item.value);
+    userConfig.value.toTranslateLanguages = items.map((item: Record<string, any>) => item.value);
   };
 
   const updateLLMModels = (items: any[]) => {
-    userSettings.value.llmModels = items;
+    userConfig.value.llmModels = items;
   };
 
   const updateSTTModels = (items: any[]) => {
-    userSettings.value.sttModels = items;
+    userConfig.value.sttModels = items;
   };
 
   const updateTTSModels = (items: any[]) => {
-    userSettings.value.ttsModels = items;
+    userConfig.value.ttsModels = items;
   };
 
-  const updateAiTasks = (items: Record<string, any>[]) => {
-    userSettings.value.aiTasks = items.map((item) => ({
-      name: item.name,
-      description: item.description,
-      context: item.context,
-    }));
+  const updateAiTasks = (items: any[]) => {
+    userConfig.value.aiTasks = items
+  };
+
+  const updatePluginConfig = (pluginName: string, values: Record<string, any>) => {
+    userConfig.value.plugins[pluginName] = values;
   };
 </script>

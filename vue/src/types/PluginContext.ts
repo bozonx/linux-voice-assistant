@@ -3,6 +3,7 @@ import { ActionItem } from "../stores/actionMenu";
 import { MenuModals } from "../stores/menuModals";
 import { DEFAULT_PARAMS } from "../stores/navPanel";
 import { IpcResult, InputConfigItem } from "./index";
+import { UserConfig } from "../../../electron/types/UserConfig";
 
 export interface PluginContext {
   registerActionsItems(actions: ActionItem[]): void;
@@ -22,9 +23,11 @@ export interface PluginContext {
   toast(message: string, type: "success" | "error" | "warn" | "info"): void;
   callApiFunction(functionName: string, args: any[]): Promise<IpcResult>;
   registerPluginConfig(config: PluginConfig): void;
+  getUserConfig(): UserConfig;
 }
 
 export interface PluginConfig {
   pluginName: string;
+  label: string;
   fields: InputConfigItem[];
 }

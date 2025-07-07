@@ -12,6 +12,7 @@ export default function pluginIndex(ctx: PluginContext) {
 
   ctx.registerPluginConfig({
     pluginName: "FastNote",
+    label: "Fast Note",
     fields: [
       {
         type: "text",
