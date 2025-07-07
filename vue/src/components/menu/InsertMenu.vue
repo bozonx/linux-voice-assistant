@@ -13,6 +13,8 @@
 <script setup lang="ts">
 import { useIpcStore } from '../../stores/ipc';
 import { useActionMenuStore } from '../../stores/actionMenu';
+import { useNavPanelStore } from '../../stores/navPanel';
+import { useMenuModalsStore } from '../../stores/menuModals';
 
 const props = defineProps({
   text: {
@@ -37,6 +39,12 @@ const emit = defineEmits<{
 const ipcStore = useIpcStore();
 const actionMenuStore = useActionMenuStore();
 const actionsMenu = computed(() => actionMenuStore.getActionsMenu());
+const navPanelStore = useNavPanelStore();
+const menuModalsStore = useMenuModalsStore();
+
+navPanelStore.resetNavParams({
+  escBtnAction: menuModalsStore.back
+});
 
 const leftLetterKeys = computed(() => 
   actionsMenu.value.map((item, index) => 

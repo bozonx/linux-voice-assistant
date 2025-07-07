@@ -16,6 +16,7 @@ import { useMainInputStore } from '../../stores/mainInput';
 import { useMenuModalsStore } from '../../stores/menuModals';
 import { useRouteParams } from '../../stores/routeParams';
 import { useRouter } from 'vue-router';
+import { useNavPanelStore } from '../../stores/navPanel';
 
 const props = defineProps({
   text: {
@@ -24,6 +25,7 @@ const props = defineProps({
   },
 });
 
+const navPanelStore = useNavPanelStore();
 const actionMenuStore = useActionMenuStore();
 const DEFAULT_ACTIONS = actionMenuStore.DEFAULT_ACTIONS;
 const ipcStore = useIpcStore();
@@ -31,6 +33,11 @@ const mainInputStore = useMainInputStore();
 const menuModalsStore = useMenuModalsStore();
 const routeParams = useRouteParams();
 const router = useRouter();
+
+navPanelStore.resetNavParams({
+  toEditorText: props.text,
+  escBtnAction: menuModalsStore.back
+});
 
 const leftLetterKeys = [
   ipcStore.params?.windowId ? DEFAULT_ACTIONS[0] : undefined,
@@ -48,15 +55,4 @@ const leftLetterKeys = [
 ] as ActionItem[]
 
 const spaceKey = ipcStore.params?.windowId ? DEFAULT_ACTIONS[0] : undefined;
-
-// function goToEditor() {
-//   if (!props.showToEditor) return;
-  
-//   if (props.text?.trim()) {
-//     routeParamsStore.setParams({ text: props.text });
-//     mainInputStore.setValue(props.text);
-//   }
-
-//   router.push("/");
-// }
 </script>

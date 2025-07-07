@@ -1,58 +1,47 @@
 import { defineStore } from "pinia";
-import { MenuModals, useMenuModalsStore } from "./menuModals";
 
 export const DEFAULT_PARAMS = {
-  escBtnText: "",
+  escBtnVisible: true,
+  escBtnText: "Назад",
   escBtnAction: undefined as (() => void) | undefined,
+  toEditorBtnVisible: true,
+  toEditorText: "",
 };
 
 export const useNavPanelStore = defineStore("navPanel", () => {
-  const menuModalsStore = useMenuModalsStore();
   const params = ref(DEFAULT_PARAMS);
 
-  function setParams(newParams: Partial<typeof DEFAULT_PARAMS>) {
+  function upateNavParams(newParams: Partial<typeof DEFAULT_PARAMS>) {
     params.value = { ...params.value, ...newParams };
   }
 
-  function resetParams() {
-    params.value = DEFAULT_PARAMS;
+  function resetNavParams(newParams: Partial<typeof DEFAULT_PARAMS> = {}) {
+    params.value = { ...DEFAULT_PARAMS, ...newParams };
   }
 
-  // watch(
-  //   () => menuModalsStore.currentModal,
-  //   (newModal) => {
-  //     if (newModal !== MenuModals.NONE) {
-  //       resetParams();
-  //     }
+  // const escBtnVisible = computed(() => {
+  //   return menuModalsStore.anyModalOpen || params.value.escBtnVisible;
+  // });
+
+  // const escBtnText = computed(() => {
+  //   if (menuModalsStore.currentModal !== MenuModals.NONE) {
+  //     return DEFAULT_PARAMS.escBtnText;
   //   }
-  // );
 
-  const escBtnVisible = computed(() => {
-    return menuModalsStore.anyModalOpen || params.value.escBtnText;
-  });
+  //   return params.value.escBtnText;
+  // });
 
-  const escBtnText = computed(() => {
-    if (menuModalsStore.currentModal !== MenuModals.NONE) {
-      return "Назад";
-    }
+  // const escBtnAction = computed(() => {
+  //   if (menuModalsStore.anyModalOpen) {
+  //     return menuModalsStore.back;
+  //   }
 
-    return params.value.escBtnText;
-  });
-
-  const escBtnAction = computed(() => {
-    if (menuModalsStore.anyModalOpen) {
-      return menuModalsStore.back;
-    }
-
-    return params.value.escBtnAction;
-  });
+  //   return params.value.escBtnAction;
+  // });
 
   return {
     params,
-    escBtnVisible,
-    escBtnText,
-    escBtnAction,
-    setParams,
-    resetParams,
+    upateNavParams,
+    resetNavParams,
   };
 });

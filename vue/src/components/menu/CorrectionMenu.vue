@@ -16,6 +16,7 @@ import { useMainInputStore } from '../../stores/mainInput';
 import { useMenuModalsStore } from '../../stores/menuModals';
 import { useRouteParams } from '../../stores/routeParams';
 import { useRouter } from 'vue-router';
+import { useNavPanelStore } from '../../stores/navPanel';
 
 const ipcStore = useIpcStore();
 const actionMenuStore = useActionMenuStore();
@@ -43,6 +44,13 @@ const emit = defineEmits<{
 function handleNewText(newText: string) {
   emit('update:newText', newText);
 }
+
+const navPanelStore = useNavPanelStore();
+
+navPanelStore.resetNavParams({
+  toEditorText: props.newText,
+  escBtnAction: menuModalsStore.back
+});
 
 const leftLetterKeys = [
   ipcStore.params?.windowId ? DEFAULT_ACTIONS[0] : undefined,

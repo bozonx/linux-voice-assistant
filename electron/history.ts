@@ -16,7 +16,6 @@ export const mainInputHistoryStore = new Store({
   },
 }) as any;
 
-// TODO: remake
 export async function moveInputToHistory() {
   try {
     const prevInputvalue = mainInputStore.get("value", "") as string;
@@ -37,7 +36,7 @@ export async function moveInputToHistory() {
 
     mainInputHistoryStore.set("history", filteredHistory);
   } catch (error) {
-    console.error("Error making history on start:", error);
+    console.error("Error making history:", error);
     throw error;
   }
 }

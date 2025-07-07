@@ -14,6 +14,7 @@
   import { useCallAi } from "../../composables/useCallAi";
   import { MenuModals, useMenuModalsStore } from "../../stores/menuModals";
   import useToast from '../../composables/useToast';
+  import { useNavPanelStore } from "../../stores/navPanel";
 
   const props = defineProps({
     text: {
@@ -22,11 +23,16 @@
     },
   });
 
+  const navPanelStore = useNavPanelStore();
   const menuModalsStore = useMenuModalsStore();
   const ipcStore = useIpcStore();
   const { aiTasks } = useCallAi();
   const appConfig = ipcStore.params!.appConfig;
   const { toast } = useToast();
+
+  navPanelStore.resetNavParams({
+    escBtnAction: menuModalsStore.back
+  });
 
   async function makeDiff(index: number) {
     if (props.text.length < appConfig.minCorrectionLength) {

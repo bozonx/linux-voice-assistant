@@ -15,6 +15,7 @@ import { GlobalEvents, useGlobalEvents } from '../../composables/useGlobalEvents
 import { useIpcStore } from '../../stores/ipc';
 import { useMenuModalsStore } from '../../stores/menuModals';
 import useToast from '../../composables/useToast';
+import { useNavPanelStore } from '../../stores/navPanel';
 
 const props = defineProps({
   onCorrected: {
@@ -31,7 +32,16 @@ const ipcStore = useIpcStore();
 const appConfig = ipcStore.params!.appConfig;
 const menuModalsStore = useMenuModalsStore();
 const { toast } = useToast();
+const navPanelStore = useNavPanelStore();
 let listenerIndex = -1;
+
+navPanelStore.resetNavParams({
+  escBtnAction: () => {
+    globalEvents.removeListener(listenerIndex);
+    stopVoiceRecognition();
+    menuModalsStore.back();
+  }
+});
 
 // TODO: поидее надо esc
 const leftLetterKeys = [

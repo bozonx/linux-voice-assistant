@@ -28,8 +28,8 @@ const correctionIsActual = ref(true);
 const appConfig = ipcStore.params!.appConfig;
 const { toast } = useToast();
 
-navPanelStore.setParams({
-  escBtnText: "Escape",
+navPanelStore.resetNavParams({
+  escBtnText: "Далее",
   escBtnAction: doCorrection,
 });
 

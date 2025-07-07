@@ -11,9 +11,9 @@ export const useCallApi = () => {
   const router = useRouter();
   const routeParamsStore = useRouteParams();
 
-  async function closeWindow() {
-    await ipcStore.callFunction("closeMainWindow", []);
-  }
+  // async function closeWindow() {
+  //   await ipcStore.callFunction("closeMainWindow", []);
+  // }
 
   async function typeIntoWindowAndClose(text: string) {
     if (!text?.trim()) return;
@@ -59,7 +59,6 @@ export const useCallApi = () => {
 
   return {
     resolveText,
-    closeWindow,
     typeIntoWindowAndClose,
     askAIShort,
     askAItext,

@@ -11,10 +11,14 @@ export const useRouteParams = defineStore("routeParams", () => {
   }
 
   function toEditor(text?: string) {
-    params.value = { text };
+    if (typeof text !== "undefined") params.value = { text };
     menuModalsStore.closeAll();
     router.push("/editor");
   }
+
+  // function isEditorPage() {
+  //   return router.currentRoute.value.path === "/editor";
+  // }
 
   return {
     params,

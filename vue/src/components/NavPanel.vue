@@ -2,65 +2,47 @@
   <div class="panel flex flex-row">
     <div class="flex-1 flex flex-row gap-2">
       <Button
-        v-if="navPanelStore.escBtnVisible"
+        v-if="navPanelStore.params.escBtnVisible"
         small
         secondary
-        @click="navPanelStore.escBtnAction"
+        @click="navPanelStore.params.escBtnAction"
         >{{ escBtnText }}</Button
       >
-      <Button v-if="isEditorOpen()" small secondary @click="goToEditor"
+      <Button v-if="navPanelStore.params.toEditorBtnVisible" small secondary @click="toEditor()"
         >в редактор (Tab)</Button
       >
-      <Button small secondary @click="closeWindow">закрыть (Ctrl + q)</Button>
     </div>
     <div class="flex flex-row gap-2">
-      <Button small secondary @click="openSettings">Настройки</Button>
       <Button small secondary @click="openHistory">История</Button>
+      <Button small secondary @click="openSettings">Настройки</Button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import { useRouter } from "vue-router";
-  import { useMenuModalsStore } from "../stores/menuModals";
-  import { useCallApi } from "../composables/useCallApi";
-  import {
-    useGlobalEvents,
-    GlobalEvents,
-  } from "../composables/useGlobalEvents";
   import { useNavPanelStore } from "../stores/navPanel";
-
+  import { useRouteParams } from "../stores/routeParams";
+  import { useKeysStore } from "../stores/keys";
+  import { useGlobalEvents, GlobalEvents } from "../composables/useGlobalEvents";
+  
   const router = useRouter();
-  const menuModalsStore = useMenuModalsStore();
-  const { closeWindow } = useCallApi();
   const { globalEvents } = useGlobalEvents();
+  const routeParamsStore = useRouteParams();
   const navPanelStore = useNavPanelStore();
-  const escBtnText = computed(() => navPanelStore.escBtnText + " (Esc)");
+  const keysStore = useKeysStore();
+  const escBtnText = computed(() => navPanelStore.params.escBtnText + " (Esc)");
 
-  const keyUpHanlderIndex = globalEvents.addListener(
-    GlobalEvents.KEY_UP,
-    handleShortCutKeyUp
-  );
+  let keyUpHanlderIndex: number;
+
+  onMounted(() => {
+    keyUpHanlderIndex = globalEvents.addListener(GlobalEvents.KEY_UP, handleShortCutKeyUp);
+  });
 
   onUnmounted(() => {
     globalEvents.removeListener(keyUpHanlderIndex);
   });
 
-  function isEditorOpen() {
-    return router.currentRoute.value.path !== "/";
-  }
-
-  function goToEditor() {
-    // if (props.text?.trim()) {
-    //   routeParamsStore.setParams({ text: props.text });
-    // }
-
-    menuModalsStore.closeAll();
-
-    if (isEditorOpen()) {
-      router.push("/");
-    }
-  }
 
   function openSettings() {
     router.push("/config");
@@ -70,15 +52,15 @@
     router.push("/history");
   }
 
+  function toEditor() {
+    routeParamsStore.toEditor(navPanelStore.params.toEditorText);
+  }
+
   function handleShortCutKeyUp(event: KeyboardEvent) {
     if (event.code === "Escape") {
-      navPanelStore.escBtnAction?.();
-    } else if (event.code === "KeyQ" && event.ctrlKey) {
-      closeWindow();
-    } else if (event.code === "Tab") {
-      if (isEditorOpen()) return;
-
-      goToEditor();
+      navPanelStore.params.escBtnAction?.();
+    } else if (event.code === "Tab" && !navPanelStore.params.toEditorBtnVisible) {
+      toEditor();
     }
   }
 </script>

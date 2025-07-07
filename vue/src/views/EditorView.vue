@@ -11,6 +11,22 @@
 
 <script setup lang="ts">
   import { useIpcStore } from "../stores/ipc";
+  import { useNavPanelStore } from "../stores/navPanel";
+  import { MenuModals, useMenuModalsStore } from "../stores/menuModals";
+  import { useMainInputStore } from "../stores/mainInput";
 
   const ipcStore = useIpcStore();
+  const navPanelStore = useNavPanelStore();
+  const menuModalsStore = useMenuModalsStore();
+  const mainInputStore = useMainInputStore();
+
+  navPanelStore.resetNavParams({
+    escBtnText: "Меню",
+    escBtnAction: () => {
+      menuModalsStore.nextModal(MenuModals.INSERT, {
+        text: mainInputStore.value,
+      });
+    },
+    toEditorBtnVisible: false,
+  });
 </script>

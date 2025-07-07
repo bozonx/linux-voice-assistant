@@ -14,16 +14,22 @@ import { useIpcStore } from '../../stores/ipc';
 import { useCallAi } from '../../composables/useCallAi';
 import { MenuModals, useMenuModalsStore } from '../../stores/menuModals';
 import useToast from '../../composables/useToast';
+import { useNavPanelStore } from '../../stores/navPanel';
 
 const ipcStore = useIpcStore();
 const appConfig = ipcStore.params!.appConfig;
 const { translateText } = useCallAi();
 const menuModalsStore = useMenuModalsStore();
 const { toast } = useToast();
+const navPanelStore = useNavPanelStore();
 
 const props = defineProps<{
   text: string;
 }>();
+
+navPanelStore.resetNavParams({
+  escBtnAction: menuModalsStore.back
+});
 
 const translate = async (toLangNum: number) => {
   const trimmedText = props.text.trim();

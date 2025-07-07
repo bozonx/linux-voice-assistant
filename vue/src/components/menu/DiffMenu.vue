@@ -16,6 +16,7 @@ import { useMainInputStore } from '../../stores/mainInput';
 import { useMenuModalsStore } from '../../stores/menuModals';
 import { useRouteParams } from '../../stores/routeParams';
 import { useRouter } from 'vue-router';
+import { useNavPanelStore } from '../../stores/navPanel';
 
 const props = defineProps({
   oldText: {
@@ -40,6 +41,12 @@ const actionMenuStore = useActionMenuStore();
 const DEFAULT_ACTIONS = actionMenuStore.DEFAULT_ACTIONS;
 const routeParams = useRouteParams();
 const router = useRouter();
+const navPanelStore = useNavPanelStore();
+
+navPanelStore.resetNavParams({
+  toEditorText: props.newText,
+  escBtnAction: menuModalsStore.back
+});
 
 const leftLetterKeys = [
   ipcStore.params?.windowId ? DEFAULT_ACTIONS[0] : undefined,

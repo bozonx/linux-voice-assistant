@@ -12,7 +12,7 @@
     </div>
     
     <div>
-      <p class="text-xs mb-2">Подсказка: можно выделить текст, и тогда изменения будут касаться только того, что выделено.</p>
+      <p class="text-xs mb-2 text-gray-500">Подсказка: можно выделить текст, и тогда изменения будут касаться только того, что выделено.</p>
 
       <div class="flex gap-1 w-full flex-wrap">
         <Button v-for="item in editMenuStore.getEditMenu()"
@@ -38,7 +38,6 @@ import { useMainInputStore } from '../stores/mainInput';
 import { useActionMenuStore } from '../stores/actionMenu';
 import { useEditMenuStore } from '../stores/edditMenu';
 import { MenuModals, useMenuModalsStore } from '../stores/menuModals';
-import { useNavPanelStore } from '../stores/navPanel';
 import useToast from '../composables/useToast';
 
 const routeParamsStore = useRouteParams();
@@ -46,7 +45,6 @@ const mainInputStore = useMainInputStore();
 const actionMenuStore = useActionMenuStore();
 const editMenuStore = useEditMenuStore();
 const menuModalsStore = useMenuModalsStore();
-const navPanelStore = useNavPanelStore();
 const { toast } = useToast();
 
 onMounted(() => {
@@ -63,16 +61,6 @@ watch(() => menuModalsStore.anyModalOpen, (value) => {
 
 async function init() {
   await nextTick();
-
-  navPanelStore.setParams({
-    escBtnText: "Меню",
-    escBtnAction: () => {
-      menuModalsStore.nextModal(MenuModals.INSERT, {
-        text: mainInputStore.value,
-      });
-    },
-  });
-  
   mainInputStore.focus();
 }
 

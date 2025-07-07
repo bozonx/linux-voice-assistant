@@ -50,20 +50,20 @@ export class Api {
   async typeIntoWindowAndClose(text: string): Promise<void> {
     await typeIntoWindow(this.userConfig!.xdotoolBin, text, this.args.windowId);
 
-    this.closeMainWindow();
+    if (this.mainWindow) this.mainWindow.close();
   }
 
   async putIntoClipboardAndClose(text: string): Promise<void> {
     clipboard.writeText(text);
 
     setTimeout(() => {
-      this.closeMainWindow();
+      if (this.mainWindow) this.mainWindow.close();
     }, 300);
   }
 
-  async closeMainWindow(): Promise<void> {
-    if (this.mainWindow) this.mainWindow.close();
-  }
+  // async closeMainWindow(): Promise<void> {
+  //   if (this.mainWindow) this.mainWindow.close();
+  // }
 
   async startVoiceRecognition(): Promise<void> {
     this.vosk.start((text) => {
