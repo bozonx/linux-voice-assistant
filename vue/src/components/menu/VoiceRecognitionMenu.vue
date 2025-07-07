@@ -39,17 +39,16 @@ const { toast } = useToast();
 const navPanelStore = useNavPanelStore();
 let listenerIndex = -1;
 
-if (props.escToMenu) {
-  navPanelStore.resetNavParams({
-    escBtnText: "Меню",
-    escBtnAction: () => finish()
-  });
-}
-else {
-  navPanelStore.resetNavParams({
-    escBtnAction: () => cancel(),
-  });
-}
+navPanelStore.upateNavParams({
+  escBtnAction: () => {
+    if (props.escToMenu) {
+      finish();
+    }
+    else {
+      cancel();
+    }
+  }
+});
 
 // TODO: поидее надо esc
 const leftLetterKeys = [

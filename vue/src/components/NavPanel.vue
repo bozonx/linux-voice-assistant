@@ -5,7 +5,7 @@
         v-if="navPanelStore.params.escBtnVisible"
         small
         secondary
-        @click="navPanelStore.params.escBtnAction"
+        @click="escBtnAction"
         >{{ escBtnText }}</Button
       >
       <Button v-if="navPanelStore.params.toEditorBtnVisible" small secondary @click="toEditor()"
@@ -21,17 +21,32 @@
 
 <script setup lang="ts">
   import { useRouter } from "vue-router";
-  import { useNavPanelStore } from "../stores/navPanel";
+  import { DEFAULT_PARAMS, useNavPanelStore } from "../stores/navPanel";
   import { useRouteParams } from "../stores/routeParams";
-  import { useKeysStore } from "../stores/keys";
   import { useGlobalEvents, GlobalEvents } from "../composables/useGlobalEvents";
-  
+  import { useMenuModalsStore } from "../stores/menuModals";
+
   const router = useRouter();
   const { globalEvents } = useGlobalEvents();
   const routeParamsStore = useRouteParams();
-  const navPanelStore = useNavPanelStore();
-  const keysStore = useKeysStore();
-  const escBtnText = computed(() => navPanelStore.params.escBtnText + " (Esc)");
+  const navPanelStore = useNavPanelStore(); 
+  const menuModalsStore = useMenuModalsStore();
+  const escBtnText = computed(() => {
+    let result = navPanelStore.params.escBtnText;
+
+    if (menuModalsStore.anyModalOpen) {
+      result = DEFAULT_PARAMS.escBtnText;
+    }
+
+    return result + " (Esc)";
+  });
+  const escBtnAction = computed(() => {
+    if (menuModalsStore.anyModalOpen) {
+      return menuModalsStore.back;
+    }
+
+    return navPanelStore.params.escBtnAction;
+  });
 
   let keyUpHanlderIndex: number;
 
@@ -58,7 +73,7 @@
 
   function handleShortCutKeyUp(event: KeyboardEvent) {
     if (event.code === "Escape") {
-      navPanelStore.params.escBtnAction?.();
+      escBtnAction.value?.();
     } else if (event.code === "Tab" && !navPanelStore.params.toEditorBtnVisible) {
       toEditor();
     }

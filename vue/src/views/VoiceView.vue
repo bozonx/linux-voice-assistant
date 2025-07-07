@@ -11,10 +11,16 @@
 <script setup lang="ts">
 import { useIpcStore } from '../stores/ipc';
 import { MenuModals, useMenuModalsStore } from '../stores/menuModals';
+import { useNavPanelStore } from '../stores/navPanel';
 
 const correctedText = ref('');
 const ipcStore = useIpcStore();
 const menuModalsStore = useMenuModalsStore();
+const navPanelStore = useNavPanelStore();
+
+navPanelStore.resetNavParams({
+  escBtnText: "Меню",
+});
 
 watch(() => ipcStore.params?.isWindowShown, (isWindowShown) => {
   if (isWindowShown) {
