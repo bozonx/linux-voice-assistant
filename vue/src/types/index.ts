@@ -1,13 +1,6 @@
-import { AppConfig } from "../../../electron/types/types";
+import { AppConfig, START_MODES } from "../../../electron/types/types";
 import { UserConfig } from "../../../electron/types/UserConfig";
 import { PluginContext } from "./PluginContext";
-
-export enum START_MODES {
-  SELECT = "select",
-  VOICE = "voice",
-  EDIT = "edit",
-  WRITE = "write",
-}
 
 export interface InitParams {
   windowId: string | null;

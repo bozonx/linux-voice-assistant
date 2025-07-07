@@ -38,8 +38,8 @@ import { useMainInputStore } from '../stores/mainInput';
 import { useActionMenuStore } from '../stores/actionMenu';
 import { useEditMenuStore } from '../stores/edditMenu';
 import { MenuModals, useMenuModalsStore } from '../stores/menuModals';
-import miniToastr from "mini-toastr";
 import { useNavPanelStore } from '../stores/navPanel';
+import useToast from '../composables/useToast';
 
 const routeParamsStore = useRouteParams();
 const mainInputStore = useMainInputStore();
@@ -47,6 +47,7 @@ const actionMenuStore = useActionMenuStore();
 const editMenuStore = useEditMenuStore();
 const menuModalsStore = useMenuModalsStore();
 const navPanelStore = useNavPanelStore();
+const { toast } = useToast();
 
 onMounted(() => {
   if (routeParamsStore.params.text) {
@@ -94,7 +95,7 @@ const doAction = async (cb: (text: string) => Promise<void>): Promise<void> => {
   value = value.trim();
 
   if (!value) {
-    miniToastr.error("Текст не выбран");
+    toast("Текст не выбран", "error");
     return;
   }
 
@@ -111,7 +112,7 @@ async function doEdit(cb: (text: string) => Promise<string>): Promise<void> {
   value = value.trim();
 
   if (!value) {
-    miniToastr.error("Текст не выбран");
+    toast("Текст не выбран", "error");
     return;
   }
 

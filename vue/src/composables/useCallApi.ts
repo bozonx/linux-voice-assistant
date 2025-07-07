@@ -2,12 +2,12 @@ import { useRouteParams } from "../stores/routeParams";
 import { useIpcStore } from "../stores/ipc";
 import { useMainInputStore } from "../stores/mainInput";
 import { useRouter } from "vue-router";
-import miniToastr from "mini-toastr";
+import useToast from "./useToast";
 
 export const useCallApi = () => {
   const ipcStore = useIpcStore();
   const mainInputStore = useMainInputStore();
-
+  const { toast } = useToast();
   const router = useRouter();
   const routeParamsStore = useRouteParams();
 
@@ -18,10 +18,7 @@ export const useCallApi = () => {
   async function typeIntoWindowAndClose(text: string) {
     if (!text?.trim()) return;
 
-    await ipcStore.callFunction("typeIntoWindowAndClose", [
-      text,
-      ipcStore.params?.windowId,
-    ]);
+    await ipcStore.callFunction("typeIntoWindowAndClose", [text]);
   }
 
   function resolveText(text?: string): string {
@@ -52,7 +49,7 @@ export const useCallApi = () => {
     let value = resolveText(text);
 
     if (!value?.trim()) {
-      miniToastr.error("Текст не выбран");
+      toast("Текст не выбран", "error");
       return;
     }
 

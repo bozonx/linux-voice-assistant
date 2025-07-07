@@ -18,3 +18,11 @@ export interface ChatMessage {
   role: "user" | "assistant" | "developer";
   content: string;
 }
+
+export enum START_MODES {
+  SELECT = "select",
+  VOICE = "voice",
+  AI_TASKS = "aiTasks",
+  EDITOR = "editor",
+  WRITE = "write",
+}

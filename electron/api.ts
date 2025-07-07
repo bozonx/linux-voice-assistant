@@ -6,28 +6,27 @@ import { typeIntoWindow } from "../common/helpers";
 import { saveUserConfig } from "./userConfigManager";
 import { mainInputStore, mainInputHistoryStore } from "./history";
 import VoskVoiceRecognition from "./vosk";
+import { CommandLineParams } from "./types/types";
 
 export class Api {
-  private readonly appConfig: AppConfig;
-  userConfig: UserConfig;
+  userConfig?: UserConfig;
   vosk: VoskVoiceRecognition;
-  private readonly mainWindow: BrowserWindow;
   private voskHandler: (text: string) => void;
 
   constructor(
-    appConfig: AppConfig,
-    userConfig: UserConfig,
-    mainWindow: BrowserWindow
+    private readonly appConfig: AppConfig,
+    private readonly args: CommandLineParams,
+    private readonly mainWindow: BrowserWindow
   ) {
-    this.appConfig = appConfig;
-    this.userConfig = userConfig;
-    this.mainWindow = mainWindow;
-
     // TODO: брать из конфига
     this.vosk = new VoskVoiceRecognition("ws://localhost:2700");
   }
 
   async init() {}
+
+  $setUserConfig(userConfig: UserConfig): void {
+    this.userConfig = userConfig;
+  }
 
   $setVoskHandler(handler: (text: string) => void): void {
     this.voskHandler = handler;
@@ -48,9 +47,8 @@ export class Api {
     });
   }
 
-  async typeIntoWindowAndClose(text: string, windowId: string): Promise<void> {
-    // TODO: не нужно получать windowId, он и так есть тут
-    await typeIntoWindow(this.userConfig.xdotoolBin, text, windowId);
+  async typeIntoWindowAndClose(text: string): Promise<void> {
+    await typeIntoWindow(this.userConfig!.xdotoolBin, text, this.args.windowId);
 
     this.closeMainWindow();
   }

@@ -10,10 +10,10 @@
 import { useCallAi } from '../composables/useCallAi';
 import { DebounceCallIncreasing } from 'squidlet-lib';
 import { useMainInputHistoryStore } from '../stores/mainInputHistory';
-import miniToastr from "mini-toastr";
 import { useIpcStore } from '../stores/ipc';
 import { MenuModals, useMenuModalsStore } from '../stores/menuModals';
 import { useNavPanelStore } from '../stores/navPanel';
+import useToast from '../composables/useToast';
 
 const navPanelStore = useNavPanelStore();
 const mainInputHistoryStore = useMainInputHistoryStore()
@@ -26,6 +26,7 @@ const inputText = ref('');
 const correctedText = ref('');
 const correctionIsActual = ref(true);
 const appConfig = ipcStore.params!.appConfig;
+const { toast } = useToast();
 
 navPanelStore.setParams({
   escBtnText: "Escape",
@@ -78,13 +79,13 @@ function toShortcuts() {
 
 async function doCorrection() {
   if (!inputText.value?.trim()) {
-    miniToastr.warn('Введите текст для коррекции');
+    toast('Введите текст для коррекции', 'warn');
   }
   else if (correctionIsActual.value) {
-    miniToastr.warn('Текст уже корректирован');
+    toast('Текст уже корректирован', 'warn');
   }
   else if (inputText.value.length < appConfig.minCorrectionLength) {
-    miniToastr.warn('Слишком короткий текст для коррекции');
+    toast('Слишком короткий текст для коррекции', 'warn');
 
     correctedText.value = inputText.value;
     correctionIsActual.value = true;

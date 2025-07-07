@@ -13,11 +13,11 @@ export const mainInputHistoryStore = new Store({
   name: "main-input-history",
   defaults: {
     history: [],
-    // maxItems: APP_CONFIG.mainInputHistoryMaxItems,
   },
 }) as any;
 
-export async function makeInputHistoryOnStart() {
+// TODO: remake
+export async function moveInputToHistory() {
   try {
     const prevInputvalue = mainInputStore.get("value", "") as string;
     // remove previous input value

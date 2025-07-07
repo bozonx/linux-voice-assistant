@@ -4,7 +4,7 @@ import { useCallApi } from "../composables/useCallApi";
 import { useIpcStore } from "./ipc";
 import { MenuModals, useMenuModalsStore } from "./menuModals";
 import { useCallAi } from "../composables/useCallAi";
-import miniToastr from "mini-toastr";
+import useToast from "../composables/useToast";
 
 export interface ActionItem {
   name: string;
@@ -19,6 +19,7 @@ export const useActionMenuStore = defineStore("actionMenu", () => {
   const menuModalsStore = useMenuModalsStore();
   const appConfig = ipcStore.params!.appConfig;
   const { correctText } = useCallAi();
+  const { toast } = useToast();
   const registeredActionsMenu = ref<ActionItem[]>([]);
 
   const DEFAULT_ACTIONS: ActionItem[] = [
@@ -44,7 +45,7 @@ export const useActionMenuStore = defineStore("actionMenu", () => {
       action: async (text: string) => {
         if (!text?.trim()) return;
         if (text.length < appConfig.minCorrectionLength) {
-          miniToastr.warn("Слишком короткий текст для коррекции");
+          toast("Слишком короткий текст для коррекции", "warn");
           return;
         }
 

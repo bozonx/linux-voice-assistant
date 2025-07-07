@@ -1,15 +1,15 @@
-// @ts-ignore
-import miniToastr from "mini-toastr";
 import { useIpcStore } from "../stores/ipc";
 import { useCallApi } from "./useCallApi";
 import { useAiRequest } from "../../../common/useAiRequest";
 import { ChatMessage } from "../../../electron/types/types";
 import { AI_TASKS } from "../types";
+import useToast from "./useToast";
 
 export const useCallAi = () => {
   const { chatCompletion, prepareAiMessages } = useAiRequest();
   const ipcStore = useIpcStore();
   const { resolveText } = useCallApi();
+  const { toast } = useToast();
 
   async function aiRequest(taskName: string, messages: string | ChatMessage[]) {
     const result = await chatCompletion(
@@ -19,7 +19,7 @@ export const useCallAi = () => {
     );
 
     if (result.error) {
-      miniToastr.error(result.error, "Api call error " + result.status);
+      toast(result.error, "error", 10000);
       console.error(result.status + " " + result.statusText, result.error);
 
       return "";
@@ -51,7 +51,7 @@ export const useCallAi = () => {
     let value = resolveText(text);
 
     if (!value?.trim()) {
-      miniToastr.error("Текст не выбран");
+      toast("Текст не выбран", "error");
       return;
     }
 
@@ -65,7 +65,7 @@ export const useCallAi = () => {
     prevMessages: ChatMessage[]
   ) => {
     if (!message?.trim()) {
-      miniToastr.error("Текст не выбран");
+      toast("Текст не выбран", "error");
       return;
     }
 
@@ -82,7 +82,7 @@ export const useCallAi = () => {
 
   const correctText = async (text: string) => {
     if (!text?.trim()) {
-      miniToastr.error("Текст не выбран");
+      toast("Текст не выбран", "error");
       return;
     }
 
@@ -94,7 +94,7 @@ export const useCallAi = () => {
 
   const translateText = async (toLangNum: number, text?: string) => {
     if (!text?.trim()) {
-      miniToastr.error("Текст не выбран");
+      toast("Текст не выбран", "error");
       return;
     }
     return await aiRequest(
@@ -114,7 +114,7 @@ export const useCallAi = () => {
 
   const aiTasks = async (presetNum: number, text?: string) => {
     if (!text?.trim()) {
-      miniToastr.error("Текст не выбран");
+      toast("Текст не выбран", "error");
       return;
     }
 

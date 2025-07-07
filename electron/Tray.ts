@@ -1,6 +1,7 @@
 import { Menu } from "electron";
+import { START_MODES } from "./types/types";
 
-export function manageTray(app, mainWindow, tray) {
+export function manageTray(app, mainWindow, tray, onClose) {
   const contextMenu = Menu.buildFromTemplate([
     { label: "Показать приложение", click: () => mainWindow.show() },
     { label: "Выход", click: () => app.quit() },
@@ -15,6 +16,7 @@ export function manageTray(app, mainWindow, tray) {
     if (!app.isQuitting) {
       event.preventDefault();
       mainWindow.hide(); // Скрываем окно вместо закрытия
+      onClose();
     }
 
     return false;
@@ -24,14 +26,17 @@ export function manageTray(app, mainWindow, tray) {
   mainWindow.on("minimize", (event) => {
     event.preventDefault();
     mainWindow.hide();
+    onClose();
   });
   // Показ окна при клике на иконку в трее
   tray.on("click", () => {
     if (mainWindow.isVisible()) {
       mainWindow.hide();
     } else {
+      mainWindow.webContents.send("params", {
+        mode: START_MODES.EDITOR,
+      });
       mainWindow.show();
     }
   });
-
 }

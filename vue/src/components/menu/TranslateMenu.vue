@@ -12,13 +12,14 @@
 <script setup lang="ts">
 import { useIpcStore } from '../../stores/ipc';
 import { useCallAi } from '../../composables/useCallAi';
-import miniToastr from "mini-toastr";
 import { MenuModals, useMenuModalsStore } from '../../stores/menuModals';
+import useToast from '../../composables/useToast';
 
 const ipcStore = useIpcStore();
 const appConfig = ipcStore.params!.appConfig;
 const { translateText } = useCallAi();
 const menuModalsStore = useMenuModalsStore();
+const { toast } = useToast();
 
 const props = defineProps<{
   text: string;
@@ -28,13 +29,13 @@ const translate = async (toLangNum: number) => {
   const trimmedText = props.text.trim();
   
   if (!trimmedText) {
-    miniToastr.warn('Нет текста для перевода');
+    toast('Нет текста для перевода', 'warn');
 
     return;
   }
 
   if (trimmedText.length < appConfig.minCorrectionLength) {
-    miniToastr.warn('Слишком короткий текст для перевода');
+    toast('Слишком короткий текст для перевода', 'warn');
 
     return;
   }

@@ -1,4 +1,3 @@
-import miniToastr from "mini-toastr";
 import { useActionMenuStore } from "../stores/actionMenu";
 import { useEditMenuStore } from "../stores/edditMenu";
 import { useMainInputStore } from "../stores/mainInput";
@@ -9,6 +8,7 @@ import { PluginIndex } from "../types";
 import { PluginConfig, PluginContext } from "../types/PluginContext";
 import { useIpcStore } from "../stores/ipc";
 import { usePluginsStore } from "../stores/plugins";
+import useToast from "./useToast";
 
 export default function usePluginContext() {
   const actionMenuStore = useActionMenuStore();
@@ -19,6 +19,7 @@ export default function usePluginContext() {
   const routeParamsStore = useRouteParams();
   const ipcStore = useIpcStore();
   const pluginsStore = usePluginsStore();
+  const { toast } = useToast();
 
   const ctx: PluginContext = {
     registerActionsItems: (actions) => {
@@ -64,7 +65,7 @@ export default function usePluginContext() {
       routeParamsStore.toEditor(text);
     },
     toast: (message, type = "info", timeout = 10000) => {
-      miniToastr[type](message, "top-center", timeout);
+      toast(message, type, timeout);
     },
     callApiFunction: (method, params) => {
       return ipcStore.callFunction(method, params);

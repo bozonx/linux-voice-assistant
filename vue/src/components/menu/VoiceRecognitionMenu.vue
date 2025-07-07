@@ -13,8 +13,8 @@
 import { useCallAi } from '../../composables/useCallAi';
 import { GlobalEvents, useGlobalEvents } from '../../composables/useGlobalEvents';
 import { useIpcStore } from '../../stores/ipc';
-import miniToastr from "mini-toastr";
 import { useMenuModalsStore } from '../../stores/menuModals';
+import useToast from '../../composables/useToast';
 
 const props = defineProps({
   onCorrected: {
@@ -30,6 +30,7 @@ const lastRecognizedTextMs = ref<number>(0);
 const ipcStore = useIpcStore();
 const appConfig = ipcStore.params!.appConfig;
 const menuModalsStore = useMenuModalsStore();
+const { toast } = useToast();
 let listenerIndex = -1;
 
 // TODO: поидее надо esc
@@ -74,7 +75,7 @@ const finish = async () => {
   }
 
   if (!recognizedText.value.trim().length) {
-    miniToastr.warn("Ничего не распознано");
+    toast("Ничего не распознано", "warn");
 
     return;
   }
@@ -95,7 +96,7 @@ const finish = async () => {
     menuModalsStore.clearPendingModal();
   }
   else {
-    miniToastr.warn("Слишком короткий текст для коррекции");
+    toast("Слишком короткий текст для коррекции", "warn");
   }
 
   props.onCorrected(correctedText);

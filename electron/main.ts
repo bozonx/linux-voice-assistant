@@ -5,9 +5,9 @@ import { getCommandLineArgs } from "../common/helpers";
 import { CommandLineParams, FunctionResult } from "./types/types.js";
 import { APP_CONFIG } from "./appConfig.js";
 import { createOrReadConfig } from "./userConfigManager";
-import { makeInputHistoryOnStart } from "./history";
 import { manageTray } from "./Tray";
 import { handleExternalCommands } from "./ExternalCommands";
+import { moveInputToHistory } from "./history";
 
 // Отключаем предупреждения о безопасности
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "true";
@@ -16,6 +16,10 @@ let mainWindow: BrowserWindow | null = null;
 
 if (!app.requestSingleInstanceLock()) {
   app.quit();
+}
+
+async function onClose() {
+  await moveInputToHistory();
 }
 
 async function configure() {
@@ -29,15 +33,11 @@ async function configure() {
     },
   });
 
-  // Создаем иконку в трее
-  // const tray = new Tray(path.join(__dirname, "assets/tray-icon.png"));
   const tray = new Tray(path.join(__dirname, "assets/tray-icon.png"));
   const args: CommandLineParams = getCommandLineArgs();
-  const userConfig = await createOrReadConfig(app.getPath("userData"));
-  const api = new Api(APP_CONFIG, userConfig, mainWindow);
+  const api = new Api(APP_CONFIG, args, mainWindow);
 
   await api.init();
-  await makeInputHistoryOnStart();
 
   if (process.env.NODE_ENV === "development") {
     mainWindow.loadURL(APP_CONFIG.devServerUrl);
@@ -46,7 +46,11 @@ async function configure() {
   }
 
   // Отправляем параметры в renderer процесс после загрузки страницы
-  mainWindow.webContents.on("did-finish-load", () => {
+  mainWindow.webContents.on("did-finish-load", async () => {
+    const userConfig = await createOrReadConfig(app.getPath("userData"));
+
+    api.$setUserConfig(userConfig);
+
     mainWindow?.webContents.send("params", {
       ...args,
       NODE_ENV: process.env.NODE_ENV,
@@ -90,7 +94,7 @@ async function configure() {
     });
   });
 
-  manageTray(app, mainWindow, tray);
+  manageTray(app, mainWindow, tray, onClose);
   handleExternalCommands(mainWindow);
 }
 
@@ -98,6 +102,7 @@ async function configure() {
 app.on("before-quit", () => {
   // @ts-ignore
   app.isQuitting = true;
+  onClose();
 });
 
 app.on("window-all-closed", () => {

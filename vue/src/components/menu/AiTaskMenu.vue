@@ -13,7 +13,7 @@
   import { useIpcStore } from "../../stores/ipc";
   import { useCallAi } from "../../composables/useCallAi";
   import { MenuModals, useMenuModalsStore } from "../../stores/menuModals";
-  import miniToastr from "mini-toastr";
+  import useToast from '../../composables/useToast';
 
   const props = defineProps({
     text: {
@@ -26,10 +26,11 @@
   const ipcStore = useIpcStore();
   const { aiTasks } = useCallAi();
   const appConfig = ipcStore.params!.appConfig;
+  const { toast } = useToast();
 
   async function makeDiff(index: number) {
     if (props.text.length < appConfig.minCorrectionLength) {
-      miniToastr.warn("Слишком короткий текст для обработки");
+      toast("Слишком короткий текст для обработки", "warn");
 
       return;
     }
