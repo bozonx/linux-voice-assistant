@@ -22,7 +22,6 @@ export function manageTray(app, mainWindow, tray, onClose) {
     return false;
   });
 
-  // @ts-ignore
   mainWindow.on("minimize", (event) => {
     event.preventDefault();
     mainWindow.hide();

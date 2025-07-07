@@ -7,6 +7,7 @@ import WriteModeView from "../views/WriteModeView.vue";
 import VoiceView from "../views/VoiceView.vue";
 import SelectModeView from "../views/SelectModeView.vue";
 import AiTaskView from "../views/AiTaskView.vue";
+import EditorView from "../views/EditorView.vue";
 
 const router = createRouter({
   history: createMemoryHistory(),
@@ -16,6 +17,12 @@ const router = createRouter({
       path: "/",
       name: "home",
       component: HomeView,
+      props: true,
+    },
+    {
+      path: "/editor",
+      name: "editor",
+      component: EditorView,
       props: true,
     },
     {
