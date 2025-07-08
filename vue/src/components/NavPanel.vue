@@ -31,6 +31,8 @@
   const routeParamsStore = useRouteParams();
   const navPanelStore = useNavPanelStore(); 
   const menuModalsStore = useMenuModalsStore();
+  let keyUpHanlderIndex: number;
+
   const escBtnText = computed(() => {
     let result = navPanelStore.params.escBtnText;
 
@@ -48,7 +50,6 @@
     return navPanelStore.params.escBtnAction;
   });
 
-  let keyUpHanlderIndex: number;
 
   onMounted(() => {
     keyUpHanlderIndex = globalEvents.addListener(GlobalEvents.KEY_UP, handleShortCutKeyUp);

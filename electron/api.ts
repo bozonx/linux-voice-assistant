@@ -6,7 +6,6 @@ import { typeIntoWindow } from "../common/helpers";
 import { saveUserConfig } from "./userConfigManager";
 import { mainInputStore, mainInputHistoryStore } from "./history";
 import VoskVoiceRecognition from "./vosk";
-import { CommandLineParams } from "./types/types";
 
 export class Api {
   userConfig?: UserConfig;
@@ -15,7 +14,6 @@ export class Api {
 
   constructor(
     private readonly appConfig: AppConfig,
-    private readonly args: CommandLineParams,
     private readonly mainWindow: BrowserWindow
   ) {
     // TODO: брать из конфига
@@ -47,8 +45,8 @@ export class Api {
     });
   }
 
-  async typeIntoWindowAndClose(text: string): Promise<void> {
-    await typeIntoWindow(this.userConfig!.xdotoolBin, text, this.args.windowId);
+  async typeIntoWindowAndClose(text: string, windowId: string): Promise<void> {
+    await typeIntoWindow(this.userConfig!.xdotoolBin, text, windowId);
 
     if (this.mainWindow) this.mainWindow.close();
   }

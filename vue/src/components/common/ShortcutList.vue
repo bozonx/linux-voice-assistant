@@ -64,8 +64,8 @@
 
 <script setup lang="ts">
   import { PRESETS_KEYS } from "../../types";
-  import { useKeysStore } from "../../stores/keys";
   import { ActionItem } from "../../stores/actionMenu";
+  import { useGlobalEvents, GlobalEvents } from "../../composables/useGlobalEvents";
 
   const props = defineProps<{
     text?: string;
@@ -73,7 +73,9 @@
     leftLetterKeys: ActionItem[];
   }>();
 
-  const keysStore = useKeysStore();
+  const { globalEvents } = useGlobalEvents();
+  let keyUpHanlderIndex: number;
+
   const col1 = computed(() =>
     PRESETS_KEYS.slice(0, 5).map((key, index) => ({
       key,
@@ -93,22 +95,28 @@
     }))
   );
 
-  watch(() => keysStore.keyupCode, (code) => {
-    if (!code) return;
+  onMounted(() => {
+    keyUpHanlderIndex = globalEvents.addListener(GlobalEvents.KEY_UP, handleShortCutKeyUp);
+  });
 
-    if (code === "Space") {
+  onUnmounted(() => {
+    globalEvents.removeListener(keyUpHanlderIndex);
+  });
+
+  function handleShortCutKeyUp(event: KeyboardEvent) {
+    if (event.code === "Space") {
       props.spaceKey?.action(props.text || '');
     }
 
     let codeLetter;
-    if (code.length === 4 && code.startsWith("Key")) {
-      codeLetter = code.slice(3).toLowerCase();
+    if (event.code.length === 4 && event.code.startsWith("Key")) {
+      codeLetter = event.code.slice(3).toLowerCase();
     }
     
     if (codeLetter && PRESETS_KEYS.includes(codeLetter)) {
       props.leftLetterKeys[PRESETS_KEYS.indexOf(codeLetter)]?.action(props.text || '');
     }
-  });
+  }
 </script>
 
 <style scoped>

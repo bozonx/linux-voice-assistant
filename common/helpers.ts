@@ -12,10 +12,11 @@ export function getCommandLineArgs(): CommandLineParams {
     } else if (args[i] === "--selected-text" && i + 1 < args.length) {
       params.selectedText = args[i + 1];
       i++;
-    } else if (args[i] === "--mode" && i + 1 < args.length) {
-      params.mode = args[i + 1];
-      i++;
     }
+    //  else if (args[i] === "--mode" && i + 1 < args.length) {
+    //   params.mode = args[i + 1];
+    //   i++;
+    // }
   }
 
   return params;

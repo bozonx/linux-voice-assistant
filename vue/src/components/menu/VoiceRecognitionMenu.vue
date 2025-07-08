@@ -47,7 +47,7 @@ navPanelStore.upateNavParams({
     else {
       cancel();
     }
-  }
+  },
 });
 
 // TODO: поидее надо esc

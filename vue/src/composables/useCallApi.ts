@@ -18,7 +18,10 @@ export const useCallApi = () => {
   async function typeIntoWindowAndClose(text: string) {
     if (!text?.trim()) return;
 
-    await ipcStore.callFunction("typeIntoWindowAndClose", [text]);
+    await ipcStore.callFunction("typeIntoWindowAndClose", [
+      text,
+      ipcStore.params?.windowId,
+    ]);
   }
 
   function resolveText(text?: string): string {

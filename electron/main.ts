@@ -1,8 +1,7 @@
 import { app, BrowserWindow, ipcMain, Tray } from "electron";
 import path from "path";
 import { Api } from "./api";
-import { getCommandLineArgs } from "../common/helpers";
-import { CommandLineParams, FunctionResult } from "./types/types.js";
+import { FunctionResult } from "./types/types.js";
 import { APP_CONFIG } from "./appConfig.js";
 import { createOrReadConfig } from "./userConfigManager";
 import { manageTray } from "./Tray";
@@ -34,8 +33,8 @@ async function configure() {
   });
 
   const tray = new Tray(path.join(__dirname, "assets/tray-icon.png"));
-  const args: CommandLineParams = getCommandLineArgs();
-  const api = new Api(APP_CONFIG, args, mainWindow);
+  // const args: CommandLineParams = getCommandLineArgs();
+  const api = new Api(APP_CONFIG, mainWindow);
 
   await api.init();
 
@@ -52,7 +51,7 @@ async function configure() {
     api.$setUserConfig(userConfig);
 
     mainWindow?.webContents.send("params", {
-      ...args,
+      // ...args,
       NODE_ENV: process.env.NODE_ENV,
       appConfig: APP_CONFIG,
       userConfig,
