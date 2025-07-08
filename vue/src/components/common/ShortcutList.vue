@@ -76,6 +76,7 @@
     spaceKey?: ActionItem;
     tabKey?: ActionItem;
     leftLetterKeys: ActionItem[];
+    stopListening?: boolean;
   }>();
 
   const { globalEvents } = useGlobalEvents();
@@ -109,6 +110,10 @@
   });
 
   function handleShortCutKeyUp(event: KeyboardEvent) {
+    if (props.stopListening) {
+      return;
+    }
+
     if (event.code === "Space") {
       props.spaceKey?.action(props.text || '');
     }

@@ -5,7 +5,10 @@
       <TextPreview :text="props.text" class="absolute" />
     </div>
 
-    <ShortcutList :text="props.text" :leftLetterKeys="leftLetterKeys" />
+    <ShortcutList
+      :text="props.text"
+      :leftLetterKeys="leftLetterKeys"
+      :stopListening="props.stopListening" />
   </div>
 </template>
 
@@ -19,6 +22,10 @@
     text: {
       type: String,
       default: "",
+    },
+    stopListening: {
+      type: Boolean,
+      default: false,
     },
   });
 

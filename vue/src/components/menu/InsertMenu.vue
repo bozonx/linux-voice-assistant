@@ -6,7 +6,11 @@
     <TextPreview v-else :text="props.text" class="absolute" />
   </div>
 
-  <ShortcutList :text="props.text" :leftLetterKeys="leftLetterKeys" :spaceKey="spaceKey" />
+  <ShortcutList
+    :text="props.text"
+    :leftLetterKeys="leftLetterKeys"
+    :spaceKey="spaceKey"
+    :stopListening="props.stopListening" />
 </div>
 </template>
 
@@ -27,6 +31,10 @@ const props = defineProps({
   allowInsertButton: {
     type: Boolean,
     default: true
+  },
+  stopListening: {
+    type: Boolean,
+    default: false,
   },
 });
 

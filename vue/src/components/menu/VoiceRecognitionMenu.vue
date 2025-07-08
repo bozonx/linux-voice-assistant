@@ -48,6 +48,7 @@ navPanelStore.upateNavParams({
       cancel();
     }
   },
+  rightPanelVisible: false,
 });
 
 // TODO: поидее надо esc

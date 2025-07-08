@@ -8,6 +8,7 @@
   const navPanelStore = useNavPanelStore();
 
   navPanelStore.resetNavParams({
+    escBtnVisible: false,
     settingsBtnDisabled: true,
   });
 </script>

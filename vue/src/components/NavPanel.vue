@@ -8,9 +8,6 @@
         @click="escBtnAction"
         >{{ escBtnText }}</Button
       >
-      <!-- <Button v-if="navPanelStore.params.toEditorBtnVisible" small secondary @click="toEditor()"
-        >в редактор (Tab)</Button
-      > -->
     </div>
     <div class="flex flex-row gap-2" v-if="navPanelStore.params.rightPanelVisible">
       <Button :disabled="navPanelStore.params.toEditorBtnDisabled" small secondary @click="routeParamsStore.toEditor()">Редактор</Button>
@@ -69,17 +66,11 @@
     router.push("/history");
   }
 
-  // function toEditor() {
-  //   routeParamsStore.toEditor(navPanelStore.params.toEditorText);
-  // }
 
   function handleShortCutKeyUp(event: KeyboardEvent) {
     if (event.code === "Escape") {
       escBtnAction.value?.();
     }
-    //  else if (event.code === "Tab" && !navPanelStore.params.toEditorBtnVisible) {
-    //   toEditor();
-    // }
   }
 </script>
 

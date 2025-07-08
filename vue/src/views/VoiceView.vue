@@ -25,9 +25,9 @@ navPanelStore.resetNavParams({
 function handleCorrected(text: string) {
   correctedText.value = text;
   
-  navPanelStore.upateNavParams({
-    toEditorText: text,
-  });
+  // navPanelStore.resetNavParams({
+  //   rightPanelVisible: false,
+  // });
   menuModalsStore.nextModal(MenuModals.INSERT, {
     text: correctedText.value,
   });
