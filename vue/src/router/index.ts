@@ -52,8 +52,8 @@ const router = createRouter({
       component: VoiceView,
     },
     {
-      path: "/edit",
-      name: "edit",
+      path: "/aiTasks",
+      name: "aiTasks",
       component: AiTaskView,
     },
     {

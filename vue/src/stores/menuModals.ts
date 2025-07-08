@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
+import { useHelpers } from "../composables/useHelpers";
 
 export enum MenuModals {
   INSERT = "insert",
@@ -17,8 +18,10 @@ export const useMenuModalsStore = defineStore("menuModals", () => {
   const currentModal = ref(MenuModals.NONE);
   const currentModalParams = ref<Record<string, any>>({});
   const currentBreadcrumbs = ref<string[]>([]);
+  const { resetGlobalFocus } = useHelpers();
 
   const nextModal = (modal: MenuModals, params: Record<string, any>) => {
+    resetGlobalFocus();
     currentBreadcrumbs.value.push(modal);
 
     currentModal.value = modal;

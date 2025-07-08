@@ -19,11 +19,13 @@ import { useRouter } from 'vue-router';
 import { GlobalEvents, useGlobalEvents } from './composables/useGlobalEvents';
 import { useKeysStore } from './stores/keys';
 import { usePlugins } from "./plugins";
+import { useMenuModalsStore } from './stores/menuModals';
 
 const ipcStore = useIpcStore();
 const router = useRouter();
 const { globalEvents } = useGlobalEvents();
 const keysStore = useKeysStore();
+const menuModalsStore = useMenuModalsStore();
 
 onMounted(() => {
   window.addEventListener('keyup', handleKeyUp);
@@ -33,6 +35,8 @@ onMounted(() => {
 
     ipcStore.setParams(params);
 
+    menuModalsStore.closeAll();
+
     if (ipcStore.params!.mode) {
       router.push(`/${ipcStore.params!.mode}`);
     }
@@ -41,7 +45,6 @@ onMounted(() => {
     }
 
     globalEvents.emit(GlobalEvents.INITED);
-    
   });
 
   window.electron.ipcRenderer.on('vosk-text', (data: string) => {

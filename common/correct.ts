@@ -3,12 +3,21 @@ import fs from "fs/promises";
 import { createOrReadConfig } from "../electron/userConfigManager";
 import { getCommandLineArgs, typeIntoWindow } from "./helpers";
 import { useAiRequest } from "./useAiRequest";
+import { APP_CONFIG } from "../electron/appConfig";
 
 (async () => {
   const args = getCommandLineArgs();
   const appDir = process.env.HOME + "/.config/librnet-assistant";
   const userConfig = await createOrReadConfig(appDir);
   const { chatCompletion, prepareAiMessages } = useAiRequest();
+
+  if (!args.selectedText) {
+    console.log("No selected text");
+    return;
+  } else if (args.selectedText.length < APP_CONFIG.minCorrectionLength) {
+    console.log("Selected text is too short");
+    return;
+  }
 
   let result;
 
