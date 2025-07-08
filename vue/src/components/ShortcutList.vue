@@ -2,7 +2,7 @@
   <div class="shortcuts-list">
     <div>
       <div v-if="props.spaceKey || props.toEditorVisible" class="mb-2">
-        <span v-if="props.spaceKey"
+        <span v-if="props.spaceKey" class="flex flex-row gap-1"
           ><KeyButton>Space</KeyButton>
           <Button
             :disabled="props.spaceKey.disabled"
@@ -12,8 +12,8 @@
             >Вставить в окно</Button
           >
         </span>
-        <span v-if="props.toEditorVisible"
-          ><KeyButton>Tab</KeyButton>
+        <span v-if="props.toEditorVisible" class="flex flex-row gap-2"
+          > <KeyButton>Tab</KeyButton>
           <Button small secondary @click="routeParamsStore.toEditor(props.text)"
             >Вставить в редактор</Button
           >
@@ -23,7 +23,7 @@
       <div class="flex flex-row gap-4">
         <div class="flex flex-col gap-1">
           <div v-for="item in col1" :key="item.name">
-            <span>
+            <span class="flex flex-row gap-1">
               <KeyButton>{{ item.key }}</KeyButton>
               <Button
                 v-if="item.name"
@@ -39,7 +39,7 @@
         </div>
         <div class="flex flex-col gap-1">
           <div v-for="item in col2" :key="item.name">
-            <span
+            <span class="flex flex-row gap-1"
               ><KeyButton>{{ item.key }}</KeyButton>
               <Button
                 v-if="item.name"
@@ -55,7 +55,7 @@
         </div>
         <div class="flex flex-col gap-1">
           <div v-for="item in col3" :key="item.name">
-            <span
+            <span class="flex flex-row gap-1"
               ><KeyButton>{{ item.key }}</KeyButton>
               <Button
                 v-if="item.name"
