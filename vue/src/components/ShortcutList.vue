@@ -1,7 +1,7 @@
 <template>
   <div class="shortcuts-list">
     <div>
-      <div v-if="props.spaceKey || props.toEditorVisible" class="mb-2">
+      <div class="flex flex-row gap-2">
         <span v-if="props.spaceKey" class="flex flex-row gap-1"
           ><KeyButton>Space</KeyButton>
           <Button
@@ -20,7 +20,7 @@
         </span>
       </div>
 
-      <div class="flex flex-row gap-4">
+      <div class="flex flex-row gap-4 mt-2">
         <div class="flex flex-col gap-1">
           <div v-for="item in col1" :key="item.name">
             <span class="flex flex-row gap-1">
@@ -83,13 +83,28 @@
   } from "../composables/useGlobalEvents";
   import { useRouteParams } from "../stores/routeParams";
 
-  const props = defineProps<{
-    text?: string;
-    spaceKey?: ActionItem;
-    toEditorVisible?: boolean;
-    leftLetterKeys: ActionItem[];
-    stopListening?: boolean;
-  }>();
+  const props = defineProps({
+    text: {
+      type: String,
+      default: "",
+    },
+    spaceKey: { 
+      type: Object as PropType<ActionItem>,
+      default: undefined,
+    },
+    toEditorVisible: {
+      type: Boolean,
+      default: true,
+    },  
+    leftLetterKeys: {
+      type: Array as PropType<ActionItem[]>,
+      default: () => [],
+    },
+    stopListening: {
+      type: Boolean,
+      default: false,
+    },
+  });
 
   const routeParamsStore = useRouteParams();
   const { globalEvents } = useGlobalEvents();
@@ -130,9 +145,9 @@
       return;
     }
 
-    if (event.code === "Space") {
+    if (event.code === "Space" && !props.spaceKey?.disabled) {
       props.spaceKey?.action(props.text || "");
-    } else if (event.code === "Tab") {
+    } else if (event.code === "Tab" && props.toEditorVisible) {
       routeParamsStore.toEditor();
     }
 
