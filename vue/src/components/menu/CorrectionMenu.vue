@@ -47,8 +47,16 @@ function handleNewText(newText: string) {
 
 const navPanelStore = useNavPanelStore();
 
-navPanelStore.upateNavParams({
-  toEditorText: props.newText,
+onMounted(() => {
+  navPanelStore.upateNavParams({
+    toEditorText: props.newText,
+  });
+});
+
+onUnmounted(() => {
+  navPanelStore.resetNavParams({
+    toEditorText: '',
+  });
 });
 
 const leftLetterKeys = [

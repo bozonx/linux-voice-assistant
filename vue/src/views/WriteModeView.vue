@@ -33,19 +33,7 @@ navPanelStore.resetNavParams({
   escBtnAction: doCorrection,
 });
 
-watch(() => ipcStore.params?.isWindowShown, (isWindowShown) => {
-  if (!isWindowShown) {
-    return;
-  }
-
-  inputText.value = '';
-  correctedText.value = '';
-  correctionIsActual.value = true;
-
-  if (textareaRef.value) {
-    textareaRef.value.innerText = '';
-  }
-
+onMounted(() => {
   focusTextarea();
 });
 

@@ -34,8 +34,16 @@ const menuModalsStore = useMenuModalsStore();
 const routeParams = useRouteParams();
 const router = useRouter();
 
-navPanelStore.upateNavParams({
-  toEditorText: props.text,
+onMounted(() => {
+  navPanelStore.upateNavParams({
+    toEditorText: props.text,
+  });
+});
+
+onUnmounted(() => {
+  navPanelStore.resetNavParams({
+    toEditorText: '',
+  });
 });
 
 const leftLetterKeys = [

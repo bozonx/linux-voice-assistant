@@ -22,14 +22,12 @@ navPanelStore.resetNavParams({
   escBtnText: "Меню",
 });
 
-watch(() => ipcStore.params?.isWindowShown, (isWindowShown) => {
-  if (isWindowShown) {
-    correctedText.value = '';
-  }
-})
-
 function handleCorrected(text: string) {
   correctedText.value = text;
+  
+  navPanelStore.upateNavParams({
+    toEditorText: text,
+  });
   menuModalsStore.nextModal(MenuModals.INSERT, {
     text: correctedText.value,
   });
