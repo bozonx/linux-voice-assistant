@@ -1,5 +1,6 @@
 import dbus from "@homebridge/dbus-native";
 import { BrowserWindow } from "electron";
+import { ParamsManager } from "./paramsManager";
 
 // dbus-send --session --type=method_call --dest=org.librass.Service /org/librass/Object org.librass.Interface.SwitchMode string:write
 
@@ -8,7 +9,10 @@ const MESSAGE_INTERFACE = "org.librass.Interface";
 const MESSAGE_DEST = "org.librass.Service";
 const MESSAGE_METHOD = "SwitchMode";
 
-export function handleExternalCommands(mainWindow: BrowserWindow) {
+export function handleExternalCommands(
+  paramsManager: ParamsManager,
+  mainWindow: BrowserWindow
+) {
   // @ts-ignore
   const sessionBus = dbus.sessionBus();
 
@@ -25,11 +29,12 @@ export function handleExternalCommands(mainWindow: BrowserWindow) {
 
       console.log("DBUS message received", message);
 
-      mainWindow.webContents.send("params", {
+      paramsManager.setParams({
         mode,
         windowId,
         selectedText: selectedText.join("|"),
       });
+
       mainWindow.show();
     }
   });

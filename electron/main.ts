@@ -7,6 +7,7 @@ import { createOrReadConfig } from "./userConfigManager";
 import { manageTray } from "./Tray";
 import { handleExternalCommands } from "./ExternalCommands";
 import { moveInputToHistory } from "./history";
+import { ParamsManager } from "./paramsManager";
 
 // Отключаем предупреждения о безопасности
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "true";
@@ -34,7 +35,8 @@ async function configure() {
 
   const tray = new Tray(path.join(__dirname, "assets/tray-icon.png"));
   // const args: CommandLineParams = getCommandLineArgs();
-  const api = new Api(APP_CONFIG, mainWindow);
+  const paramsManager = new ParamsManager(mainWindow);
+  const api = new Api(paramsManager, APP_CONFIG, mainWindow);
 
   await api.init();
 
@@ -50,7 +52,7 @@ async function configure() {
 
     api.$setUserConfig(userConfig);
 
-    mainWindow?.webContents.send("params", {
+    paramsManager.setParams({
       // ...args,
       NODE_ENV: process.env.NODE_ENV,
       appConfig: APP_CONFIG,
@@ -94,7 +96,7 @@ async function configure() {
   });
 
   manageTray(app, mainWindow, tray, onClose);
-  handleExternalCommands(mainWindow);
+  handleExternalCommands(paramsManager, mainWindow);
 }
 
 // Обработка полного выхода из приложения
