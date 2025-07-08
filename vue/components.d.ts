@@ -37,7 +37,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Settings: typeof import('./src/components/Settings.vue')['default']
-    ShortcutList: typeof import('./src/components/common/ShortcutList.vue')['default']
+    ShortcutList: typeof import('./src/components/ShortcutList.vue')['default']
     TextPreview: typeof import('./src/components/common/TextPreview.vue')['default']
     TranslateMenu: typeof import('./src/components/menu/TranslateMenu.vue')['default']
     VoiceRecognitionMenu: typeof import('./src/components/menu/VoiceRecognitionMenu.vue')['default']
