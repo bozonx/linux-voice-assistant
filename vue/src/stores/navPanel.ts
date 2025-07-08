@@ -4,8 +4,12 @@ export const DEFAULT_PARAMS = {
   escBtnVisible: true,
   escBtnText: "Назад",
   escBtnAction: undefined as (() => void) | undefined,
-  toEditorBtnVisible: true,
-  toEditorText: "",
+  // toEditorBtnVisible: true,
+  // toEditorText: "",
+  rightPanelVisible: true,
+  toEditorBtnDisabled: false,
+  historyBtnDisabled: false,
+  settingsBtnDisabled: false,
 };
 
 export const useNavPanelStore = defineStore("navPanel", () => {

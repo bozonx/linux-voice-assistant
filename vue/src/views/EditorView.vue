@@ -27,6 +27,6 @@
         text: mainInputStore.value,
       });
     },
-    toEditorBtnVisible: false,
+    toEditorBtnDisabled: true,
   });
 </script>

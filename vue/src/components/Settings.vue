@@ -25,7 +25,7 @@
         >
           <template #item="{ item, index }">
             <div class="flex flex-row gap-2 w-full">
-              <KeyButton :index="index" />
+              <KeyButton>{{ PRESETS_KEYS[index] }}</KeyButton>
               <FieldInput class="flex-1" v-model:value="item.value" />
             </div>
           </template>
@@ -155,7 +155,7 @@
           <template #item="{ item, index }">
             <div class="flex flex-row gap-2 w-full">
               <div>
-                <KeyButton :index="index" />
+                <KeyButton>{{ PRESETS_KEYS[index] }}</KeyButton>
               </div>
               <div class="flex-1">
                 <FieldRow label="Name" vertical>
@@ -191,7 +191,8 @@
   import { useIpcStore } from "../stores/ipc";
   import { usePluginsStore } from "../stores/plugins";
   import useToast from "../composables/useToast";
-
+  import { PRESETS_KEYS } from "../types";
+  
   const ipcStore = useIpcStore();
   const pluginsStore = usePluginsStore();
   const {toast} = useToast();
