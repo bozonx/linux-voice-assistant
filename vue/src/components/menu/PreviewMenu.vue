@@ -5,7 +5,11 @@
       <TextPreview :text="props.text" class="absolute" />
     </div>
 
-    <ShortcutList :text="props.text" :leftLetterKeys="leftLetterKeys" :spaceKey="spaceKey" />
+    <ShortcutList 
+      :text="props.text"
+      :leftLetterKeys="leftLetterKeys"
+      :spaceKey="spaceKey"
+      :toEditorVisible="true" />
   </div>
 </template>
 
@@ -16,7 +20,6 @@ import { useMainInputStore } from '../../stores/mainInput';
 import { useMenuModalsStore } from '../../stores/menuModals';
 import { useRouteParams } from '../../stores/routeParams';
 import { useRouter } from 'vue-router';
-import { useNavPanelStore } from '../../stores/navPanel';
 
 const props = defineProps({
   text: {
@@ -25,7 +28,6 @@ const props = defineProps({
   },
 });
 
-const navPanelStore = useNavPanelStore();
 const actionMenuStore = useActionMenuStore();
 const DEFAULT_ACTIONS = actionMenuStore.DEFAULT_ACTIONS;
 const ipcStore = useIpcStore();
@@ -33,18 +35,6 @@ const mainInputStore = useMainInputStore();
 const menuModalsStore = useMenuModalsStore();
 const routeParams = useRouteParams();
 const router = useRouter();
-
-onMounted(() => {
-  navPanelStore.upateNavParams({
-    toEditorText: props.text,
-  });
-});
-
-onUnmounted(() => {
-  navPanelStore.resetNavParams({
-    toEditorText: '',
-  });
-});
 
 const leftLetterKeys = [
   ipcStore.params?.windowId ? DEFAULT_ACTIONS[0] : undefined,

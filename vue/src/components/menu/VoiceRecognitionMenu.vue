@@ -5,7 +5,9 @@
       <TextPreview :text="recognizedText" class="absolute" />
     </div>
 
-    <ShortcutList :leftLetterKeys="leftLetterKeys" :spaceKey="spaceKey" />
+    <ShortcutList
+      :leftLetterKeys="leftLetterKeys"
+      :spaceKey="spaceKey" />
   </div>
 </template>
 

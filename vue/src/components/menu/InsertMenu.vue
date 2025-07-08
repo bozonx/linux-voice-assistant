@@ -10,13 +10,17 @@
     :text="props.text"
     :leftLetterKeys="leftLetterKeys"
     :spaceKey="spaceKey"
-    :stopListening="props.stopListening" />
+    :stopListening="props.stopListening"
+    :toEditorVisible="!routeParamsStore.isEditorPage()" />
 </div>
 </template>
 
 <script setup lang="ts">
 import { useIpcStore } from '../../stores/ipc';
 import { useActionMenuStore } from '../../stores/actionMenu';
+import { useRouteParams } from '../../stores/routeParams';
+
+const routeParamsStore = useRouteParams();
 
 const props = defineProps({
   text: {

@@ -16,13 +16,14 @@ export const useRouteParams = defineStore("routeParams", () => {
     router.push("/editor");
   }
 
-  // function isEditorPage() {
-  //   return router.currentRoute.value.path === "/editor";
-  // }
+  function isEditorPage() {
+    return router.currentRoute.value.path === "/editor";
+  }
 
   return {
     params,
     setParams,
     toEditor,
+    isEditorPage,
   };
 });

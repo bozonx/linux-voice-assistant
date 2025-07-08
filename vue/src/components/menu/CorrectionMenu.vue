@@ -5,7 +5,11 @@
     <DiffInput :oldText="props.oldText" :newText="props.newText" @update:newText="handleNewText" />
   </div>
 
-  <ShortcutList :text="props.newText" :leftLetterKeys="leftLetterKeys" :spaceKey="spaceKey" />
+  <ShortcutList
+    :text="props.newText"
+    :leftLetterKeys="leftLetterKeys"
+    :spaceKey="spaceKey"
+    :toEditorVisible="true" />
 </div>
 </template>
 
@@ -16,7 +20,6 @@ import { useMainInputStore } from '../../stores/mainInput';
 import { useMenuModalsStore } from '../../stores/menuModals';
 import { useRouteParams } from '../../stores/routeParams';
 import { useRouter } from 'vue-router';
-import { useNavPanelStore } from '../../stores/navPanel';
 
 const ipcStore = useIpcStore();
 const actionMenuStore = useActionMenuStore();
@@ -44,20 +47,6 @@ const emit = defineEmits<{
 function handleNewText(newText: string) {
   emit('update:newText', newText);
 }
-
-const navPanelStore = useNavPanelStore();
-
-onMounted(() => {
-  navPanelStore.upateNavParams({
-    toEditorText: props.newText,
-  });
-});
-
-onUnmounted(() => {
-  navPanelStore.resetNavParams({
-    toEditorText: '',
-  });
-});
 
 const leftLetterKeys = [
   ipcStore.params?.windowId ? DEFAULT_ACTIONS[0] : undefined,

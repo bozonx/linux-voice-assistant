@@ -9,14 +9,13 @@
             small
             secondary
             @click="props.spaceKey.action(props.text || '')"
-            >Вставить в окно</Button
+            >{{ props.spaceKey.name }}</Button
           >
         </span>
         <span v-if="props.toEditorVisible" class="flex flex-row gap-2"
           > <KeyButton>Tab</KeyButton>
           <Button small secondary @click="routeParamsStore.toEditor(props.text)"
-            >Вставить в редактор</Button
-          >
+            >Вставить в редактор</Button>
         </span>
       </div>
 
@@ -94,8 +93,8 @@
     },
     toEditorVisible: {
       type: Boolean,
-      default: true,
-    },  
+      default: false,
+    },
     leftLetterKeys: {
       type: Array as PropType<ActionItem[]>,
       default: () => [],
@@ -148,7 +147,7 @@
     if (event.code === "Space" && !props.spaceKey?.disabled) {
       props.spaceKey?.action(props.text || "");
     } else if (event.code === "Tab" && props.toEditorVisible) {
-      routeParamsStore.toEditor();
+      routeParamsStore.toEditor(props.text);
     }
 
     let codeLetter;

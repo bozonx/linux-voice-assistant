@@ -8,7 +8,8 @@
     <ShortcutList
       :text="props.text"
       :leftLetterKeys="leftLetterKeys"
-      :stopListening="props.stopListening" />
+      :stopListening="props.stopListening"
+      :toEditorVisible="!routeParamsStore.isEditorPage()" />
   </div>
 </template>
 
@@ -17,6 +18,9 @@
   import { useCallAi } from "../../composables/useCallAi";
   import { MenuModals, useMenuModalsStore } from "../../stores/menuModals";
   import useToast from '../../composables/useToast';
+  import { useRouteParams } from '../../stores/routeParams';
+
+  const routeParamsStore = useRouteParams();
 
   const props = defineProps({
     text: {
