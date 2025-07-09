@@ -11,6 +11,7 @@ declare module 'vue' {
     AiChat: typeof import('./src/components/AiChat.vue')['default']
     AiTaskMenu: typeof import('./src/components/menu/AiTaskMenu.vue')['default']
     Button: typeof import('./src/components/common/Button.vue')['default']
+    Card: typeof import('./src/components/common/Card.vue')['default']
     Checkbox: typeof import('./src/components/common/Checkbox.vue')['default']
     CheckboxRow: typeof import('./src/components/common/CheckboxRow.vue')['default']
     CorrectionMenu: typeof import('./src/components/menu/CorrectionMenu.vue')['default']

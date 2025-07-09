@@ -1,53 +1,47 @@
 <template>
-  <div class="main-input-history">
-    <div class="history-toolbar">
-      <button @click="back">
-        Назад
-      </button>
-      <button
-          @click="$emit('clear-history')"
-          class="clear-history-btn"
-        >
-          Очистить историю
-        </button>
+<div class="flex flex-col gap-2 h-full">
+  <div class="flex flex-row gap-2">
+    <div class="flex-1">
+      <input
+        v-model="searchQuery"
+        type="text"
+        ref="searchInput"
+        placeholder="Поиск в истории..."
+        class="history-search"
+      />
     </div>
-    <div class="history-header">
-      <h3>История ввода</h3>
-      <div class="history-controls">
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="Поиск в истории..."
-          class="history-search"
-        />
-
-      </div>
-    </div>
-
-
-    <!-- <div v-else-if="filteredHistory.length === 0" class="empty-history">
-      {{ searchQuery ? 'Ничего не найдено' : 'История пуста' }}
-    </div> -->
-
-    <div class="history-list">
-      <div
-        v-for="(item, index) in props.items || []"
-        :key="index"
-        class="history-item"
+    <Button
+      small
+      secondary
+      @click="$emit('clear-history')"
       >
-        <div class="history-text">
-          {{ item || 'пусто' }}
-        </div>
-        <button
-          @click="$emit('remove-item', item)"
-          class="remove-history-btn"
-          title="Удалить из истории"
-        >
-          ×
-        </button>
+      Очистить историю
+    </Button>
+  </div>
+
+  <div v-if="filteredHistory.length === 0" class="empty-history">
+    {{ searchQuery ? 'Ничего не найдено' : 'История пуста' }}
+  </div>
+  <div v-else class="history-list flex-1">
+    <div
+      v-for="(item, index) in filteredHistory"
+      :key="index"
+      class="history-item"
+    >
+      <div class="history-text">
+        {{ item || 'пусто' }}
       </div>
+      <button
+        @click="$emit('remove-item', item)"
+        class="remove-history-btn"
+        title="Удалить из истории"
+      >
+        ×
+      </button>
     </div>
   </div>
+</div>
+
 </template>
 
 <script setup lang="ts">
@@ -59,62 +53,48 @@ const props = defineProps<{
   items: string[]
 }>()
 
-console.log("items", props.items);
-
+const searchInput = ref<HTMLInputElement | null>(null);
 const searchQuery = ref<string>('')
-const back = () => {
-  router.push("/");
+// // Фильтрованная история на основе поискового запроса
+const filteredHistory = computed(() => {
+  return getFilteredHistory(searchQuery.value) || []
+})
+
+onMounted(() => {
+  if (searchInput.value) {
+    searchInput.value.focus();
+  }
+});
+
+// Получение истории с фильтрацией по поисковому запросу
+const getFilteredHistory = (searchQuery: string): string[] => {
+  if (!searchQuery.trim()) {
+    return props.items;
+  }
+  const query = searchQuery.toLowerCase();
+  return props.items.filter((item) => item.toLowerCase().includes(query));
 };
 
-// // Получение истории с фильтрацией по поисковому запросу
-//   const getFilteredHistory = (searchQuery: string): string[] => {
-//     if (!searchQuery.trim()) {
-//       return history.value;
-//     }
 
-//     const query = searchQuery.toLowerCase();
-//     return history.value.filter((item) => item.toLowerCase().includes(query));
-//   };
-
-// // // Фильтрованная история на основе поискового запроса
-// const filteredHistory = computed(() => {
-//   return getFilteredHistory(searchQuery.value)
-// })
 
 </script>
 
 <style scoped>
-.main-input-history {
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  padding: 16px;
-  background-color: #f9f9f9;
-}
 
-.history-header {
-  margin-bottom: 16px;
-}
-
-.history-header h3 {
-  margin: 0 0 12px 0;
-  color: #333;
-  font-size: 18px;
-}
-
-.history-controls {
+/* .history-controls {
   display: flex;
   gap: 8px;
   align-items: center;
-}
+} */
 
 .history-search {
-  flex: 1;
+  width: 100%;
   padding: 8px 12px;
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 14px;
 }
-
+/*
 .clear-history-btn {
   padding: 8px 12px;
   background-color: #f44336;
@@ -134,8 +114,9 @@ const back = () => {
   background-color: #ccc;
   cursor: not-allowed;
 }
+*/
 
-.loading, .empty-history {
+.empty-history {
   text-align: center;
   padding: 20px;
   color: #666;
@@ -143,7 +124,6 @@ const back = () => {
 }
 
 .history-list {
-  max-height: 300px;
   overflow-y: auto;
 }
 
