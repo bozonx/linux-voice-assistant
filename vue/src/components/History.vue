@@ -31,20 +31,24 @@
       <div class="history-text">
         {{ item || 'пусто' }}
       </div>
-      <Button
-        small
-        secondary
-        @click="routeParams.toEditor(item)"
+      <div class="flex flex-row gap-1">
+        <Button
+          small
+          secondary
+          @click="routeParams.toEditor(item)"
+          title="В редактор"
+          >
+          E
+        </Button>
+        <Button
+          small
+          secondary
+          @click="$emit('remove-item', item)"
+          title="Удалить из истории"
         >
-        E
-      </Button>
-      <button
-        @click="$emit('remove-item', item)"
-        class="remove-history-btn"
-        title="Удалить из истории"
-      >
-        ×
-      </button>
+          ×
+        </Button>
+      </div>
     </div>
   </div>
 </div>
@@ -130,7 +134,7 @@ onMounted(() => {
 .history-text:hover {
   color: #2196F3;
 }
-
+/* 
 .remove-history-btn {
   background: none;
   border: none;
@@ -146,5 +150,5 @@ onMounted(() => {
 .remove-history-btn:hover {
   background-color: #ffebee;
   color: #f44336;
-}
+} */
 </style> 
