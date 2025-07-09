@@ -18,6 +18,6 @@ const ipcStore = useIpcStore();
 const text = computed(() => ipcStore.params!.selectedText || '');
 
 navPanelStore.resetNavParams({
-  escBtnText: "Меню",
+  escBtnVisible: false,
 });
 </script>
