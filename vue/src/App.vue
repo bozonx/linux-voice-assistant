@@ -71,17 +71,26 @@ const handleKeyUp = (event: KeyboardEvent) => {
   background-color: #eee;
   border-bottom: 1px solid #ccc;
   height: 40px;
-}
-.main {
-  position: relative;
-}
-.content {
-  padding: 1.25rem;
-  height: 100%;
+  flex-shrink: 0;
 }
 .layout {
   height: 100dvh;
   width: 100dvw;
+  display: flex;
+  flex-direction: column;
+}
+.main {
+  flex: 1 1 0%;
+  min-height: 0; /* Важно для flexbox, чтобы потомки могли сжиматься */
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.content {
+  flex: 1 1 0%;
+  min-height: 0; /* Важно для flexbox, чтобы потомки могли сжиматься */
+  padding: 1.25rem;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }

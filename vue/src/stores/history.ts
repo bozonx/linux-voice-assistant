@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useIpcStore } from "./ipc";
 
-export const useMainInputHistoryStore = defineStore("mainInputHistory", () => {
+export const useHistoryStore = defineStore("history", () => {
   const history = ref<string[]>([]);
   const ipcStore = useIpcStore();
 
@@ -11,8 +11,6 @@ export const useMainInputHistoryStore = defineStore("mainInputHistory", () => {
       "getMainInputHistory",
       []
     );
-
-    console.log("loadedHistory", loadedHistory.result);
 
     history.value = loadedHistory.result as string[];
   };

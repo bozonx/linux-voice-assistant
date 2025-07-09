@@ -1,5 +1,5 @@
 <template>
-<div class="flex flex-col gap-2 h-full">
+<div class="flex flex-col gap-2 h-full overflow-hidden">
   <div class="flex flex-row gap-2">
     <div class="flex-1">
       <input
@@ -31,6 +31,13 @@
       <div class="history-text">
         {{ item || 'пусто' }}
       </div>
+      <Button
+        small
+        secondary
+        @click="routeParams.toEditor(item)"
+        >
+        E
+      </Button>
       <button
         @click="$emit('remove-item', item)"
         class="remove-history-btn"
@@ -45,19 +52,23 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from "vue-router";
-
-const router = useRouter();
+import { useRouteParams } from '../stores/routeParams';
 
 const props = defineProps<{
   items: string[]
 }>()
 
+const routeParams = useRouteParams();
 const searchInput = ref<HTMLInputElement | null>(null);
 const searchQuery = ref<string>('')
 // // Фильтрованная история на основе поискового запроса
 const filteredHistory = computed(() => {
-  return getFilteredHistory(searchQuery.value) || []
+  if (!searchQuery.value.trim()) {
+    return props.items;
+  }
+  const query = searchQuery.value.toLowerCase();
+
+  return props.items.filter((item) => item.toLowerCase().includes(query));
 })
 
 onMounted(() => {
@@ -65,28 +76,9 @@ onMounted(() => {
     searchInput.value.focus();
   }
 });
-
-// Получение истории с фильтрацией по поисковому запросу
-const getFilteredHistory = (searchQuery: string): string[] => {
-  if (!searchQuery.trim()) {
-    return props.items;
-  }
-  const query = searchQuery.toLowerCase();
-  return props.items.filter((item) => item.toLowerCase().includes(query));
-};
-
-
-
 </script>
 
 <style scoped>
-
-/* .history-controls {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-} */
-
 .history-search {
   width: 100%;
   padding: 8px 12px;
@@ -94,27 +86,6 @@ const getFilteredHistory = (searchQuery: string): string[] => {
   border-radius: 4px;
   font-size: 14px;
 }
-/*
-.clear-history-btn {
-  padding: 8px 12px;
-  background-color: #f44336;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  white-space: nowrap;
-}
-
-.clear-history-btn:hover:not(:disabled) {
-  background-color: #d32f2f;
-}
-
-.clear-history-btn:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-*/
 
 .empty-history {
   text-align: center;
@@ -125,6 +96,7 @@ const getFilteredHistory = (searchQuery: string): string[] => {
 
 .history-list {
   overflow-y: auto;
+  min-height: 0; /* Важно для правильной работы flexbox с overflow */
 }
 
 .history-item {

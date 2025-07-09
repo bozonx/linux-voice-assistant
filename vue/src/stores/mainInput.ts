@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { DebounceCallIncreasing } from "squidlet-lib";
-import { useMainInputHistoryStore } from "./mainInputHistory";
+import { useHistoryStore } from "./history";
 
 export const useMainInputStore = defineStore("mainInput", () => {
   const value = ref<string>("");
@@ -12,14 +12,14 @@ export const useMainInputStore = defineStore("mainInput", () => {
   const selectionEnd = ref<number>(0);
 
   const debounced = new DebounceCallIncreasing();
-  const mainInputHistoryStore = useMainInputHistoryStore();
+  const historyStore = useHistoryStore();
 
   // Действия
   const setValue = (newText: string): void => {
     value.value = newText;
 
     debounced.invoke(() => {
-      mainInputHistoryStore.saveMainInput(newText);
+      historyStore.saveMainInput(newText);
     }, 600);
   };
 
