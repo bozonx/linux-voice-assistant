@@ -12,25 +12,31 @@
 import { useIpcStore } from '../stores/ipc';
 import { MenuModals, useMenuModalsStore } from '../stores/menuModals';
 import { useNavPanelStore } from '../stores/navPanel';
+import { useMainInputStore } from '../stores/mainInput';
 
-const correctedText = ref('');
 const ipcStore = useIpcStore();
 const menuModalsStore = useMenuModalsStore();
 const navPanelStore = useNavPanelStore();
+const mainInputStore = useMainInputStore();
 
 navPanelStore.resetNavParams({
   escBtnText: "Меню",
 });
 
-function handleCorrected(text: string) {
-  correctedText.value = text;
-  
-  // navPanelStore.resetNavParams({
-  //   rightPanelVisible: false,
-  // });
+function handleCorrected(
+  resultText: string,
+  recognizedText: string,
+  correctedText: string
+) {
+  if (recognizedText) {
+    mainInputStore.setValue(recognizedText);
+  }
+
+  // TODO: save to transform history
+
+
   menuModalsStore.nextModal(MenuModals.INSERT, {
-    text: correctedText.value,
+    text: resultText,
   });
 }
-
 </script>

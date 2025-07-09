@@ -8,17 +8,15 @@
 
 <script setup lang="ts">
 import { useCallAi } from '../composables/useCallAi';
-import { DebounceCallIncreasing } from 'squidlet-lib';
-import { useMainInputHistoryStore } from '../stores/mainInputHistory';
 import { useIpcStore } from '../stores/ipc';
 import { MenuModals, useMenuModalsStore } from '../stores/menuModals';
 import { useNavPanelStore } from '../stores/navPanel';
 import useToast from '../composables/useToast';
+import { useMainInputStore } from '../stores/mainInput';
 
 const navPanelStore = useNavPanelStore();
-const mainInputHistoryStore = useMainInputHistoryStore()
+const mainInputStore = useMainInputStore();
 const ipcStore = useIpcStore();
-const debounced = new DebounceCallIncreasing()
 const { correctText } = useCallAi();
 const menuModalsStore = useMenuModalsStore();
 const textareaRef = ref<HTMLDivElement>();
@@ -39,11 +37,8 @@ onMounted(() => {
 
 const handleInput = (event: Event) => {
   inputText.value = (event.target as HTMLDivElement).innerText || '';
+  mainInputStore.setValue(inputText.value);
   correctionIsActual.value = false;
-
-  debounced.invoke(() => {
-    mainInputHistoryStore.saveMainInput(inputText.value)
-  }, 1000)
 }
 
 function focusTextarea() {

@@ -66,8 +66,8 @@ async function init() {
 
 function voiceRecognition() {
   menuModalsStore.nextModal(MenuModals.VOICE_RECOGNITION, {
-    onCorrected: (text: string) => {
-      mainInputStore.setValueAtCursor(text);
+    onCorrected: (resultText: string) => {
+      mainInputStore.setValueAtCursor(resultText);
       menuModalsStore.closeAll();
     },
   });

@@ -97,6 +97,8 @@ const finish = async () => {
   if (!recognizedText.value.trim().length) {
     toast("Ничего не распознано", "warn");
 
+    props.onCorrected('');
+
     return;
   }
 
@@ -104,14 +106,17 @@ const finish = async () => {
   globalEvents.removeListener(listenerIndex);
   await stopVoiceRecognition();
 
-  let correctedText = recognizedText.value;
+  let resultText = recognizedText.value;
+  let correctedText;
 
   if (recognizedText.value.trim().length > appConfig.minCorrectionLength) {
     menuModalsStore.setPendingModal({
       correction: true,
     });
   
-    correctedText = await voiceCorrection(recognizedText.value);
+    resultText = await voiceCorrection(recognizedText.value);
+    correctedText = resultText;
+
 
     menuModalsStore.clearPendingModal();
   }
@@ -119,7 +124,7 @@ const finish = async () => {
     toast("Слишком короткий текст для коррекции", "warn");
   }
 
-  props.onCorrected(correctedText);
+  props.onCorrected(resultText, recognizedText.value, correctedText);
 };
 
 onMounted(async () => {
