@@ -59,10 +59,12 @@
 
 
   function openSettings() {
+    menuModalsStore.closeAll();
     router.push("/config");
   }
 
   function openHistory() {
+    menuModalsStore.closeAll();
     router.push("/history");
   }
 

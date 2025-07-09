@@ -3,7 +3,7 @@
     ref="textareaRef"
     class="main-input"
     placeholder="Enter text..."
-    :value="store.value"
+    :value="mainInputStore.value"
     @input="handleInput"
     @select="handleSelect"
     @mouseup="handleMouseUp"
@@ -12,29 +12,17 @@
 
 <script setup lang="ts">
 import { useMainInputStore } from '../stores/mainInput'
-import { DebounceCallIncreasing } from 'squidlet-lib'
-import { useMainInputHistoryStore } from '../stores/mainInputHistory'
 
-const mainInputHistoryStore = useMainInputHistoryStore()
-const store = useMainInputStore()
+const mainInputStore = useMainInputStore()
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
-const debounced = new DebounceCallIncreasing()
 
-watch(() => store.value, (newValue, oldValue) => {
-  if (newValue !== oldValue) {
-    debounced.invoke(() => {
-      mainInputHistoryStore.saveMainInput(newValue)
-    }, 600)
-  }
-})
-
-watch(() => store.focusCount, (newValue, oldValue) => {
+watch(() => mainInputStore.focusCount, (newValue, oldValue) => {
   if (newValue > oldValue) {
     textareaRef.value?.focus()
   }
 })
 
-watch(() => store.selectAllCount, (newValue, oldValue) => {
+watch(() => mainInputStore.selectAllCount, (newValue, oldValue) => {
   if (newValue > oldValue) {
     textareaRef.value?.select()
   }
@@ -42,7 +30,7 @@ watch(() => store.selectAllCount, (newValue, oldValue) => {
 
 // Следим за изменениями выделения в store
 watch(
-  () => [store.selectionStart, store.selectionEnd],
+  () => [mainInputStore.selectionStart, mainInputStore.selectionEnd],
   ([start, end]) => {
     if (textareaRef.value) {
       textareaRef.value.setSelectionRange(start, end)
@@ -50,12 +38,8 @@ watch(
   }
 )
 
-// Input handler with type safety
 const handleInput = (event: Event): void => {
-  const target = event.target as HTMLTextAreaElement
-  if (target) {
-    store.setValue(target.value)
-  }
+  if (event.target) mainInputStore.setValue((event.target as HTMLTextAreaElement).value)
 }
 
 // Selection handler
@@ -65,7 +49,8 @@ const handleSelect = (event: Event): void => {
     const start = target.selectionStart || 0
     const end = target.selectionEnd || 0
     const text = target.value.substring(start, end)
-    store.setSelection(text, start, end)
+
+    mainInputStore.setSelection(text, start, end)
   }
 }
 
@@ -78,7 +63,7 @@ const handleMouseUp = (event: Event): void => {
     
     // Если начало и конец выделения совпадают, значит выделение снято
     if (start === end) {
-      store.setSelection('', 0, 0)
+      mainInputStore.setSelection('', 0, 0)
     }
   }
 }
