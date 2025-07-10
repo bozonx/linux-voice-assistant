@@ -4,7 +4,11 @@ import { UserConfig } from "./types/UserConfig";
 import { AppConfig } from "./types/types";
 import { typeIntoWindow } from "../common/helpers";
 import { saveUserConfig } from "./userConfigManager";
-import { mainInputStore, mainInputHistoryStore } from "./history";
+import {
+  mainInputStore,
+  inputHistoryStore,
+  transformHistoryStore,
+} from "./history";
 import VoskVoiceRecognition from "./vosk";
 import { ParamsManager } from "./paramsManager";
 
@@ -95,9 +99,35 @@ export class Api {
     }
   }
 
-  async getMainInputHistory(): Promise<string[]> {
+  async saveTransformHistory(value: string): Promise<void> {
     try {
-      return mainInputHistoryStore.get("history", []) as string[];
+      const history = transformHistoryStore.get("history", []) as string[];
+      const filteredHistory = history.filter((item) => item !== value);
+
+      if (filteredHistory.length > this.appConfig.mainInputHistoryMaxItems) {
+        filteredHistory.splice(this.appConfig.mainInputHistoryMaxItems);
+      }
+
+      filteredHistory.unshift(value);
+      transformHistoryStore.set("history", filteredHistory);
+    } catch (error) {
+      console.error("Error saving transform:", error);
+      throw error;
+    }
+  }
+
+  async getInputHistory(): Promise<string[]> {
+    try {
+      return inputHistoryStore.get("history", []) as string[];
+    } catch (error) {
+      console.error("Error getting main input history:", error);
+      return [];
+    }
+  }
+
+  async getTransformHistory(): Promise<string[]> {
+    try {
+      return transformHistoryStore.get("history", []) as string[];
     } catch (error) {
       console.error("Error getting main input history:", error);
       return [];
@@ -105,20 +135,40 @@ export class Api {
   }
 
   // Очистка истории main input
-  async clearMainInputHistory(): Promise<void> {
+  async clearInputHistory(): Promise<void> {
     try {
-      mainInputHistoryStore.set("history", []);
+      inputHistoryStore.set("history", []);
     } catch (error) {
       console.error("Error clearing main input history:", error);
       throw error;
     }
   }
 
-  async removeFromMainInputHistory(value: string): Promise<void> {
+  async removeFromInputHistory(value: string): Promise<void> {
     try {
-      const history = mainInputHistoryStore.get("history", []) as string[];
+      const history = inputHistoryStore.get("history", []) as string[];
       const filteredHistory = history.filter((item) => item !== value);
-      mainInputHistoryStore.set("history", filteredHistory);
+      inputHistoryStore.set("history", filteredHistory);
+    } catch (error) {
+      console.error("Error removing from main input history:", error);
+      throw error;
+    }
+  }
+
+  async clearTransformHistory(): Promise<void> {
+    try {
+      transformHistoryStore.set("history", []);
+    } catch (error) {
+      console.error("Error clearing main input history:", error);
+      throw error;
+    }
+  }
+
+  async removeFromTransformHistory(value: string): Promise<void> {
+    try {
+      const history = transformHistoryStore.get("history", []) as string[];
+      const filteredHistory = history.filter((item) => item !== value);
+      transformHistoryStore.set("history", filteredHistory);
     } catch (error) {
       console.error("Error removing from main input history:", error);
       throw error;

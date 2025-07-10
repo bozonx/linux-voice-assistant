@@ -13,12 +13,14 @@ import { MenuModals, useMenuModalsStore } from '../stores/menuModals';
 import { useNavPanelStore } from '../stores/navPanel';
 import useToast from '../composables/useToast';
 import { useMainInputStore } from '../stores/mainInput';
+import { useHistoryStore } from '../stores/history';
 
 const navPanelStore = useNavPanelStore();
 const mainInputStore = useMainInputStore();
 const ipcStore = useIpcStore();
 const { correctText } = useCallAi();
 const menuModalsStore = useMenuModalsStore();
+const historyStore = useHistoryStore();
 const textareaRef = ref<HTMLDivElement>();
 const inputText = ref('');
 const correctedText = ref('');
@@ -79,6 +81,8 @@ async function doCorrection() {
     });
 
     const result = await correctText(inputText.value);
+
+    await historyStore.saveTransformHistory(result);
 
     correctedText.value = result;
     correctionIsActual.value = true;

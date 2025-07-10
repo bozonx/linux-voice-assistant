@@ -26,3 +26,10 @@ export enum START_MODES {
   EDITOR = "editor",
   WRITE = "write",
 }
+
+export interface ChatParams {
+  initialMessage?: string;
+  initialRole?: string;
+  initialRules?: string;
+  context?: string[];
+}

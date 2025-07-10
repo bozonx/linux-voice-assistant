@@ -19,7 +19,8 @@
   import { MenuModals, useMenuModalsStore } from "../../stores/menuModals";
   import useToast from '../../composables/useToast';
   import { useRouteParams } from '../../stores/routeParams';
-
+  import { useHistoryStore } from '../../stores/history';
+  
   const routeParamsStore = useRouteParams();
 
   const props = defineProps({
@@ -38,6 +39,7 @@
   const { aiTasks } = useCallAi();
   const appConfig = ipcStore.params!.appConfig;
   const { toast } = useToast();
+  const historyStore = useHistoryStore();
 
   async function makeDiff(index: number) {
     if (props.text.length < appConfig.minCorrectionLength) {
@@ -49,6 +51,8 @@
     menuModalsStore.setPendingModal({ ai: true });
 
     const newText = await aiTasks(index, props.text);
+
+    await historyStore.saveTransformHistory(newText);
 
     menuModalsStore.clearPendingModal();
 

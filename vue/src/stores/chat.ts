@@ -1,13 +1,16 @@
-import { ChatMessage } from "../../../electron/types/types";
+import { ChatMessage, ChatParams } from "../../../electron/types/types";
 import { defineStore } from "pinia";
 import { useCallAi } from "../composables/useCallAi";
+import { useRouter } from "vue-router";
 
 export const useChatStore = defineStore("chat", () => {
   const { sendChatMessage } = useCallAi();
+  const router = useRouter();
 
   const messages = ref<ChatMessage[]>([
     // { role: "assistant", content: "Hello, how are you?" },
   ]);
+  const params = ref<ChatParams>({});
 
   const sendMessage = async (message: string) => {
     const prevMessages = messages.value;
@@ -25,9 +28,17 @@ export const useChatStore = defineStore("chat", () => {
     messages.value = [];
   };
 
+  const startChat = (chatParams: ChatParams) => {
+    params.value = chatParams;
+
+    router.push("/chat");
+  };
+
   return {
     messages,
+    params,
     sendMessage,
     clearMessages,
+    startChat,
   };
 });

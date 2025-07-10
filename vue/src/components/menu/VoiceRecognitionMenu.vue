@@ -18,6 +18,7 @@ import { useIpcStore } from '../../stores/ipc';
 import { useMenuModalsStore } from '../../stores/menuModals';
 import useToast from '../../composables/useToast';
 import { useNavPanelStore } from '../../stores/navPanel';
+import { useHistoryStore } from '../../stores/history';
 
 const props = defineProps({
   onCorrected: {
@@ -39,6 +40,7 @@ const appConfig = ipcStore.params!.appConfig;
 const menuModalsStore = useMenuModalsStore();
 const { toast } = useToast();
 const navPanelStore = useNavPanelStore();
+const historyStore = useHistoryStore();
 let listenerIndex = -1;
 
 navPanelStore.upateNavParams({
@@ -117,6 +119,7 @@ const finish = async () => {
     resultText = await voiceCorrection(recognizedText.value);
     correctedText = resultText;
 
+    await historyStore.saveTransformHistory(resultText);
 
     menuModalsStore.clearPendingModal();
   }

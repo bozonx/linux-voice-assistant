@@ -9,8 +9,15 @@ export const mainInputStore = new Store({
   },
 }) as any;
 
-export const mainInputHistoryStore = new Store({
-  name: "main-input-history",
+export const inputHistoryStore = new Store({
+  name: "input-history",
+  defaults: {
+    history: [],
+  },
+}) as any;
+
+export const transformHistoryStore = new Store({
+  name: "transform-history",
   defaults: {
     history: [],
   },
@@ -24,7 +31,7 @@ export async function moveInputToHistory() {
 
     if (!prevInputvalue) return;
 
-    const history = mainInputHistoryStore.get("history", []) as string[];
+    const history = inputHistoryStore.get("history", []) as string[];
     // Удаляем дубликаты
     const filteredHistory = history.filter((item) => item !== prevInputvalue);
     // Ограничиваем количество элементов
@@ -34,7 +41,7 @@ export async function moveInputToHistory() {
     // Добавляем новое значение в начало
     filteredHistory.unshift(prevInputvalue);
 
-    mainInputHistoryStore.set("history", filteredHistory);
+    inputHistoryStore.set("history", filteredHistory);
   } catch (error) {
     console.error("Error making history:", error);
     throw error;

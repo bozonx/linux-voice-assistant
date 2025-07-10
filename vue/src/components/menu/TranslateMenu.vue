@@ -14,11 +14,13 @@ import { useIpcStore } from '../../stores/ipc';
 import { useCallAi } from '../../composables/useCallAi';
 import { MenuModals, useMenuModalsStore } from '../../stores/menuModals';
 import useToast from '../../composables/useToast';
+import { useHistoryStore } from '../../stores/history';
 
 const ipcStore = useIpcStore();
 const appConfig = ipcStore.params!.appConfig;
 const { translateText } = useCallAi();
 const menuModalsStore = useMenuModalsStore();
+const historyStore = useHistoryStore();
 const { toast } = useToast();
 
 const props = defineProps<{
@@ -42,7 +44,9 @@ const translate = async (toLangNum: number) => {
 
   menuModalsStore.setPendingModal({ ai: true });
   
-  const newText = await translateText(toLangNum, trimmedText);
+  const newText = await translateText(toLangNum, trimmedText);  
+
+  await historyStore.saveTransformHistory(newText);
 
   menuModalsStore.clearPendingModal();
 

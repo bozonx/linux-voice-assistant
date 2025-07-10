@@ -5,10 +5,18 @@
       <Button @click="currentTab = 1" :active="currentTab === 1">История трансформаций</Button>
     </div>
     <Card v-show="currentTab === 0" class="flex-1">
-      <History :items="historyStore.history" @remove-item="removeItem" @clear-history="clearHistory" />
+      <History
+        :items="historyStore.inputHistory"
+        @remove-item="removeInputItem"
+        @clear-history="historyStore.clearInputHistory()"
+      />
     </Card>
     <Card v-show="currentTab === 1" class="flex-1">
-      <History :items="historyStore.history" @remove-item="removeItem" @clear-history="clearHistory" />
+      <History
+        :items="historyStore.transformHistory"
+        @remove-item="removeTransformItem"
+        @clear-history="historyStore.clearTransformHistory()"
+      />
     </Card>
   </div>
 </template>
@@ -22,7 +30,8 @@
   const currentTab = ref(0)
 
   onMounted(async () => {
-    await historyStore.loadHistory()
+    await historyStore.loadInputHistory()
+    await historyStore.loadTransformHistory()
   })
 
   navPanelStore.resetNavParams({
@@ -30,11 +39,12 @@
     historyBtnDisabled: true,
   });
 
-  const removeItem = async (item: string) => {
-    await historyStore.removeFromHistory(item)
+  const removeInputItem = async (item: string) => {
+    await historyStore.removeFromInputHistory(item)
   }
 
-  const clearHistory = async () => {
-    await historyStore.clearHistory()
+  const removeTransformItem = async (item: string) => {
+    await historyStore.removeFromTransformHistory(item)
   }
+
 </script>

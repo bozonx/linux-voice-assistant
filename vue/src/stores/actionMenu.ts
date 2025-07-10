@@ -5,6 +5,8 @@ import { useIpcStore } from "./ipc";
 import { MenuModals, useMenuModalsStore } from "./menuModals";
 import { useCallAi } from "../composables/useCallAi";
 import useToast from "../composables/useToast";
+import { useHistoryStore } from "./history";
+import { useChatStore } from "./chat";
 
 export interface ActionItem {
   name: string;
@@ -17,10 +19,12 @@ export const useActionMenuStore = defineStore("actionMenu", () => {
   const { typeIntoWindowAndClose } = useCallApi();
   const ipcStore = useIpcStore();
   const menuModalsStore = useMenuModalsStore();
+  const historyStore = useHistoryStore();
   const appConfig = ipcStore.params!.appConfig;
   const { correctText } = useCallAi();
   const { toast } = useToast();
   const registeredActionsMenu = ref<ActionItem[]>([]);
+  const chatStore = useChatStore();
 
   const DEFAULT_ACTIONS: ActionItem[] = [
     {
@@ -53,6 +57,8 @@ export const useActionMenuStore = defineStore("actionMenu", () => {
 
         const newText = await correctText(text);
 
+        await historyStore.saveTransformHistory(newText);
+
         menuModalsStore.clearPendingModal();
 
         menuModalsStore.nextModal(MenuModals.CORRECTION, {
@@ -66,6 +72,22 @@ export const useActionMenuStore = defineStore("actionMenu", () => {
       action: async (text: string) => {
         menuModalsStore.nextModal(MenuModals.TRANSLATE, {
           text,
+        });
+      },
+    },
+    {
+      name: "Спросить у AI",
+      action: async (text: string) => {
+        chatStore.startChat({
+          initialMessage: text,
+        });
+      },
+    },
+    {
+      name: "Спросить по тексту у AI",
+      action: async (text: string) => {
+        chatStore.startChat({
+          context: [text],
         });
       },
     },

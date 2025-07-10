@@ -26,14 +26,10 @@ navPanelStore.resetNavParams({
 function handleCorrected(
   resultText: string,
   recognizedText: string,
-  correctedText: string
 ) {
   if (recognizedText) {
     mainInputStore.setValue(recognizedText);
   }
-
-  // TODO: save to transform history
-
 
   menuModalsStore.nextModal(MenuModals.INSERT, {
     text: resultText,
