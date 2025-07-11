@@ -2,8 +2,10 @@ import { ChatMessage, ChatParams } from "../../../electron/types/types";
 import { defineStore } from "pinia";
 import { useCallAi } from "../composables/useCallAi";
 import { useRouter } from "vue-router";
+import useToast from "../composables/useToast";
 
 export const useChatStore = defineStore("chat", () => {
+  const { toast } = useToast();
   const { sendChatMessage } = useCallAi();
   const router = useRouter();
 
@@ -17,6 +19,11 @@ export const useChatStore = defineStore("chat", () => {
     attachments?: string[],
     role?: string
   ) => {
+    if (!message?.trim()) {
+      toast("Текст не выбран", "error");
+      return;
+    }
+
     const prevMessages = messages.value;
     const attachString = (attachments || [])
       .map((a) => `=== ATTACHMENT START ===\n${a}\n=== ATTACHMENT END ===`)
@@ -30,6 +37,7 @@ export const useChatStore = defineStore("chat", () => {
       .join("\n\n");
 
     // TODO: save to history
+
     // save to previous messages
     messages.value.push({
       role: "user",

@@ -25,10 +25,9 @@ export enum GlobalEvents {
 export enum AI_TASKS {
   TRANSLATE = "translate",
   VOICE_CORRECTION = "voiceCorrection",
-  INTENTION_RECOGNITION = "intentionRecognition",
   CORRECTION = "correction",
   AI_TASKS = "aiTasks",
-  ASK_AI = "askAi",
+  CHAT = "chat",
 }
 
 export const PRESETS_KEYS = [

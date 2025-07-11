@@ -1,5 +1,4 @@
 import { useIpcStore } from "../stores/ipc";
-import { useCallApi } from "./useCallApi";
 import { useAiRequest } from "../../../common/useAiRequest";
 import { ChatMessage } from "../../../electron/types/types";
 import { AI_TASKS } from "../types";
@@ -8,7 +7,6 @@ import useToast from "./useToast";
 export const useCallAi = () => {
   const { chatCompletion, prepareAiMessages } = useAiRequest();
   const ipcStore = useIpcStore();
-  const { resolveText } = useCallApi();
   const { toast } = useToast();
 
   async function aiRequest(taskName: string, messages: string | ChatMessage[]) {
@@ -47,31 +45,13 @@ export const useCallAi = () => {
     );
   };
 
-  const dealToCalendar = async (text?: string) => {
-    let value = resolveText(text);
-
-    if (!value?.trim()) {
-      toast("Текст не выбран", "error");
-      return;
-    }
-
-    console.log("dealToCalendar");
-
-    // TODO: do it
-  };
-
   const sendChatMessage = async (
     message: string,
     prevMessages: ChatMessage[]
   ) => {
-    if (!message?.trim()) {
-      toast("Текст не выбран", "error");
-      return;
-    }
-
     const result = await aiRequest(
-      AI_TASKS.ASK_AI,
-      prepareAiMessages(ipcStore.params!.userConfig, AI_TASKS.ASK_AI, [
+      AI_TASKS.CHAT,
+      prepareAiMessages(ipcStore.params!.userConfig, AI_TASKS.CHAT, [
         ...prevMessages,
         { role: "user", content: message },
       ])
@@ -124,7 +104,7 @@ export const useCallAi = () => {
         ipcStore.params!.userConfig,
         AI_TASKS.AI_TASKS,
         text,
-        ipcStore.params!.userConfig.aiTasks[presetNum].context
+        ipcStore.params!.userConfig.aiTasks[presetNum].rule
       )
     );
   };
@@ -134,7 +114,6 @@ export const useCallAi = () => {
     startVoiceRecognition,
     stopVoiceRecognition,
     voiceCorrection,
-    dealToCalendar,
     sendChatMessage,
     correctText,
     translateText,
