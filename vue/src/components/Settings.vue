@@ -1,11 +1,12 @@
 <template>
-  <div>
+  <div class="overflow-y-auto">
     <div class="flex flex-row gap-1 mb-4">
       <Button @click="currentTab = 0" :active="currentTab === 0">Основные</Button>
       <Button @click="currentTab = 1" :active="currentTab === 1">Модели</Button>
       <Button @click="currentTab = 2" :active="currentTab === 2">AI rules</Button>
-      <Button @click="currentTab = 3" :active="currentTab === 3">Ваши задачи для AI</Button>
-      <Button @click="currentTab = 4" :active="currentTab === 4">Плагины</Button>
+      <Button @click="currentTab = 3" :active="currentTab === 3">Задания для AI</Button>
+      <Button @click="currentTab = 4" :active="currentTab === 4">Роли чата</Button>
+      <Button @click="currentTab = 5" :active="currentTab === 5">Плагины</Button>
     </div>
 
     <div v-show="currentTab === 0"> 
@@ -122,8 +123,8 @@
       <FieldRow label="AI Tasks">
         <Dropdown v-model:value="userConfig.aiModelUsage.aiTasks" :options="userConfig.llmModels.map((model) => ({ id: model.id, name: model.id }))" />
       </FieldRow>
-      <FieldRow label="Ask AI">
-        <Dropdown v-model:value="userConfig.aiModelUsage.askAI" :options="userConfig.llmModels.map((model) => ({ id: model.id, name: model.id }))" />
+      <FieldRow label="Chat">
+        <Dropdown v-model:value="userConfig.aiModelUsage.chat" :options="userConfig.llmModels.map((model) => ({ id: model.id, name: model.id }))" />
       </FieldRow>
     </div>
 
@@ -141,12 +142,6 @@
       <FieldRow label="Коррекция текста">
         <FieldTextArea v-model:value="userConfig.aiRules.correction" />
       </FieldRow>
-      <FieldRow label="Быстрый запрос к AI">
-        <FieldTextArea v-model:value="userConfig.aiRules.askAiShort" />
-      </FieldRow>
-      <FieldRow label="Запрос к AI по тексту">
-        <FieldTextArea v-model:value="userConfig.aiRules.askAiForText" />
-      </FieldRow>
     </div>
 
     <div v-show="currentTab === 3">
@@ -161,11 +156,8 @@
                 <FieldRow label="Name" vertical>
                   <FieldInput v-model:value="item.name" />
                 </FieldRow>
-                <FieldRow label="Description" vertical>
-                  <FieldTextArea v-model:value="item.description" />
-                </FieldRow>
-                <FieldRow label="Context" vertical>
-                  <FieldTextArea v-model:value="item.context" />
+                <FieldRow label="Rule" vertical>
+                  <FieldTextArea v-model:value="item.rule" />
                 </FieldRow>
               </div>
             </div>
@@ -175,6 +167,28 @@
     </div>
 
     <div v-show="currentTab === 4">
+      <FieldRow label="Роли чата">
+        <FieldItems :items="userConfig.chatRoles" @update:items="updateChatRoles">
+          <template #item="{ item, index }">
+            <div class="flex flex-row gap-2 w-full">
+              <div>
+                <KeyButton>{{ PRESETS_KEYS[index] }}</KeyButton>
+              </div>
+              <div class="flex-1">
+                <FieldRow label="Name" vertical>
+                  <FieldInput v-model:value="item.name" />
+                </FieldRow>
+                <FieldRow label="Rule" vertical>
+                  <FieldTextArea v-model:value="item.rule" />
+                </FieldRow>
+              </div>
+            </div>
+          </template>
+        </FieldItems>
+      </FieldRow>
+    </div>
+
+    <div v-show="currentTab === 5">
       <template v-for="plugin of plugins" :key="plugin.pluginName">
         <h2>{{ plugin.label }}</h2>
         <FieldsByCfg :config="plugin.fields" @update:values="updatePluginConfig(plugin.pluginName, $event)" />
@@ -259,6 +273,10 @@
 
   const updateAiTasks = (items: any[]) => {
     userConfig.value.aiTasks = items
+  };
+
+  const updateChatRoles = (items: any[]) => {
+    userConfig.value.chatRoles = items;
   };
 
   const updatePluginConfig = (pluginName: string, values: Record<string, any>) => {

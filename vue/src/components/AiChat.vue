@@ -14,25 +14,26 @@
 
     <Card class="flex flex-col gap-2">
       <div class="flex flex-row gap-2">
-        <div v-if="context.length > 0" class="flex-1 flex flex-row gap-2">
-          <span class="text-sm font-bold">Контекст:</span>
-          <Button small secondary v-for="contextItem in context" :key="contextItem">
-            {{ truncate(contextItem, 10) }}
+        <div class="flex-1 flex flex-row gap-2">
+          <Button
+            small secondary 
+            v-for="attachment in attachments"
+            :key="attachment"
+            :title="attachment"
+          >
+            {{ truncate(attachment, 24) }}
           </Button>
         </div>
         <div v-if="roles.length > 0" class="flex flex-col gap-2">
-          <span class="text-sm font-bold">Роли:</span>
-          <Button small secondary v-for="role in roles" :key="role">
-            {{ role }}
-          </Button>
+          <Dropdown :options="roles" v-model:value="selectedRole" title="Роль" />
         </div>
       </div>
     
       <div class="flex flex-row gap-2">
-        <textarea v-model="message" class="text-area" />
+        <textarea v-model="message" class="text-area" ref="textAreaRef" />
         <div class="flex flex-col gap-2">
-          <Button small secondary @click="sendMessage">Send</Button>
-          <Button small secondary @click="chatStore.clearMessages">Clear</Button>
+          <Button small secondary @click="sendMessage" title="Отправить сообщение">Send</Button>
+          <Button small secondary @click="clearInput" title="Очистить поле ввода">Clear</Button>
         </div>
       </div>
 
@@ -44,17 +45,25 @@
   import { useChatStore } from "../stores/chat";
   import { useRouteParams } from "../stores/routeParams";
   import { truncate } from "squidlet-lib";
+  import { useIpcStore } from "../stores/ipc";
 
+  const ipcStore = useIpcStore();
   const chatStore = useChatStore();
-  const message = ref<string>("");
-  const context = computed(() => chatStore.params.context || []);
-  // TODO: get from config
-  const roles = computed(() =>  []);
+  const userConfig = computed(() => ipcStore.params!.userConfig);
+  const message = ref<string>(chatStore.params.initialMessage || "");
+  const textAreaRef = ref<HTMLTextAreaElement | null>(null);
+  const attachments = computed(() => chatStore.params.attachments || []);
+  const roles = computed(() => userConfig.value.chatRoles.map((role: any) => ({ id: role.name, name: truncate(role.name, 16) })));
+  const selectedRole = ref<string | undefined>(roles.value[0]?.id);
+  
   const routeParamsStore = useRouteParams();
 
   onMounted(() => {
     if (routeParamsStore.params.message) {
       message.value = routeParamsStore.params.message;
+    }
+    if (textAreaRef.value) {
+      textAreaRef.value.focus();
     }
   });
 
@@ -64,28 +73,19 @@
     chatStore.sendMessage(message.value);
     message.value = "";
   };
+
+  const clearInput = () => {
+    message.value = "";
+    if (textAreaRef.value) {
+      textAreaRef.value.focus();
+    }
+  };
 </script>
 
 <style scoped>
-  /* .chat-container {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: stretch;
-  } */
-  /* .messages-container {
-    gap: 10px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  } */
-
   .message {
     display: flex;
     padding: 10px;
-
   }
 
   .message p {

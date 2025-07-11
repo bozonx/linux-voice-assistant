@@ -1,5 +1,5 @@
 <template>
-  <select v-model="value">
+  <select v-model="value" :title="title">
     <option v-for="option in options" :key="option.id" :value="option.id">
       {{ option.name }}
     </option>
@@ -9,6 +9,7 @@
 <script setup lang="ts">
   const props = defineProps<{
     value?: number | string;
+    title?: string;
     options: { id: number | string; name: string }[];
   }>();
 

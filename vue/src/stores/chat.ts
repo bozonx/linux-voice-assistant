@@ -24,9 +24,9 @@ export const useChatStore = defineStore("chat", () => {
     return result;
   };
 
-  const clearMessages = () => {
-    messages.value = [];
-  };
+  // const clearMessages = () => {
+  //   messages.value = [];
+  // };
 
   const startChat = (chatParams: ChatParams) => {
     params.value = chatParams;
@@ -38,7 +38,6 @@ export const useChatStore = defineStore("chat", () => {
     messages,
     params,
     sendMessage,
-    clearMessages,
     startChat,
   };
 });

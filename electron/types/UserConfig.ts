@@ -63,7 +63,7 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
     voiceCorrection: "",
     correction: "",
     aiTasks: "",
-    askAI: "",
+    chat: "",
   },
 
   // AI rules
@@ -72,18 +72,17 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
     translate: TRANSLATION_TASK,
     voiceCorrection: VOICE_CORRECTION_TASK,
     correction: CORRECTION_TASK,
-    askAiForText: "",
-    askAiShort: "Отвечай лаконично",
   },
 
   aiTasks: [
     {
       name: "deepEdit",
-      description: "Редактирование текста",
-      context:
-        "убрать косноязычие , добавить местоимения где они нужны, исправление смысла и запутанности, убрать дублирование, подобрать уместные синонимы",
+      rule: "убрать косноязычие , добавить местоимения где они нужны, исправление смысла и запутанности, убрать дублирование, подобрать уместные синонимы",
     },
   ],
+
+  // Chat roles
+  chatRoles: [],
 
   // Plugins
   plugins: [],
@@ -147,7 +146,7 @@ export interface UserConfig {
 
     ////// Most smart models //////
     aiTasks: string;
-    askAI: string;
+    chat: string;
   };
 
   // AI rules
@@ -158,15 +157,18 @@ export interface UserConfig {
     translate: string;
     voiceCorrection: string;
     correction: string;
-    askAiShort: string;
-    askAiForText: string;
   };
 
   // Custom AI tasks
   aiTasks: {
     name: string;
-    description: string;
-    context: string;
+    rule: string;
+  }[];
+
+  // Chat roles rules
+  chatRoles: {
+    name: string;
+    rule: string;
   }[];
 
   // Plugins

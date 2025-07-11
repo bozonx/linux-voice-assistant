@@ -29,7 +29,6 @@ export enum START_MODES {
 
 export interface ChatParams {
   initialMessage?: string;
-  initialRole?: string;
-  initialRules?: string;
-  context?: string[];
+  initialRule?: string;
+  attachments?: string[];
 }
