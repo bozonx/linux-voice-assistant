@@ -21,10 +21,16 @@ import { APP_CONFIG } from "../electron/appConfig";
 
   let result;
 
+  const modelId = (userConfig.aiModelUsage as any)["correction"];
+  const model = userConfig.llmModels.find((model) => model.id === modelId);
+
+  if (!model) {
+    throw new Error("Model not found");
+  }
+
   try {
     result = await chatCompletion(
-      userConfig,
-      "correction",
+      model,
       prepareAiMessages(userConfig, "correction", args.selectedText)
     );
 

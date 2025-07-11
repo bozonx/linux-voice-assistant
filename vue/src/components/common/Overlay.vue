@@ -12,7 +12,6 @@ const props = defineProps<{
 
 <style scoped>
 .overlay {
-  z-index: 100;
   width: 100%;
   height: 100%;
   display: flex;
@@ -22,6 +21,7 @@ const props = defineProps<{
 }
 
 .modal {
+  z-index: 100;
   height: calc(100% - 40px);
   position: fixed;
   background-color: rgb(0 8 2 / 80%);

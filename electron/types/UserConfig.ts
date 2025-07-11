@@ -101,6 +101,15 @@ export type ModelTag =
   | "lowCost"
   | "free";
 
+export interface LlmModel {
+  id: string;
+  model: string;
+  description?: string;
+  baseUrl: string;
+  apiKey: string;
+  tags?: ModelTag[];
+}
+
 export interface UserConfig {
   // Common
   xdotoolBin: string;
@@ -111,14 +120,7 @@ export interface UserConfig {
   toTranslateLanguages: string[];
 
   // Models
-  llmModels: {
-    id: string;
-    model: string;
-    description?: string;
-    baseUrl: string;
-    apiKey: string;
-    tags?: ModelTag[];
-  }[];
+  llmModels: LlmModel[];
   sttModels: {
     id: string;
     model: string;

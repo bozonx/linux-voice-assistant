@@ -10,11 +10,15 @@ export const useCallAi = () => {
   const { toast } = useToast();
 
   async function aiRequest(taskName: string, messages: string | ChatMessage[]) {
-    const result = await chatCompletion(
-      ipcStore.params!.userConfig,
-      taskName,
-      messages
-    );
+    const userConfig = ipcStore.params!.userConfig;
+    const modelId = (userConfig.aiModelUsage as any)[taskName];
+    const model = userConfig.llmModels.find((model) => model.id === modelId);
+
+    if (!model) {
+      throw new Error("Model not found");
+    }
+
+    const result = await chatCompletion(model, messages);
 
     if (result.error) {
       toast(result.error, "error", 10000);

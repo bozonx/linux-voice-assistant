@@ -1,5 +1,5 @@
 import { APP_CONFIG } from "../electron/appConfig";
-import type { UserConfig } from "../electron/types/UserConfig";
+import type { LlmModel, UserConfig } from "../electron/types/UserConfig";
 import { ChatMessage } from "../electron/types/types";
 
 export const useAiRequest = () => {
@@ -50,22 +50,10 @@ export const useAiRequest = () => {
   }
 
   async function chatCompletion(
-    userConfig: UserConfig,
-    taskName: string,
+    model: LlmModel,
     messages: string | ChatMessage[]
   ): Promise<Record<string, any>> {
-    console.log("chatCompletion", userConfig, taskName, messages);
-
-    const modelId = (userConfig.aiModelUsage as any)[taskName];
-    const model = userConfig.llmModels.find((model) => model.id === modelId);
-
-    if (!model) {
-      throw new Error("Model not found");
-    }
-
-    const modelName = model.model;
-
-    console.log(1, messages, 2, modelId, 3, modelName, 4, model.baseUrl, 5, model.apiKey);
+    console.log("chatCompletion", model, messages);
 
     const result = await fetch(model.baseUrl + "/chat/completions", {
       method: "POST",
@@ -76,7 +64,7 @@ export const useAiRequest = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: modelName,
+        model: model.model,
         messages,
       }),
     });

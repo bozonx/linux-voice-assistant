@@ -54,6 +54,12 @@ const VOICE_CORRECTION_TASK = `
 - Восстанови пунктуацию и сделай текст граматически верным
 `;
 
+const CHAT_TASK = `
+## Что возвращать
+
+- Возвращай только результат
+`;
+
 export const APP_CONFIG = {
   windowWidth: 800,
   windowHeight: 600,
@@ -68,5 +74,6 @@ export const APP_CONFIG = {
     aiTasks: CUSTOM_AI_TASKS,
     translate: TRANSLATION_TASK,
     voiceCorrection: VOICE_CORRECTION_TASK,
+    chat: CHAT_TASK,
   },
 };

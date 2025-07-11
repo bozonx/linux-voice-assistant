@@ -34,6 +34,7 @@
         <div class="flex flex-col gap-2">
           <Button small secondary @click="sendMessage" title="Отправить сообщение">Send</Button>
           <Button small secondary @click="clearInput" title="Очистить поле ввода">Clear</Button>
+          <Button small secondary @click="voiceInput" title="Голосовой ввод">Voice</Button>
         </div>
       </div>
 
@@ -46,9 +47,12 @@
   import { useRouteParams } from "../stores/routeParams";
   import { truncate } from "squidlet-lib";
   import { useIpcStore } from "../stores/ipc";
+  import { MenuModals, useMenuModalsStore } from '../stores/menuModals';
+  import { useMainInputStore } from '../stores/mainInput';
 
   const ipcStore = useIpcStore();
   const chatStore = useChatStore();
+  const menuModalsStore = useMenuModalsStore();
   const userConfig = computed(() => ipcStore.params!.userConfig);
   const message = ref<string>(chatStore.params.initialMessage || "");
   const textAreaRef = ref<HTMLTextAreaElement | null>(null);
@@ -85,6 +89,15 @@
     if (textAreaRef.value) {
       textAreaRef.value.focus();
     }
+  };
+
+  const voiceInput = () => {
+    menuModalsStore.nextModal(MenuModals.VOICE_RECOGNITION, {
+      onCorrected: (resultText: string) => {
+        message.value = resultText;
+        menuModalsStore.closeAll();
+      },
+    });
   };
 </script>
 
