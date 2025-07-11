@@ -87,7 +87,7 @@ export const useActionMenuStore = defineStore("actionMenu", () => {
       name: "Спросить по тексту у AI",
       action: async (text: string) => {
         chatStore.startChat({
-          context: [text],
+          attachments: [text],
         });
       },
     },

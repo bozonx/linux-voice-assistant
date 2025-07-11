@@ -7,7 +7,7 @@
           :key="message.content" class="message"
           :class="{ 'user': message.role === 'user', 'opponent': message.role === 'assistant' }"
         >
-          <p>{{ message.content }}</p>
+          <pre>{{ message.content }}</pre>
         </div>
       </div>
     </Card>
@@ -67,10 +67,16 @@
     }
   });
 
-  const sendMessage = () => {
-    if (!message.value.trim()) return;
+  const sendMessage = async () => {
+    const msg = message.value.trim();
+
+    if (!msg) return;
     
-    chatStore.sendMessage(message.value);
+    await chatStore.sendMessage(
+      msg,
+       attachments.value,
+       userConfig.value.chatRoles.find((role: any) => role.name === selectedRole.value)?.rule || ""
+      );
     message.value = "";
   };
 
@@ -88,23 +94,24 @@
     padding: 10px;
   }
 
-  .message p {
+  .message pre {
     margin: 0;
     border: 1px solid #ccc;
     padding: 10px;
     border-radius: 5px;
+    white-space: break-spaces;
   }
 
   .message.user {
     justify-content: flex-end;
   }
 
-  .message.user p {
+  .message.user pre {
     background-color: #007bff;
     color: white;
   }
 
-  .message.opponent p {
+  .message.opponent pre {
     background-color: #f0f0f0;
     color: black;
   }
