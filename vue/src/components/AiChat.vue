@@ -53,9 +53,9 @@
   const chatStore = useChatStore();
   const menuModalsStore = useMenuModalsStore();
   const userConfig = computed(() => ipcStore.params!.userConfig);
-  const message = ref<string>(chatStore.params.initialMessage || "");
+  const message = ref<string>(chatStore.newChatParams.initialMessage || "");
   const textAreaRef = ref<HTMLTextAreaElement | null>(null);
-  const attachments = computed(() => chatStore.params.attachments || []);
+  const attachments = computed(() => chatStore.newChatParams.attachments || []);
   const roles = computed(() => userConfig.value.chatRoles.map((role: any) => ({ id: role.name, name: truncate(role.name, 16) })));
   const selectedRole = ref<string | undefined>(roles.value[0]?.id);
   

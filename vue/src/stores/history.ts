@@ -59,13 +59,11 @@ export const useHistoryStore = defineStore("history", () => {
     item: ChatHistoryItem
   ): Promise<void> => {
     await ipcStore.callFunction("removeFromChatHistory", [item]);
-    chatHistory.value = chatHistory.value.filter(
-      (item) => item.name !== item.name && item.lastMsgDate !== item.lastMsgDate
-    );
+    chatHistory.value = chatHistory.value.filter((item) => item.id !== item.id);
   };
 
   const saveMainInput = async (value: string) => {
-    await ipcStore.callFunction("saveMainInput", [value]);
+    await ipcStore.callFunction("saveMainInputTmp", [value]);
   };
 
   const saveTransformHistory = async (value: string) => {

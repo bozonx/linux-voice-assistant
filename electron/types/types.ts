@@ -28,13 +28,15 @@ export enum START_MODES {
 }
 
 export interface ChatParams {
+  id?: string;
   initialMessage?: string;
   initialRule?: string;
   attachments?: string[];
 }
 
 export interface ChatHistoryItem {
-  name: string;
+  id: string;
+  description: string;
   lastMsgDate: string;
   messages: any[];
 }

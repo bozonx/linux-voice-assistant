@@ -28,14 +28,17 @@
       :key="index"
       class="history-item"
     >
+      <div v-if="item.label" class="text-gray-500">
+        {{ item.label }}:
+      </div>
       <div class="history-text">
-        {{ item || 'пусто' }}
+        {{ item.value || 'пусто' }}
       </div>
       <div class="flex flex-row gap-1">
         <Button
           small
           secondary
-          @click="routeParams.toEditor(item)"
+          @click="routeParams.toEditor(item.value)"
           title="В редактор"
           >
           E
@@ -59,7 +62,7 @@
 import { useRouteParams } from '../stores/routeParams';
 
 const props = defineProps<{
-  items: string[]
+  items: {label: string, value: string}[]
 }>()
 
 const routeParams = useRouteParams();
@@ -72,7 +75,7 @@ const filteredHistory = computed(() => {
   }
   const query = searchQuery.value.toLowerCase();
 
-  return props.items.filter((item) => item.toLowerCase().includes(query));
+  return props.items.filter((item) => item.value.toLowerCase().includes(query));
 })
 
 onMounted(() => {

@@ -5,16 +5,19 @@ import { useRouter } from "vue-router";
 import useToast from "../composables/useToast";
 import { APP_CONFIG } from "../../../electron/appConfig";
 import { AI_TASKS } from "../types";
+import { useHistoryStore } from "./history";
+import { makeUniqId } from "squidlet-lib";
 
 export const useChatStore = defineStore("chat", () => {
   const { toast } = useToast();
   const { sendChatMessage } = useCallAi();
   const router = useRouter();
+  const historyStore = useHistoryStore();
 
   const messages = ref<ChatMessage[]>([
     // { role: "assistant", content: "Hello, how are you?" },
   ]);
-  const params = ref<ChatParams>({});
+  const newChatParams = ref<ChatParams>({});
 
   const sendMessage = async (
     message: string,
@@ -44,13 +47,12 @@ export const useChatStore = defineStore("chat", () => {
       .filter(Boolean)
       .join("\n\n");
 
-    // TODO: save to history
-
     // save to previous messages
-    messages.value.push({
+    const newMessage: ChatMessage = {
       role: "user",
       content: [attachString, message].filter(Boolean).join("\n\n"),
-    });
+    };
+    messages.value.push(newMessage);
 
     const result = await sendChatMessage(
       preparedMessage,
@@ -58,9 +60,21 @@ export const useChatStore = defineStore("chat", () => {
       devInstructions
     );
 
-    messages.value.push({ role: "assistant", content: result });
+    const assistantMessage: ChatMessage = {
+      role: "assistant",
+      content: result,
+    };
+    messages.value.push(assistantMessage);
 
-    params.value.attachments = [];
+    newChatParams.value.attachments = [];
+
+    historyStore.saveChatHistory({
+      id: newChatParams.value.id!,
+      // TODO: description
+      description: newChatParams.value.initialMessage!,
+      lastMsgDate: new Date().toISOString(),
+      messages: [newMessage, assistantMessage],
+    });
 
     return result;
   };
@@ -70,14 +84,14 @@ export const useChatStore = defineStore("chat", () => {
   // };
 
   const startChat = (chatParams: ChatParams) => {
-    params.value = chatParams;
+    newChatParams.value = { ...chatParams, id: makeUniqId(8) };
 
     router.push("/chat");
   };
 
   return {
     messages,
-    params,
+    newChatParams,
     sendMessage,
     startChat,
   };

@@ -130,12 +130,21 @@ export class Api {
   async saveChatHistory(chatHistoryItem: ChatHistoryItem): Promise<void> {
     try {
       const history = chatHistoryStore.get("history", []) as ChatHistoryItem[];
+      const chatItem = history.find((item) => item.id === chatHistoryItem.id);
 
-      if (history.length > this.appConfig.mainInputHistoryMaxItems) {
-        history.splice(this.appConfig.mainInputHistoryMaxItems);
+      if (chatItem) {
+        chatItem.messages.push(...chatHistoryItem.messages);
+        chatItem.lastMsgDate = chatHistoryItem.lastMsgDate;
+        chatItem.description = chatHistoryItem.description;
+      } else {
+        // add new item
+        if (history.length > this.appConfig.mainInputHistoryMaxItems) {
+          history.splice(this.appConfig.mainInputHistoryMaxItems);
+        }
+
+        history.unshift(chatHistoryItem);
       }
 
-      history.unshift(chatHistoryItem);
       chatHistoryStore.set("history", history);
     } catch (error) {
       console.error("Error saving chat history:", error);
@@ -220,15 +229,10 @@ export class Api {
     }
   }
 
-  async removeFromChatHistory(
-    name: string,
-    lastMsgDate: string
-  ): Promise<void> {
+  async removeFromChatHistory(id: string): Promise<void> {
     try {
       const history = chatHistoryStore.get("history", []) as ChatHistoryItem[];
-      const filteredHistory = history.filter(
-        (item) => item.name !== name && item.lastMsgDate !== lastMsgDate
-      );
+      const filteredHistory = history.filter((item) => item.id !== item.id);
       chatHistoryStore.set("history", filteredHistory);
     } catch (error) {
       console.error("Error removing from chat history:", error);
