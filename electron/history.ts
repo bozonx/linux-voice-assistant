@@ -23,6 +23,13 @@ export const transformHistoryStore = new Store({
   },
 }) as any;
 
+export const chatHistoryStore = new Store({
+  name: "chat-history",
+  defaults: {
+    history: [],
+  },
+}) as any;
+
 export async function moveInputToHistory() {
   try {
     const prevInputvalue = mainInputStore.get("value", "") as string;

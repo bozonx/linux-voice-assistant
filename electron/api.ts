@@ -1,13 +1,15 @@
 import { BrowserWindow, clipboard } from "electron";
 import { exec } from "child_process";
 import { UserConfig } from "./types/UserConfig";
-import { AppConfig } from "./types/types";
+import { AppConfig, ChatHistoryItem } from "./types/types";
 import { typeIntoWindow } from "../common/helpers";
 import { saveUserConfig } from "./userConfigManager";
 import {
   mainInputStore,
   inputHistoryStore,
   transformHistoryStore,
+  moveInputToHistory,
+  chatHistoryStore,
 } from "./history";
 import VoskVoiceRecognition from "./vosk";
 import { ParamsManager } from "./paramsManager";
@@ -89,12 +91,21 @@ export class Api {
     this.userConfig = userConfigObj;
   }
 
-  async saveMainInput(value: string): Promise<void> {
+  async saveMainInputTmp(value: string): Promise<void> {
     try {
       mainInputStore.set("value", value);
       mainInputStore.set("lastSaved", new Date().toISOString());
     } catch (error) {
       console.error("Error saving main input:", error);
+      throw error;
+    }
+  }
+
+  async moveMainInputToHistory(): Promise<void> {
+    try {
+      moveInputToHistory();
+    } catch (error) {
+      console.error("Error moving main input to history:", error);
       throw error;
     }
   }
@@ -116,6 +127,22 @@ export class Api {
     }
   }
 
+  async saveChatHistory(chatHistoryItem: ChatHistoryItem): Promise<void> {
+    try {
+      const history = chatHistoryStore.get("history", []) as ChatHistoryItem[];
+
+      if (history.length > this.appConfig.mainInputHistoryMaxItems) {
+        history.splice(this.appConfig.mainInputHistoryMaxItems);
+      }
+
+      history.unshift(chatHistoryItem);
+      chatHistoryStore.set("history", history);
+    } catch (error) {
+      console.error("Error saving chat history:", error);
+      throw error;
+    }
+  }
+
   async getInputHistory(): Promise<string[]> {
     try {
       return inputHistoryStore.get("history", []) as string[];
@@ -129,7 +156,16 @@ export class Api {
     try {
       return transformHistoryStore.get("history", []) as string[];
     } catch (error) {
-      console.error("Error getting main input history:", error);
+      console.error("Error getting transform history:", error);
+      return [];
+    }
+  }
+
+  async getChatHistory(): Promise<ChatHistoryItem[]> {
+    try {
+      return chatHistoryStore.get("history", []) as ChatHistoryItem[];
+    } catch (error) {
+      console.error("Error getting chat history:", error);
       return [];
     }
   }
@@ -140,6 +176,24 @@ export class Api {
       inputHistoryStore.set("history", []);
     } catch (error) {
       console.error("Error clearing main input history:", error);
+      throw error;
+    }
+  }
+
+  async clearTransformHistory(): Promise<void> {
+    try {
+      transformHistoryStore.set("history", []);
+    } catch (error) {
+      console.error("Error clearing transform history:", error);
+      throw error;
+    }
+  }
+
+  async clearChatHistory(): Promise<void> {
+    try {
+      chatHistoryStore.set("history", []);
+    } catch (error) {
+      console.error("Error clearing chat history:", error);
       throw error;
     }
   }
@@ -155,22 +209,29 @@ export class Api {
     }
   }
 
-  async clearTransformHistory(): Promise<void> {
-    try {
-      transformHistoryStore.set("history", []);
-    } catch (error) {
-      console.error("Error clearing main input history:", error);
-      throw error;
-    }
-  }
-
   async removeFromTransformHistory(value: string): Promise<void> {
     try {
       const history = transformHistoryStore.get("history", []) as string[];
       const filteredHistory = history.filter((item) => item !== value);
       transformHistoryStore.set("history", filteredHistory);
     } catch (error) {
-      console.error("Error removing from main input history:", error);
+      console.error("Error removing from transform history:", error);
+      throw error;
+    }
+  }
+
+  async removeFromChatHistory(
+    name: string,
+    lastMsgDate: string
+  ): Promise<void> {
+    try {
+      const history = chatHistoryStore.get("history", []) as ChatHistoryItem[];
+      const filteredHistory = history.filter(
+        (item) => item.name !== name && item.lastMsgDate !== lastMsgDate
+      );
+      chatHistoryStore.set("history", filteredHistory);
+    } catch (error) {
+      console.error("Error removing from chat history:", error);
       throw error;
     }
   }

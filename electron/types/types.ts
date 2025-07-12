@@ -32,3 +32,9 @@ export interface ChatParams {
   initialRule?: string;
   attachments?: string[];
 }
+
+export interface ChatHistoryItem {
+  name: string;
+  lastMsgDate: string;
+  messages: any[];
+}
