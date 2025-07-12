@@ -1,40 +1,47 @@
 import { APP_CONFIG } from "../electron/appConfig";
-import type { LlmModel, UserConfig } from "../electron/types/UserConfig";
+import type { LlmModel } from "../electron/types/UserConfig";
 import { ChatMessage } from "../electron/types/types";
 
 export const useAiRequest = () => {
-  function prepareAiMessages(
-    userConfig: UserConfig,
-    taskName: string,
-    userInput: string | ChatMessage[],
-    rules?: string,
+  const prepareDevInstructions = (
+    devInstructions: string,
     devInstructionsData?: Record<string, string>
-  ) {
-    const resolvedRules = rules || userConfig.aiRules[taskName];
-    const messages: ChatMessage[] = [];
-    let devInstructions = APP_CONFIG.aiInstructions[taskName];
+  ) => {
+    let result = devInstructions;
 
     if (devInstructionsData) {
       Object.entries(devInstructionsData).forEach(([key, value]) => {
-        devInstructions = devInstructions.replace("{{" + key + "}}", value);
+        result = result.replace("{{" + key + "}}", value);
       });
     }
 
-    messages.push({
-      role: "developer",
-      content: devInstructions.trim(),
-    });
+    return devInstructions;
+  };
 
-    if (resolvedRules) {
+  function prepareAiMessages(
+    rawMessages: string | ChatMessage[],
+    rules?: string,
+    devInstructions?: string
+  ) {
+    const messages: ChatMessage[] = [];
+
+    if (devInstructions) {
+      messages.push({
+        role: "developer",
+        content: devInstructions.trim(),
+      });
+    }
+
+    if (rules) {
       messages.push({
         role: "user",
-        content: APP_CONFIG.rulePrefix + ":\n\n" + resolvedRules.trim(),
+        content: APP_CONFIG.rulePrefix + ":\n\n" + rules.trim(),
       });
     }
 
-    if (Array.isArray(userInput)) {
+    if (Array.isArray(rawMessages)) {
       messages.push(
-        ...userInput.map((item) => ({
+        ...rawMessages.map((item) => ({
           ...item,
           content: item.content.trim(),
         }))
@@ -42,7 +49,7 @@ export const useAiRequest = () => {
     } else {
       messages.push({
         role: "user",
-        content: userInput.trim(),
+        content: rawMessages.trim(),
       });
     }
 
@@ -89,5 +96,6 @@ export const useAiRequest = () => {
   return {
     chatCompletion,
     prepareAiMessages,
+    prepareDevInstructions,
   };
 };

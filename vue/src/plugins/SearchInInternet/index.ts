@@ -6,6 +6,11 @@ export default function pluginIndex(ctx: PluginContext) {
     {
       name: "Search in Internet",
       action: async (text: string) => {
+        if (!text?.trim()) {
+          ctx.toast("Текст не выбран", "error");
+          return;
+        }
+
         const baseUrl = ctx.getUserConfig().plugins?.SearchInInternet?.url;
 
         if (!baseUrl) {

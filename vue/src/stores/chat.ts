@@ -3,6 +3,8 @@ import { defineStore } from "pinia";
 import { useCallAi } from "../composables/useCallAi";
 import { useRouter } from "vue-router";
 import useToast from "../composables/useToast";
+import { APP_CONFIG } from "../../../electron/appConfig";
+import { AI_TASKS } from "../types";
 
 export const useChatStore = defineStore("chat", () => {
   const { toast } = useToast();
@@ -24,7 +26,13 @@ export const useChatStore = defineStore("chat", () => {
       return;
     }
 
+    let devInstructions;
     const prevMessages = messages.value;
+
+    if (prevMessages.length > 0) {
+      devInstructions = APP_CONFIG.aiInstructions[AI_TASKS.CHAT];
+    }
+
     const attachString = (attachments || [])
       .map((a) => `=== ATTACHMENT START ===\n${a}\n=== ATTACHMENT END ===`)
       .join("\n\n");
@@ -44,7 +52,11 @@ export const useChatStore = defineStore("chat", () => {
       content: [attachString, message].filter(Boolean).join("\n\n"),
     });
 
-    const result = await sendChatMessage(preparedMessage, prevMessages);
+    const result = await sendChatMessage(
+      preparedMessage,
+      prevMessages,
+      devInstructions
+    );
 
     messages.value.push({ role: "assistant", content: result });
 

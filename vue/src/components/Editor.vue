@@ -82,11 +82,6 @@ const doAction = async (cb: (text: string) => Promise<void>): Promise<void> => {
 
   value = value.trim();
 
-  if (!value) {
-    toast("Текст не выбран", "error");
-    return;
-  }
-
   return cb(value);
 };
 

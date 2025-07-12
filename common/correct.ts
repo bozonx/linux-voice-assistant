@@ -23,6 +23,8 @@ import { APP_CONFIG } from "../electron/appConfig";
 
   const modelId = (userConfig.aiModelUsage as any)["correction"];
   const model = userConfig.llmModels.find((model) => model.id === modelId);
+  const rule = userConfig.aiRules["correction"];
+  const devInstructions = APP_CONFIG.aiInstructions["correction"];
 
   if (!model) {
     throw new Error("Model not found");
@@ -31,7 +33,7 @@ import { APP_CONFIG } from "../electron/appConfig";
   try {
     result = await chatCompletion(
       model,
-      prepareAiMessages(userConfig, "correction", args.selectedText)
+      prepareAiMessages(args.selectedText, rule, devInstructions)
     );
 
     await fs.appendFile(

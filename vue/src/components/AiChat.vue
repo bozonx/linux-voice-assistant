@@ -48,7 +48,6 @@
   import { truncate } from "squidlet-lib";
   import { useIpcStore } from "../stores/ipc";
   import { MenuModals, useMenuModalsStore } from '../stores/menuModals';
-  import { useMainInputStore } from '../stores/mainInput';
 
   const ipcStore = useIpcStore();
   const chatStore = useChatStore();

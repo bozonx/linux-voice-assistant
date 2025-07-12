@@ -3,9 +3,11 @@ import { useAiRequest } from "../../../common/useAiRequest";
 import { ChatMessage } from "../../../electron/types/types";
 import { AI_TASKS } from "../types";
 import useToast from "./useToast";
+import { APP_CONFIG } from "../../../electron/appConfig";
 
 export const useCallAi = () => {
-  const { chatCompletion, prepareAiMessages } = useAiRequest();
+  const { chatCompletion, prepareAiMessages, prepareDevInstructions } =
+    useAiRequest();
   const ipcStore = useIpcStore();
   const { toast } = useToast();
 
@@ -21,7 +23,7 @@ export const useCallAi = () => {
     const result = await chatCompletion(model, messages);
 
     if (result.error) {
-      toast(result.error, "error", 10000);
+      toast(result.error, "error");
       console.error(result.status + " " + result.statusText, result.error);
 
       return "";
@@ -39,26 +41,30 @@ export const useCallAi = () => {
   };
 
   const voiceCorrection = async (text: string) => {
+    const userConfig = ipcStore.params!.userConfig;
+    const rule = userConfig.aiRules[AI_TASKS.VOICE_CORRECTION];
+    const devInstructions = prepareDevInstructions(
+      APP_CONFIG.aiInstructions[AI_TASKS.VOICE_CORRECTION]
+    );
+
     return await aiRequest(
       AI_TASKS.VOICE_CORRECTION,
-      prepareAiMessages(
-        ipcStore.params!.userConfig,
-        AI_TASKS.VOICE_CORRECTION,
-        text
-      )
+      prepareAiMessages(text, rule, devInstructions)
     );
   };
 
   const sendChatMessage = async (
     message: string,
-    prevMessages: ChatMessage[]
+    prevMessages: ChatMessage[],
+    devInstructions?: string
   ) => {
     const result = await aiRequest(
       AI_TASKS.CHAT,
-      prepareAiMessages(ipcStore.params!.userConfig, AI_TASKS.CHAT, [
-        ...prevMessages,
-        { role: "user", content: message },
-      ])
+      prepareAiMessages(
+        [...prevMessages, { role: "user", content: message }],
+        undefined,
+        devInstructions
+      )
     );
 
     return result;
@@ -70,9 +76,15 @@ export const useCallAi = () => {
       return;
     }
 
+    const userConfig = ipcStore.params!.userConfig;
+    const rule = userConfig.aiRules[AI_TASKS.CORRECTION];
+    const devInstructions = prepareDevInstructions(
+      APP_CONFIG.aiInstructions[AI_TASKS.CORRECTION]
+    );
+
     return await aiRequest(
       AI_TASKS.CORRECTION,
-      prepareAiMessages(ipcStore.params!.userConfig, AI_TASKS.CORRECTION, text)
+      prepareAiMessages(text, rule, devInstructions)
     );
   };
 
@@ -81,18 +93,20 @@ export const useCallAi = () => {
       toast("Текст не выбран", "error");
       return;
     }
+
+    const userConfig = ipcStore.params!.userConfig;
+    const rule = userConfig.aiRules[AI_TASKS.TRANSLATE];
+    const devInstructions = prepareDevInstructions(
+      APP_CONFIG.aiInstructions[AI_TASKS.TRANSLATE],
+      {
+        TRANSLATION_LANG:
+          ipcStore.params!.userConfig.toTranslateLanguages[toLangNum],
+      }
+    );
+
     return await aiRequest(
       AI_TASKS.TRANSLATE,
-      prepareAiMessages(
-        ipcStore.params!.userConfig,
-        AI_TASKS.TRANSLATE,
-        text,
-        undefined,
-        {
-          TRANSLATION_LANG:
-            ipcStore.params!.userConfig.toTranslateLanguages[toLangNum],
-        }
-      )
+      prepareAiMessages(text, rule, devInstructions)
     );
   };
 
@@ -102,14 +116,15 @@ export const useCallAi = () => {
       return;
     }
 
+    const userConfig = ipcStore.params!.userConfig;
+    const rule = userConfig.aiTasks[presetNum].rule;
+    const devInstructions = prepareDevInstructions(
+      APP_CONFIG.aiInstructions[AI_TASKS.AI_TASKS]
+    );
+
     return await aiRequest(
       AI_TASKS.AI_TASKS,
-      prepareAiMessages(
-        ipcStore.params!.userConfig,
-        AI_TASKS.AI_TASKS,
-        text,
-        ipcStore.params!.userConfig.aiTasks[presetNum].rule
-      )
+      prepareAiMessages(text, rule, devInstructions)
     );
   };
 

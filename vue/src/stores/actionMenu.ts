@@ -29,25 +29,47 @@ export const useActionMenuStore = defineStore("actionMenu", () => {
   const DEFAULT_ACTIONS: ActionItem[] = [
     {
       name: "Вставить в окно",
-      action: async (text: string) => typeIntoWindowAndClose(text),
+      action: async (text: string) => {
+        if (!text?.trim()) {
+          toast("Текст не выбран", "error");
+          return;
+        }
+
+        typeIntoWindowAndClose(text);
+      },
     },
     {
       name: "В буфер обмена",
       action: async (text: string) => {
+        if (!text?.trim()) {
+          toast("Текст не выбран", "error");
+          return;
+        }
+
         await ipcStore.callFunction("putIntoClipboardAndClose", [text]);
       },
     },
     {
       name: "Задание для AI",
-      action: async (text: string) =>
+      action: async (text: string) => {
+        if (!text?.trim()) {
+          toast("Текст не выбран", "error");
+          return;
+        }
+
         menuModalsStore.nextModal(MenuModals.AI_TASK, {
           text,
-        }),
+        });
+      },
     },
     {
       name: "Коррекция",
       action: async (text: string) => {
-        if (!text?.trim()) return;
+        if (!text?.trim()) {
+          toast("Текст не выбран", "error");
+          return;
+        }
+
         if (text.length < appConfig.minCorrectionLength) {
           toast("Слишком короткий текст для коррекции", "warn");
           return;
@@ -70,6 +92,11 @@ export const useActionMenuStore = defineStore("actionMenu", () => {
     {
       name: "Перевод",
       action: async (text: string) => {
+        if (!text?.trim()) {
+          toast("Текст не выбран", "error");
+          return;
+        }
+
         menuModalsStore.nextModal(MenuModals.TRANSLATE, {
           text,
         });
@@ -86,6 +113,11 @@ export const useActionMenuStore = defineStore("actionMenu", () => {
     {
       name: "Спросить по тексту у AI",
       action: async (text: string) => {
+        if (!text?.trim()) {
+          toast("Текст не выбран", "error");
+          return;
+        }
+
         chatStore.startChat({
           attachments: [text],
         });
