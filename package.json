@@ -13,9 +13,14 @@
   "author": "Kozyrin Ivan",
   "license": "MIT",
   "dependencies": {
+    "@grpc/grpc-js": "^1.13.4",
+    "@grpc/proto-loader": "^0.7.15",
     "@homebridge/dbus-native": "^0.7.1",
     "electron-store": "^10.1.0",
+    "grpc-tools": "^1.13.0",
     "mic": "^2.1.2",
+    "node-microphone": "^0.1.6",
+    "protoc-gen-ts": "^0.8.7",
     "ws": "^8.18.3",
     "yaml": "^2.8.0"
   },
