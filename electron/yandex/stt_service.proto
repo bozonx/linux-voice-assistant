@@ -2,47 +2,45 @@ syntax = "proto3";
 
 package speechkit.stt.v3;
 
-import "yandex/cloud/ai/stt/v3/stt.proto";
-import "google/api/annotations.proto";
-import "google/protobuf/empty.proto";
-import "yandex/cloud/validation.proto";
-import "yandex/cloud/api/operation.proto";
-import "yandex/cloud/operation/operation.proto";
+import "stt.proto";
 
-option go_package = "github.com/yandex-cloud/go-genproto/yandex/cloud/ai/stt/v3;stt";
-option java_package = "yandex.cloud.api.ai.stt.v3";
+// Упрощенные определения для замены внешних импортов
+message Empty {}
 
-// A set of methods for voice recognition.
+message Operation {
+  string id = 1;
+  bool done = 2;
+  string error = 3;
+  bytes response = 4;
+}
+
+// Опции для HTTP аннотаций
+message HttpRule {
+  string post = 1;
+  string get = 2;
+  string delete = 3;
+  string body = 4;
+}
+
+message OperationRule {
+  string response = 1;
+}
+
+// Основной сервис распознавания речи
 service Recognizer {
-
-    // Expects audio in real-time
-    rpc RecognizeStreaming (stream StreamingRequest) returns (stream StreamingResponse) {
-
-    }
-
+    // Ожидает аудио в реальном времени
+    rpc RecognizeStreaming (stream StreamingRequest) returns (stream StreamingResponse) {}
 }
 
 message GetRecognitionRequest {
-    string operation_id = 1 [(yandex.cloud.required) = true, (yandex.cloud.length) = "<=50"];
+    string operation_id = 1;
 }
 
-// A set of methods for async voice recognition.
+// Сервис для асинхронного распознавания речи
 service AsyncRecognizer {
-
-    rpc RecognizeFile (RecognizeFileRequest) returns (yandex.cloud.operation.Operation) {
-        option (yandex.cloud.api.operation) = {
-            response: "google.protobuf.Empty"
-        };
-        option (google.api.http) = { post: "/stt/v3/recognizeFileAsync" body: "*" };
-    }
-
-    rpc GetRecognition(GetRecognitionRequest) returns (stream StreamingResponse) {
-        option (google.api.http) = { get: "/stt/v3/getRecognition"};
-    }
-
-
-    rpc DeleteRecognition(DeleteRecognitionRequest) returns (google.protobuf.Empty) {
-        option (google.api.http) = { delete: "/stt/v3/deleteRecognition"};
-    }
-
+    rpc RecognizeFile (RecognizeFileRequest) returns (Operation) {}
+    
+    rpc GetRecognition(GetRecognitionRequest) returns (stream StreamingResponse) {}
+    
+    rpc DeleteRecognition(DeleteRecognitionRequest) returns (Empty) {}
 }

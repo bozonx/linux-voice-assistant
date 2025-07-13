@@ -2,10 +2,24 @@ syntax = "proto3";
 
 package speechkit.stt.v3;
 
-option go_package = "github.com/yandex-cloud/go-genproto/yandex/cloud/ai/stt/v3;stt";
-option java_package = "yandex.cloud.api.ai.stt.v3";
+// Упрощенное определение для замены google.protobuf.Struct
+message Struct {
+  map<string, Value> fields = 1;
+}
 
-import "google/protobuf/struct.proto";
+message Value {
+  oneof kind {
+    bool bool_value = 1;
+    double number_value = 2;
+    string string_value = 3;
+    Struct struct_value = 4;
+    ListValue list_value = 5;
+  }
+}
+
+message ListValue {
+  repeated Value values = 1;
+}
 
 // Options
 message TextNormalizationOptions {
@@ -155,7 +169,7 @@ message LanguageRestrictionOptions {
 // Represents the expected structure of the model's response using a JSON Schema.
 message JsonSchema {
   // The JSON Schema that the model's output must conform to.
-  google.protobuf.Struct schema = 1;
+  Struct schema = 1;
 }
 
 // Represents summarization entry for transcription. 
