@@ -5,13 +5,13 @@
         <MainInput ref="mainInput"/>
       </div>
       <div class="flex gap-2 flex-col">
-        <Button sm @click="voiceRecognition" title="Голосовой ввод">
+        <Button sm square @click="voiceRecognition" title="Голосовой ввод">
           <Icon icon="mdi:microphone" height="24" />
         </Button>
-        <Button sm @click="mainInputStore.clear" title="Очистить">
+        <Button sm square @click="mainInputStore.clear" title="Очистить">
           <Icon icon="mdi:clear" height="24" />
         </Button>
-        <Button sm @click="mainInputStore.selectAll" title="Выбрать всё">
+        <Button sm square @click="mainInputStore.selectAll" title="Выбрать всё">
           <Icon icon="mdi:select-all" height="24" />
         </Button>
       </div>

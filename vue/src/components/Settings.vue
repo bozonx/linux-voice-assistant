@@ -1,6 +1,11 @@
 <template>
   <div>
-    <Tabs :tabs="tabs" :activeTab="currentTab" @click="currentTab = Number($event)" />
+    <Tabs
+      :tabs="tabs" 
+      :activeTab="currentTab"
+      @click="currentTab = Number($event)"
+      class="mb-4"
+    />
 
     <div v-show="currentTab === 0">
       <FieldRow label="Theme">

@@ -1,6 +1,11 @@
 <template>
   <div class="h-full flex flex-col gap-3 overflow-hidden">
-    <Tabs :tabs="tabs" :activeTab="currentTab" @click="currentTab = Number($event)" />
+    <Tabs
+      :tabs="tabs"
+      :activeTab="currentTab"
+      @click="currentTab = Number($event)"
+      class="mb-4"
+    />
     <Card v-show="currentTab === 0" class="flex-1">
       <History
         :items="historyStore.inputHistory.map((item) => ({ value: item }))"

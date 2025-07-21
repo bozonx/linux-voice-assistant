@@ -1,5 +1,5 @@
 <template>
-  <div role="tablist" class="tabs tabs-border mb-4">
+  <div role="tablist" class="tabs tabs-border">
     <TabItem
       v-for="tab in tabs"
       :key="tab.key"

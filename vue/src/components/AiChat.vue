@@ -30,13 +30,13 @@
       <div class="flex flex-row gap-2">
         <textarea v-model="message" class="text-area" ref="textAreaRef" />
         <div class="flex flex-col gap-2">
-          <Button sm @click="sendMessage" title="Отправить сообщение">
+          <Button sm square @click="sendMessage" title="Отправить сообщение">
             <Icon icon="mdi:send" height="24" />
           </Button>
-          <Button sm @click="clearInput" title="Очистить поле ввода">
+          <Button sm square @click="clearInput" title="Очистить поле ввода">
             <Icon icon="mdi:clear" height="24" />
           </Button>
-          <Button sm @click="voiceInput" title="Голосовой ввод">
+          <Button sm square @click="voiceInput" title="Голосовой ввод">
             <Icon icon="mdi:microphone" height="24" />
           </Button>
         </div>

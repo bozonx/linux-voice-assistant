@@ -13,6 +13,7 @@ const props = defineProps<{
   neutral?: boolean;
   active?: boolean;
   disabled?: boolean;
+  square?: boolean;
 }>();
 
 const buttonClass = computed(() => {
@@ -23,6 +24,7 @@ const buttonClass = computed(() => {
     'btn-sm': props.sm,
     'btn-active': props.active,
     'btn-disabled': props.disabled,
+    'btn-square': props.square,
   };
 });
 
