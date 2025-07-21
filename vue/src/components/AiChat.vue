@@ -30,9 +30,15 @@
       <div class="flex flex-row gap-2">
         <textarea v-model="message" class="text-area" ref="textAreaRef" />
         <div class="flex flex-col gap-2">
-          <Button small secondary @click="sendMessage" title="Отправить сообщение">Send</Button>
-          <Button small secondary @click="clearInput" title="Очистить поле ввода">Clear</Button>
-          <Button small secondary @click="voiceInput" title="Голосовой ввод">Voice</Button>
+          <Button sm @click="sendMessage" title="Отправить сообщение">
+            <Icon icon="mdi:send" height="24" />
+          </Button>
+          <Button sm @click="clearInput" title="Очистить поле ввода">
+            <Icon icon="mdi:clear" height="24" />
+          </Button>
+          <Button sm @click="voiceInput" title="Голосовой ввод">
+            <Icon icon="mdi:microphone" height="24" />
+          </Button>
         </div>
       </div>
 
@@ -41,6 +47,7 @@
 </template>
 
 <script setup lang="ts">
+  import { Icon } from "@iconify/vue";
   import { useChatStore } from "../stores/chat";
   import { useRouteParams } from "../stores/routeParams";
   import { truncate } from "squidlet-lib";

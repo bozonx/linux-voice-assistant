@@ -5,9 +5,15 @@
         <MainInput ref="mainInput"/>
       </div>
       <div class="flex gap-2 flex-col">
-        <Button sm @click="voiceRecognition">Голосовой ввод</Button>
-        <Button sm @click="mainInputStore.clear">Очистить</Button>
-        <Button sm @click="mainInputStore.selectAll">Выбрать всё</Button>
+        <Button sm @click="voiceRecognition" title="Голосовой ввод">
+          <Icon icon="mdi:microphone" height="24" />
+        </Button>
+        <Button sm @click="mainInputStore.clear" title="Очистить">
+          <Icon icon="mdi:clear" height="24" />
+        </Button>
+        <Button sm @click="mainInputStore.selectAll" title="Выбрать всё">
+          <Icon icon="mdi:select-all" height="24" />
+        </Button>
       </div>
     </div>
     
@@ -33,6 +39,7 @@
 </template>
 
 <script setup lang="ts">
+import { Icon } from "@iconify/vue"
 import { useRouteParams } from '../stores/routeParams';
 import { useMainInputStore } from '../stores/mainInput';
 import { useActionMenuStore } from '../stores/actionMenu';
