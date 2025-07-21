@@ -40,6 +40,7 @@ declare module 'vue' {
     Settings: typeof import('./src/components/Settings.vue')['default']
     ShortcutList: typeof import('./src/components/ShortcutList.vue')['default']
     TextPreview: typeof import('./src/components/common/TextPreview.vue')['default']
+    ThemeSwitcher: typeof import('./src/components/common/ThemeSwitcher.vue')['default']
     TranslateMenu: typeof import('./src/components/menu/TranslateMenu.vue')['default']
     VoiceRecognitionMenu: typeof import('./src/components/menu/VoiceRecognitionMenu.vue')['default']
   }

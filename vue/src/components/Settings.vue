@@ -9,7 +9,10 @@
       <Button @click="currentTab = 5" :active="currentTab === 5">Плагины</Button>
     </div>
 
-    <div v-show="currentTab === 0"> 
+    <div v-show="currentTab === 0">
+      <FieldRow label="Theme">
+        <ThemeSwitcher />
+      </FieldRow>
       <FieldRow label="Xdotool Bin">
         <FieldInput v-model:value="userConfig.xdotoolBin" />
       </FieldRow>

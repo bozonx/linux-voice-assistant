@@ -27,6 +27,7 @@
   "devDependencies": {
     "@types/electron": "^1.4.38",
     "@types/node": "^24.0.10",
+    "@types/node-microphone": "^0.1.4",
     "@types/ws": "^8.18.1",
     "electron": "^37.2.0",
     "electron-builder": "^26.0.12",

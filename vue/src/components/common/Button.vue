@@ -1,5 +1,5 @@
 <template>
-  <button :class="[buttonClass, props.class]" @click="onClick">
+  <button :class="['btn btn-primary btn-soft', buttonClass, props.class]" :disabled="props.disabled" @click="onClick">
     <slot></slot>
   </button>
 </template>
@@ -13,16 +13,17 @@ const props = defineProps<{
   primary?: boolean;
   secondary?: boolean;
   active?: boolean;
+  disabled?: boolean;
 }>();
 
 const buttonClass = computed(() => {
   return {
-    'button': true,
-    'small': props.small,
-    'big': props.big,
-    'primary': props.primary,
-    'secondary': props.secondary,
-    'active': props.active,
+    'btn-neutral': props.secondary,
+    'btn-xs': props.small,
+    // 'big': props.big,
+    // 'primary': props.primary,
+    'btn-active': props.active,
+    'btn-disabled': props.disabled,
   };
 });
 
@@ -37,7 +38,7 @@ const onClick = () => {
 
 <style scoped>
 /* Button styles */
-.button {
+/* .button {
   background-color: #2196F3;
   color: white;
   border: none;
@@ -47,14 +48,14 @@ const onClick = () => {
   font-size: 14px;
   transition: all 0.3s ease;
   text-align: left;
-}
+} */
 
-.button:hover {
+/* .button:hover {
   background-color: #1976D2;
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
+} */
+/* 
 .small {
   background-color: #1b72b7;
   color: white;
@@ -74,17 +75,17 @@ const onClick = () => {
 .small-pressed {
   background-color: #19528b;
   color: white;
-}
+} */
 
-.active {
+/* .active {
   background-color: #1976D2;
   color: white;
-}
+} */
 
 
 
 /* List styles */
-.small-buttons-toolbar {
+/* .small-buttons-toolbar {
   display: flex;
   flex-direction: row;
   width: 100%;
@@ -119,5 +120,5 @@ const onClick = () => {
   background-color: #ccc;
   color: #666;
   cursor: not-allowed;
-}
+} */
 </style>

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.11",
+    "daisyui": "^5.0.46",
     "diff": "^8.0.2",
     "highlight.js": "^11.11.1",
     "js-beautify": "^1.15.4",

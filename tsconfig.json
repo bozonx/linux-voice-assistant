@@ -12,5 +12,5 @@
     "resolveJsonModule": true
   },
   "include": ["electron/**/*", "common/**/*"],
-  "exclude": ["node_modules", "dist", "vue", "_old"]
+  "exclude": ["node_modules", "dist", "vue", "_old", "electron/yandex"]
 }
