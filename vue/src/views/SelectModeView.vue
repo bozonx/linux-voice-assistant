@@ -1,10 +1,10 @@
 <template>
-  <Overlay> 
+  <ContentPadding> 
     <InsertMenu 
       :allowInsertButton="false"
       :text="text"
       :stopListening="menuModalsStore.anyModalOpen" />
-  </Overlay>
+  </ContentPadding>
 </template>
 
 <script setup lang="ts">
@@ -15,9 +15,7 @@ import { useMenuModalsStore } from '../stores/menuModals';
 const menuModalsStore = useMenuModalsStore();
 const navPanelStore = useNavPanelStore();
 const ipcStore = useIpcStore();
-const text = computed(() => ipcStore.params!.selectedText || '');
+const text = computed(() => ipcStore.params?.selectedText || '');
 
-navPanelStore.resetNavParams({
-  escBtnVisible: false,
-});
+navPanelStore.resetNavParams({});
 </script>

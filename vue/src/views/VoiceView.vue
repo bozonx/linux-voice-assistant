@@ -1,11 +1,11 @@
 <template>
-  <Overlay>
+  <ContentPadding>
     <VoiceRecognitionMenu 
       v-if="ipcStore.params?.isWindowShown"
       :showBackButton="false"
       :escToMenu="true"
-       @corrected="handleCorrected" />
-  </Overlay>
+      @corrected="handleCorrected" />
+  </ContentPadding>
 </template>
 
 <script setup lang="ts">
@@ -19,9 +19,7 @@ const menuModalsStore = useMenuModalsStore();
 const navPanelStore = useNavPanelStore();
 const mainInputStore = useMainInputStore();
 
-navPanelStore.resetNavParams({
-  escBtnText: "Меню",
-});
+navPanelStore.resetNavParams({});
 
 function handleCorrected(
   resultText: string,

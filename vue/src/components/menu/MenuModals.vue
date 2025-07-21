@@ -1,5 +1,5 @@
 <template>
-  <Overlay v-if="menuModalsStore.currentModal !== MenuModals.NONE" :modal="true">
+  <Overlay v-if="menuModalsStore.currentModal !== MenuModals.NONE">
     <InsertMenu v-if="menuModalsStore.currentModal === MenuModals.INSERT" v-bind="menuModalsStore.currentModalParams" />
     <AiTaskMenu v-else-if="menuModalsStore.currentModal === MenuModals.AI_TASK" v-bind="menuModalsStore.currentModalParams" />
     <CorrectionMenu v-else-if="menuModalsStore.currentModal === MenuModals.CORRECTION" v-bind="menuModalsStore.currentModalParams" />
@@ -9,7 +9,7 @@
     <PreviewMenu v-else-if="menuModalsStore.currentModal === MenuModals.PREVIEW" v-bind="menuModalsStore.currentModalParams" />
   </Overlay>
 
-  <Overlay v-if="menuModalsStore.pendingModal" :modal="true">
+  <Overlay v-if="menuModalsStore.pendingModal">
     <InProgressMessage v-bind="menuModalsStore.pendingModal" />
   </Overlay>
 </template>

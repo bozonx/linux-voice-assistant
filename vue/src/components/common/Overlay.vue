@@ -1,5 +1,5 @@
 <template>
-  <div class="overlay" :class="{ 'modal-mode glass': modal }">
+  <div class="overlay glass">
     <div class="navbar bg-neutral text-neutral-content shadow-sm overlay-header">
       <Button neutral @click="menuModalsStore.back">
           Назад
@@ -15,10 +15,6 @@
 import { useMenuModalsStore } from '../../stores/menuModals';
 
 const menuModalsStore = useMenuModalsStore();
-
-const props = defineProps<{
-  modal?: boolean;
-}>();
 </script>
 
 <style scoped>
@@ -27,9 +23,6 @@ const props = defineProps<{
   height: 100%;
   display: flex;
   flex-direction: column;
-}
-
-.modal-mode {
   z-index: 100;
   height: 100%;
   position: fixed;

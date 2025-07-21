@@ -1,5 +1,7 @@
 <template>
-  <Settings />
+  <ContentPadding> 
+    <Settings />
+  </ContentPadding>
 </template>
 
 <script setup lang="ts">
@@ -7,7 +9,5 @@
 
   const navPanelStore = useNavPanelStore();
 
-  navPanelStore.resetNavParams({
-    escBtnVisible: false,
-  });
+  navPanelStore.resetNavParams({});
 </script>

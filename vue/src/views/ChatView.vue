@@ -7,7 +7,5 @@
 
   const navPanelStore = useNavPanelStore();
 
-  navPanelStore.resetNavParams({
-    escBtnVisible: false,
-  });
+  navPanelStore.resetNavParams({});
 </script>
