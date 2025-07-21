@@ -20,7 +20,9 @@ import { GlobalEvents, useGlobalEvents } from './composables/useGlobalEvents';
 import { useKeysStore } from './stores/keys';
 import { usePlugins } from "./plugins";
 import { useMenuModalsStore } from './stores/menuModals';
+import { useThemeStore } from './stores/theme';
 
+useThemeStore();
 const ipcStore = useIpcStore();
 const router = useRouter();
 const { globalEvents } = useGlobalEvents();

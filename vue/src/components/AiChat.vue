@@ -3,12 +3,10 @@
 
     <Card class="flex-1 ">
       <div class="overflow-y-auto">
-        <div v-for="message in chatStore.messages"
-          :key="message.content" class="message"
-          :class="{ 'user': message.role === 'user', 'opponent': message.role === 'assistant' }"
-        >
-          <pre>{{ message.content }}</pre>
-        </div>
+        <ChatItem v-for="message in chatStore.messages"
+          :key="message.content"
+          :message="message"
+        />
       </div>
     </Card>
 
@@ -101,7 +99,7 @@
 </script>
 
 <style scoped>
-  .message {
+  /* .message {
     display: flex;
     padding: 10px;
   }
@@ -126,7 +124,7 @@
   .message.opponent pre {
     background-color: #f0f0f0;
     color: black;
-  }
+  } */
 
   .text-area {
     width: 100%;

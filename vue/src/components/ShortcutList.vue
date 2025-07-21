@@ -6,15 +6,15 @@
           ><KeyButton>Space</KeyButton>
           <Button
             :disabled="props.spaceKey.disabled"
-            small
-            secondary
+            sm
+            neutral
             @click="props.spaceKey.action(props.text || '')"
             >{{ props.spaceKey.name }}</Button
           >
         </span>
         <span v-if="props.toEditorVisible" class="flex flex-row gap-2"
           > <KeyButton>Tab</KeyButton>
-          <Button small secondary @click="routeParamsStore.toEditor(props.text)"
+          <Button sm neutral @click="routeParamsStore.toEditor(props.text)"
             >Вставить в редактор</Button>
         </span>
       </div>
@@ -27,8 +27,8 @@
               <Button
                 v-if="item.name"
                 :disabled="item.disabled"
-                small
-                secondary
+                sm
+                neutral
                 :icon="item.icon"
                 @click="item.action(props.text || '')"
                 >{{ item.name }}</Button
@@ -43,8 +43,8 @@
               <Button
                 v-if="item.name"
                 :disabled="item.disabled"
-                small
-                secondary
+                sm
+                neutral
                 :icon="item.icon"
                 @click="item.action(props.text || '')"
                 >{{ item.name }}</Button
@@ -59,8 +59,8 @@
               <Button
                 v-if="item.name"
                 :disabled="item.disabled"
-                small
-                secondary
+                sm
+                neutral
                 :icon="item.icon"
                 @click="item.action(props.text || '')"
                 >{{ item.name }}</Button

@@ -5,9 +5,9 @@
         <MainInput ref="mainInput"/>
       </div>
       <div class="flex gap-2 flex-col">
-        <Button small primary @click="voiceRecognition">Голосовой ввод</Button>
-        <Button small primary @click="mainInputStore.clear">Очистить</Button>
-        <Button small primary @click="mainInputStore.selectAll">Выбрать всё</Button>
+        <Button sm @click="voiceRecognition">Голосовой ввод</Button>
+        <Button sm @click="mainInputStore.clear">Очистить</Button>
+        <Button sm @click="mainInputStore.selectAll">Выбрать всё</Button>
       </div>
     </div>
     
@@ -16,14 +16,14 @@
 
       <div class="flex gap-1 w-full flex-wrap">
         <Button v-for="item in editMenuStore.getEditMenu()"
-          :key="item.name" small secondary :icon="item.icon"
+          :key="item.name" sm neutral :icon="item.icon"
           @click="doEdit(item.action)">{{ item.name }}</Button>
       </div>
 
       <h2 class="mt-4 mb-1 text-sm">Действия</h2>
       <div class="flex gap-1 w-full flex-wrap">
         <Button v-for="item in actionMenuStore.getActionsMenu()"
-          :key="item.name" big primary :icon="item.icon"
+          :key="item.name" :icon="item.icon"
           @click="doAction(item.action)">{{ item.name }}</Button>
       </div>
 

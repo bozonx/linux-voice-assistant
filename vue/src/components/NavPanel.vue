@@ -3,16 +3,16 @@
     <div class="flex-1 flex flex-row gap-2">
       <Button
         v-if="navPanelStore.params.escBtnVisible"
-        small
-        secondary
+        sm
+        neutral
         @click="escBtnAction"
         >{{ escBtnText }}</Button
       >
     </div>
     <div class="flex flex-row gap-2" v-if="navPanelStore.params.rightPanelVisible">
-      <Button :disabled="navPanelStore.params.toEditorBtnDisabled" small secondary @click="routeParamsStore.toEditor()">Редактор</Button>
-      <Button :disabled="navPanelStore.params.historyBtnDisabled" small secondary @click="openHistory">История</Button>
-      <Button :disabled="navPanelStore.params.settingsBtnDisabled" small secondary @click="openSettings">Настройки</Button>
+      <Button :disabled="navPanelStore.params.toEditorBtnDisabled" sm neutral @click="routeParamsStore.toEditor()">Редактор</Button>
+      <Button :disabled="navPanelStore.params.historyBtnDisabled" sm neutral @click="openHistory">История</Button>
+      <Button :disabled="navPanelStore.params.settingsBtnDisabled" sm neutral @click="openSettings">Настройки</Button>
     </div>
   </div>
 </template>
