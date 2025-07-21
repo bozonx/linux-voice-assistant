@@ -28,6 +28,8 @@ declare module 'vue' {
     FieldsByCfg: typeof import('./src/components/common/FieldsByCfg.vue')['default']
     FieldTextArea: typeof import('./src/components/common/FieldTextArea.vue')['default']
     History: typeof import('./src/components/History.vue')['default']
+    HistoryList: typeof import('./src/components/HistoryList.vue')['default']
+    HistorySearch: typeof import('./src/components/HistorySearch.vue')['default']
     InProgressMessage: typeof import('./src/components/menu/InProgressMessage.vue')['default']
     InputHistory: typeof import('./src/components/InputHistory.vue')['default']
     InsertMenu: typeof import('./src/components/menu/InsertMenu.vue')['default']

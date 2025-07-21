@@ -58,8 +58,11 @@ export default function usePluginContext() {
     clearPendingModal: () => {
       menuModalsStore.clearPendingModal();
     },
-    navPanelSetParams: (params) => {
-      navPanelStore.setParams(params);
+    resetNavParams: (params) => {
+      navPanelStore.resetNavParams(params);
+    },
+    updateNavParams: (params) => {
+      navPanelStore.upateNavParams(params);
     },
     toEditor: (text) => {
       routeParamsStore.toEditor(text);

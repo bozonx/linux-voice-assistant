@@ -1,19 +1,25 @@
 <template>
 <ContentPadding>
+  <HistorySearch
+    v-show="currentTab === 0"
+    :items="historyStore.inputHistory"
+    @clear-history="historyStore.clearInputHistory()"
+  />
+
   <Tabs
     :tabs="tabs"
     :activeTab="currentTab"
     @click="currentTab = Number($event)"
     class="mb-4"
   />
-  
-  <History
+
+  <HistoryList
     v-show="currentTab === 0"
     :items="historyStore.inputHistory.map((item) => ({ value: item }))"
     @remove-item="removeInputItem"
     @clear-history="historyStore.clearInputHistory()"
   />
-  <History
+  <HistoryList
     v-show="currentTab === 1"
     :items="historyStore.transformHistory.map((item) => ({ value: item }))"
     @remove-item="removeTransformItem"
@@ -25,7 +31,7 @@
         <div>{{ truncate(item.description, 24) }}</div>
         <div class="flex-1">{{ item.lastMsgDate }}</div>
       </div>
-      <History
+      <HistoryList
       :items="item.messages.map((message: any) => ({ label: message.role, value: message.content }))"
       @remove-item="removeChatItem(item)"
       @clear-history="historyStore.clearChatHistory()"

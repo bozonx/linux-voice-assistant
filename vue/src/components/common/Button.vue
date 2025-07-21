@@ -14,6 +14,7 @@ const props = defineProps<{
   active?: boolean;
   disabled?: boolean;
   square?: boolean;
+  ghost?: boolean;
 }>();
 
 const buttonClass = computed(() => {
@@ -25,6 +26,7 @@ const buttonClass = computed(() => {
     'btn-active': props.active,
     'btn-disabled': props.disabled,
     'btn-square': props.square,
+    'btn-ghost': props.ghost,
   };
 });
 

@@ -18,6 +18,7 @@ export interface IpcResult {
   result?: any;
 }
 
+// TODO: оже есть в composables/useGlobalEvents.ts
 export enum GlobalEvents {
   KEY_UP,
 }

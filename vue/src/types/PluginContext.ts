@@ -18,7 +18,8 @@ export interface PluginContext {
   closeAllModals(): void;
   setPendingModal(params: Record<string, any>): void;
   clearPendingModal(): void;
-  navPanelSetParams(params: Partial<typeof DEFAULT_PARAMS>): void;
+  resetNavParams(params: Partial<typeof DEFAULT_PARAMS>): void;
+  updateNavParams(params: Partial<typeof DEFAULT_PARAMS>): void;
   toEditor(text?: string): void;
   toast(message: string, type: "success" | "error" | "warn" | "info"): void;
   callApiFunction(functionName: string, args: any[]): Promise<IpcResult>;
