@@ -69,12 +69,12 @@ const handleKeyUp = (event: KeyboardEvent) => {
 </script>
 
 <style scoped>
-.panel {
+/* .panel {
   background-color: #eee;
   border-bottom: 1px solid #ccc;
   height: 40px;
   flex-shrink: 0;
-}
+} */
 .layout {
   height: 100dvh;
   width: 100dvw;

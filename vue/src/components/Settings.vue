@@ -1,12 +1,12 @@
 <template>
-  <div class="overflow-y-auto">
-    <div class="flex flex-row gap-1 mb-4">
-      <Button @click="currentTab = 0" :active="currentTab === 0">Основные</Button>
-      <Button @click="currentTab = 1" :active="currentTab === 1">Модели</Button>
-      <Button @click="currentTab = 2" :active="currentTab === 2">AI rules</Button>
-      <Button @click="currentTab = 3" :active="currentTab === 3">Задания для AI</Button>
-      <Button @click="currentTab = 4" :active="currentTab === 4">Роли чата</Button>
-      <Button @click="currentTab = 5" :active="currentTab === 5">Плагины</Button>
+  <div>
+    <div role="tablist" class="tabs tabs-border mb-4">
+      <TabItem @click="currentTab = 0" :active="currentTab === 0">Основные</TabItem>
+      <TabItem @click="currentTab = 1" :active="currentTab === 1">Модели</TabItem>
+      <TabItem @click="currentTab = 2" :active="currentTab === 2">AI rules</TabItem>
+      <TabItem @click="currentTab = 3" :active="currentTab === 3">Задания для AI</TabItem>
+      <TabItem @click="currentTab = 4" :active="currentTab === 4">Роли чата</TabItem>
+      <TabItem @click="currentTab = 5" :active="currentTab === 5">Плагины</TabItem>
     </div>
 
     <div v-show="currentTab === 0">

@@ -1,5 +1,5 @@
 <template>
-  <div class="panel flex flex-row">
+  <div class="navbar bg-neutral text-neutral-content shadow-sm">
     <div class="flex-1 flex flex-row gap-2">
       <Button
         v-if="navPanelStore.params.escBtnVisible"
@@ -77,7 +77,7 @@
 </script>
 
 <style scoped>
-  .panel {
+  /* .panel {
     padding: 0.25rem 1.25rem;
-  }
+  } */
 </style>

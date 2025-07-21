@@ -5,7 +5,7 @@
         <span v-else-if="props.correction">Коррекция </span>
         <!-- <span v-else-if="props.recognition">Распознавание </span> -->
         <span v-else>Выполняется </span>
-        <button ref="pendingButton">...</button>
+        <span class="loading loading-spinner loading-lg"></span>
       </h2>
   </div>
 </template>
@@ -26,16 +26,4 @@ const props = defineProps({
   // }
 });
 
-const pendingButton = ref<HTMLButtonElement>();
-
-onMounted(() => {
-  nextTick(() => {
-    if (pendingButton.value) {
-      pendingButton.value.focus();
-    }
-  })
-})
 </script>
-
-<style scoped>
-</style>

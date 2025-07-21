@@ -40,6 +40,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     Settings: typeof import('./src/components/Settings.vue')['default']
     ShortcutList: typeof import('./src/components/ShortcutList.vue')['default']
+    TabItem: typeof import('./src/components/common/TabItem.vue')['default']
     TextPreview: typeof import('./src/components/common/TextPreview.vue')['default']
     ThemeSwitcher: typeof import('./src/components/common/ThemeSwitcher.vue')['default']
     TranslateMenu: typeof import('./src/components/menu/TranslateMenu.vue')['default']

@@ -1,9 +1,9 @@
 <template>
   <div class="h-full flex flex-col gap-3 overflow-hidden">
-    <div class="flex flex-row gap-2">
-      <Button @click="currentTab = 0" :active="currentTab === 0">История ввода</Button>
-      <Button @click="currentTab = 1" :active="currentTab === 1">История трансформаций</Button>
-      <Button @click="currentTab = 2" :active="currentTab === 2">История чатов</Button>
+    <div role="tablist" class="tabs tabs-border mb-4">
+      <TabItem @click="currentTab = 0" :active="currentTab === 0">История ввода</TabItem>
+      <TabItem @click="currentTab = 1" :active="currentTab === 1">История трансформаций</TabItem>
+      <TabItem @click="currentTab = 2" :active="currentTab === 2">История чатов</TabItem>
     </div>
     <Card v-show="currentTab === 0" class="flex-1">
       <History
