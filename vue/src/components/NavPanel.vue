@@ -28,33 +28,9 @@
   const navPanelStore = useNavPanelStore(); 
   const menuModalsStore = useMenuModalsStore();
 
-
   const escBtnText = computed(() => {
-    // let result = navPanelStore.params.escBtnText;
-
-    // if (menuModalsStore.anyModalOpen) {
-    //   result = DEFAULT_PARAMS.escBtnText;
-    // }
-
     return navPanelStore.params.escBtnText + " (Esc)";
   });
-
-  // const escBtnAction = computed(() => {
-  //   if (menuModalsStore.anyModalOpen) {
-  //     return menuModalsStore.back;
-  //   }
-
-  //   return navPanelStore.params.escBtnAction;
-  // });
-
-  // onMounted(() => {
-  //   keyUpHanlderIndex = globalEvents.addListener(GlobalEvents.KEY_UP, handleShortCutKeyUp);
-  // });
-
-  // onUnmounted(() => {
-  //   globalEvents.removeListener(keyUpHanlderIndex);
-  // });
-
 
   function openSettings() {
     menuModalsStore.closeAll();
@@ -65,7 +41,6 @@
     menuModalsStore.closeAll();
     router.push("/history");
   }
-
 </script>
 
 <style scoped>

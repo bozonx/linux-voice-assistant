@@ -1,5 +1,5 @@
 <template>
-  <div class="overlay" :class="{ 'modal-mode': modal }">
+  <div class="overlay" :class="{ 'modal-mode glass': modal }">
     <div class="navbar bg-neutral text-neutral-content shadow-sm overlay-header">
       <Button neutral @click="menuModalsStore.back">
           Назад
@@ -33,8 +33,7 @@ const props = defineProps<{
   z-index: 100;
   height: 100%;
   position: fixed;
-  background-color: rgb(0 8 2 / 80%);
-  /* color: white; */
+  background-color: rgb(0 8 2 / 60%);
 }
 
 .overlay-header {
