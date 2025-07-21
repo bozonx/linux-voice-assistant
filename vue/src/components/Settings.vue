@@ -1,13 +1,6 @@
 <template>
   <div>
-    <div role="tablist" class="tabs tabs-border mb-4">
-      <TabItem @click="currentTab = 0" :active="currentTab === 0">Основные</TabItem>
-      <TabItem @click="currentTab = 1" :active="currentTab === 1">Модели</TabItem>
-      <TabItem @click="currentTab = 2" :active="currentTab === 2">AI rules</TabItem>
-      <TabItem @click="currentTab = 3" :active="currentTab === 3">Задания для AI</TabItem>
-      <TabItem @click="currentTab = 4" :active="currentTab === 4">Роли чата</TabItem>
-      <TabItem @click="currentTab = 5" :active="currentTab === 5">Плагины</TabItem>
-    </div>
+    <Tabs :tabs="tabs" :activeTab="currentTab" @click="currentTab = Number($event)" />
 
     <div v-show="currentTab === 0">
       <FieldRow label="Theme">
@@ -216,6 +209,13 @@
   
   const userConfig = ref(ipcStore.params!.userConfig);
   const currentTab = ref(0);
+  const tabs = [
+    { text: "Основные", key: 0 },
+    { text: "Модели", key: 1 },
+    { text: "AI rules", key: 2 },
+    { text: "Задания для AI", key: 3 },
+    { text: "Роли чата", key: 4 },
+  ]
 
   onMounted(() => {
     userConfig.value = ipcStore.params!.userConfig;

@@ -1,10 +1,6 @@
 <template>
   <div class="h-full flex flex-col gap-3 overflow-hidden">
-    <div role="tablist" class="tabs tabs-border mb-4">
-      <TabItem @click="currentTab = 0" :active="currentTab === 0">История ввода</TabItem>
-      <TabItem @click="currentTab = 1" :active="currentTab === 1">История трансформаций</TabItem>
-      <TabItem @click="currentTab = 2" :active="currentTab === 2">История чатов</TabItem>
-    </div>
+    <Tabs :tabs="tabs" :activeTab="currentTab" @click="currentTab = Number($event)" />
     <Card v-show="currentTab === 0" class="flex-1">
       <History
         :items="historyStore.inputHistory.map((item) => ({ value: item }))"
@@ -44,6 +40,11 @@
   const navPanelStore = useNavPanelStore();
   const historyStore = useHistoryStore()
   const currentTab = ref(0)
+  const tabs = [
+    { text: "История ввода", key: 0 },
+    { text: "История трансформаций", key: 1 },
+    { text: "История чатов", key: 2 },
+  ]
 
   onMounted(async () => {
     await historyStore.loadInputHistory()
