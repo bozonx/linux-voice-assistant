@@ -1,10 +1,21 @@
 <template>
-  <div class="overlay" :class="{ 'modal': modal }">
-    <slot />
+  <div class="overlay" :class="{ 'modal-mode': modal }">
+    <div class="navbar bg-neutral text-neutral-content shadow-sm overlay-header">
+      <Button neutral @click="menuModalsStore.back">
+          Назад
+      </Button>
+    </div>
+    <ContentPadding class="flex-1">
+      <slot />
+    </ContentPadding>
   </div>
 </template>
 
 <script setup lang="ts">  
+import { useMenuModalsStore } from '../../stores/menuModals';
+
+const menuModalsStore = useMenuModalsStore();
+
 const props = defineProps<{
   modal?: boolean;
 }>();
@@ -16,16 +27,17 @@ const props = defineProps<{
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
 }
 
-.modal {
+.modal-mode {
   z-index: 100;
-  height: calc(100% - 40px);
+  height: 100%;
   position: fixed;
   background-color: rgb(0 8 2 / 80%);
-  color: white;
-  padding: 1.25rem;
+  /* color: white; */
+}
+
+.overlay-header {
+  padding: 0.5rem 1.25rem;
 }
 </style>

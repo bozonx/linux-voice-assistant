@@ -1,4 +1,5 @@
 <template>
+<ContentPadding>
   <Editor v-if="ipcStore.params">
     <div class="mt-4 flex flex-row gap-2 text-xs">
       <RouterLink to="/write">Режим написания</RouterLink>
@@ -7,6 +8,7 @@
       <RouterLink to="/select">Режим выбора</RouterLink>
     </div>
   </Editor>
+</ContentPadding>
 </template>
 
 <script setup lang="ts">
@@ -21,12 +23,10 @@
   const mainInputStore = useMainInputStore();
 
   navPanelStore.resetNavParams({
-    escBtnText: "Меню",
     escBtnAction: () => {
       menuModalsStore.nextModal(MenuModals.INSERT, {
         text: mainInputStore.value,
       });
     },
-    toEditorBtnDisabled: true,
   });
 </script>

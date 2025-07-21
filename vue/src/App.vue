@@ -1,13 +1,9 @@
 <template>
+  <MenuModals />
   <div class="layout">
-    <div class="panel">
-      <NavPanel />
-    </div>
-    <div class="main flex-1">
-      <MenuModals />
-      <div class="content">
-        <RouterView />
-      </div>
+    <NavPanel />
+    <div class="main">
+      <RouterView />
     </div>
   </div>
 </template>
@@ -17,17 +13,17 @@ import { useIpcStore } from './stores/ipc';
 import { InitParams } from './types';
 import { useRouter } from 'vue-router';
 import { GlobalEvents, useGlobalEvents } from './composables/useGlobalEvents';
-import { useKeysStore } from './stores/keys';
 import { usePlugins } from "./plugins";
 import { useMenuModalsStore } from './stores/menuModals';
 import { useThemeStore } from './stores/theme';
+import { useNavPanelStore } from './stores/navPanel';
 
 useThemeStore();
 const ipcStore = useIpcStore();
 const router = useRouter();
 const { globalEvents } = useGlobalEvents();
-const keysStore = useKeysStore();
 const menuModalsStore = useMenuModalsStore();
+const navPanelStore = useNavPanelStore();
 
 onMounted(() => {
   window.addEventListener('keyup', handleKeyUp);
@@ -64,17 +60,11 @@ onUnmounted(() => {
 
 const handleKeyUp = (event: KeyboardEvent) => {
   globalEvents.emit(GlobalEvents.KEY_UP, event);
-  keysStore.setKeyup(event);
+  navPanelStore.handleKeyUp(event);
 };
 </script>
 
 <style scoped>
-/* .panel {
-  background-color: #eee;
-  border-bottom: 1px solid #ccc;
-  height: 40px;
-  flex-shrink: 0;
-} */
 .layout {
   height: 100dvh;
   width: 100dvw;
@@ -87,13 +77,5 @@ const handleKeyUp = (event: KeyboardEvent) => {
   display: flex;
   flex-direction: column;
   position: relative;
-}
-.content {
-  flex: 1 1 0%;
-  min-height: 0; /* Важно для flexbox, чтобы потомки могли сжиматься */
-  padding: 1.25rem;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
 }
 </style>

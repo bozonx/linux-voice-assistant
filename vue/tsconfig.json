@@ -34,6 +34,7 @@
     "components.d.ts",
     "auto-imports.d.ts",
     "../common/useAiRequest.ts",
-    "src/components/DropdownRow.vue"
+    "src/components/DropdownRow.vue",
+    "../_old/keys.ts"
   ]
 }

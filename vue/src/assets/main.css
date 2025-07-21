@@ -3,9 +3,9 @@
   themes: light --default, dark --prefersdark;
 }
 
-.menu-title {
+/* .menu-title {
   @apply text-sm text-gray-400;
   line-height: 0.5rem;
   padding: 0;
   margin: 0;
-}
+} */

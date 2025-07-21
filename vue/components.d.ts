@@ -15,6 +15,7 @@ declare module 'vue' {
     ChatItem: typeof import('./src/components/common/ChatItem.vue')['default']
     Checkbox: typeof import('./src/components/common/Checkbox.vue')['default']
     CheckboxRow: typeof import('./src/components/common/CheckboxRow.vue')['default']
+    ContentPadding: typeof import('./src/components/common/ContentPadding.vue')['default']
     CorrectionMenu: typeof import('./src/components/menu/CorrectionMenu.vue')['default']
     Diff: typeof import('./src/components/common/Diff.vue')['default']
     DiffInput: typeof import('./src/components/common/DiffInput.vue')['default']

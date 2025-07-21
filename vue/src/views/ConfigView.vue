@@ -9,6 +9,5 @@
 
   navPanelStore.resetNavParams({
     escBtnVisible: false,
-    settingsBtnDisabled: true,
   });
 </script>

@@ -1,6 +1,6 @@
 {
-  "name": "linux-voice-assistant-ui",
-  "version": "0.0.2",
+  "name": "your-assistant-ui",
+  "version": "0.0.3",
   "private": true,
   "type": "module",
   "scripts": {

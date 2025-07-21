@@ -59,7 +59,6 @@
 
   navPanelStore.resetNavParams({
     escBtnVisible: false,
-    historyBtnDisabled: true,
   });
 
   const removeInputItem = async (item: string) => {
