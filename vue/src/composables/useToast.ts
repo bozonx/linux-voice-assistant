@@ -7,7 +7,7 @@ export default function useToast() {
     type: "success" | "error" | "warn" | "info",
     timeout = 10000
   ) => {
-    miniToastr[type](message, timeout);
+    miniToastr[type](message, "", timeout);
   };
 
   return { toast };

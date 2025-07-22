@@ -1,17 +1,16 @@
 <template>
-  <!-- <div>
-    <Button small secondary @click="emit('clear-history')">
-      Очистить историю
-    </Button>
-  </div> -->
-
-  <div class="flex flex-col h-full overflow-hidden">
+  <div class="flex flex-col h-full overflow-auto">
     <div v-if="filtered.length === 0" role="alert" class="alert">
       <span>{{ searchQuery ? "Ничего не найдено" : "История пуста" }}</span>
     </div>
+
     <ul v-else class="list bg-base-100 rounded-box shadow-md">
-      <li class="list-row" v-for="(item, index) in filtered" :key="index">
-        <div @click="emit('to-editor', item)" title="В редактор" class="history-text list-col-grow">
+      <li class="list-row hover:bg-base-200" v-for="(item, index) in filtered" :key="index">
+        <div
+          @click="emit('text-click', item)"
+          :title="textTitle"
+          class="history-text list-col-grow cursor-pointer"
+        >
           {{ truncate(item, 250) || "пусто" }}
         </div>
 
@@ -20,11 +19,18 @@
           square
           @click="$emit('remove-item', item)"
           title="Удалить из истории"
+          class="remove-history-btn"
         >
           <Icon icon="mdi:delete" height="24" />
         </Button>
       </li>
     </ul>
+
+    <div class="mt-4">
+      <Button @click="emit('clear-history')">
+        Очистить историю
+      </Button>
+    </div>
   </div>
 </template>
 
@@ -35,12 +41,13 @@
   const emit = defineEmits<{
     (e: "remove-item", item: string): void;
     (e: "clear-history"): void;
-    (e: "to-editor", item: string): void;
+    (e: "text-click", item: string): void;
   }>();
 
   const props = defineProps<{
     items: string[];
     searchQuery?: string;
+    textTitle?: string;
   }>();
 
   const filtered = computed(() => {
@@ -55,27 +62,17 @@
 </script>
 
 <style scoped>
-  /* .empty-history {
-    text-align: center;
-    padding: 20px;
-    color: #666;
-    font-style: italic;
-  } */
+.remove-history-btn {
+  display: none;
+}
 
-  /* .history-list {
-    overflow-y: auto;
-    min-height: 0;
-  } */
+.list-row:hover .remove-history-btn {
+  display: flex;
+}
 
-  /* .history-text {
-    flex: 1;
-    cursor: pointer;
-    word-break: break-word;
-    line-height: 1.4;
-    max-height: 60px;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-  } */
+.history-text {
+  word-break: break-word;
+  line-height: 1.4;
+  min-height: 2.5rem;
+}
 </style>
