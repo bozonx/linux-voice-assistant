@@ -1,8 +1,9 @@
 <template>
 <ContentPadding>
-  <HistorySearch
-    v-show="currentTab === 0"
-    :items="historyStore.inputHistory"
+  <SearchInput
+    v-model="searchQuery"
+    placeholder="Поиск в истории..."
+    ref="searchInput"
   />
 
   <Tabs
@@ -54,6 +55,17 @@
     { text: "История трансформаций", key: 1 },
     { text: "История чатов", key: 2 },
   ]
+
+  const searchQuery = ref<string>("");
+  const searchInput = ref<HTMLInputElement | null>(null);
+
+
+
+  onMounted(() => {
+    if (searchInput.value) {
+      searchInput.value.focus();
+    }
+  });
 
   onMounted(async () => {
     await historyStore.loadInputHistory()

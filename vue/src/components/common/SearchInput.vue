@@ -31,7 +31,17 @@
     value?: string;
   }>();
 
-  focus;
+  const searchInput = ref<HTMLInputElement | null>(null);
+
+  const focus = () => {
+    if (searchInput.value) {
+      searchInput.value.focus();
+    }
+  };
+
+  defineExpose({
+    focus
+  });
 
   watch(
     () => props.value,
@@ -41,13 +51,6 @@
   );
 
   const value = ref<string>(props.value || "");
-  // const searchInput = ref<HTMLInputElement | null>(null);
-
-  // onMounted(() => {
-  //   if (searchInput.value) {
-  //     searchInput.value.focus();
-  //   }
-  // });
 
   const onInput = (event: Event) => {
     value.value = (event.target as HTMLInputElement).value;
@@ -57,5 +60,6 @@
 
   const clear = () => {
     value.value = "";
+    emit("input", value.value);
   };
 </script>

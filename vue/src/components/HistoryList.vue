@@ -47,6 +47,18 @@
   }>();
 
   const routeParams = useRouteParams();
+
+    // // Фильтрованная история на основе поискового запроса
+    const filteredHistory = computed(() => {
+    if (!searchQuery.value.trim()) {
+      return props.items;
+    }
+    const query = searchQuery.value.toLowerCase();
+
+    return props.items.filter((item) =>
+      item.value.toLowerCase().includes(query)
+    );
+  });
 </script>
 
 <style scoped>
