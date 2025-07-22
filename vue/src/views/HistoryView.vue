@@ -95,12 +95,12 @@
     toast.toast("История трансформаций очищена", "success")
   }
 
-  const removeInputItem = async (item: {id: string, value: string}) => {
+  const removeInputItem = async (item: {id: string | number, value: string}) => {
     await historyStore.removeFromInputHistory(item.value)
     toast.toast("Удалено из истории ввода", "success")
   }
 
-  const removeTransformItem = async (item: {id: string, value: string}) => {
+  const removeTransformItem = async (item: {id: string | number, value: string}) => {
     await historyStore.removeFromTransformHistory(item.value)
     toast.toast("Удалено из истории трансформаций", "success")
   }
@@ -110,16 +110,16 @@
     toast.toast("История чатов очищена", "success")
   }
 
-  const removeChatItem = async (item: {id: string, value: string}) => {
-    await historyStore.removeFromChatHistory(item.id)
+  const removeChatItem = async (item: {id: string | number, value: string}) => {
+    await historyStore.removeFromChatHistory(item.id.toString())
     toast.toast("Удалено из истории чатов", "success")
   }
 
-  const toEditor = (item: {id: string, value: string}) => {
+  const toEditor = (item: {id: string | number, value: string}) => {
     routeParams.toEditor(item.value)
   }
 
-  const toChat = (item: {id: string, value: string}) => {
+  const toChat = (item: {id: string | number, value: string}) => {
     // routeParams.toChat(item)
   }
 
