@@ -1,17 +1,17 @@
 <template>
 <ContentPadding>
   <SearchInput
-    v-model:value="searchQuery"
+    v-model="searchQuery"
     placeholder="Поиск в истории..."
     ref="searchInput"
+    class="mb-4"
   />
-
-  {{ searchQuery }}
 
   <Tabs
     :tabs="tabs"
     v-model:value="currentTab"
     class="mb-4"
+    @update:value="onTabChange"
   />
 
   <HistoryList
@@ -78,6 +78,12 @@
   })
 
   navPanelStore.resetNavParams({});
+
+  const onTabChange = (tab: string | number) => {
+    if (searchInput.value) {
+      searchInput.value.focus();
+    }
+  }
 
   const removeInputItem = async (item: string) => {
     await historyStore.removeFromInputHistory(item)

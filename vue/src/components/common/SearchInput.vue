@@ -3,7 +3,7 @@
     <label class="input w-full">
       <Icon icon="mdi:search" height="18" />
       <input
-        v-model="value"
+        :value="modelValue"
         ref="searchInput"
         type="search"
         class="grow"
@@ -18,12 +18,12 @@
   import { Icon } from "@iconify/vue";
 
   const emit = defineEmits<{
-    (e: "input", value: string): void;
+    (e: "update:modelValue", value: string): void;
   }>();
 
   const props = defineProps<{
     placeholder?: string;
-    value?: string;
+    modelValue?: string;
   }>();
 
   const searchInput = ref<HTMLInputElement | null>(null);
@@ -38,18 +38,8 @@
     focus
   });
 
-  watch(
-    () => props.value,
-    (newValue) => {
-      value.value = newValue || "";
-    }
-  );
-
-  const value = ref<string>(props.value || "");
-
   const onInput = (event: Event) => {
-    value.value = (event.target as HTMLInputElement).value;
-
-    emit("input", value.value);
+    const newValue = (event.target as HTMLInputElement).value;
+    emit("update:modelValue", newValue);
   };
 </script>
