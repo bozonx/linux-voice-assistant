@@ -55,11 +55,9 @@ export const useHistoryStore = defineStore("history", () => {
     );
   };
 
-  const removeFromChatHistory = async (
-    item: ChatHistoryItem
-  ): Promise<void> => {
-    await ipcStore.callFunction("removeFromChatHistory", [item]);
-    chatHistory.value = chatHistory.value.filter((item) => item.id !== item.id);
+  const removeFromChatHistory = async (id: string): Promise<void> => {
+    await ipcStore.callFunction("removeFromChatHistory", [id]);
+    chatHistory.value = chatHistory.value.filter((item) => item.id !== id);
   };
 
   const saveMainInput = async (value: string) => {

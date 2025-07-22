@@ -232,7 +232,7 @@ export class Api {
   async removeFromChatHistory(id: string): Promise<void> {
     try {
       const history = chatHistoryStore.get("history", []) as ChatHistoryItem[];
-      const filteredHistory = history.filter((item) => item.id !== item.id);
+      const filteredHistory = history.filter((item) => item.id !== id);
       chatHistoryStore.set("history", filteredHistory);
     } catch (error) {
       console.error("Error removing from chat history:", error);

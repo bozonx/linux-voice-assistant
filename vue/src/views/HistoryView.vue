@@ -16,27 +16,27 @@
 
   <HistoryList
     v-show="currentTab === 0"
-    :items="historyStore.inputHistory"
+    :items="historyStore.inputHistory.map((item, index) => ({ id: index, value: item }))"
     :searchQuery="searchQuery"
     textTitle="Поместить в редактор"
     @remove-item="removeInputItem"
     @clear-history="clearInputHistory()"
-    @text-click="routeParams.toEditor"
+    @text-click="toEditor"
   />
   
   <HistoryList
     v-show="currentTab === 1"
-    :items="historyStore.transformHistory"
+    :items="historyStore.transformHistory.map((item, index) => ({ id: index, value: item }))"
     :searchQuery="searchQuery"
     textTitle="Поместить в редактор"
     @remove-item="removeTransformItem"
     @clear-history="clearTransformHistory()"
-    @text-click="routeParams.toEditor"
+    @text-click="toEditor"
   />
 
   <HistoryList
     v-show="currentTab === 2"
-    :items="historyStore.chatHistory.map((item) => item.description)"
+    :items="historyStore.chatHistory.map((item) => ({ id: item.id, value: item.description }))"
     :searchQuery="searchQuery"
     textTitle="Посмотреть"
     @remove-item="removeChatItem"
@@ -95,13 +95,13 @@
     toast.toast("История трансформаций очищена", "success")
   }
 
-  const removeInputItem = async (item: string) => {
-    await historyStore.removeFromInputHistory(item)
+  const removeInputItem = async (item: {id: string, value: string}) => {
+    await historyStore.removeFromInputHistory(item.value)
     toast.toast("Удалено из истории ввода", "success")
   }
 
-  const removeTransformItem = async (item: string) => {
-    await historyStore.removeFromTransformHistory(item)
+  const removeTransformItem = async (item: {id: string, value: string}) => {
+    await historyStore.removeFromTransformHistory(item.value)
     toast.toast("Удалено из истории трансформаций", "success")
   }
 
@@ -110,12 +110,17 @@
     toast.toast("История чатов очищена", "success")
   }
 
-  const removeChatItem = async (item: string) => {
-    // await historyStore.removeFromChatHistory(item)
-    // toast.toast("Удалено из истории чатов", "success")
+  const removeChatItem = async (item: {id: string, value: string}) => {
+    await historyStore.removeFromChatHistory(item.id)
+    toast.toast("Удалено из истории чатов", "success")
   }
 
-  const toChat = (item: string) => {
+  const toEditor = (item: {id: string, value: string}) => {
+    routeParams.toEditor(item.value)
+  }
+
+  const toChat = (item: {id: string, value: string}) => {
     // routeParams.toChat(item)
   }
+
 </script>

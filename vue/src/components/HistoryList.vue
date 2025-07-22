@@ -5,19 +5,19 @@
     </div>
 
     <ul v-else class="list bg-base-100 rounded-box shadow-md">
-      <li class="list-row hover:bg-base-200" v-for="(item, index) in filtered" :key="index">
+      <li class="list-row hover:bg-base-200" v-for="item in filtered" :key="item.id">
         <div
           @click="emit('text-click', item)"
           :title="textTitle"
           class="history-text list-col-grow cursor-pointer"
         >
-          {{ truncate(item, 250) || "пусто" }}
+          {{ truncate(item.value, 250) || "пусто" }}
         </div>
 
         <Button
           ghost
           square
-          @click="$emit('remove-item', item)"
+          @click="emit('remove-item', item)"
           title="Удалить из истории"
           class="remove-history-btn"
         >
@@ -39,13 +39,13 @@
   import { truncate } from "squidlet-lib";
 
   const emit = defineEmits<{
-    (e: "remove-item", item: string): void;
+    (e: "remove-item", item: {id: string | number, value: string}): void;
     (e: "clear-history"): void;
-    (e: "text-click", item: string): void;
+    (e: "text-click", item: {id: string | number, value: string}): void;
   }>();
 
   const props = defineProps<{
-    items: string[];
+    items: {id: string | number, value: string}[];
     searchQuery?: string;
     textTitle?: string;
   }>();
@@ -56,7 +56,7 @@
     if (!query) return props.items;
     
     return props.items.filter((item) =>
-      item.toLowerCase().includes(query)
+      item.value.toLowerCase().includes(query)
     );
   });
 </script>
