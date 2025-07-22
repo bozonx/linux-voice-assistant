@@ -41,6 +41,7 @@ declare module 'vue' {
     PreviewMenu: typeof import('./src/components/menu/PreviewMenu.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SearchInput: typeof import('./src/components/common/SearchInput.vue')['default']
     Settings: typeof import('./src/components/Settings.vue')['default']
     ShortcutList: typeof import('./src/components/ShortcutList.vue')['default']
     TabItem: typeof import('./src/components/common/TabItem.vue')['default']

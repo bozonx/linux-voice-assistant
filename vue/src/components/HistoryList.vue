@@ -1,4 +1,10 @@
 <template>
+  <div>
+    <Button small secondary @click="$emit('clear-history')">
+      Очистить историю
+    </Button>
+  </div>
+
   <div class="flex flex-col gap-2 h-full overflow-hidden">
     <div v-if="items.length === 0" class="empty-history">
       {{ searchQuery ? "Ничего не найдено" : "История пуста" }}

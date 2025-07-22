@@ -1,18 +1,9 @@
 <template>
-  <div class="flex flex-row gap-2">
-    <div class="flex-1">
-      <input
-        v-model="searchQuery"
-        type="text"
-        ref="searchInput"
-        placeholder="Поиск в истории..."
-        class="history-search"
-      />
-    </div>
-    <Button small secondary @click="$emit('clear-history')">
-      Очистить историю
-    </Button>
-  </div>
+  <SearchInput
+    v-model="searchQuery"
+    placeholder="Поиск в истории..."
+    ref="searchInput"
+  />
 </template>
 
 <script setup lang="ts">
@@ -37,13 +28,3 @@
     }
   });
 </script>
-
-<style scoped>
-  .history-search {
-    width: 100%;
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
-  }
-</style>

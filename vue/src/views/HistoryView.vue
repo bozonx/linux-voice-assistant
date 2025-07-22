@@ -3,7 +3,6 @@
   <HistorySearch
     v-show="currentTab === 0"
     :items="historyStore.inputHistory"
-    @clear-history="historyStore.clearInputHistory()"
   />
 
   <Tabs
