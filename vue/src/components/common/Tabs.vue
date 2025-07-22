@@ -3,8 +3,8 @@
     <TabItem
       v-for="tab in tabs"
       :key="tab.key"
-      :active="tab.key === props.activeTab"
-      @click="onClick(tab.key)"
+      :active="tab.key === activeTab"
+      @click="onTabClick(tab.key)"
     >
       {{ tab.text }}
     </TabItem>
@@ -15,7 +15,7 @@
   import TabItem from "./TabItem.vue";
 
   const emit = defineEmits<{
-    (e: "click", key: string | number): void;
+    (e: "update:value", key: string | number): void;
   }>();
 
   const props = defineProps<{
@@ -23,10 +23,20 @@
       text: string;
       key: string | number;
     }[];
-    activeTab?: string | number;
+    value?: string | number;
   }>();
 
-  const onClick = (key: string | number) => {
-    emit("click", key);
+  const activeTab = ref<string | number>(props.value || props.tabs[0].key);
+
+  watch(
+    () => props.value,
+    (newValue) => {
+      activeTab.value = newValue || props.tabs[0].key;
+    }
+  );
+
+  const onTabClick = (key: string | number) => {
+    activeTab.value = key;
+    emit("update:value", activeTab.value);
   };
 </script>

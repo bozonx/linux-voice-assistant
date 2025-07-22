@@ -2,8 +2,7 @@
   <div>
     <Tabs
       :tabs="tabs" 
-      :activeTab="currentTab"
-      @click="currentTab = Number($event)"
+      v-model="currentTab"
       class="mb-4"
     />
 

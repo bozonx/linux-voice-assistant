@@ -8,24 +8,28 @@
 
   <Tabs
     :tabs="tabs"
-    :activeTab="currentTab"
-    @click="currentTab = Number($event)"
+    v-model="currentTab"
     class="mb-4"
   />
 
+  {{ currentTab }}
+
   <HistoryList
     v-show="currentTab === 0"
-    :items="historyStore.inputHistory.map((item) => ({ value: item }))"
+    :items="historyStore.inputHistory"
+    :searchQuery="searchQuery"
     @remove-item="removeInputItem"
     @clear-history="historyStore.clearInputHistory()"
   />
   <HistoryList
     v-show="currentTab === 1"
-    :items="historyStore.transformHistory.map((item) => ({ value: item }))"
+    :items="historyStore.transformHistory"
+    :searchQuery="searchQuery"
     @remove-item="removeTransformItem"
     @clear-history="historyStore.clearTransformHistory()"
   />
-  <div v-show="currentTab === 2">
+
+  <!-- <div v-show="currentTab === 2">
     <div v-for="item in historyStore.chatHistory" :key="item.id">
       <div class="flex flex-row gap-2">
         <div>{{ truncate(item.description, 24) }}</div>
@@ -37,7 +41,7 @@
       @clear-history="historyStore.clearChatHistory()"
       />
     </div>
-  </div>
+  </div> -->
 </ContentPadding>
 </template>
 
@@ -45,7 +49,6 @@
   import { useNavPanelStore } from "../stores/navPanel";
   import { useHistoryStore } from '../stores/history'
   import { ChatHistoryItem } from "../../../electron/types/types";
-  import { truncate } from "squidlet-lib";
 
   const navPanelStore = useNavPanelStore();
   const historyStore = useHistoryStore()
@@ -59,15 +62,11 @@
   const searchQuery = ref<string>("");
   const searchInput = ref<HTMLInputElement | null>(null);
 
-
-
-  onMounted(() => {
+  onMounted(async () => {
     if (searchInput.value) {
       searchInput.value.focus();
     }
-  });
 
-  onMounted(async () => {
     await historyStore.loadInputHistory()
     await historyStore.loadTransformHistory()
     await historyStore.loadChatHistory()

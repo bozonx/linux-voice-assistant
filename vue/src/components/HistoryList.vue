@@ -6,15 +6,15 @@
   </div>
 
   <div class="flex flex-col gap-2 h-full overflow-hidden">
-    <div v-if="items.length === 0" class="empty-history">
+    <div v-if="filtered.length === 0" class="empty-history">
       {{ searchQuery ? "Ничего не найдено" : "История пуста" }}
     </div>
     <ul v-else class="list bg-base-100 rounded-box shadow-md">
-      <li class="list-row" v-for="(item, index) in items" :key="index">
+      <li class="list-row" v-for="(item, index) in filtered" :key="index">
         <!-- <div class="text-4xl font-thin opacity-30 tabular-nums">01</div> -->
         <!-- <div v-if="item.label" class="text-gray-500">{{ item.label }}:</div> -->
         <div class="history-text list-col-grow">
-          {{ item.value || "пусто" }}
+          {{ item || "пусто" }}
         </div>
         <!-- <Button
           ghost
@@ -40,39 +40,38 @@
 <script setup lang="ts">
   import { Icon } from "@iconify/vue";
   import { useRouteParams } from "../stores/routeParams";
+  import { truncate } from "squidlet-lib";
 
   const props = defineProps<{
-    items: { label: string; value: string }[];
+    items: string[];
     searchQuery: string;
   }>();
 
   const routeParams = useRouteParams();
 
-    // // Фильтрованная история на основе поискового запроса
-    const filteredHistory = computed(() => {
-    if (!searchQuery.value.trim()) {
-      return props.items;
-    }
-    const query = searchQuery.value.toLowerCase();
+  const filtered = computed(() => {
+    const query = props.searchQuery?.trim().toLowerCase();
 
+    if (!query) return props.items;
+    
     return props.items.filter((item) =>
-      item.value.toLowerCase().includes(query)
+      item.toLowerCase().includes(query)
     );
   });
 </script>
 
 <style scoped>
-  .empty-history {
+  /* .empty-history {
     text-align: center;
     padding: 20px;
     color: #666;
     font-style: italic;
-  }
+  } */
 
-  .history-list {
+  /* .history-list {
     overflow-y: auto;
-    min-height: 0; /* Важно для правильной работы flexbox с overflow */
-  }
+    min-height: 0;
+  } */
 
   /* .history-item {
     display: flex;
@@ -90,7 +89,7 @@
     background-color: #f0f0f0;
   } */
 
-  .history-text {
+  /* .history-text {
     flex: 1;
     cursor: pointer;
     word-break: break-word;
@@ -100,11 +99,11 @@
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
-  }
+  } */
 
-  .history-text:hover {
+  /* .history-text:hover {
     color: #2196f3;
-  }
+  } */
   /* 
 .remove-history-btn {
   background: none;
