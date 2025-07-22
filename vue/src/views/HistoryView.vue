@@ -1,18 +1,18 @@
 <template>
 <ContentPadding>
   <SearchInput
-    v-model="searchQuery"
+    v-model:value="searchQuery"
     placeholder="Поиск в истории..."
     ref="searchInput"
   />
 
+  {{ searchQuery }}
+
   <Tabs
     :tabs="tabs"
-    v-model="currentTab"
+    v-model:value="currentTab"
     class="mb-4"
   />
-
-  {{ currentTab }}
 
   <HistoryList
     v-show="currentTab === 0"
@@ -20,13 +20,16 @@
     :searchQuery="searchQuery"
     @remove-item="removeInputItem"
     @clear-history="historyStore.clearInputHistory()"
+    @to-editor="routeParams.toEditor"
   />
+  
   <HistoryList
     v-show="currentTab === 1"
     :items="historyStore.transformHistory"
     :searchQuery="searchQuery"
     @remove-item="removeTransformItem"
     @clear-history="historyStore.clearTransformHistory()"
+    @to-editor="routeParams.toEditor"
   />
 
   <!-- <div v-show="currentTab === 2">
@@ -49,9 +52,11 @@
   import { useNavPanelStore } from "../stores/navPanel";
   import { useHistoryStore } from '../stores/history'
   import { ChatHistoryItem } from "../../../electron/types/types";
+  import { useRouteParams } from "../stores/routeParams";
 
   const navPanelStore = useNavPanelStore();
   const historyStore = useHistoryStore()
+  const routeParams = useRouteParams();
   const currentTab = ref(0)
   const tabs = [
     { text: "История ввода", key: 0 },
