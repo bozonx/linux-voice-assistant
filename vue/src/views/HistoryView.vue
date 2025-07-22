@@ -34,19 +34,15 @@
     @text-click="routeParams.toEditor"
   />
 
-  <!-- <div v-show="currentTab === 2">
-    <div v-for="item in historyStore.chatHistory" :key="item.id">
-      <div class="flex flex-row gap-2">
-        <div>{{ truncate(item.description, 24) }}</div>
-        <div class="flex-1">{{ item.lastMsgDate }}</div>
-      </div>
-      <HistoryList
-      :items="item.messages.map((message: any) => ({ label: message.role, value: message.content }))"
-      @remove-item="removeChatItem(item)"
-      @clear-history="historyStore.clearChatHistory()"
-      />
-    </div>
-  </div> -->
+  <HistoryList
+    v-show="currentTab === 2"
+    :items="historyStore.chatHistory.map((item) => item.description)"
+    :searchQuery="searchQuery"
+    textTitle="Посмотреть"
+    @remove-item="removeChatItem"
+    @clear-history="clearChatHistory()"
+    @text-click="toChat"
+  />
 </ContentPadding>
 </template>
 
@@ -114,9 +110,12 @@
     toast.toast("История чатов очищена", "success")
   }
 
-  const removeChatItem = async (item: ChatHistoryItem) => {
-    await historyStore.removeFromChatHistory(item)
-    toast.toast("Удалено из истории чатов", "success")
+  const removeChatItem = async (item: string) => {
+    // await historyStore.removeFromChatHistory(item)
+    // toast.toast("Удалено из истории чатов", "success")
   }
 
+  const toChat = (item: string) => {
+    // routeParams.toChat(item)
+  }
 </script>
