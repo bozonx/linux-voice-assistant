@@ -1,9 +1,14 @@
 <template>
 <div class="flex flex-col gap-4 w-full h-full"> 
-  <h1 class="menu-title">Вставить</h1>
-  <div class="flex-1 relative">
-    <DiffInput v-if="props.oldText" :oldText="props.oldText" :newText="props.text" @update:newText="handleNewText" />
-    <TextPreview v-else :text="props.text" class="absolute" />
+  <h1>Вставить</h1>
+
+  <div class="flex-1">
+    <DiffInput
+      v-if="props.oldText"
+      :oldText="props.oldText"
+      :newText="props.text"
+      @update:newText="handleNewText" />
+    <TextPreview v-else :text="props.text" />
   </div>
 
   <ShortcutList
@@ -43,7 +48,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits<{
-  (e: 'update:newText', value: string): void;
+  (e: 'update:text', value: string): void;
 }>();
 
 const ipcStore = useIpcStore();
@@ -52,18 +57,18 @@ const actionsMenu = computed(() => actionMenuStore.getActionsMenu());
 
 const leftLetterKeys = computed(() => 
   actionsMenu.value.map((item, index) => 
-    ({...item, disabled: index === 0 && !showInsertButton()})));
+    ({...item, disabled: index === 0 && !needShowInsertButton()})));
 
 const spaceKey = computed(() => ({
   ...actionsMenu.value[0],
-  disabled: !showInsertButton(),
+  disabled: !needShowInsertButton(),
 }));
 
 function handleNewText(newText: string) {
-  emit('update:newText', newText);
+  emit('update:text', newText);
 }
 
-function showInsertButton() {
+function needShowInsertButton() {
   return ipcStore.params?.windowId && props.text && props.allowInsertButton;
 }
 </script>

@@ -8,6 +8,7 @@ import useToast from "../composables/useToast";
 import { useHistoryStore } from "./history";
 import { useChatStore } from "./chat";
 
+// TODO: почему тут?
 export interface ActionItem {
   name: string;
   icon?: string;

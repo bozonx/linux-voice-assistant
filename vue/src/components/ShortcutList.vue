@@ -91,6 +91,7 @@
       type: Object as PropType<ActionItem>,
       default: undefined,
     },
+    // make visible key "to editor"
     toEditorVisible: {
       type: Boolean,
       default: false,

@@ -1,8 +1,9 @@
 <template>
   <div class="flex flex-col gap-4 w-full h-full">
-    <h1 class="menu-title">Перевести</h1>
-    <div class="flex-1 relative">
-      <TextPreview :text="props.text" class="absolute" />
+    <h1>Перевести</h1>
+
+    <div class="flex-1">
+      <TextPreview :text="props.text" />
     </div>
 
     <ShortcutList :text="props.text" :leftLetterKeys="leftLetterKeys" />
@@ -16,16 +17,22 @@ import { MenuModals, useMenuModalsStore } from '../../stores/menuModals';
 import useToast from '../../composables/useToast';
 import { useHistoryStore } from '../../stores/history';
 
+const props = defineProps({
+  text: {
+    type: String,
+    default: "",
+  },
+});
+
 const ipcStore = useIpcStore();
 const appConfig = ipcStore.params!.appConfig;
 const { translateText } = useCallAi();
 const menuModalsStore = useMenuModalsStore();
 const historyStore = useHistoryStore();
 const { toast } = useToast();
-
-const props = defineProps<{
-  text: string;
-}>();
+const leftLetterKeys = computed(() => 
+  ipcStore.params!.userConfig.toTranslateLanguages.map((lang, index) => 
+    ({name: lang, action: () => translate(index)})));
 
 const translate = async (toLangNum: number) => {
   const trimmedText = props.text.trim();
@@ -48,14 +55,8 @@ const translate = async (toLangNum: number) => {
 
   await historyStore.saveTransformHistory(newText);
 
-  menuModalsStore.clearPendingModal();
-
   menuModalsStore.nextModal(MenuModals.PREVIEW, {
     text: newText,
   });
 };
-
-const leftLetterKeys = computed(() => 
-  ipcStore.params!.userConfig.toTranslateLanguages.map((lang, index) => 
-    ({name: lang, action: () => translate(index)})));
 </script>

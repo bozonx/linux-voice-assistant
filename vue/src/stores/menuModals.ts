@@ -15,26 +15,28 @@ export enum MenuModals {
 
 export const useMenuModalsStore = defineStore("menuModals", () => {
   const pendingModal = ref<Record<string, any> | null>(null);
-  const currentModal = ref(MenuModals.NONE);
+  const currentModal = ref<MenuModals>(MenuModals.NONE);
   const currentModalParams = ref<Record<string, any>>({});
-  const currentBreadcrumbs = ref<string[]>([]);
+  const menuBreadcrumbs = ref<MenuModals[]>([]);
   const { resetGlobalFocus } = useHelpers();
 
   const nextModal = (modal: MenuModals, params: Record<string, any>) => {
     resetGlobalFocus();
-    currentBreadcrumbs.value.push(modal);
+    menuBreadcrumbs.value.push(modal);
 
     currentModal.value = modal;
     currentModalParams.value = params;
+    pendingModal.value = null;
   };
 
   const back = () => {
-    currentBreadcrumbs.value.pop();
+    menuBreadcrumbs.value.pop();
 
-    if (currentBreadcrumbs.value.length > 0) {
-      currentModal.value = currentBreadcrumbs.value[
-        currentBreadcrumbs.value.length - 1
+    if (menuBreadcrumbs.value.length > 0) {
+      currentModal.value = menuBreadcrumbs.value[
+        menuBreadcrumbs.value.length - 1
       ] as MenuModals;
+      pendingModal.value = null;
     } else {
       closeAll();
     }
@@ -43,7 +45,8 @@ export const useMenuModalsStore = defineStore("menuModals", () => {
   const closeAll = () => {
     currentModal.value = MenuModals.NONE;
     currentModalParams.value = {};
-    currentBreadcrumbs.value = [];
+    menuBreadcrumbs.value = [];
+    pendingModal.value = null;
   };
 
   const setPendingModal = (params: Record<string, any>) => {
@@ -62,7 +65,7 @@ export const useMenuModalsStore = defineStore("menuModals", () => {
     pendingModal,
     currentModal,
     currentModalParams,
-    currentBreadcrumbs,
+    menuBreadcrumbs,
     nextModal,
     back,
     closeAll,

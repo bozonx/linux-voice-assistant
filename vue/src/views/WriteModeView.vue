@@ -56,6 +56,7 @@ function focusTextarea() {
 }
 
 function toShortcuts() {
+  // TODO: текст могут отредактировать в diff ???
   menuModalsStore.nextModal(MenuModals.INSERT, {
     text: correctedText.value,
     oldText: inputText.value,
