@@ -1,13 +1,13 @@
 <template>
 <div class="flex flex-col gap-4 w-full h-full"> 
-  <h1 class="menu-title">Проверьте результат коррекции</h1>
-  <div class="flex-1 relative">
+  <h1>Проверьте результат коррекции</h1>
+
+  <div class="flex-1">
     <DiffInput :oldText="props.oldText" :newText="props.newText" @update:newText="handleNewText" />
   </div>
 
   <ShortcutList
     :text="props.newText"
-    :leftLetterKeys="leftLetterKeys"
     :spaceKey="spaceKey"
     :toEditorVisible="true" />
 </div>
@@ -15,19 +15,11 @@
 
 <script setup lang="ts">
 import { useIpcStore } from '../../stores/ipc';
-import { ActionItem, useActionMenuStore } from '../../stores/actionMenu';
-import { useMainInputStore } from '../../stores/mainInput';
-import { useMenuModalsStore } from '../../stores/menuModals';
-import { useRouteParams } from '../../stores/routeParams';
-import { useRouter } from 'vue-router';
+import { useActionMenuStore } from '../../stores/actionMenu';
 
 const ipcStore = useIpcStore();
 const actionMenuStore = useActionMenuStore();
 const DEFAULT_ACTIONS = actionMenuStore.DEFAULT_ACTIONS;
-const mainInputStore = useMainInputStore();
-const menuModalsStore = useMenuModalsStore();
-const routeParams = useRouteParams();
-const router = useRouter();
 
 const props = defineProps({
   newText: {
@@ -41,27 +33,12 @@ const props = defineProps({
 });
 
 const emit = defineEmits<{
-  (e: 'update:newText', value: string): void;
+  (e: 'update:text', value: string): void;
 }>();
 
 function handleNewText(newText: string) {
-  emit('update:newText', newText);
+  emit('update:text', newText);
 }
-
-const leftLetterKeys = [
-  ipcStore.params?.windowId ? DEFAULT_ACTIONS[0] : undefined,
-  DEFAULT_ACTIONS[1],
-  {
-    name: "Вставить в редактор",
-    action: () => {
-      mainInputStore.setValue(props.newText);
-      routeParams.setParams({ text: props.newText });
-      mainInputStore.focus();
-      menuModalsStore.closeAll();
-      router.push('/');
-    },
-  }
-] as ActionItem[]
 
 const spaceKey = ipcStore.params?.windowId ? DEFAULT_ACTIONS[0] : undefined;
 </script>
