@@ -1,7 +1,7 @@
 <template>
   <MenuModals />
   <div class="layout">
-    <NavPanel />
+    <NavPanel v-if="navPanelStore.params.panelVisible" />
     <div class="main">
       <RouterView />
     </div>

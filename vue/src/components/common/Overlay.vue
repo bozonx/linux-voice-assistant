@@ -1,8 +1,8 @@
 <template>
   <div class="overlay glass">
-    <div class="navbar bg-neutral text-neutral-content shadow-sm overlay-header">
+    <div v-if="navBarVisible" class="navbar bg-neutral text-neutral-content shadow-sm overlay-header">
       <Button neutral @click="menuModalsStore.back">
-          Назад
+          Назад (Esc)
       </Button>
     </div>
     <ContentPadding class="flex-1">
@@ -15,6 +15,13 @@
 import { useMenuModalsStore } from '../../stores/menuModals';
 
 const menuModalsStore = useMenuModalsStore();
+
+const props = defineProps({
+  navBarVisible: {
+    type: Boolean,
+    default: true,
+  },
+});
 </script>
 
 <style scoped>

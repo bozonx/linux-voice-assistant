@@ -2,9 +2,10 @@ import { defineStore } from "pinia";
 import { useMenuModalsStore } from "./menuModals";
 
 export const DEFAULT_PARAMS = {
+  panelVisible: true,
+  rightPanelVisible: true,
   escBtnText: "Меню",
   escBtnAction: undefined as (() => void) | undefined,
-  rightPanelVisible: true,
 };
 
 export const useNavPanelStore = defineStore("navPanel", () => {

@@ -9,7 +9,7 @@
     <PreviewMenu v-else-if="menuModalsStore.currentModal === MenuModals.PREVIEW" v-bind="menuModalsStore.currentModalParams as any" />
   </Overlay>
 
-  <Overlay v-if="menuModalsStore.pendingModal">
+  <Overlay :navBarVisible="false" v-if="menuModalsStore.pendingModal">
     <InProgressMessage v-bind="menuModalsStore.pendingModal" />
   </Overlay>
 </template>

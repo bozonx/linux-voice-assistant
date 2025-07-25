@@ -1,12 +1,12 @@
 <template>
   <div class="flex flex-col gap-4 w-full h-full">
-    <h1 class="menu-title">Распознавание</h1>
-    <div class="flex-1 relative">
-      <TextPreview :text="recognizedText" class="absolute" />
+    <h1>Распознавание голоса</h1>
+
+    <div class="flex-1">
+      <TextPreview :text="recognizedText" />
     </div>
 
     <ShortcutList
-      :leftLetterKeys="leftLetterKeys"
       :spaceKey="spaceKey" />
   </div>
 </template>
@@ -25,10 +25,10 @@ const props = defineProps({
     type: Function,
     default: () => {}
   },
-  escToMenu: {
-    type: Boolean,
-    default: false
-  }
+  // escToCancel: {
+  //   type: Boolean,
+  //   default: true
+  // }
 });
 
 const { startVoiceRecognition, stopVoiceRecognition, voiceCorrection } = useCallAi();
@@ -43,25 +43,14 @@ const navPanelStore = useNavPanelStore();
 const historyStore = useHistoryStore();
 let listenerIndex = -1;
 
-navPanelStore.upateNavParams({
-  escBtnAction: () => {
-    if (props.escToMenu) {
-      finish();
-    }
-    else {
-      cancel();
-    }
-  },
-  rightPanelVisible: false,
-});
-
-// TODO: поидее надо esc
-const leftLetterKeys = [
-  {
-    name: "Отмена",
-    action: () => cancel(),
-  },
-];
+// navPanelStore.upateNavParams({
+//   escBtnText: props.escToCancel ? "Отмена" : "Назад11",
+//   escBtnAction: () => {
+//     if (props.escToCancel) {
+//       cancel();
+//     }
+//   },
+// });
 
 const spaceKey = {
   name: "Закончить",
@@ -75,6 +64,7 @@ const cancel = async () => {
 };
 
 const finish = async () => {
+  // TODO: пока ждет нужно блокировать кнопку назад и не позволять нажимать еще раз закончить
   if (!lastRecognizedTextMs.value || Date.now() - lastRecognizedTextMs.value < appConfig.recognitionWaitTimeSec * 1000) {
     const currentText = recognizedText.value;
     
