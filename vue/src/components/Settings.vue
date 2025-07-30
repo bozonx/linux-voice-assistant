@@ -115,7 +115,7 @@
           <FieldSelect
             v-model:value="userConfig.aiModelUsage.stt"
             :options="
-              userConfig.sttModels.map((model) => ({
+              userConfig.sttModels.map((model: any) => ({
                 id: model.id,
                 name: model.id,
               }))
@@ -126,7 +126,7 @@
           <FieldSelect
             v-model:value="userConfig.aiModelUsage.tts"
             :options="
-              userConfig.ttsModels.map((model) => ({
+              userConfig.ttsModels.map((model: any) => ({
                 id: model.id,
                 name: model.id,
               }))
@@ -137,7 +137,7 @@
           <FieldSelect
             v-model:value="userConfig.aiModelUsage.translate"
             :options="
-              userConfig.llmModels.map((model) => ({
+              userConfig.llmModels.map((model: any) => ({
                 id: model.id,
                 name: model.id,
               }))
@@ -148,7 +148,7 @@
           <FieldSelect
             v-model:value="userConfig.aiModelUsage.voiceCorrection"
             :options="
-              userConfig.llmModels.map((model) => ({
+              userConfig.llmModels.map((model: any) => ({
                 id: model.id,
                 name: model.id,
               }))
@@ -159,7 +159,7 @@
           <FieldSelect
             v-model:value="userConfig.aiModelUsage.correction"
             :options="
-              userConfig.llmModels.map((model) => ({
+              userConfig.llmModels.map((model: any) => ({
                 id: model.id,
                 name: model.id,
               }))
@@ -170,7 +170,7 @@
           <FieldSelect
             v-model:value="userConfig.aiModelUsage.aiTasks"
             :options="
-              userConfig.llmModels.map((model) => ({
+              userConfig.llmModels.map((model: any) => ({
                 id: model.id,
                 name: model.id,
               }))
@@ -181,7 +181,7 @@
           <FieldSelect
             v-model:value="userConfig.aiModelUsage.chat"
             :options="
-              userConfig.llmModels.map((model) => ({
+              userConfig.llmModels.map((model: any) => ({
                 id: model.id,
                 name: model.id,
               }))
@@ -290,6 +290,7 @@ const tabs = [
   { text: 'AI rules', key: 2 },
   { text: 'Задания для AI', key: 3 },
   { text: 'Роли чата', key: 4 },
+  { text: 'Плагины', key: 5 },
 ]
 
 onMounted(() => {
@@ -311,7 +312,7 @@ const plugins = computed(() => {
   return Object.keys(userConfig.value.plugins || {})
     .map((pluginName) => {
       const pluginCfg = pluginsStore.pluginConfig.find(
-        (plugin) => plugin.pluginName === pluginName
+        (plugin: any) => plugin.pluginName === pluginName
       )
 
       if (!pluginCfg) {
@@ -320,7 +321,7 @@ const plugins = computed(() => {
 
       return {
         ...pluginCfg,
-        fields: pluginCfg.fields.map((field) => ({
+        fields: pluginCfg.fields.map((field: any) => ({
           ...field,
           value: userConfig.value.plugins[pluginName][field.name],
         })),
@@ -335,7 +336,7 @@ const saveSettings = () => {
 }
 
 const translateLanguagesItems = computed(() => {
-  return (userConfig.value.toTranslateLanguages || []).map((lang) => ({
+  return (userConfig.value.toTranslateLanguages || []).map((lang: string) => ({
     value: lang,
   }))
 })
