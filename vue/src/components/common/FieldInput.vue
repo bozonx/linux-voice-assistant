@@ -1,32 +1,33 @@
 <template>
   <div class="form-input">
-    <input type="text" v-model="value" />
+    <input
+      type="text"
+      v-model="value"
+      :placeholder="placeholder"
+      class="input"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-  const props = defineProps<{
-    value: string;
-  }>();
+const props = defineProps<{ value: string; placeholder?: string }>()
 
-  const emit = defineEmits<{
-    (e: "update:value", value: string): void;
-  }>();
+const emit = defineEmits<{ (e: 'update:value', value: string): void }>()
 
-  const value = computed({
-    get: () => props.value,
-    set: (value) => emit("update:value", value),
-  });
+const value = computed({
+  get: () => props.value,
+  set: (value) => emit('update:value', value),
+})
 </script>
 
 <style scoped>
-  input {
-    display: block;
-    width: 100%;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 4px;
-    font-size: 14px;
-    line-height: 1.5rem;
-  }
+input {
+  display: block;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 4px;
+  font-size: 14px;
+  line-height: 1.5rem;
+}
 </style>

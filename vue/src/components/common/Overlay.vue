@@ -1,9 +1,10 @@
 <template>
   <div class="overlay glass">
-    <div v-if="navBarVisible" class="navbar bg-neutral text-neutral-content shadow-sm overlay-header">
-      <Button neutral @click="menuModalsStore.back">
-          Назад (Esc)
-      </Button>
+    <div
+      v-if="navBarVisible"
+      class="navbar bg-neutral text-neutral-content shadow-sm overlay-header"
+    >
+      <Button neutral @click="menuModalsStore.back"> Назад (Esc) </Button>
     </div>
     <ContentPadding class="flex-1">
       <slot />
@@ -11,17 +12,11 @@
   </div>
 </template>
 
-<script setup lang="ts">  
-import { useMenuModalsStore } from '../../stores/menuModals';
+<script setup lang="ts">
+import { useMenuModalsStore } from '../../stores/menuModals'
 
-const menuModalsStore = useMenuModalsStore();
-
-const props = defineProps({
-  navBarVisible: {
-    type: Boolean,
-    default: true,
-  },
-});
+const menuModalsStore = useMenuModalsStore()
+const props = defineProps({ navBarVisible: { type: Boolean, default: true } })
 </script>
 
 <style scoped>

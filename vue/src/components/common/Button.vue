@@ -1,21 +1,28 @@
 <template>
-  <button :class="['btn', buttonClass, props.class]" :disabled="props.disabled" @click="onClick">
+  <button
+    :class="['btn', buttonClass, props.class]"
+    :disabled="props.disabled"
+    @click="onClick"
+  >
+    <Icon v-if="props.icon" :icon="props.icon" />
     <slot></slot>
   </button>
 </template>
 
 <script setup lang="ts">
+import { Icon } from '@iconify/vue'
+
 const props = defineProps<{
-  class?: string;
-  icon?: string;
-  sm?: boolean;
-  xs?: boolean;
-  neutral?: boolean;
-  active?: boolean;
-  disabled?: boolean;
-  square?: boolean;
-  ghost?: boolean;
-}>();
+  class?: string
+  icon?: string
+  sm?: boolean
+  xs?: boolean
+  neutral?: boolean
+  active?: boolean
+  disabled?: boolean
+  square?: boolean
+  ghost?: boolean
+}>()
 
 const buttonClass = computed(() => {
   return {
@@ -27,14 +34,12 @@ const buttonClass = computed(() => {
     'btn-disabled': props.disabled,
     'btn-square': props.square,
     'btn-ghost': props.ghost,
-  };
-});
+  }
+})
 
-const emit = defineEmits<{
-  (e: 'click'): void;
-}>();
+const emit = defineEmits<{ (e: 'click'): void }>()
 
 const onClick = () => {
-  emit('click');
-};
+  emit('click')
+}
 </script>

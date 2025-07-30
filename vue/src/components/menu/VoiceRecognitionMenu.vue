@@ -17,7 +17,6 @@ import { GlobalEvents, useGlobalEvents } from '../../composables/useGlobalEvents
 import { useIpcStore } from '../../stores/ipc';
 import { useMenuModalsStore } from '../../stores/menuModals';
 import useToast from '../../composables/useToast';
-import { useNavPanelStore } from '../../stores/navPanel';
 import { useHistoryStore } from '../../stores/history';
 
 const props = defineProps({
@@ -25,10 +24,6 @@ const props = defineProps({
     type: Function,
     default: () => {}
   },
-  // escToCancel: {
-  //   type: Boolean,
-  //   default: true
-  // }
 });
 
 const { startVoiceRecognition, stopVoiceRecognition, voiceCorrection } = useCallAi();
@@ -39,32 +34,16 @@ const ipcStore = useIpcStore();
 const appConfig = ipcStore.params!.appConfig;
 const menuModalsStore = useMenuModalsStore();
 const { toast } = useToast();
-const navPanelStore = useNavPanelStore();
 const historyStore = useHistoryStore();
 let listenerIndex = -1;
-
-// navPanelStore.upateNavParams({
-//   escBtnText: props.escToCancel ? "Отмена" : "Назад11",
-//   escBtnAction: () => {
-//     if (props.escToCancel) {
-//       cancel();
-//     }
-//   },
-// });
 
 const spaceKey = {
   name: "Закончить",
   action: () => finish(),
 };
 
-const cancel = async () => {
-  globalEvents.removeListener(listenerIndex);
-  await stopVoiceRecognition();
-  menuModalsStore.back();
-};
-
 const finish = async () => {
-  // TODO: пока ждет нужно блокировать кнопку назад и не позволять нажимать еще раз закончить
+  // TODO: пока ждет  не позволять нажимать еще раз закончить
   if (!lastRecognizedTextMs.value || Date.now() - lastRecognizedTextMs.value < appConfig.recognitionWaitTimeSec * 1000) {
     const currentText = recognizedText.value;
     

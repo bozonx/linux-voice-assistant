@@ -12,31 +12,31 @@
 </template>
 
 <script setup lang="ts">
-  import TabItem from "./TabItem.vue";
+import TabItem from './TabItem.vue'
 
-  const emit = defineEmits<{
-    (e: "update:value", key: string | number): void;
-  }>();
+const emit = defineEmits<{
+  (e: 'update:value', key: string | number): void
+}>()
 
-  const props = defineProps<{
-    tabs: {
-      text: string;
-      key: string | number;
-    }[];
-    value?: string | number;
-  }>();
+const props = defineProps<{
+  tabs: {
+    text: string
+    key: string | number
+  }[]
+  value?: string | number
+}>()
 
-  const activeTab = ref<string | number>(props.value || props.tabs[0].key);
+const activeTab = ref<string | number>(props.value || props.tabs[0].key)
 
-  watch(
-    () => props.value,
-    (newValue) => {
-      activeTab.value = newValue || props.tabs[0].key;
-    }
-  );
+watch(
+  () => props.value,
+  (newValue: string | number) => {
+    activeTab.value = newValue || props.tabs[0].key
+  }
+)
 
-  const onTabClick = (key: string | number) => {
-    activeTab.value = key;
-    emit("update:value", activeTab.value);
-  };
+const onTabClick = (key: string | number) => {
+  activeTab.value = key
+  emit('update:value', activeTab.value)
+}
 </script>
