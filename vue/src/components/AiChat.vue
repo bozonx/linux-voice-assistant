@@ -23,7 +23,7 @@
           </Button>
         </div>
         <div v-if="roles.length > 0" class="flex flex-col gap-2">
-          <Dropdown :options="roles" v-model:value="selectedRole" title="Роль" />
+          <FieldSelect :options="roles" v-model:value="selectedRole" title="Роль" />
         </div>
       </div>
     

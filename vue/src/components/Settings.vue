@@ -1,12 +1,9 @@
 <template>
   <div class="flex flex-col gap-4 w-full h-full">
-    <Tabs
-      :tabs="tabs" 
-      v-model:value="currentTab"
-    />
+    <Tabs :tabs="tabs" v-model:value="currentTab" />
 
     <div class="flex-1 overflow-y-auto">
-      <div v-show="currentTab === 0">
+      <div v-show="currentTab === 0" class="fields-col">
         <FieldRow label="Theme">
           <ThemeSwitcher />
         </FieldRow>
@@ -34,9 +31,12 @@
         </FieldRow>
       </div>
 
-      <div v-show="currentTab === 1"> 
+      <div v-show="currentTab === 1">
         <FieldRow label="LLM Models">
-          <FieldItems :items="userConfig.llmModels" @update:items="updateLLMModels">
+          <FieldItems
+            :items="userConfig.llmModels"
+            @update:items="updateLLMModels"
+          >
             <template #item="{ item }">
               <FieldRow label="Id" vertical>
                 <FieldInput v-model:value="item.id" />
@@ -61,7 +61,10 @@
         </FieldRow>
 
         <FieldRow label="STT Models">
-          <FieldItems :items="userConfig.sttModels" @update:items="updateSTTModels">
+          <FieldItems
+            :items="userConfig.sttModels"
+            @update:items="updateSTTModels"
+          >
             <template #item="{ item }">
               <FieldRow label="Id" vertical>
                 <FieldInput v-model:value="item.id" />
@@ -83,7 +86,10 @@
         </FieldRow>
 
         <FieldRow label="TTS Models">
-          <FieldItems :items="userConfig.ttsModels" @update:items="updateTTSModels">
+          <FieldItems
+            :items="userConfig.ttsModels"
+            @update:items="updateTTSModels"
+          >
             <template #item="{ item }">
               <FieldRow label="Id" vertical>
                 <FieldInput v-model:value="item.id" />
@@ -99,36 +105,92 @@
               </FieldRow>
               <FieldRow label="API Key" vertical>
                 <FieldInput v-model:value="item.apiKey" />
-              </FieldRow> 
+              </FieldRow>
             </template>
           </FieldItems>
         </FieldRow>
 
         <h2>AI Model Usage</h2>
         <FieldRow label="Speech to Text">
-          <Dropdown v-model:value="userConfig.aiModelUsage.stt" :options="userConfig.sttModels.map((model) => ({ id: model.id, name: model.id }))" />
+          <FieldSelect
+            v-model:value="userConfig.aiModelUsage.stt"
+            :options="
+              userConfig.sttModels.map((model) => ({
+                id: model.id,
+                name: model.id,
+              }))
+            "
+          />
         </FieldRow>
         <FieldRow label="Text to Speech">
-          <Dropdown v-model:value="userConfig.aiModelUsage.tts" :options="userConfig.ttsModels.map((model) => ({ id: model.id, name: model.id }))" />
+          <FieldSelect
+            v-model:value="userConfig.aiModelUsage.tts"
+            :options="
+              userConfig.ttsModels.map((model) => ({
+                id: model.id,
+                name: model.id,
+              }))
+            "
+          />
         </FieldRow>
         <FieldRow label="Translate">
-          <Dropdown v-model:value="userConfig.aiModelUsage.translate" :options="userConfig.llmModels.map((model) => ({ id: model.id, name: model.id }))" />
+          <FieldSelect
+            v-model:value="userConfig.aiModelUsage.translate"
+            :options="
+              userConfig.llmModels.map((model) => ({
+                id: model.id,
+                name: model.id,
+              }))
+            "
+          />
         </FieldRow>
         <FieldRow label="Voice Correction">
-          <Dropdown v-model:value="userConfig.aiModelUsage.voiceCorrection" :options="userConfig.llmModels.map((model) => ({ id: model.id, name: model.id }))" />
+          <FieldSelect
+            v-model:value="userConfig.aiModelUsage.voiceCorrection"
+            :options="
+              userConfig.llmModels.map((model) => ({
+                id: model.id,
+                name: model.id,
+              }))
+            "
+          />
         </FieldRow>
         <FieldRow label="Correction">
-          <Dropdown v-model:value="userConfig.aiModelUsage.correction" :options="userConfig.llmModels.map((model) => ({ id: model.id, name: model.id }))" />
+          <FieldSelect
+            v-model:value="userConfig.aiModelUsage.correction"
+            :options="
+              userConfig.llmModels.map((model) => ({
+                id: model.id,
+                name: model.id,
+              }))
+            "
+          />
         </FieldRow>
         <FieldRow label="AI Tasks">
-          <Dropdown v-model:value="userConfig.aiModelUsage.aiTasks" :options="userConfig.llmModels.map((model) => ({ id: model.id, name: model.id }))" />
+          <FieldSelect
+            v-model:value="userConfig.aiModelUsage.aiTasks"
+            :options="
+              userConfig.llmModels.map((model) => ({
+                id: model.id,
+                name: model.id,
+              }))
+            "
+          />
         </FieldRow>
         <FieldRow label="Chat">
-          <Dropdown v-model:value="userConfig.aiModelUsage.chat" :options="userConfig.llmModels.map((model) => ({ id: model.id, name: model.id }))" />
+          <FieldSelect
+            v-model:value="userConfig.aiModelUsage.chat"
+            :options="
+              userConfig.llmModels.map((model) => ({
+                id: model.id,
+                name: model.id,
+              }))
+            "
+          />
         </FieldRow>
       </div>
 
-      <div v-show="currentTab === 2"> 
+      <div v-show="currentTab === 2">
         <h2>AI rules</h2>
         <FieldRow label="Общие правила для всех задач">
           <FieldTextArea v-model:value="userConfig.aiRules.base" />
@@ -136,7 +198,9 @@
         <FieldRow label="Быстрый перевод">
           <FieldTextArea v-model:value="userConfig.aiRules.translate" />
         </FieldRow>
-        <FieldRow label="Исправление пунктуации и коррекция после распознавания голоса">
+        <FieldRow
+          label="Исправление пунктуации и коррекция после распознавания голоса"
+        >
           <FieldTextArea v-model:value="userConfig.aiRules.voiceCorrection" />
         </FieldRow>
         <FieldRow label="Коррекция текста">
@@ -168,7 +232,10 @@
 
       <div v-show="currentTab === 4">
         <FieldRow label="Роли чата">
-          <FieldItems :items="userConfig.chatRoles" @update:items="updateChatRoles">
+          <FieldItems
+            :items="userConfig.chatRoles"
+            @update:items="updateChatRoles"
+          >
             <template #item="{ item, index }">
               <div class="flex flex-row gap-2 w-full">
                 <div>
@@ -191,10 +258,12 @@
       <div v-show="currentTab === 5">
         <template v-for="plugin of plugins" :key="plugin.pluginName">
           <h2>{{ plugin.label }}</h2>
-          <FieldsByCfg :config="plugin.fields" @update:values="updatePluginConfig(plugin.pluginName, $event)" />
+          <FieldsByCfg
+            :config="plugin.fields"
+            @update:values="updatePluginConfig(plugin.pluginName, $event)"
+          />
         </template>
       </div>
-
     </div>
 
     <div class="flex flex-row gap-2">
@@ -204,45 +273,49 @@
 </template>
 
 <script setup lang="ts">
-  import { useIpcStore } from "../stores/ipc";
-  import { usePluginsStore } from "../stores/plugins";
-  import useToast from "../composables/useToast";
-  import { PRESETS_KEYS } from "../types";
-  
-  const ipcStore = useIpcStore();
-  const pluginsStore = usePluginsStore();
-  const {toast} = useToast();
-  
-  const userConfig = ref(ipcStore.params!.userConfig);
-  const currentTab = ref(0);
-  const tabs = [
-    { text: "Основные", key: 0 },
-    { text: "Модели", key: 1 },
-    { text: "AI rules", key: 2 },
-    { text: "Задания для AI", key: 3 },
-    { text: "Роли чата", key: 4 },
-  ]
+import useToast from '../composables/useToast'
+import { useIpcStore } from '../stores/ipc'
+import { usePluginsStore } from '../stores/plugins'
+import { PRESETS_KEYS } from '../types'
 
-  onMounted(() => {
-    userConfig.value = ipcStore.params!.userConfig;
-    // fill default values for plugins which are not in userConfig.plugins
-    for (const pluginCfg of pluginsStore.pluginConfig) {
-      if (!userConfig.value.plugins[pluginCfg.pluginName]) {
-        userConfig.value.plugins[pluginCfg.pluginName] = {};
+const ipcStore = useIpcStore()
+const pluginsStore = usePluginsStore()
+const { toast } = useToast()
 
-        for (const field of pluginCfg.fields) {
-          userConfig.value.plugins[pluginCfg.pluginName][field.name] = field.defaultValue;
-        }
+const userConfig = ref(ipcStore.params!.userConfig)
+const currentTab = ref(0)
+const tabs = [
+  { text: 'Основные', key: 0 },
+  { text: 'Модели', key: 1 },
+  { text: 'AI rules', key: 2 },
+  { text: 'Задания для AI', key: 3 },
+  { text: 'Роли чата', key: 4 },
+]
+
+onMounted(() => {
+  userConfig.value = ipcStore.params!.userConfig
+  // fill default values for plugins which are not in userConfig.plugins
+  for (const pluginCfg of pluginsStore.pluginConfig) {
+    if (!userConfig.value.plugins[pluginCfg.pluginName]) {
+      userConfig.value.plugins[pluginCfg.pluginName] = {}
+
+      for (const field of pluginCfg.fields) {
+        userConfig.value.plugins[pluginCfg.pluginName][field.name] =
+          field.defaultValue
       }
     }
-  });
+  }
+})
 
-  const plugins = computed(() => {
-    return Object.keys(userConfig.value.plugins || {}).map((pluginName) => {
-      const pluginCfg = pluginsStore.pluginConfig.find((plugin) => plugin.pluginName === pluginName);
-      
+const plugins = computed(() => {
+  return Object.keys(userConfig.value.plugins || {})
+    .map((pluginName) => {
+      const pluginCfg = pluginsStore.pluginConfig.find(
+        (plugin) => plugin.pluginName === pluginName
+      )
+
       if (!pluginCfg) {
-        return null;
+        return null
       }
 
       return {
@@ -252,43 +325,51 @@
           value: userConfig.value.plugins[pluginName][field.name],
         })),
       }
-    }).filter((plugin) => plugin !== null);
-  });
+    })
+    .filter((plugin) => plugin !== null)
+})
 
-  const saveSettings = () => {
-    ipcStore.saveUserConfig(userConfig.value);
-    toast("Settings saved", "success");
-  };
+const saveSettings = () => {
+  ipcStore.saveUserConfig(userConfig.value)
+  toast('Settings saved', 'success')
+}
 
-  const translateLanguagesItems = computed(() => {
-    return (userConfig.value.toTranslateLanguages || []).map((lang) => ({ value: lang }));
-  });
+const translateLanguagesItems = computed(() => {
+  return (userConfig.value.toTranslateLanguages || []).map((lang) => ({
+    value: lang,
+  }))
+})
 
-  const updateTranslateLanguages = (items: Record<string, any>[]) => {
-    userConfig.value.toTranslateLanguages = items.map((item: Record<string, any>) => item.value);
-  };
+const updateTranslateLanguages = (items: Record<string, any>[]) => {
+  userConfig.value.toTranslateLanguages = items.map(
+    (item: Record<string, any>) => item.value
+  )
+}
 
-  const updateLLMModels = (items: any[]) => {
-    userConfig.value.llmModels = items;
-  };
+const updateLLMModels = (items: any[]) => {
+  userConfig.value.llmModels = items
+}
 
-  const updateSTTModels = (items: any[]) => {
-    userConfig.value.sttModels = items;
-  };
+const updateSTTModels = (items: any[]) => {
+  userConfig.value.sttModels = items
+}
 
-  const updateTTSModels = (items: any[]) => {
-    userConfig.value.ttsModels = items;
-  };
+const updateTTSModels = (items: any[]) => {
+  userConfig.value.ttsModels = items
+}
 
-  const updateAiTasks = (items: any[]) => {
-    userConfig.value.aiTasks = items
-  };
+const updateAiTasks = (items: any[]) => {
+  userConfig.value.aiTasks = items
+}
 
-  const updateChatRoles = (items: any[]) => {
-    userConfig.value.chatRoles = items;
-  };
+const updateChatRoles = (items: any[]) => {
+  userConfig.value.chatRoles = items
+}
 
-  const updatePluginConfig = (pluginName: string, values: Record<string, any>) => {
-    userConfig.value.plugins[pluginName] = values;
-  };
+const updatePluginConfig = (
+  pluginName: string,
+  values: Record<string, any>
+) => {
+  userConfig.value.plugins[pluginName] = values
+}
 </script>

@@ -1,4 +1,18 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 @plugin "daisyui" {
-  themes: light --default, dark --prefersdark;
+  themes:
+    light --default,
+    dark --prefersdark;
+}
+
+.fields-col .field-row {
+  border-bottom: 1px solid #eee;
+}
+
+[data-theme='dark'] .fields-col .field-row {
+  border-bottom: 1px solid #333;
+}
+
+.fields-col .field-row:last-child {
+  border-bottom: none;
 }

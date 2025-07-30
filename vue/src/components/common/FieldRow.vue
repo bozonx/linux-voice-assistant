@@ -1,6 +1,6 @@
 <template>
-  <div class="form-row" :class="{ vertical: vertical }">
-    <div class="text-sm text-gray-600 form-row-label">
+  <div class="field-row" :class="{ vertical: vertical }">
+    <div class="text-sm text-gray-600 field-row-label">
       {{ label }}
     </div>
     <div class="flex-1">
@@ -14,14 +14,14 @@ const props = defineProps<{ label: string; vertical?: boolean }>()
 </script>
 
 <style scoped>
-.form-row {
+.field-row {
   display: flex;
   flex-direction: row;
   gap: 14px;
-  padding: 6px 0;
+  padding: 0.75rem 0.5rem;
 }
 
-.form-row-label {
+.field-row-label {
   width: 160px;
   text-align: right;
   line-height: 2rem;

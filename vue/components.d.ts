@@ -26,6 +26,7 @@ declare module 'vue' {
     FieldItems: typeof import('./src/components/common/FieldItems.vue')['default']
     FieldRow: typeof import('./src/components/common/FieldRow.vue')['default']
     FieldsByCfg: typeof import('./src/components/common/FieldsByCfg.vue')['default']
+    FieldSelect: typeof import('./src/components/common/FieldSelect.vue')['default']
     FieldTextArea: typeof import('./src/components/common/FieldTextArea.vue')['default']
     History: typeof import('./src/components/History.vue')['default']
     HistoryList: typeof import('./src/components/HistoryList.vue')['default']
