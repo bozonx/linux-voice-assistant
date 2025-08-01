@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { useMainInputStore } from '../stores/EditorInput'
+import { useEditorInputStore } from '../stores/editorInput'
 import { useIpcStore } from '../stores/ipc'
 import { MenuModals, useMenuModalsStore } from '../stores/menuModals'
 import { useNavPanelStore } from '../stores/navPanel'
@@ -20,12 +20,12 @@ import { useNavPanelStore } from '../stores/navPanel'
 const ipcStore = useIpcStore()
 const navPanelStore = useNavPanelStore()
 const menuModalsStore = useMenuModalsStore()
-const mainInputStore = useMainInputStore()
+const editorInputStore = useEditorInputStore()
 
 navPanelStore.resetNavParams({
   escBtnAction: () => {
     menuModalsStore.nextModal(MenuModals.INSERT, {
-      text: mainInputStore.value,
+      text: editorInputStore.value,
     })
   },
 })

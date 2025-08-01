@@ -1,0 +1,40 @@
+import { defineStore } from 'pinia'
+import { DebounceCallIncreasing } from 'squidlet-lib'
+
+import { useHistoryStore } from './history'
+
+export const useWriterInputStore = defineStore('writerInput', () => {
+  const value = ref<string>('')
+  const focusCount = ref<number>(0)
+
+  const debounced = new DebounceCallIncreasing()
+  const historyStore = useHistoryStore()
+
+  // replace value
+  const setValue = (newText: string): void => {
+    value.value = newText
+
+    debounced.invoke(() => {
+      // TODO: может отдельное хранилище для каждого интута
+      historyStore.saveMainInput(newText)
+    }, 600)
+  }
+
+  const clear = (): void => {
+    value.value = ''
+
+    historyStore.saveMainInput('')
+  }
+
+  const focus = (): void => {
+    focusCount.value++
+  }
+
+  return {
+    value,
+    focusCount,
+    setValue,
+    focus,
+    clear,
+  }
+})

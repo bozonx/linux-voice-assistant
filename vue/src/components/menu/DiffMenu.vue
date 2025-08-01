@@ -20,8 +20,8 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 
-import { useEditorInputStore } from '../../stores/EditorInput'
 import { ActionItem, useActionMenuStore } from '../../stores/actionMenu'
+import { useEditorInputStore } from '../../stores/editorInput'
 import { useIpcStore } from '../../stores/ipc'
 import { useMenuModalsStore } from '../../stores/menuModals'
 import { useRouteParams } from '../../stores/routeParams'

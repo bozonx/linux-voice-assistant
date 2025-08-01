@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { useEditorInputStore } from '../stores/EditorInput'
+import { useEditorInputStore } from '../stores/editorInput'
 import { useMenuModalsStore } from '../stores/menuModals'
 import { useRouteParams } from '../stores/routeParams'
 

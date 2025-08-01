@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 
 import router from '../router'
-import { useEditorInputStore } from './EditorInput'
+import { useEditorInputStore } from './editorInput'
 import { useMenuModalsStore } from './menuModals'
 
 export const useRouteParams = defineStore('routeParams', () => {

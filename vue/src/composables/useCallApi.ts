@@ -1,4 +1,4 @@
-import { useEditorInputStore } from '../stores/EditorInput'
+import { useEditorInputStore } from '../stores/editorInput'
 import { useIpcStore } from '../stores/ipc'
 import useToast from './useToast'
 

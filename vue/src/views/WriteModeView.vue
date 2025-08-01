@@ -14,7 +14,7 @@
 <script setup lang="ts">
 import { useCallAi } from '../composables/useCallAi'
 import useToast from '../composables/useToast'
-import { useEditorInputStore } from '../stores/EditorInput'
+import { useEditorInputStore } from '../stores/editorInput'
 import { useHistoryStore } from '../stores/history'
 import { useIpcStore } from '../stores/ipc'
 import { MenuModals, useMenuModalsStore } from '../stores/menuModals'

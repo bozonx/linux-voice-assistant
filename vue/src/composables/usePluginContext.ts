@@ -1,6 +1,6 @@
-import { useEditorInputStore } from '../stores/EditorInput'
 import { useActionMenuStore } from '../stores/actionMenu'
 import { useEditMenuStore } from '../stores/edditMenu'
+import { useEditorInputStore } from '../stores/editorInput'
 import { useIpcStore } from '../stores/ipc'
 import { useMenuModalsStore } from '../stores/menuModals'
 import { useNavPanelStore } from '../stores/navPanel'

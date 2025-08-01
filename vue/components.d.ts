@@ -12,10 +12,12 @@ declare module 'vue' {
     AiTaskMenu: typeof import('./src/components/menu/AiTaskMenu.vue')['default']
     Button: typeof import('./src/components/common/Button.vue')['default']
     Card: typeof import('./src/components/common/Card.vue')['default']
+    ChatInput: typeof import('./src/components/ChatInput.vue')['default']
     ChatItem: typeof import('./src/components/common/ChatItem.vue')['default']
     Checkbox: typeof import('./src/components/common/Checkbox.vue')['default']
     CheckboxRow: typeof import('./src/components/common/CheckboxRow.vue')['default']
     ContentPadding: typeof import('./src/components/common/ContentPadding.vue')['default']
+    copy: typeof import('./src/components/Editor copy.vue')['default']
     CorrectionMenu: typeof import('./src/components/menu/CorrectionMenu.vue')['default']
     Diff: typeof import('./src/components/common/Diff.vue')['default']
     DiffInput: typeof import('./src/components/common/DiffInput.vue')['default']
@@ -53,5 +55,6 @@ declare module 'vue' {
     ThemeSwitcher: typeof import('./src/components/common/ThemeSwitcher.vue')['default']
     TranslateMenu: typeof import('./src/components/menu/TranslateMenu.vue')['default']
     VoiceRecognitionMenu: typeof import('./src/components/menu/VoiceRecognitionMenu.vue')['default']
+    WriteModeInput: typeof import('./src/components/WriteModeInput.vue')['default']
   }
 }

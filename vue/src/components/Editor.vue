@@ -8,10 +8,15 @@
         <Button sm square @click="voiceRecognition" title="Голосовой ввод">
           <Icon icon="mdi:microphone" height="24" />
         </Button>
-        <Button sm square @click="mainInputStore.clear" title="Очистить">
+        <Button sm square @click="editorInputStore.clear" title="Очистить">
           <Icon icon="mdi:clear" height="24" />
         </Button>
-        <Button sm square @click="mainInputStore.selectAll" title="Выбрать всё">
+        <Button
+          sm
+          square
+          @click="editorInputStore.selectAll"
+          title="Выбрать всё"
+        >
           <Icon icon="mdi:select-all" height="24" />
         </Button>
       </div>
@@ -53,9 +58,9 @@
 
 <script setup lang="ts">
 import useToast from '../composables/useToast'
-import { useEditorInputStore } from '../stores/EditorInput'
 import { useActionMenuStore } from '../stores/actionMenu'
 import { useEditMenuStore } from '../stores/edditMenu'
+import { useEditorInputStore } from '../stores/editorInput'
 import { MenuModals, useMenuModalsStore } from '../stores/menuModals'
 import { Icon } from '@iconify/vue'
 
