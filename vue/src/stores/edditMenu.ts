@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
 import { useTextTransform } from "../composables/useTextTransform";
 import { useCodeFormatter } from "../composables/useCodeFormatter";
 

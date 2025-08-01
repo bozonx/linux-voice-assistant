@@ -1,13 +1,13 @@
 import { defineStore } from 'pinia'
 
 import router from '../router'
-import { useMainInputStore } from './EditorInput'
+import { useEditorInputStore } from './EditorInput'
 import { useMenuModalsStore } from './menuModals'
 
 export const useRouteParams = defineStore('routeParams', () => {
   const params = ref<Record<string, any>>({})
   const menuModalsStore = useMenuModalsStore()
-  const mainInputStore = useMainInputStore()
+  const editorInputStore = useEditorInputStore()
 
   function setParams(value: Record<string, any>) {
     params.value = value
@@ -16,7 +16,7 @@ export const useRouteParams = defineStore('routeParams', () => {
   function toEditor(text?: string) {
     if (typeof text !== 'undefined') {
       params.value = { text }
-      mainInputStore.setValue(text)
+      editorInputStore.setValue(text)
     }
     menuModalsStore.closeAll()
     router.push('/editor')

@@ -1,5 +1,4 @@
-import { useEditorInputStore } from 'src/stores/EditorInput'
-
+import { useEditorInputStore } from '../stores/EditorInput'
 import { useActionMenuStore } from '../stores/actionMenu'
 import { useEditMenuStore } from '../stores/edditMenu'
 import { useIpcStore } from '../stores/ipc'

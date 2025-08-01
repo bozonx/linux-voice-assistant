@@ -14,14 +14,14 @@
 <script setup lang="ts">
 import { useCallAi } from '../composables/useCallAi'
 import useToast from '../composables/useToast'
-import { useMainInputStore } from '../stores/EditorInput'
+import { useEditorInputStore } from '../stores/EditorInput'
 import { useHistoryStore } from '../stores/history'
 import { useIpcStore } from '../stores/ipc'
 import { MenuModals, useMenuModalsStore } from '../stores/menuModals'
 import { useNavPanelStore } from '../stores/navPanel'
 
 const navPanelStore = useNavPanelStore()
-const mainInputStore = useMainInputStore()
+const editorInputStore = useEditorInputStore()
 const ipcStore = useIpcStore()
 const { correctText } = useCallAi()
 const menuModalsStore = useMenuModalsStore()
@@ -44,7 +44,7 @@ onMounted(() => {
 
 const handleInput = (event: Event) => {
   inputText.value = (event.target as HTMLDivElement).innerText || ''
-  mainInputStore.setValue(inputText.value)
+  editorInputStore.setValue(inputText.value)
   correctionIsActual.value = false
 }
 

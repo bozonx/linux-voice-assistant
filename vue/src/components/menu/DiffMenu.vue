@@ -20,7 +20,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 
-import { useMainInputStore } from '../../stores/EditorInput'
+import { useEditorInputStore } from '../../stores/EditorInput'
 import { ActionItem, useActionMenuStore } from '../../stores/actionMenu'
 import { useIpcStore } from '../../stores/ipc'
 import { useMenuModalsStore } from '../../stores/menuModals'
@@ -42,7 +42,7 @@ const emit = defineEmits<{
 }>()
 
 const ipcStore = useIpcStore()
-const mainInputStore = useMainInputStore()
+const editorInputStore = useEditorInputStore()
 const menuModalsStore = useMenuModalsStore()
 const editedNewText = ref(props.newText)
 const actionMenuStore = useActionMenuStore()
@@ -56,9 +56,9 @@ const leftLetterKeys = [
   {
     name: 'Вставить в редактор',
     action: () => {
-      mainInputStore.setValue(props.newText)
+      editorInputStore.setValue(props.newText)
       routeParams.setParams({ text: props.newText })
-      mainInputStore.focus()
+      editorInputStore.focus()
       menuModalsStore.closeAll()
       router.push('/')
     },

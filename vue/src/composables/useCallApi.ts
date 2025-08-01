@@ -1,10 +1,10 @@
-import { useMainInputStore } from '../stores/EditorInput'
+import { useEditorInputStore } from '../stores/EditorInput'
 import { useIpcStore } from '../stores/ipc'
 import useToast from './useToast'
 
 export const useCallApi = () => {
   const ipcStore = useIpcStore()
-  const mainInputStore = useMainInputStore()
+  const editorInputStore = useEditorInputStore()
   const { toast } = useToast()
 
   // async function closeWindow() {
@@ -25,10 +25,10 @@ export const useCallApi = () => {
 
     if (text) {
       value = text
-    } else if (mainInputStore.selectedText) {
-      value = mainInputStore.selectedText
+    } else if (editorInputStore.selectedText) {
+      value = editorInputStore.selectedText
     } else {
-      value = mainInputStore.value
+      value = editorInputStore.value
     }
 
     return value || ''

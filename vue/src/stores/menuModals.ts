@@ -1,65 +1,65 @@
-import { defineStore } from "pinia";
-import { ref } from "vue";
-import { useHelpers } from "../composables/useHelpers";
+import { defineStore } from 'pinia'
+
+import { useHelpers } from '../composables/useHelpers'
 
 export enum MenuModals {
-  INSERT = "insert",
-  AI_TASK = "ai-task",
-  CORRECTION = "correction",
-  DIFF = "diff",
-  VOICE_RECOGNITION = "voice-recognition",
-  TRANSLATE = "translate",
-  PREVIEW = "preview",
-  NONE = "none",
+  INSERT = 'insert',
+  AI_TASK = 'ai-task',
+  CORRECTION = 'correction',
+  DIFF = 'diff',
+  VOICE_RECOGNITION = 'voice-recognition',
+  TRANSLATE = 'translate',
+  PREVIEW = 'preview',
+  NONE = 'none',
 }
 
-export const useMenuModalsStore = defineStore("menuModals", () => {
-  const pendingModal = ref<Record<string, any> | null>(null);
-  const currentModal = ref<MenuModals>(MenuModals.NONE);
-  const currentModalParams = ref<Record<string, any>>({});
-  const menuBreadcrumbs = ref<MenuModals[]>([]);
-  const { resetGlobalFocus } = useHelpers();
+export const useMenuModalsStore = defineStore('menuModals', () => {
+  const pendingModal = ref<Record<string, any> | null>(null)
+  const currentModal = ref<MenuModals>(MenuModals.NONE)
+  const currentModalParams = ref<Record<string, any>>({})
+  const menuBreadcrumbs = ref<MenuModals[]>([])
+  const { resetGlobalFocus } = useHelpers()
 
   const nextModal = (modal: MenuModals, params: Record<string, any>) => {
-    resetGlobalFocus();
-    menuBreadcrumbs.value.push(modal);
+    resetGlobalFocus()
+    menuBreadcrumbs.value.push(modal)
 
-    currentModal.value = modal;
-    currentModalParams.value = params;
-    pendingModal.value = null;
-  };
+    currentModal.value = modal
+    currentModalParams.value = params
+    pendingModal.value = null
+  }
 
   const back = () => {
-    menuBreadcrumbs.value.pop();
+    menuBreadcrumbs.value.pop()
 
     if (menuBreadcrumbs.value.length > 0) {
       currentModal.value = menuBreadcrumbs.value[
         menuBreadcrumbs.value.length - 1
-      ] as MenuModals;
-      pendingModal.value = null;
+      ] as MenuModals
+      pendingModal.value = null
     } else {
-      closeAll();
+      closeAll()
     }
-  };
+  }
 
   const closeAll = () => {
-    currentModal.value = MenuModals.NONE;
-    currentModalParams.value = {};
-    menuBreadcrumbs.value = [];
-    pendingModal.value = null;
-  };
+    currentModal.value = MenuModals.NONE
+    currentModalParams.value = {}
+    menuBreadcrumbs.value = []
+    pendingModal.value = null
+  }
 
   const setPendingModal = (params: Record<string, any>) => {
-    pendingModal.value = params;
-  };
+    pendingModal.value = params
+  }
 
   const clearPendingModal = () => {
-    pendingModal.value = null;
-  };
+    pendingModal.value = null
+  }
 
   const anyModalOpen = computed(() => {
-    return currentModal.value !== MenuModals.NONE;
-  });
+    return currentModal.value !== MenuModals.NONE
+  })
 
   return {
     pendingModal,
@@ -72,5 +72,5 @@ export const useMenuModalsStore = defineStore("menuModals", () => {
     setPendingModal,
     clearPendingModal,
     anyModalOpen,
-  };
-});
+  }
+})

@@ -15,12 +15,12 @@
 </template>
 
 <script setup lang="ts">
-import { useMainInputStore } from '../stores/EditorInput'
+import { useEditorInputStore } from '../stores/EditorInput'
 import { useMenuModalsStore } from '../stores/menuModals'
 import { useNavPanelStore } from '../stores/navPanel'
 
 const navPanelStore = useNavPanelStore()
-const mainInputStore = useMainInputStore()
+const editorInputStore = useEditorInputStore()
 const menuModalsStore = useMenuModalsStore()
 const isInsertMenu = ref(false)
 const resText = ref('')
@@ -31,7 +31,7 @@ navPanelStore.resetNavParams({
 
 function handleCorrected(resultText: string, recognizedText: string) {
   if (recognizedText) {
-    mainInputStore.setValue(recognizedText)
+    editorInputStore.setValue(recognizedText)
   }
 
   resText.value = resultText

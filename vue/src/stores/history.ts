@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
 import { useIpcStore } from "./ipc";
 import { ChatHistoryItem } from "../../../electron/types/types";
 

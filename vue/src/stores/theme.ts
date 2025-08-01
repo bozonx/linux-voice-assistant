@@ -1,54 +1,53 @@
-import { defineStore } from "pinia";
-import { ref } from "vue";
+import { defineStore } from 'pinia'
 
 // Функция для получения системной темы из настроек браузера
 const getSystemTheme = (): string => {
   // Проверяем поддержку prefers-color-scheme
   if (
     window.matchMedia &&
-    window.matchMedia("(prefers-color-scheme: dark)").matches
+    window.matchMedia('(prefers-color-scheme: dark)').matches
   ) {
-    return "dark";
+    return 'dark'
   }
   if (
     window.matchMedia &&
-    window.matchMedia("(prefers-color-scheme: light)").matches
+    window.matchMedia('(prefers-color-scheme: light)').matches
   ) {
-    return "light";
+    return 'light'
   }
   // По умолчанию возвращаем светлую тему
-  return "light";
-};
+  return 'light'
+}
 
-export const useThemeStore = defineStore("theme", () => {
-  let initialTheme = localStorage.getItem("theme");
+export const useThemeStore = defineStore('theme', () => {
+  let initialTheme = localStorage.getItem('theme')
 
   if (!initialTheme) {
-    initialTheme = getSystemTheme();
+    initialTheme = getSystemTheme()
   }
 
-  const theme = ref(initialTheme);
+  const theme = ref(initialTheme)
 
   // Применяем тему к документу при инициализации
-  document.documentElement.setAttribute("data-theme", theme.value);
+  document.documentElement.setAttribute('data-theme', theme.value)
 
   const toggleTheme = () => {
-    theme.value = theme.value === "light" ? "dark" : "light";
-    document.documentElement.setAttribute("data-theme", theme.value);
-    localStorage.setItem("theme", theme.value);
-  };
+    theme.value = theme.value === 'light' ? 'dark' : 'light'
+    document.documentElement.setAttribute('data-theme', theme.value)
+    localStorage.setItem('theme', theme.value)
+  }
 
   // Функция для сброса к системной теме
   const resetToSystemTheme = () => {
-    const systemTheme = getSystemTheme();
-    theme.value = systemTheme;
-    document.documentElement.setAttribute("data-theme", systemTheme);
-    localStorage.removeItem("theme"); // Удаляем сохраненную тему, чтобы использовать системную
-  };
+    const systemTheme = getSystemTheme()
+    theme.value = systemTheme
+    document.documentElement.setAttribute('data-theme', systemTheme)
+    localStorage.removeItem('theme') // Удаляем сохраненную тему, чтобы использовать системную
+  }
 
   return {
     theme,
     toggleTheme,
     resetToSystemTheme,
-  };
-});
+  }
+})
