@@ -19,5 +19,3 @@ function handleChange() {
   emit('update:value', !props.value)
 }
 </script>
-
-<style scoped></style>

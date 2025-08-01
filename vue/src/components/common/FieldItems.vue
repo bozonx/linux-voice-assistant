@@ -1,5 +1,5 @@
 <template>
-  <div class="field-items flex flex-col">
+  <div class="flex flex-col">
     <div class="line-row" v-for="(item, index) in localItems" :key="index">
       <div class="flex-1">
         <slot name="item" :item="item" :index="index" />

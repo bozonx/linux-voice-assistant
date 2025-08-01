@@ -22,6 +22,7 @@ declare module 'vue' {
     DiffMenu: typeof import('./src/components/menu/DiffMenu.vue')['default']
     Dropdown: typeof import('./src/components/common/Dropdown.vue')['default']
     Editor: typeof import('./src/components/Editor.vue')['default']
+    FieldCheckbox: typeof import('./src/components/common/FieldCheckbox.vue')['default']
     FieldInput: typeof import('./src/components/common/FieldInput.vue')['default']
     FieldItems: typeof import('./src/components/common/FieldItems.vue')['default']
     FieldRow: typeof import('./src/components/common/FieldRow.vue')['default']

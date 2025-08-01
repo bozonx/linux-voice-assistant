@@ -1,12 +1,5 @@
 <template>
-  <div class="form-input">
-    <input
-      type="text"
-      v-model="value"
-      :placeholder="placeholder"
-      class="input"
-    />
-  </div>
+  <input type="text" v-model="value" :placeholder="placeholder" class="input" />
 </template>
 
 <script setup lang="ts">
