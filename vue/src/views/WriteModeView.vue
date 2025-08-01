@@ -1,57 +1,62 @@
 <template>
   <div class="write-mode-container">
     <div class="textarea-container">
-      <div ref="textareaRef" @input="handleInput" class="textarea" contenteditable="true"></div>
+      <div
+        ref="textareaRef"
+        @input="handleInput"
+        class="textarea"
+        contenteditable="true"
+      ></div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useCallAi } from '../composables/useCallAi';
-import { useIpcStore } from '../stores/ipc';
-import { MenuModals, useMenuModalsStore } from '../stores/menuModals';
-import { useNavPanelStore } from '../stores/navPanel';
-import useToast from '../composables/useToast';
-import { useMainInputStore } from '../stores/mainInput';
-import { useHistoryStore } from '../stores/history';
+import { useCallAi } from '../composables/useCallAi'
+import useToast from '../composables/useToast'
+import { useMainInputStore } from '../stores/EditorInput'
+import { useHistoryStore } from '../stores/history'
+import { useIpcStore } from '../stores/ipc'
+import { MenuModals, useMenuModalsStore } from '../stores/menuModals'
+import { useNavPanelStore } from '../stores/navPanel'
 
-const navPanelStore = useNavPanelStore();
-const mainInputStore = useMainInputStore();
-const ipcStore = useIpcStore();
-const { correctText } = useCallAi();
-const menuModalsStore = useMenuModalsStore();
-const historyStore = useHistoryStore();
-const textareaRef = ref<HTMLDivElement>();
-const inputText = ref('');
-const correctedText = ref('');
-const correctionIsActual = ref(true);
-const appConfig = ipcStore.params!.appConfig;
-const { toast } = useToast();
+const navPanelStore = useNavPanelStore()
+const mainInputStore = useMainInputStore()
+const ipcStore = useIpcStore()
+const { correctText } = useCallAi()
+const menuModalsStore = useMenuModalsStore()
+const historyStore = useHistoryStore()
+const textareaRef = ref<HTMLDivElement>()
+const inputText = ref('')
+const correctedText = ref('')
+const correctionIsActual = ref(true)
+const appConfig = ipcStore.params!.appConfig
+const { toast } = useToast()
 
 navPanelStore.resetNavParams({
-  escBtnText: "Далее",
+  escBtnText: 'Далее',
   escBtnAction: doCorrection,
-});
+})
 
 onMounted(() => {
-  focusTextarea();
-});
+  focusTextarea()
+})
 
 const handleInput = (event: Event) => {
-  inputText.value = (event.target as HTMLDivElement).innerText || '';
-  mainInputStore.setValue(inputText.value);
-  correctionIsActual.value = false;
+  inputText.value = (event.target as HTMLDivElement).innerText || ''
+  mainInputStore.setValue(inputText.value)
+  correctionIsActual.value = false
 }
 
 function focusTextarea() {
   nextTick(() => {
-    textareaRef.value?.focus();
-    const range = document.createRange();
-    const selection = window.getSelection();
-    range.selectNodeContents(textareaRef.value!);
-    range.collapse(false);
-    selection?.removeAllRanges();
-    selection?.addRange(range);
+    textareaRef.value?.focus()
+    const range = document.createRange()
+    const selection = window.getSelection()
+    range.selectNodeContents(textareaRef.value!)
+    range.collapse(false)
+    selection?.removeAllRanges()
+    selection?.addRange(range)
   })
 }
 
@@ -60,42 +65,39 @@ function toShortcuts() {
   menuModalsStore.nextModal(MenuModals.INSERT, {
     text: correctedText.value,
     oldText: inputText.value,
-  });
+  })
 }
 
 async function doCorrection() {
   if (!inputText.value?.trim()) {
-    toast('Введите текст для коррекции', 'warn');
-  }
-  else if (correctionIsActual.value) {
-    toast('Текст уже корректирован', 'warn');
-  }
-  else if (inputText.value.length < appConfig.minCorrectionLength) {
-    toast('Слишком короткий текст для коррекции', 'warn');
+    toast('Введите текст для коррекции', 'warn')
+  } else if (correctionIsActual.value) {
+    toast('Текст уже корректирован', 'warn')
+  } else if (inputText.value.length < appConfig.minCorrectionLength) {
+    toast('Слишком короткий текст для коррекции', 'warn')
 
-    correctedText.value = inputText.value;
-    correctionIsActual.value = true;
-  }
-  else {
+    correctedText.value = inputText.value
+    correctionIsActual.value = true
+  } else {
     menuModalsStore.setPendingModal({
       correction: true,
-    });
+    })
 
-    const result = await correctText(inputText.value);
+    const result = await correctText(inputText.value)
 
-    await historyStore.saveTransformHistory(result);
+    await historyStore.saveTransformHistory(result)
 
-    correctedText.value = result;
-    correctionIsActual.value = true;
+    correctedText.value = result
+    correctionIsActual.value = true
 
-    menuModalsStore.clearPendingModal();
+    menuModalsStore.clearPendingModal()
     menuModalsStore.nextModal(MenuModals.INSERT, {
       text: result,
       oldText: inputText.value,
-    });
+    })
   }
 
-  toShortcuts();
+  toShortcuts()
 }
 
 // const handleWriteModeKeyUp = (event: KeyboardEvent) => {
@@ -135,5 +137,4 @@ async function doCorrection() {
   color: #000;
   font-size: 16px;
 }
-
 </style>

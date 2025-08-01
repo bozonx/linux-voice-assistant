@@ -2,7 +2,7 @@
   <div class="flex flex-col w-full h-full">
     <div class="flex-1 flex gap-2">
       <div class="flex-1">
-        <MainInput ref="mainInput" placeholder="Введите текст..." />
+        <EditorInput />
       </div>
       <div class="flex gap-2 flex-col">
         <Button sm square @click="voiceRecognition" title="Голосовой ввод">
@@ -53,54 +53,32 @@
 
 <script setup lang="ts">
 import useToast from '../composables/useToast'
+import { useEditorInputStore } from '../stores/EditorInput'
 import { useActionMenuStore } from '../stores/actionMenu'
 import { useEditMenuStore } from '../stores/edditMenu'
-import { useMainInputStore } from '../stores/mainInput'
 import { MenuModals, useMenuModalsStore } from '../stores/menuModals'
-import { useRouteParams } from '../stores/routeParams'
 import { Icon } from '@iconify/vue'
 
-const routeParamsStore = useRouteParams()
-const mainInputStore = useMainInputStore()
 const actionMenuStore = useActionMenuStore()
+const editorInputStore = useEditorInputStore()
 const editMenuStore = useEditMenuStore()
 const menuModalsStore = useMenuModalsStore()
 const { toast } = useToast()
 
-onMounted(() => {
-  if (routeParamsStore.params.text) {
-    mainInputStore.setValue(routeParamsStore.params.text)
-  }
-
-  init()
-})
-
-watch(
-  () => menuModalsStore.anyModalOpen,
-  (value) => {
-    if (!value) init()
-  }
-)
-
-async function init() {
-  await nextTick()
-  mainInputStore.focus()
-}
-
 function voiceRecognition() {
   menuModalsStore.nextModal(MenuModals.VOICE_RECOGNITION, {
     onCorrected: (resultText: string) => {
-      mainInputStore.setValueAtCursor(resultText)
+      editorInputStore.setValueAtCursor(resultText)
       menuModalsStore.closeAll()
     },
   })
 }
 
 const doAction = async (cb: (text: string) => Promise<void>): Promise<void> => {
-  let value = mainInputStore.value
+  let value = editorInputStore.value
 
-  if (mainInputStore.selectedText) {
-    value = mainInputStore.selectedText
+  if (editorInputStore.selectedText) {
+    value = editorInputStore.selectedText
   }
 
   value = value.trim()
@@ -109,10 +87,10 @@ const doAction = async (cb: (text: string) => Promise<void>): Promise<void> => {
 }
 
 async function doEdit(cb: (text: string) => Promise<string>): Promise<void> {
-  let value = mainInputStore.value
+  let value = editorInputStore.value
 
-  if (mainInputStore.selectedText) {
-    value = mainInputStore.selectedText
+  if (editorInputStore.selectedText) {
+    value = editorInputStore.selectedText
   }
 
   value = value.trim()
@@ -124,8 +102,8 @@ async function doEdit(cb: (text: string) => Promise<string>): Promise<void> {
 
   const result = await cb(value)
 
-  mainInputStore.selectedText
-    ? mainInputStore.replaceSelection(result)
-    : mainInputStore.setValue(result)
+  editorInputStore.selectedText
+    ? editorInputStore.replaceSelection(result)
+    : editorInputStore.setValue(result)
 }
 </script>

@@ -3,7 +3,7 @@ import { DebounceCallIncreasing } from 'squidlet-lib'
 
 import { useHistoryStore } from './history'
 
-export const useMainInputStore = defineStore('mainInput', () => {
+export const useEditorInputStore = defineStore('editorInput', () => {
   const value = ref<string>('')
   const focusCount = ref<number>(0)
   const selectAllCount = ref<number>(0)

@@ -3,39 +3,38 @@
     <VoiceRecognitionMenu
       v-if="!isInsertMenu"
       :escToCancel="false"
-      @corrected="handleCorrected" />
+      @corrected="handleCorrected"
+    />
     <InsertMenu
       v-else
       :text="resText"
       :allowInsertButton="false"
-      :stopListening="menuModalsStore.anyModalOpen" />
+      :stopListening="menuModalsStore.anyModalOpen"
+    />
   </ContentPadding>
 </template>
 
 <script setup lang="ts">
-import { useNavPanelStore } from '../stores/navPanel';
-import { useMainInputStore } from '../stores/mainInput';
-import { useMenuModalsStore } from '../stores/menuModals';
+import { useMainInputStore } from '../stores/EditorInput'
+import { useMenuModalsStore } from '../stores/menuModals'
+import { useNavPanelStore } from '../stores/navPanel'
 
-const navPanelStore = useNavPanelStore();
-const mainInputStore = useMainInputStore();
-const menuModalsStore = useMenuModalsStore();
-const isInsertMenu = ref(false);
-const resText = ref("");
+const navPanelStore = useNavPanelStore()
+const mainInputStore = useMainInputStore()
+const menuModalsStore = useMenuModalsStore()
+const isInsertMenu = ref(false)
+const resText = ref('')
 
 navPanelStore.resetNavParams({
   panelVisible: false,
-});
+})
 
-function handleCorrected(
-  resultText: string,
-  recognizedText: string,
-) {
+function handleCorrected(resultText: string, recognizedText: string) {
   if (recognizedText) {
-    mainInputStore.setValue(recognizedText);
+    mainInputStore.setValue(recognizedText)
   }
 
-  resText.value = resultText;
-  isInsertMenu.value = true;
+  resText.value = resultText
+  isInsertMenu.value = true
 }
 </script>
