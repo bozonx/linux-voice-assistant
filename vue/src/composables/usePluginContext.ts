@@ -1,4 +1,5 @@
-import { useMainInputStore } from '../stores/EditorInput'
+import { useEditorInputStore } from 'src/stores/EditorInput'
+
 import { useActionMenuStore } from '../stores/actionMenu'
 import { useEditMenuStore } from '../stores/edditMenu'
 import { useIpcStore } from '../stores/ipc'
@@ -13,7 +14,7 @@ import useToast from './useToast'
 export default function usePluginContext() {
   const actionMenuStore = useActionMenuStore()
   const editMenuStore = useEditMenuStore()
-  const mainInputStore = useMainInputStore()
+  const editorInputStore = useEditorInputStore()
   const menuModalsStore = useMenuModalsStore()
   const navPanelStore = useNavPanelStore()
   const routeParamsStore = useRouteParams()
@@ -28,20 +29,20 @@ export default function usePluginContext() {
     registerEditItems: (edit) => {
       editMenuStore.registerEditItems(edit)
     },
-    getMainInputValue: () => {
-      return mainInputStore.value
+    getEditorInputValue: () => {
+      return editorInputStore.value
     },
-    getMainInputSelectedText: () => {
-      return mainInputStore.selectedText
+    getEditorInputSelectedText: () => {
+      return editorInputStore.selectedText
     },
-    setMainInputValue: (value) => {
-      mainInputStore.setValue(value)
+    setEditorInputValue: (value) => {
+      editorInputStore.setValue(value)
     },
-    replaceSelection: (value) => {
-      mainInputStore.replaceSelection(value)
+    replaceEditorInputSelection: (value) => {
+      editorInputStore.replaceSelection(value)
     },
-    setMainInputFocus: () => {
-      mainInputStore.focus()
+    setEditorInputFocus: () => {
+      editorInputStore.focus()
     },
     nextModal: (modal, params) => {
       menuModalsStore.nextModal(modal, params)

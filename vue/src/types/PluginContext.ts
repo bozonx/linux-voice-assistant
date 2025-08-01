@@ -8,11 +8,11 @@ import { InputConfigItem, IpcResult } from './index'
 export interface PluginContext {
   registerActionsItems(actions: ActionItem[]): void
   registerEditItems(edit: EditItem[]): void
-  getMainInputValue(): string
-  getMainInputSelectedText(): string
-  setMainInputValue(value: string): void
-  replaceSelection(value: string): void
-  setMainInputFocus(): void
+  getEditorInputValue(): string
+  getEditorInputSelectedText(): string
+  setEditorInputValue(value: string): void
+  replaceEditorInputSelection(value: string): void
+  setEditorInputFocus(): void
   nextModal(modal: MenuModals, params: Record<string, any>): void
   backModal(): void
   closeAllModals(): void
