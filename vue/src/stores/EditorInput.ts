@@ -14,20 +14,36 @@ export const useEditorInputStore = defineStore('editorInput', () => {
   const debounced = new DebounceCallIncreasing()
   const historyStore = useHistoryStore()
 
-  // Действия
+  // replace value
   const setValue = (newText: string): void => {
     value.value = newText
 
     debounced.invoke(() => {
+      // TODO: может отдельное хранилище для каждого интута
       historyStore.saveMainInput(newText)
     }, 600)
   }
 
-  const setValueAtCursor = (newText: string): void => {
-    value.value =
-      value.value.substring(0, selectionStart.value) +
-      newText +
-      value.value.substring(selectionEnd.value)
+  // replace only selected text
+  const replaceSelection = (newText: string): void => {
+    // Получаем текст до и после выделения
+    const beforeSelection = value.value.substring(0, selectionStart.value)
+    const afterSelection = value.value.substring(selectionEnd.value)
+    // Формируем новый текст
+    const newValue = beforeSelection + newText + afterSelection
+    // Обновляем значение
+    value.value = newValue
+    // Обновляем позиции выделения
+    const newEnd = selectionStart.value + newText.length
+    setSelection(newText, selectionStart.value, newEnd)
+
+    historyStore.saveMainInput(newText)
+  }
+
+  const clear = (): void => {
+    value.value = ''
+
+    historyStore.saveMainInput('')
   }
 
   const focus = (): void => {
@@ -38,30 +54,10 @@ export const useEditorInputStore = defineStore('editorInput', () => {
     selectAllCount.value++
   }
 
-  const clear = (): void => {
-    value.value = ''
-  }
-
   const setSelection = (text: string, start: number, end: number): void => {
     selectedText.value = text
     selectionStart.value = start
     selectionEnd.value = end
-  }
-
-  const replaceSelection = (newText: string): void => {
-    // Получаем текст до и после выделения
-    const beforeSelection = value.value.substring(0, selectionStart.value)
-    const afterSelection = value.value.substring(selectionEnd.value)
-
-    // Формируем новый текст
-    const newValue = beforeSelection + newText + afterSelection
-
-    // Обновляем значение
-    value.value = newValue
-
-    // Обновляем позиции выделения
-    const newEnd = selectionStart.value + newText.length
-    setSelection(newText, selectionStart.value, newEnd)
   }
 
   return {
@@ -72,7 +68,6 @@ export const useEditorInputStore = defineStore('editorInput', () => {
     selectionStart,
     selectionEnd,
     setValue,
-    setValueAtCursor,
     focus,
     selectAll,
     setSelection,

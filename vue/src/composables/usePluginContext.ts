@@ -37,8 +37,8 @@ export default function usePluginContext() {
     setMainInputValue: (value) => {
       mainInputStore.setValue(value)
     },
-    setMainInputValueAtCursor: (value) => {
-      mainInputStore.setValueAtCursor(value)
+    replaceSelection: (value) => {
+      mainInputStore.replaceSelection(value)
     },
     setMainInputFocus: () => {
       mainInputStore.focus()
