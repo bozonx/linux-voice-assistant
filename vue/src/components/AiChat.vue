@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-col gap-2 h-full">
-
-    <Card class="flex-1 ">
+    <Card class="flex-1">
       <div class="overflow-y-auto">
-        <ChatItem v-for="message in chatStore.messages"
+        <ChatItem
+          v-for="message in chatStore.messages"
           :key="message.content"
           :message="message"
         />
@@ -14,7 +14,8 @@
       <div class="flex flex-row gap-2">
         <div class="flex-1 flex flex-row gap-2">
           <Button
-            small secondary 
+            small
+            secondary
             v-for="attachment in attachments"
             :key="attachment"
             :title="attachment"
@@ -23,12 +24,16 @@
           </Button>
         </div>
         <div v-if="roles.length > 0" class="flex flex-col gap-2">
-          <FieldSelect :options="roles" v-model:value="selectedRole" title="Роль" />
+          <FieldSelect
+            :options="roles"
+            v-model:value="selectedRole"
+            title="Роль"
+          />
         </div>
       </div>
-    
+
       <div class="flex flex-row gap-2">
-        <textarea v-model="message" class="text-area" ref="textAreaRef" />
+        <ChatInput />
         <div class="flex flex-col gap-2">
           <Button sm square @click="sendMessage" title="Отправить сообщение">
             <Icon icon="mdi:send" height="24" />
@@ -41,72 +46,66 @@
           </Button>
         </div>
       </div>
-
     </Card>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { Icon } from "@iconify/vue";
-  import { useChatStore } from "../stores/chat";
-  import { useRouteParams } from "../stores/routeParams";
-  import { truncate } from "squidlet-lib";
-  import { useIpcStore } from "../stores/ipc";
-  import { MenuModals, useMenuModalsStore } from '../stores/menuModals';
+import { truncate } from 'squidlet-lib'
 
-  const ipcStore = useIpcStore();
-  const chatStore = useChatStore();
-  const menuModalsStore = useMenuModalsStore();
-  const userConfig = computed(() => ipcStore.params!.userConfig);
-  const message = ref<string>(chatStore.newChatParams.initialMessage || "");
-  const textAreaRef = ref<HTMLTextAreaElement | null>(null);
-  const attachments = computed(() => chatStore.newChatParams.attachments || []);
-  const roles = computed(() => userConfig.value.chatRoles.map((role: any) => ({ id: role.name, name: truncate(role.name, 16) })));
-  const selectedRole = ref<string | undefined>(roles.value[0]?.id);
-  
-  const routeParamsStore = useRouteParams();
+import { useChatStore } from '../stores/chat'
+import { useChatInputStore } from '../stores/chatInput'
+import { useIpcStore } from '../stores/ipc'
+import { MenuModals, useMenuModalsStore } from '../stores/menuModals'
+import { Icon } from '@iconify/vue'
 
-  onMounted(() => {
-    if (routeParamsStore.params.message) {
-      message.value = routeParamsStore.params.message;
-    }
-    if (textAreaRef.value) {
-      textAreaRef.value.focus();
-    }
-  });
+const chatInputStore = useChatInputStore()
+const ipcStore = useIpcStore()
+const chatStore = useChatStore()
+const menuModalsStore = useMenuModalsStore()
+const userConfig = computed(() => ipcStore.params!.userConfig)
+const attachments = computed(() => chatStore.newChatParams.attachments || [])
+const roles = computed(() =>
+  userConfig.value.chatRoles.map((role: any) => ({
+    id: role.name,
+    name: truncate(role.name, 16),
+  }))
+)
+const selectedRole = ref<string | undefined>(roles.value[0]?.id)
 
-  const sendMessage = async () => {
-    const msg = message.value.trim();
+const sendMessage = async () => {
+  const msg = chatInputStore.value.trim()
 
-    if (!msg) return;
-    
-    await chatStore.sendMessage(
-      msg,
-       attachments.value,
-       userConfig.value.chatRoles.find((role: any) => role.name === selectedRole.value)?.rule || ""
-      );
-    message.value = "";
-  };
+  if (!msg) return
 
-  const clearInput = () => {
-    message.value = "";
-    if (textAreaRef.value) {
-      textAreaRef.value.focus();
-    }
-  };
+  await chatStore.sendMessage(
+    msg,
+    attachments.value,
+    userConfig.value.chatRoles.find(
+      (role: any) => role.name === selectedRole.value
+    )?.rule || ''
+  )
 
-  const voiceInput = () => {
-    menuModalsStore.nextModal(MenuModals.VOICE_RECOGNITION, {
-      onCorrected: (resultText: string) => {
-        message.value = resultText;
-        menuModalsStore.closeAll();
-      },
-    });
-  };
+  chatInputStore.clear()
+}
+
+const clearInput = () => {
+  chatInputStore.clear()
+  chatInputStore.focus()
+}
+
+const voiceInput = () => {
+  menuModalsStore.nextModal(MenuModals.VOICE_RECOGNITION, {
+    onCorrected: (resultText: string) => {
+      chatInputStore.setValue(resultText)
+      menuModalsStore.closeAll()
+    },
+  })
+}
 </script>
 
 <style scoped>
-  /* .message {
+/* .message {
     display: flex;
     padding: 10px;
   }
@@ -132,14 +131,4 @@
     background-color: #f0f0f0;
     color: black;
   } */
-
-  .text-area {
-    width: 100%;
-    height: 100px;
-    resize: none;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
-    background-color: white;
-  }
 </style>

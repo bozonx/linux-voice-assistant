@@ -3,9 +3,8 @@
     ref="textareaRef"
     class="main-input"
     placeholder="Введите текст..."
-    :value="editorInputStore.value"
+    :value="writerInputStore.value"
     @update:value="handleInput"
-    @select="handleSelect"
   />
 </template>
 

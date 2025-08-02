@@ -1,14 +1,12 @@
-declare module "vue" {
-  export * from "@vue/runtime-core";
-}
-
-declare module "vue" {
-  export interface GlobalComponents {
-    MainInput: typeof import("./components/MainInput.vue")["default"];
-    MainInputHistory: typeof import("./components/MainInputHistory.vue")["default"];
-    Actions: typeof import("./components/Actions.vue")["default"];
-    TransformAndInsertMenu: typeof import("./components/TransformAndInsertMenu.vue")["default"];
-    TextEditToolbar: typeof import("./components/TextEditToolbar.vue")["default"];
-    VoiceRecognitionProcess: typeof import("./components/VoiceRecognitionProcess.vue")["default"];
-  }
+declare module 'vue' {
+  export function createApp(rootComponent: any): any
+  export function ref<T>(value: T): { value: T }
+  export function computed<T>(getter: () => T): { readonly value: T }
+  export function watch<T>(
+    source: T,
+    callback: (newValue: T, oldValue: T) => void
+  ): void
+  export function onMounted(callback: () => void): void
+  export function defineProps<T>(): T
+  export function defineEmits<T>(): T
 }

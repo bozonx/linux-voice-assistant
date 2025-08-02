@@ -3,33 +3,38 @@
     ref="textareaRef"
     class="main-input"
     placeholder="Введите текст..."
-    :value="editorInputStore.value"
+    :value="chatInputStore.value"
     @update:value="handleInput"
-    @select="handleSelect"
   />
 </template>
 
 <script setup lang="ts">
 import { useChatInputStore } from '../stores/chatInput'
 import { useMenuModalsStore } from '../stores/menuModals'
+import { useRouteParams } from '../stores/routeParams'
 
 const chatInputStore = useChatInputStore()
+const routeParamsStore = useRouteParams()
 const menuModalsStore = useMenuModalsStore()
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
 
 // set value from route params and focus
 onMounted(async () => {
+  if (routeParamsStore.params.text) {
+    chatInputStore.setValue(routeParamsStore.params.text)
+  }
+
   await nextTick()
   chatInputStore.focus()
 })
 
 // set focus on close modal
-watch(
-  () => menuModalsStore.anyModalOpen,
-  (value) => {
-    if (!value) chatInputStore.focus()
-  }
-)
+// watch(
+//   () => menuModalsStore.anyModalOpen,
+//   (value) => {
+//     if (!value) chatInputStore.focus()
+//   }
+// )
 
 // handle focus
 watch(
