@@ -4,15 +4,15 @@ import { ChatHistoryItem } from '../../../electron/types/types'
 import { useIpcStore } from './ipc'
 
 export const useHistoryStore = defineStore('history', () => {
-  const inputHistory = ref<string[]>([])
+  const editorHistory = ref<string[]>([])
   const transformHistory = ref<string[]>([])
   const chatHistory = ref<ChatHistoryItem[]>([])
   const ipcStore = useIpcStore()
 
-  const loadInputHistory = async (): Promise<void> => {
-    const loadedHistory = await ipcStore.callFunction('getInputHistory', [])
+  const loadEditorHistory = async (): Promise<void> => {
+    const loadedHistory = await ipcStore.callFunction('getEditorHistory', [])
 
-    inputHistory.value = loadedHistory.result as string[]
+    editorHistory.value = loadedHistory.result as string[]
   }
 
   const loadTransformHistory = async (): Promise<void> => {
@@ -29,6 +29,10 @@ export const useHistoryStore = defineStore('history', () => {
     await ipcStore.callFunction('saveMainInputTmp', [value])
   }
 
+  const saveEditorHistory = async (value: string) => {
+    await ipcStore.callFunction('saveEditorHistory', [value])
+  }
+
   const saveTransformHistory = async (value: string) => {
     await ipcStore.callFunction('saveTransformHistory', [value])
   }
@@ -37,9 +41,9 @@ export const useHistoryStore = defineStore('history', () => {
     await ipcStore.callFunction('saveChatHistory', [chatHistoryItem])
   }
 
-  const removeFromInputHistory = async (value: string): Promise<void> => {
-    await ipcStore.callFunction('removeFromInputHistory', [value])
-    inputHistory.value = inputHistory.value.filter((item) => item !== value)
+  const removeFromEditorHistory = async (value: string): Promise<void> => {
+    await ipcStore.callFunction('removeFromEditorHistory', [value])
+    editorHistory.value = editorHistory.value.filter((item) => item !== value)
   }
 
   const removeFromTransformHistory = async (value: string): Promise<void> => {
@@ -58,9 +62,9 @@ export const useHistoryStore = defineStore('history', () => {
     await ipcStore.callFunction('clearMainInputTmp', [])
   }
 
-  const clearInputHistory = async (): Promise<void> => {
-    await ipcStore.callFunction('clearInputHistory', [])
-    inputHistory.value = []
+  const clearEditorHistory = async (): Promise<void> => {
+    await ipcStore.callFunction('clearEditorHistory', [])
+    editorHistory.value = []
   }
 
   const clearTransformHistory = async (): Promise<void> => {
@@ -74,20 +78,21 @@ export const useHistoryStore = defineStore('history', () => {
   }
 
   return {
-    inputHistory,
+    editorHistory,
     transformHistory,
     chatHistory,
-    loadInputHistory,
+    loadEditorHistory,
     loadTransformHistory,
     loadChatHistory,
     saveMainInputTmp,
+    saveEditorHistory,
     saveTransformHistory,
     saveChatHistory,
-    removeFromInputHistory,
+    removeFromEditorHistory,
     removeFromTransformHistory,
     removeFromChatHistory,
     clearMainInputTmp,
-    clearInputHistory,
+    clearEditorHistory,
     clearTransformHistory,
     clearChatHistory,
   }

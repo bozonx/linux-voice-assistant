@@ -12,7 +12,7 @@ const CORRECTION_TASK = `
 - откорректируй текст находящийся в последнем сообщении с ролью "user"
 - точно следуй правилам данными пользователем
 - Именно корректируй текст, не добавляй новый текст и не проводи глубокую редакцию
-`;
+`
 
 const TRANSLATION_TASK = `
 Ты опытный переводчик, умеющий передавать смысл и тон текста, а не переводить дословно.
@@ -26,7 +26,7 @@ const TRANSLATION_TASK = `
 
 - переведи на язык {{TRANSLATION_LANG}} текст, находящийся в последнем сообщении с ролью "user"
 - точно следуй правилам данными пользователем
-`;
+`
 
 const CUSTOM_AI_TASKS = `
 Ты опыбный редактор, умеющий ректировать как художественную так и не художественную литературу.
@@ -42,7 +42,7 @@ const CUSTOM_AI_TASKS = `
 - редактируй текст находящийся в последнем сообщении с ролью "user"
 - точно следуй правилам данными пользователем
 - Исправляй логические ошибки, запутанность речи, косноязычие
-`;
+`
 
 const VOICE_CORRECTION_TASK = `
 ## Что возвращать
@@ -52,23 +52,22 @@ const VOICE_CORRECTION_TASK = `
 ## Твоё задание
 - в последнем сообщении с ролью "user" находится текст после распознования голоса тебе нужно из него сделать нормальный текст
 - Восстанови пунктуацию и сделай текст граматически верным
-`;
+`
 
 const CHAT_TASK = `
 ## Что возвращать
 
 - Возвращай только результат
-`;
+`
 
 export const APP_CONFIG = {
   windowWidth: 800,
   windowHeight: 600,
-  mainInputHistoryMaxItems: 50,
   minCorrectionLength: 30,
   recognitionWaitTimeSec: 5,
-  devServerUrl: "http://localhost:3000",
-  indexHtmlPath: "../../vue/dist/index.html",
-  rulePrefix: "Используй следующие правила для выполнения задания",
+  devServerUrl: 'http://localhost:3000',
+  indexHtmlPath: '../../vue/dist/index.html',
+  rulePrefix: 'Используй следующие правила для выполнения задания',
   aiInstructions: {
     correction: CORRECTION_TASK,
     aiTasks: CUSTOM_AI_TASKS,
@@ -76,4 +75,4 @@ export const APP_CONFIG = {
     voiceCorrection: VOICE_CORRECTION_TASK,
     chat: CHAT_TASK,
   },
-};
+}

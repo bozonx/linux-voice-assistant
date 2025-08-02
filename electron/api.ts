@@ -4,9 +4,8 @@ import { BrowserWindow, clipboard } from 'electron'
 import { typeIntoWindow } from '../common/helpers'
 import {
   chatHistoryStore,
-  inputHistoryStore,
-  mainInputStore,
-  moveInputToHistory,
+  editorHistoryStore,
+  mainInputTmpStore,
   transformHistoryStore,
 } from './history'
 import { ParamsManager } from './paramsManager'
@@ -94,8 +93,8 @@ export class Api {
 
   async saveMainInputTmp(value: string): Promise<void> {
     try {
-      mainInputStore.set('value', value)
-      mainInputStore.set('lastSaved', new Date().toISOString())
+      mainInputTmpStore.set('value', value)
+      mainInputTmpStore.set('lastSaved', new Date().toISOString())
     } catch (error) {
       console.error('Error saving main input tmp:', error)
       throw error
@@ -104,19 +103,36 @@ export class Api {
 
   async clearMainInputTmp(): Promise<void> {
     try {
-      mainInputStore.set('value', '')
-      mainInputStore.set('lastSaved', '')
+      mainInputTmpStore.set('value', '')
+      mainInputTmpStore.set('lastSaved', '')
     } catch (error) {
       console.error('Error clearing main input tmp:', error)
       throw error
     }
   }
 
-  async moveMainInputToHistory(): Promise<void> {
+  // async moveMainInputToHistory(): Promise<void> {
+  //   try {
+  //     moveInputToHistory()
+  //   } catch (error) {
+  //     console.error('Error moving main input to history:', error)
+  //     throw error
+  //   }
+  // }
+
+  async saveEditorHistory(value: string): Promise<void> {
     try {
-      moveInputToHistory()
+      const history = editorHistoryStore.get('history', []) as string[]
+      const filteredHistory = history.filter((item) => item !== value)
+
+      if (filteredHistory.length > this.userConfig!.editorHistoryMaxItems) {
+        filteredHistory.splice(this.userConfig!.editorHistoryMaxItems)
+      }
+
+      filteredHistory.unshift(value)
+      editorHistoryStore.set('history', filteredHistory)
     } catch (error) {
-      console.error('Error moving main input to history:', error)
+      console.error('Error saving editor history:', error)
       throw error
     }
   }
@@ -126,8 +142,8 @@ export class Api {
       const history = transformHistoryStore.get('history', []) as string[]
       const filteredHistory = history.filter((item) => item !== value)
 
-      if (filteredHistory.length > this.appConfig.mainInputHistoryMaxItems) {
-        filteredHistory.splice(this.appConfig.mainInputHistoryMaxItems)
+      if (filteredHistory.length > this.userConfig!.transformHistoryMaxItems) {
+        filteredHistory.splice(this.userConfig!.transformHistoryMaxItems)
       }
 
       filteredHistory.unshift(value)
@@ -149,8 +165,8 @@ export class Api {
         chatItem.description = chatHistoryItem.description
       } else {
         // add new item
-        if (history.length > this.appConfig.mainInputHistoryMaxItems) {
-          history.splice(this.appConfig.mainInputHistoryMaxItems)
+        if (history.length > this.userConfig!.chatHistoryMaxItems) {
+          history.splice(this.userConfig!.chatHistoryMaxItems)
         }
 
         history.unshift(chatHistoryItem)
@@ -163,9 +179,9 @@ export class Api {
     }
   }
 
-  async getInputHistory(): Promise<string[]> {
+  async getEditorHistory(): Promise<string[]> {
     try {
-      return inputHistoryStore.get('history', []) as string[]
+      return editorHistoryStore.get('history', []) as string[]
     } catch (error) {
       console.error('Error getting main input history:', error)
       return []
@@ -191,11 +207,11 @@ export class Api {
   }
 
   // Очистка истории main input
-  async clearInputHistory(): Promise<void> {
+  async clearEditorHistory(): Promise<void> {
     try {
-      inputHistoryStore.set('history', [])
+      editorHistoryStore.set('history', [])
     } catch (error) {
-      console.error('Error clearing main input history:', error)
+      console.error('Error clearing editor history:', error)
       throw error
     }
   }
@@ -218,13 +234,13 @@ export class Api {
     }
   }
 
-  async removeFromInputHistory(value: string): Promise<void> {
+  async removeFromEditorHistory(value: string): Promise<void> {
     try {
-      const history = inputHistoryStore.get('history', []) as string[]
+      const history = editorHistoryStore.get('history', []) as string[]
       const filteredHistory = history.filter((item) => item !== value)
-      inputHistoryStore.set('history', filteredHistory)
+      editorHistoryStore.set('history', filteredHistory)
     } catch (error) {
-      console.error('Error removing from main input history:', error)
+      console.error('Error removing from editor history:', error)
       throw error
     }
   }

@@ -61,6 +61,7 @@ import useToast from '../composables/useToast'
 import { useActionMenuStore } from '../stores/actionMenu'
 import { useEditMenuStore } from '../stores/edditMenu'
 import { useEditorInputStore } from '../stores/editorInput'
+import { useHistoryStore } from '../stores/history'
 import { MenuModals, useMenuModalsStore } from '../stores/menuModals'
 import { Icon } from '@iconify/vue'
 
@@ -69,6 +70,15 @@ const editorInputStore = useEditorInputStore()
 const editMenuStore = useEditMenuStore()
 const menuModalsStore = useMenuModalsStore()
 const { toast } = useToast()
+const historyStore = useHistoryStore()
+
+onUnmounted(async () => {
+  if (editorInputStore.value) {
+    historyStore.saveEditorHistory(editorInputStore.value)
+  }
+
+  await historyStore.clearMainInputTmp()
+})
 
 function voiceRecognition() {
   menuModalsStore.nextModal(MenuModals.VOICE_RECOGNITION, {

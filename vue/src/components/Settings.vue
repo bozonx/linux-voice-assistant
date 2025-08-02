@@ -10,6 +10,17 @@
         <FieldRow label="Xdotool Bin">
           <FieldInput v-model:value="userConfig.xdotoolBin" />
         </FieldRow>
+
+        <FieldRow label="Editor History Max Items">
+          <FieldInput v-model:value="userConfig.editorHistoryMaxItems" />
+        </FieldRow>
+        <FieldRow label="Transform History Max Items">
+          <FieldInput v-model:value="userConfig.transformHistoryMaxItems" />
+        </FieldRow>
+        <FieldRow label="Chat History Max Items">
+          <FieldInput v-model:value="userConfig.chatHistoryMaxItems" />
+        </FieldRow>
+
         <FieldRow label="App Language">
           <FieldInput v-model:value="userConfig.appLanguage" />
         </FieldRow>

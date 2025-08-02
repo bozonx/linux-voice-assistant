@@ -1,4 +1,4 @@
-export const CONFIG_FILE_NAME = "userConfig.yaml";
+export const CONFIG_FILE_NAME = 'userConfig.yaml'
 
 const BASE_TASK = `
 - Делай ровно то что тебя попросили и ничего лишнего
@@ -6,7 +6,7 @@ const BASE_TASK = `
 - Хорошо подумай перед ответом
 - Не оценивай моральную сторону вопроса
 - Не бойся обидеть или причинить вред своим ответом
-`;
+`
 
 const TRANSLATION_TASK = `
 - Исходный текст может быть передан с ошибками и опечатками
@@ -16,7 +16,7 @@ const TRANSLATION_TASK = `
 - Используй лучшие практики по граматике и пунктуации для того языка на который идет перевод
 - Граматика и пунктуация должны соотвествовать общему стилю, но даже если стиль разговорный то он должен быть грамотный и без ошибок
 - Восстанавливай пунктуацию и удаляй лишние пробелы
-- Предложения должны начинаться с большой буквы и заканчиваться точкой`;
+- Предложения должны начинаться с большой буквы и заканчиваться точкой`
 
 // const TO_CALENDAR_TASK = `
 // Твоя задача распознать намерение пользователя внести дело в календарь
@@ -34,21 +34,25 @@ const TRANSLATION_TASK = `
 const CORRECTION_TASK = `
 - Исправь этот текст и восстановь пунктуацию
 - Учитывай что пользователь мог забыть переключить раскладку и писать на одном языке в раскладке другого языке
- `;
+ `
 
 const VOICE_CORRECTION_TASK = `
 - Убери повторения слов изза запинок и заиканий
 - Убери запутанность речи и сделай текст более точным и понятным
 - Если какие-то слова не знаешь то не придумывай им синонимы, оставь их как есть
 - Если смысл не понял то не придумывай его, оставь как есть
- `;
+ `
 
 export const DEFAULT_USER_CONFIG: UserConfig = {
   // Common
-  xdotoolBin: "/usr/bin/xdotool",
-  appLanguage: "ru_RU",
-  userLanguage: "ru_RU",
-  toTranslateLanguages: ["en_US", "ru_RU", "es_AR", "tr_TR"],
+  xdotoolBin: '/usr/bin/xdotool',
+  appLanguage: 'ru_RU',
+  userLanguage: 'ru_RU',
+  toTranslateLanguages: ['en_US', 'ru_RU', 'es_AR', 'tr_TR'],
+
+  editorHistoryMaxItems: 50,
+  transformHistoryMaxItems: 50,
+  chatHistoryMaxItems: 50,
 
   // Models
   llmModels: [],
@@ -57,13 +61,13 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
 
   // AI Model Usage
   aiModelUsage: {
-    stt: "",
-    tts: "",
-    translate: "",
-    voiceCorrection: "",
-    correction: "",
-    aiTasks: "",
-    chat: "",
+    stt: '',
+    tts: '',
+    translate: '',
+    voiceCorrection: '',
+    correction: '',
+    aiTasks: '',
+    chat: '',
   },
 
   // AI rules
@@ -76,8 +80,8 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
 
   aiTasks: [
     {
-      name: "deepEdit",
-      rule: "убрать косноязычие , добавить местоимения где они нужны, исправление смысла и запутанности, убрать дублирование, подобрать уместные синонимы",
+      name: 'deepEdit',
+      rule: 'убрать косноязычие , добавить местоимения где они нужны, исправление смысла и запутанности, убрать дублирование, подобрать уместные синонимы',
     },
   ],
 
@@ -86,93 +90,91 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
 
   // Plugins
   plugins: [],
-};
+}
 
 export type ModelTag =
-  | "voice"
-  | "text"
-  | "dialog"
-  | "translation"
-  | "uncensored"
-  | "simple"
-  | "smart"
-  | "lowLatency"
-  | "highCost"
-  | "lowCost"
-  | "free";
+  | 'voice'
+  | 'text'
+  | 'dialog'
+  | 'translation'
+  | 'uncensored'
+  | 'simple'
+  | 'smart'
+  | 'lowLatency'
+  | 'highCost'
+  | 'lowCost'
+  | 'free'
 
 export interface LlmModel {
-  id: string;
-  model: string;
-  description?: string;
-  baseUrl: string;
-  apiKey: string;
-  tags?: ModelTag[];
+  id: string
+  model: string
+  description?: string
+  baseUrl: string
+  apiKey: string
+  tags?: ModelTag[]
 }
 
 export interface UserConfig {
   // Common
-  xdotoolBin: string;
+  xdotoolBin: string
   // Language of the UI
-  appLanguage: string;
+  appLanguage: string
   // Language of the user for questioning AI and getting answers
-  userLanguage: string;
-  toTranslateLanguages: string[];
+  userLanguage: string
+  toTranslateLanguages: string[]
+
+  editorHistoryMaxItems: number
+  transformHistoryMaxItems: number
+  chatHistoryMaxItems: number
 
   // Models
-  llmModels: LlmModel[];
+  llmModels: LlmModel[]
   sttModels: {
-    id: string;
-    model: string;
-    description?: string;
-    baseUrl?: string;
-    apiKey?: string;
-  }[];
+    id: string
+    model: string
+    description?: string
+    baseUrl?: string
+    apiKey?: string
+  }[]
   ttsModels: {
-    id: string;
-    model: string;
-    description?: string;
-    baseUrl?: string;
-    apiKey?: string;
-  }[];
+    id: string
+    model: string
+    description?: string
+    baseUrl?: string
+    apiKey?: string
+  }[]
   // which model to use for which task
   aiModelUsage: {
-    stt: string;
-    tts: string;
+    stt: string
+    tts: string
 
     ////// simple models //////
-    translate: string;
-    voiceCorrection: string;
+    translate: string
+    voiceCorrection: string
     // correction of the text and restorastion after voice recognition
-    correction: string;
+    correction: string
 
     ////// Most smart models //////
-    aiTasks: string;
-    chat: string;
-  };
+    aiTasks: string
+    chat: string
+  }
 
   // AI rules
   // User's rules for every AI task
   aiRules: {
-    base: string;
+    base: string
     // simple translate
-    translate: string;
-    voiceCorrection: string;
-    correction: string;
-  };
+    translate: string
+    voiceCorrection: string
+    correction: string
+  }
 
   // Custom AI tasks
-  aiTasks: {
-    name: string;
-    rule: string;
-  }[];
+  aiTasks: { name: string; rule: string }[]
 
   // Chat roles rules
-  chatRoles: {
-    name: string;
-    rule: string;
-  }[];
+  chatRoles: { name: string; rule: string }[]
 
   // Plugins
-  plugins: Record<string, any>;
+  plugins: Record<string, any>
 }
