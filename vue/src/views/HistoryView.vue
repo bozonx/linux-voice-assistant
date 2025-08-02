@@ -17,15 +17,15 @@
     <HistoryList
       v-show="currentTab === 0"
       :items="
-        historyStore.inputHistory.map((item, index) => ({
+        historyStore.editorHistory.map((item, index) => ({
           id: index,
           value: item,
         }))
       "
       :searchQuery="searchQuery"
       textTitle="Поместить в редактор"
-      @remove-item="removeInputItem"
-      @clear-history="clearInputHistory()"
+      @remove-item="removeEditorItem"
+      @clear-history="clearEditorHistory()"
       @text-click="toEditor"
     />
 
@@ -87,7 +87,7 @@ onMounted(async () => {
     searchInput.value.focus()
   }
 
-  await historyStore.loadInputHistory()
+  await historyStore.loadEditorHistory()
   await historyStore.loadTransformHistory()
   await historyStore.loadChatHistory()
 })
@@ -100,8 +100,8 @@ const onTabChange = () => {
   }
 }
 
-const clearInputHistory = async () => {
-  await historyStore.clearInputHistory()
+const clearEditorHistory = async () => {
+  await historyStore.clearEditorHistory()
   toast.toast('История ввода очищена', 'success')
 }
 
@@ -110,11 +110,11 @@ const clearTransformHistory = async () => {
   toast.toast('История трансформаций очищена', 'success')
 }
 
-const removeInputItem = async (item: {
+const removeEditorItem = async (item: {
   id: string | number
   value: string
 }) => {
-  await historyStore.removeFromInputHistory(item.value)
+  await historyStore.removeFromEditorHistory(item.value)
   toast.toast('Удалено из истории ввода', 'success')
 }
 

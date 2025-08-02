@@ -17,7 +17,7 @@ export function manageTray(app, mainWindow, tray, onClose?: () => void) {
     if (!app.isQuitting) {
       event.preventDefault()
       mainWindow.hide() // Скрываем окно вместо закрытия
-      onClose()
+      onClose?.()
     }
 
     return false
@@ -26,7 +26,7 @@ export function manageTray(app, mainWindow, tray, onClose?: () => void) {
   mainWindow.on('minimize', (event) => {
     event.preventDefault()
     mainWindow.hide()
-    onClose()
+    onClose?.()
   })
   // Показ окна при клике на иконку в трее
   tray.on('click', () => {

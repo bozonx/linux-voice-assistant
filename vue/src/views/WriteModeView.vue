@@ -47,7 +47,7 @@ watch(
 
 onUnmounted(async () => {
   if (writerInputStore.value) {
-    await historyStore.saveMainInput(writerInputStore.value)
+    await historyStore.saveEditorHistory(writerInputStore.value)
     writerInputStore.value = ''
   }
 
