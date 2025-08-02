@@ -20,7 +20,7 @@ export const useEditorInputStore = defineStore('editorInput', () => {
 
     debounced.invoke(() => {
       // TODO: может отдельное хранилище для каждого интута
-      historyStore.saveMainInput(newText)
+      historyStore.saveMainInputTmp(newText)
     }, 600)
   }
 
@@ -37,13 +37,13 @@ export const useEditorInputStore = defineStore('editorInput', () => {
     const newEnd = selectionStart.value + newText.length
     setSelection(newText, selectionStart.value, newEnd)
 
-    historyStore.saveMainInput(newText)
+    historyStore.saveMainInputTmp(newText)
   }
 
   const clear = (): void => {
     value.value = ''
 
-    historyStore.saveMainInput('')
+    historyStore.clearMainInputTmp()
   }
 
   const focus = (): void => {

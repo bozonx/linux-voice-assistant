@@ -16,14 +16,14 @@ export const useChatInputStore = defineStore('chatInput', () => {
 
     debounced.invoke(() => {
       // TODO: может отдельное хранилище для каждого интута
-      historyStore.saveMainInput(newText)
+      historyStore.saveMainInputTmp(newText)
     }, 600)
   }
 
   const clear = (): void => {
     value.value = ''
 
-    historyStore.saveMainInput('')
+    historyStore.clearMainInputTmp()
   }
 
   const focus = (): void => {

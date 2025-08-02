@@ -10,12 +10,10 @@
 
 <script setup lang="ts">
 import { useChatInputStore } from '../stores/chatInput'
-import { useMenuModalsStore } from '../stores/menuModals'
 import { useRouteParams } from '../stores/routeParams'
 
 const chatInputStore = useChatInputStore()
 const routeParamsStore = useRouteParams()
-const menuModalsStore = useMenuModalsStore()
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
 
 // set value from route params and focus

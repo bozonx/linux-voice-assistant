@@ -1,140 +1,92 @@
 <template>
   <div class="write-mode-container">
-    <div class="textarea-container">
-      <div
-        ref="textareaRef"
-        @input="handleInput"
-        class="textarea"
-        contenteditable="true"
-      ></div>
+    <div class="flex flex-row gap-2">
+      <WriteModeInput />
+      <div class="flex gap-2 flex-col">
+        <Button sm square @click="clear" title="Очистить">
+          <Icon icon="mdi:clear" height="24" />
+        </Button>
+      </div>
     </div>
+    <p class="text-xs mt-1 text-gray-500">Esc - далее</p>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useCallAi } from '../composables/useCallAi'
 import useToast from '../composables/useToast'
-import { useEditorInputStore } from '../stores/editorInput'
 import { useHistoryStore } from '../stores/history'
 import { useIpcStore } from '../stores/ipc'
 import { MenuModals, useMenuModalsStore } from '../stores/menuModals'
 import { useNavPanelStore } from '../stores/navPanel'
+import { useWriterInputStore } from '../stores/writerInput'
+import { Icon } from '@iconify/vue'
 
 const navPanelStore = useNavPanelStore()
-const editorInputStore = useEditorInputStore()
+const writerInputStore = useWriterInputStore()
 const ipcStore = useIpcStore()
 const { correctText } = useCallAi()
 const menuModalsStore = useMenuModalsStore()
 const historyStore = useHistoryStore()
-const textareaRef = ref<HTMLDivElement>()
-const inputText = ref('')
+const { toast } = useToast()
+const appConfig = ipcStore.params!.appConfig
 const correctedText = ref('')
 const correctionIsActual = ref(true)
-const appConfig = ipcStore.params!.appConfig
-const { toast } = useToast()
 
 navPanelStore.resetNavParams({
   escBtnText: 'Далее',
   escBtnAction: doCorrection,
 })
 
-onMounted(() => {
-  focusTextarea()
+watch(
+  () => writerInputStore.value,
+  () => {
+    correctionIsActual.value = false
+  }
+)
+
+onUnmounted(async () => {
+  if (writerInputStore.value) {
+    await historyStore.saveMainInput(writerInputStore.value)
+    writerInputStore.value = ''
+  }
+
+  await historyStore.clearMainInputTmp()
 })
 
-const handleInput = (event: Event) => {
-  inputText.value = (event.target as HTMLDivElement).innerText || ''
-  editorInputStore.setValue(inputText.value)
-  correctionIsActual.value = false
-}
-
-function focusTextarea() {
-  nextTick(() => {
-    textareaRef.value?.focus()
-    const range = document.createRange()
-    const selection = window.getSelection()
-    range.selectNodeContents(textareaRef.value!)
-    range.collapse(false)
-    selection?.removeAllRanges()
-    selection?.addRange(range)
-  })
-}
-
-function toShortcuts() {
-  // TODO: текст могут отредактировать в diff ???
-  menuModalsStore.nextModal(MenuModals.INSERT, {
-    text: correctedText.value,
-    oldText: inputText.value,
-  })
+const clear = () => {
+  writerInputStore.clear()
+  writerInputStore.focus()
 }
 
 async function doCorrection() {
-  if (!inputText.value?.trim()) {
+  if (!writerInputStore.value?.trim()) {
     toast('Введите текст для коррекции', 'warn')
+    return
   } else if (correctionIsActual.value) {
     toast('Текст уже корректирован', 'warn')
-  } else if (inputText.value.length < appConfig.minCorrectionLength) {
+  } else if (writerInputStore.value.length < appConfig.minCorrectionLength) {
     toast('Слишком короткий текст для коррекции', 'warn')
 
-    correctedText.value = inputText.value
+    correctedText.value = writerInputStore.value
     correctionIsActual.value = true
   } else {
     menuModalsStore.setPendingModal({
       correction: true,
     })
 
-    const result = await correctText(inputText.value)
+    const result = await correctText(writerInputStore.value)
 
-    await historyStore.saveTransformHistory(result)
+    historyStore.saveTransformHistory(result)
 
     correctedText.value = result
     correctionIsActual.value = true
-
-    menuModalsStore.clearPendingModal()
-    menuModalsStore.nextModal(MenuModals.INSERT, {
-      text: result,
-      oldText: inputText.value,
-    })
   }
 
-  toShortcuts()
+  // TODO: текст могут отредактировать в diff ???
+  menuModalsStore.nextModal(MenuModals.INSERT, {
+    text: correctedText.value,
+    oldText: writerInputStore.value,
+  })
 }
-
-// const handleWriteModeKeyUp = (event: KeyboardEvent) => {
-//   if (event.code === "Escape") {
-//     doCorrection();
-//   }
-//   else if (event.code === "KeyQ" && event.ctrlKey) {
-//     closeWindow();
-//   }
-// }
 </script>
-
-<style scoped>
-.write-mode-container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 100%;
-  font-family: monospace;
-}
-
-.textarea-container {
-  flex: 1;
-  display: flex;
-  align-items: end;
-  justify-content: center;
-}
-
-.textarea {
-  width: 80%;
-  min-height: 40px;
-  resize: none;
-  border: 1px solid #000;
-  padding: 10px;
-  border-radius: 10px;
-  background-color: #ebfff6;
-  color: #000;
-  font-size: 16px;
-}
-</style>

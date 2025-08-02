@@ -1,23 +1,24 @@
-import { BrowserWindow, clipboard } from "electron";
-import { exec } from "child_process";
-import { UserConfig } from "./types/UserConfig";
-import { AppConfig, ChatHistoryItem } from "./types/types";
-import { typeIntoWindow } from "../common/helpers";
-import { saveUserConfig } from "./userConfigManager";
+import { exec } from 'child_process'
+import { BrowserWindow, clipboard } from 'electron'
+
+import { typeIntoWindow } from '../common/helpers'
 import {
-  mainInputStore,
-  inputHistoryStore,
-  transformHistoryStore,
-  moveInputToHistory,
   chatHistoryStore,
-} from "./history";
-import VoskVoiceRecognition from "./vosk";
-import { ParamsManager } from "./paramsManager";
+  inputHistoryStore,
+  mainInputStore,
+  moveInputToHistory,
+  transformHistoryStore,
+} from './history'
+import { ParamsManager } from './paramsManager'
+import { UserConfig } from './types/UserConfig'
+import { AppConfig, ChatHistoryItem } from './types/types'
+import { saveUserConfig } from './userConfigManager'
+import VoskVoiceRecognition from './vosk'
 
 export class Api {
-  userConfig?: UserConfig;
-  vosk: VoskVoiceRecognition;
-  private voskHandler: (text: string) => void;
+  userConfig?: UserConfig
+  vosk: VoskVoiceRecognition
+  private voskHandler: (text: string) => void
 
   constructor(
     private readonly paramsManager: ParamsManager,
@@ -25,17 +26,17 @@ export class Api {
     private readonly mainWindow: BrowserWindow
   ) {
     // TODO: брать из конфига
-    this.vosk = new VoskVoiceRecognition("ws://localhost:2700");
+    this.vosk = new VoskVoiceRecognition('ws://localhost:2700')
   }
 
   async init() {}
 
   $setUserConfig(userConfig: UserConfig): void {
-    this.userConfig = userConfig;
+    this.userConfig = userConfig
   }
 
   $setVoskHandler(handler: (text: string) => void): void {
-    this.voskHandler = handler;
+    this.voskHandler = handler
   }
 
   // Функция для открытия URL в браузере
@@ -43,14 +44,14 @@ export class Api {
     return new Promise<void>((resolve, reject) => {
       exec(`xdg-open "${url}"`, (error) => {
         if (error) {
-          console.error("Error opening browser:", error);
-          reject(error);
-          return;
+          console.error('Error opening browser:', error)
+          reject(error)
+          return
         }
-        resolve();
-        this.mainWindow.close();
-      });
-    });
+        resolve()
+        this.mainWindow.close()
+      })
+    })
   }
 
   async typeIntoWindowAndClose(text: string): Promise<void> {
@@ -58,17 +59,17 @@ export class Api {
       this.userConfig!.xdotoolBin,
       text,
       this.paramsManager.getParams().windowId
-    );
+    )
 
-    if (this.mainWindow) this.mainWindow.close();
+    if (this.mainWindow) this.mainWindow.close()
   }
 
   async putIntoClipboardAndClose(text: string): Promise<void> {
-    clipboard.writeText(text);
+    clipboard.writeText(text)
 
     setTimeout(() => {
-      if (this.mainWindow) this.mainWindow.close();
-    }, 300);
+      if (this.mainWindow) this.mainWindow.close()
+    }, 300)
   }
 
   // async closeMainWindow(): Promise<void> {
@@ -77,166 +78,176 @@ export class Api {
 
   async startVoiceRecognition(): Promise<void> {
     this.vosk.start((text) => {
-      this.voskHandler(text);
-    });
+      this.voskHandler(text)
+    })
   }
 
   async stopVoiceRecognition(): Promise<void> {
-    this.vosk.stop();
+    this.vosk.stop()
   }
 
   async saveUserConfig(userConfig: string): Promise<void> {
-    const userConfigObj = JSON.parse(userConfig) as UserConfig;
-    await saveUserConfig(userConfigObj);
-    this.userConfig = userConfigObj;
+    const userConfigObj = JSON.parse(userConfig) as UserConfig
+    await saveUserConfig(userConfigObj)
+    this.userConfig = userConfigObj
   }
 
   async saveMainInputTmp(value: string): Promise<void> {
     try {
-      mainInputStore.set("value", value);
-      mainInputStore.set("lastSaved", new Date().toISOString());
+      mainInputStore.set('value', value)
+      mainInputStore.set('lastSaved', new Date().toISOString())
     } catch (error) {
-      console.error("Error saving main input:", error);
-      throw error;
+      console.error('Error saving main input tmp:', error)
+      throw error
+    }
+  }
+
+  async clearMainInputTmp(): Promise<void> {
+    try {
+      mainInputStore.set('value', '')
+      mainInputStore.set('lastSaved', '')
+    } catch (error) {
+      console.error('Error clearing main input tmp:', error)
+      throw error
     }
   }
 
   async moveMainInputToHistory(): Promise<void> {
     try {
-      moveInputToHistory();
+      moveInputToHistory()
     } catch (error) {
-      console.error("Error moving main input to history:", error);
-      throw error;
+      console.error('Error moving main input to history:', error)
+      throw error
     }
   }
 
   async saveTransformHistory(value: string): Promise<void> {
     try {
-      const history = transformHistoryStore.get("history", []) as string[];
-      const filteredHistory = history.filter((item) => item !== value);
+      const history = transformHistoryStore.get('history', []) as string[]
+      const filteredHistory = history.filter((item) => item !== value)
 
       if (filteredHistory.length > this.appConfig.mainInputHistoryMaxItems) {
-        filteredHistory.splice(this.appConfig.mainInputHistoryMaxItems);
+        filteredHistory.splice(this.appConfig.mainInputHistoryMaxItems)
       }
 
-      filteredHistory.unshift(value);
-      transformHistoryStore.set("history", filteredHistory);
+      filteredHistory.unshift(value)
+      transformHistoryStore.set('history', filteredHistory)
     } catch (error) {
-      console.error("Error saving transform:", error);
-      throw error;
+      console.error('Error saving transform:', error)
+      throw error
     }
   }
 
   async saveChatHistory(chatHistoryItem: ChatHistoryItem): Promise<void> {
     try {
-      const history = chatHistoryStore.get("history", []) as ChatHistoryItem[];
-      const chatItem = history.find((item) => item.id === chatHistoryItem.id);
+      const history = chatHistoryStore.get('history', []) as ChatHistoryItem[]
+      const chatItem = history.find((item) => item.id === chatHistoryItem.id)
 
       if (chatItem) {
-        chatItem.messages.push(...chatHistoryItem.messages);
-        chatItem.lastMsgDate = chatHistoryItem.lastMsgDate;
-        chatItem.description = chatHistoryItem.description;
+        chatItem.messages.push(...chatHistoryItem.messages)
+        chatItem.lastMsgDate = chatHistoryItem.lastMsgDate
+        chatItem.description = chatHistoryItem.description
       } else {
         // add new item
         if (history.length > this.appConfig.mainInputHistoryMaxItems) {
-          history.splice(this.appConfig.mainInputHistoryMaxItems);
+          history.splice(this.appConfig.mainInputHistoryMaxItems)
         }
 
-        history.unshift(chatHistoryItem);
+        history.unshift(chatHistoryItem)
       }
 
-      chatHistoryStore.set("history", history);
+      chatHistoryStore.set('history', history)
     } catch (error) {
-      console.error("Error saving chat history:", error);
-      throw error;
+      console.error('Error saving chat history:', error)
+      throw error
     }
   }
 
   async getInputHistory(): Promise<string[]> {
     try {
-      return inputHistoryStore.get("history", []) as string[];
+      return inputHistoryStore.get('history', []) as string[]
     } catch (error) {
-      console.error("Error getting main input history:", error);
-      return [];
+      console.error('Error getting main input history:', error)
+      return []
     }
   }
 
   async getTransformHistory(): Promise<string[]> {
     try {
-      return transformHistoryStore.get("history", []) as string[];
+      return transformHistoryStore.get('history', []) as string[]
     } catch (error) {
-      console.error("Error getting transform history:", error);
-      return [];
+      console.error('Error getting transform history:', error)
+      return []
     }
   }
 
   async getChatHistory(): Promise<ChatHistoryItem[]> {
     try {
-      return chatHistoryStore.get("history", []) as ChatHistoryItem[];
+      return chatHistoryStore.get('history', []) as ChatHistoryItem[]
     } catch (error) {
-      console.error("Error getting chat history:", error);
-      return [];
+      console.error('Error getting chat history:', error)
+      return []
     }
   }
 
   // Очистка истории main input
   async clearInputHistory(): Promise<void> {
     try {
-      inputHistoryStore.set("history", []);
+      inputHistoryStore.set('history', [])
     } catch (error) {
-      console.error("Error clearing main input history:", error);
-      throw error;
+      console.error('Error clearing main input history:', error)
+      throw error
     }
   }
 
   async clearTransformHistory(): Promise<void> {
     try {
-      transformHistoryStore.set("history", []);
+      transformHistoryStore.set('history', [])
     } catch (error) {
-      console.error("Error clearing transform history:", error);
-      throw error;
+      console.error('Error clearing transform history:', error)
+      throw error
     }
   }
 
   async clearChatHistory(): Promise<void> {
     try {
-      chatHistoryStore.set("history", []);
+      chatHistoryStore.set('history', [])
     } catch (error) {
-      console.error("Error clearing chat history:", error);
-      throw error;
+      console.error('Error clearing chat history:', error)
+      throw error
     }
   }
 
   async removeFromInputHistory(value: string): Promise<void> {
     try {
-      const history = inputHistoryStore.get("history", []) as string[];
-      const filteredHistory = history.filter((item) => item !== value);
-      inputHistoryStore.set("history", filteredHistory);
+      const history = inputHistoryStore.get('history', []) as string[]
+      const filteredHistory = history.filter((item) => item !== value)
+      inputHistoryStore.set('history', filteredHistory)
     } catch (error) {
-      console.error("Error removing from main input history:", error);
-      throw error;
+      console.error('Error removing from main input history:', error)
+      throw error
     }
   }
 
   async removeFromTransformHistory(value: string): Promise<void> {
     try {
-      const history = transformHistoryStore.get("history", []) as string[];
-      const filteredHistory = history.filter((item) => item !== value);
-      transformHistoryStore.set("history", filteredHistory);
+      const history = transformHistoryStore.get('history', []) as string[]
+      const filteredHistory = history.filter((item) => item !== value)
+      transformHistoryStore.set('history', filteredHistory)
     } catch (error) {
-      console.error("Error removing from transform history:", error);
-      throw error;
+      console.error('Error removing from transform history:', error)
+      throw error
     }
   }
 
   async removeFromChatHistory(id: string): Promise<void> {
     try {
-      const history = chatHistoryStore.get("history", []) as ChatHistoryItem[];
-      const filteredHistory = history.filter((item) => item.id !== id);
-      chatHistoryStore.set("history", filteredHistory);
+      const history = chatHistoryStore.get('history', []) as ChatHistoryItem[]
+      const filteredHistory = history.filter((item) => item.id !== id)
+      chatHistoryStore.set('history', filteredHistory)
     } catch (error) {
-      console.error("Error removing from chat history:", error);
-      throw error;
+      console.error('Error removing from chat history:', error)
+      throw error
     }
   }
 }
