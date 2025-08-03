@@ -1,39 +1,44 @@
-import { PluginContext } from '../../types/PluginContext'
+import { InputConfigItem } from 'src/types'
 
-export default function pluginIndex(ctx: PluginContext) {
-  ctx.registerActionsItems([
-    {
-      name: 'Search in Internet',
-      action: async (text: string) => {
-        if (!text?.trim()) {
-          ctx.toast('Текст не выбран', 'error')
-          return
-        }
+import { PluginContext } from '../../types/plugins'
 
-        const baseUrl = ctx.getUserConfig().plugins?.SearchInInternet?.url
-
-        if (!baseUrl) {
-          ctx.toast('No base URL for search in internet', 'warn')
-          return
-        }
-
-        const url = baseUrl + encodeURIComponent(text)
-
-        await ctx.callApiFunction('openInBrowserAndClose', [url])
-      },
+export default function pluginIndex() {
+  return {
+    name: 'SearchInInternet',
+    label: 'Поиск в интернете',
+    defaultConfig: {
+      fields: [
+        {
+          type: 'text',
+          name: 'url',
+          label: 'Internet Search URL',
+          defaultValue: 'https://duckduckgo.com/?q=',
+        } as InputConfigItem,
+      ],
     },
-  ])
+    init: (ctx: PluginContext) => {
+      ctx.registerActionsItems([
+        {
+          name: 'Search in Internet',
+          action: async (text: string) => {
+            if (!text?.trim()) {
+              ctx.toast('Текст не выбран', 'error')
+              return
+            }
 
-  ctx.registerPluginConfig({
-    pluginName: 'SearchInInternet',
-    label: 'Search in Internet',
-    fields: [
-      {
-        type: 'text',
-        name: 'url',
-        label: 'Internet Search URL',
-        defaultValue: 'https://duckduckgo.com/?q=',
-      },
-    ],
-  })
+            const baseUrl = ctx.getUserConfig().plugins?.SearchInInternet?.url
+
+            if (!baseUrl) {
+              ctx.toast('No base URL for search in internet', 'warn')
+              return
+            }
+
+            const url = baseUrl + encodeURIComponent(text)
+
+            await ctx.callApiFunction('openInBrowserAndClose', [url])
+          },
+        },
+      ])
+    },
+  }
 }

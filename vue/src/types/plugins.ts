@@ -5,6 +5,13 @@ import { MenuModals } from '../stores/menuModals'
 import { DEFAULT_PARAMS } from '../stores/navPanel'
 import { InputConfigItem, IpcResult } from './index'
 
+export type PluginIndex = () => {
+  name: string
+  label: string
+  defaultConfig?: PluginConfig
+  init: (ctx: PluginContext) => void
+}
+
 export interface PluginContext {
   registerActionsItems(actions: ActionItem[]): void
   registerEditItems(edit: EditItem[]): void
@@ -23,12 +30,9 @@ export interface PluginContext {
   toEditor(text?: string): void
   toast(message: string, type: 'success' | 'error' | 'warn' | 'info'): void
   callApiFunction(functionName: string, args: any[]): Promise<IpcResult>
-  registerPluginConfig(config: PluginConfig): void
   getUserConfig(): UserConfig
 }
 
 export interface PluginConfig {
-  pluginName: string
-  label: string
   fields: InputConfigItem[]
 }

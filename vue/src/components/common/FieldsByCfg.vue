@@ -11,7 +11,7 @@
         v-model:value="values[item.name]"
         @update:value="updateValue(item.name, $event)"
       />
-      <Checkbox
+      <FieldCheckbox
         v-else-if="item.type === 'checkbox'"
         v-model:value="values[item.name]"
         @update:value="updateValue(item.name, $event)"

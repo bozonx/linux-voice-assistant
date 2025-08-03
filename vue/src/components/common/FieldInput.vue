@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{ value: string; placeholder?: string }>()
+const props = defineProps<{ value: string | number; placeholder?: string }>()
 
 const emit = defineEmits<{ (e: 'update:value', value: string): void }>()
 
@@ -15,12 +15,6 @@ const value = computed({
 
 <style scoped>
 input {
-  display: block;
   width: 100%;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 4px;
-  font-size: 14px;
-  line-height: 1.5rem;
 }
 </style>

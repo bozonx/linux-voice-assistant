@@ -12,13 +12,22 @@
         </FieldRow>
 
         <FieldRow label="Editor History Max Items">
-          <FieldInput v-model:value="userConfig.editorHistoryMaxItems" />
+          <FieldInput
+            type="number"
+            v-model:value="userConfig.editorHistoryMaxItems"
+          />
         </FieldRow>
         <FieldRow label="Transform History Max Items">
-          <FieldInput v-model:value="userConfig.transformHistoryMaxItems" />
+          <FieldInput
+            type="number"
+            v-model:value="userConfig.transformHistoryMaxItems"
+          />
         </FieldRow>
         <FieldRow label="Chat History Max Items">
-          <FieldInput v-model:value="userConfig.chatHistoryMaxItems" />
+          <FieldInput
+            type="number"
+            v-model:value="userConfig.chatHistoryMaxItems"
+          />
         </FieldRow>
 
         <FieldRow label="App Language">
@@ -286,11 +295,11 @@
 <script setup lang="ts">
 import useToast from '../composables/useToast'
 import { useIpcStore } from '../stores/ipc'
-import { usePluginsStore } from '../stores/plugins'
+import { usePluginsConfigsStore } from '../stores/pluginsConfigs'
 import { PRESETS_KEYS } from '../types'
 
 const ipcStore = useIpcStore()
-const pluginsStore = usePluginsStore()
+const pluginsConfigsStore = usePluginsConfigsStore()
 const { toast } = useToast()
 
 const userConfig = ref(ipcStore.params!.userConfig)
@@ -307,7 +316,7 @@ const tabs = [
 onMounted(() => {
   userConfig.value = ipcStore.params!.userConfig
   // fill default values for plugins which are not in userConfig.plugins
-  for (const pluginCfg of pluginsStore.pluginConfig) {
+  for (const pluginCfg of pluginsConfigsStore.pluginConfig) {
     if (!userConfig.value.plugins[pluginCfg.pluginName]) {
       userConfig.value.plugins[pluginCfg.pluginName] = {}
 
@@ -322,7 +331,7 @@ onMounted(() => {
 const plugins = computed(() => {
   return Object.keys(userConfig.value.plugins || {})
     .map((pluginName) => {
-      const pluginCfg = pluginsStore.pluginConfig.find(
+      const pluginCfg = pluginsConfigsStore.pluginConfig.find(
         (plugin: any) => plugin.pluginName === pluginName
       )
 
