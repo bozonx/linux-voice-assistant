@@ -36,7 +36,7 @@
 
 <script setup lang="ts">
   import { Icon } from "@iconify/vue";
-  import { truncate } from "squidlet-lib";
+  import { truncate } from "@/lib/squidlet-lib-local";
 
   const emit = defineEmits<{
     (e: "remove-item", item: {id: string | number, value: string}): void;

@@ -22,7 +22,6 @@
     "mic": "^2.1.2",
     "node-microphone": "^0.1.6",
     "protoc-gen-ts": "^0.8.7",
-    "squidlet-lib": "link:../../../.local/share/pnpm/global/5/node_modules/squidlet-lib",
     "ws": "^8.18.3",
     "yaml": "^2.8.0"
   },

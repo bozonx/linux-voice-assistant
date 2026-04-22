@@ -51,7 +51,7 @@
 </template>
 
 <script setup lang="ts">
-import { truncate } from 'squidlet-lib'
+import { truncate } from '@/lib/squidlet-lib-local'
 
 import { useChatStore } from '../stores/chat'
 import { useChatInputStore } from '../stores/chatInput'

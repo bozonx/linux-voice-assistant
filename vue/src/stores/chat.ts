@@ -6,7 +6,7 @@ import useToast from "../composables/useToast";
 import { APP_CONFIG } from "../../../electron/appConfig";
 import { AI_TASKS } from "../types";
 import { useHistoryStore } from "./history";
-import { makeUniqId } from "squidlet-lib";
+import { makeUniqId } from "@/lib/squidlet-lib-local";
 
 export const useChatStore = defineStore("chat", () => {
   const { toast } = useToast();

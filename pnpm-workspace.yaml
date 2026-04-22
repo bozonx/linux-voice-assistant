@@ -9,5 +9,3 @@ ignoredBuiltDependencies:
 
 onlyBuiltDependencies:
   - electron
-overrides:
-  squidlet-lib: link:../../../.local/share/pnpm/global/5/node_modules/squidlet-lib

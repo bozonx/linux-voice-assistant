@@ -4,7 +4,7 @@ import {
   toSnakeCase,
   toKebabCase,
   normalizeText,
-} from "squidlet-lib";
+} from "@/lib/squidlet-lib-local";
 
 export function useTextTransform() {
   const toUppercase = (text?: string): string => {

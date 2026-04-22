@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { DebounceCallIncreasing } from 'squidlet-lib'
+import { DebounceCallIncreasing } from '@/lib/squidlet-lib-local'
 
 import { useHistoryStore } from './history'
 
