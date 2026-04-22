@@ -1,5 +1,6 @@
 @import 'tailwindcss';
-@plugin "daisyui" {
+/* Use the JS entry explicitly because Node 24 + Tailwind/Vite can resolve daisyui's browser field to CSS and fail. */
+@plugin "../../node_modules/daisyui/index.js" {
   themes:
     light --default,
     dark --prefersdark;
