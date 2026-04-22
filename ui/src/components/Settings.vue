@@ -7,17 +7,33 @@
         <FieldRow :label="t('settings.theme')">
           <ThemeSwitcher v-model:value="userConfig.theme" />
         </FieldRow>
-        <FieldRow :label="t('settings.appLanguage')">
-          <FieldSelect
-            v-model:value="userConfig.appLanguage"
-            :options="appLanguageOptions"
-          />
-        </FieldRow>
         <FieldRow :label="t('settings.userLanguage')">
           <FieldSelect
             v-model:value="userConfig.userLanguage"
             :options="userLanguageOptions"
           />
+        </FieldRow>
+        <FieldRow :label="t('settings.appLanguage')">
+          <div class="flex items-center gap-2 w-full">
+            <FieldSelect
+              class="flex-1"
+              :value="effectiveAppLanguage"
+              :options="appLanguageOptions"
+              :disabled="!isAppLanguageManual"
+              @update:value="updateAppLanguage"
+            />
+            <button
+              type="button"
+              class="text-sm underline underline-offset-2 disabled:no-underline opacity-80 hover:opacity-100"
+              @click="toggleAppLanguageMode"
+            >
+              {{
+                isAppLanguageManual
+                  ? t('settings.appLanguageAuto')
+                  : t('settings.appLanguageManual')
+              }}
+            </button>
+          </div>
         </FieldRow>
         <FieldRow :label="t('settings.xdotoolBin')">
           <FieldInput v-model:value="userConfig.xdotoolBin" />
@@ -303,14 +319,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watchEffect } from 'vue'
+import { computed, onMounted, ref, watch, watchEffect } from 'vue'
 
 import { useI18n } from '../composables/useI18n'
 import useToast from '../composables/useToast'
 import {
   AUTO_LANGUAGE_VALUE,
   DEFAULT_LANGUAGE,
+  SUPPORTED_UI_LANGUAGE_OPTIONS,
   buildLanguageOptions,
+  getNavigatorLanguages,
+  normalizeLocale,
+  resolveUiLanguagePreference,
 } from '../lib/locale/language'
 import { pluginIndexes } from '../plugins'
 import { useIpcStore } from '../stores/ipc'
@@ -414,13 +434,32 @@ function normalizeLanguageConfig() {
   ).map((lang: string) => lang || DEFAULT_LANGUAGE)
 }
 
+const navigatorLanguages = computed(() => getNavigatorLanguages())
+
+const isAppLanguageManual = computed(
+  () => userConfig.value.appLanguage !== AUTO_LANGUAGE_VALUE
+)
+
+const effectiveAppLanguage = computed(() =>
+  resolveUiLanguagePreference(
+    userConfig.value.appLanguage,
+    userConfig.value.userLanguage,
+    navigatorLanguages.value
+  )
+)
+
 const saveSettings = () => {
   ipcStore.saveUserConfig(userConfig.value)
   toast(t('settings.saved'), 'success')
 }
 
 const appLanguageOptions = computed(() =>
-  buildLanguageOptions([userConfig.value.appLanguage], true, t)
+  buildLanguageOptions(
+    [effectiveAppLanguage.value, userConfig.value.appLanguage],
+    false,
+    t,
+    SUPPORTED_UI_LANGUAGE_OPTIONS
+  )
 )
 
 const userLanguageOptions = computed(() =>
@@ -441,6 +480,30 @@ const updateTranslateLanguages = (items: Record<string, any>[]) => {
   userConfig.value.toTranslateLanguages = items.map(
     (item: Record<string, any>) => item.value
   )
+}
+
+watch(
+  () => userConfig.value.userLanguage,
+  (userLanguage) => {
+    userConfig.value.userLanguage = normalizeLocale(userLanguage || AUTO_LANGUAGE_VALUE)
+  }
+)
+
+const updateAppLanguage = (value: number | string | undefined) => {
+  if (typeof value !== 'string') {
+    return
+  }
+
+  userConfig.value.appLanguage = value
+}
+
+const toggleAppLanguageMode = () => {
+  if (isAppLanguageManual.value) {
+    userConfig.value.appLanguage = AUTO_LANGUAGE_VALUE
+    return
+  }
+
+  userConfig.value.appLanguage = effectiveAppLanguage.value
 }
 
 const updateLLMModels = (items: any[]) => {

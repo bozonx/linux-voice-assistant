@@ -91,7 +91,12 @@ export interface UserConfig {
     voiceCorrection: string
     correction: string
   }
-  aiTasks: { name: string; rule: string }[]
+  aiTasks: {
+    name: string
+    rule: string
+    tapAction?: string
+    holdAction?: string
+  }[]
   chatRoles: { name: string; rule: string }[]
   plugins: Record<string, any>
 }

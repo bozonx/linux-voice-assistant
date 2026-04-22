@@ -11,6 +11,7 @@ export enum MenuModals {
   VOICE_RECOGNITION = 'voice-recognition',
   TRANSLATE = 'translate',
   PREVIEW = 'preview',
+  ACTION_SELECT = 'action-select',
   NONE = 'none',
 }
 

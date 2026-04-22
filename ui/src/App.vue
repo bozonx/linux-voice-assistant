@@ -52,9 +52,12 @@ const bootstrap = createAppBootstrap({
 })
 
 watch(
-  () => ipcStore.params.userConfig?.appLanguage,
-  (appLanguage) => {
-    syncI18nLocale(appLanguage)
+  () => [
+    ipcStore.params.userConfig?.appLanguage,
+    ipcStore.params.userConfig?.userLanguage,
+  ],
+  ([appLanguage, userLanguage]) => {
+    syncI18nLocale(appLanguage, userLanguage)
   },
   { immediate: true }
 )

@@ -1,5 +1,11 @@
 <template>
-  <select :value="props.value" :title="title" class="select" @change="handleChange">
+  <select
+    :value="props.value"
+    :title="title"
+    :disabled="props.disabled"
+    class="select"
+    @change="handleChange"
+  >
     <option
       v-for="option in options"
       :key="option.id"
@@ -15,6 +21,7 @@
 const props = defineProps<{
   value?: number | string
   title?: string
+  disabled?: boolean
   options: { id: number | string; name: string }[]
 }>()
 

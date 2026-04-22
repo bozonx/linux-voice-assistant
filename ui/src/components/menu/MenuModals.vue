@@ -7,6 +7,7 @@
     <VoiceRecognitionMenu v-else-if="menuModalsStore.currentModal === MenuModals.VOICE_RECOGNITION" v-bind="menuModalsStore.currentModalParams" />
     <TranslateMenu v-else-if="menuModalsStore.currentModal === MenuModals.TRANSLATE" v-bind="menuModalsStore.currentModalParams as any" />
     <PreviewMenu v-else-if="menuModalsStore.currentModal === MenuModals.PREVIEW" v-bind="menuModalsStore.currentModalParams as any" />
+    <ActionSelectModal v-else-if="menuModalsStore.currentModal === MenuModals.ACTION_SELECT" v-bind="menuModalsStore.currentModalParams as any" />
   </Overlay>
 
   <Overlay :navBarVisible="false" v-if="menuModalsStore.pendingModal">
@@ -16,6 +17,7 @@
 
 <script setup lang="ts">
 import { MenuModals, useMenuModalsStore } from '../../stores/menuModals';
+import ActionSelectModal from './ActionSelectModal.vue';
 
 const menuModalsStore = useMenuModalsStore();
 </script>
