@@ -4,9 +4,9 @@
   "private": true,
   "description": "Librnet assistant built with Tauri and Vue",
   "scripts": {
-    "dev:ui": "pnpm --filter ./apps/desktop-ui dev",
-    "build:ui": "pnpm --filter ./apps/desktop-ui build",
-    "type-check": "pnpm --filter ./apps/desktop-ui type-check",
+    "dev:ui": "pnpm --filter ui dev",
+    "build:ui": "pnpm --filter ui build",
+    "type-check": "pnpm --filter ui type-check",
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build",

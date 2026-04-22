@@ -6,7 +6,7 @@
   "build": {
     "beforeDevCommand": "pnpm dev:ui",
     "beforeBuildCommand": "pnpm build:ui",
-    "frontendDist": "../apps/desktop-ui/dist",
+    "frontendDist": "../ui/dist",
     "devUrl": "http://localhost:3000"
   },
   "app": {
