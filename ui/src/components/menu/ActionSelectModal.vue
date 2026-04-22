@@ -17,16 +17,19 @@
     </div>
 
     <div class="flex flex-row justify-end gap-2">
-      <Button neutral @click="menuModalsStore.back()">{{ t('common.back') }}</Button>
+      <Button neutral @click="menuModalsStore.back()">{{
+        t('common.back')
+      }}</Button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
+
 import { useI18n } from '../../composables/useI18n'
-import { useMenuModalsStore } from '../../stores/menuModals'
 import { useActionMenuStore } from '../../stores/actionMenu'
+import { useMenuModalsStore } from '../../stores/menuModals'
 
 const { t } = useI18n()
 const menuModalsStore = useMenuModalsStore()
@@ -37,10 +40,13 @@ const props = defineProps<{
 }>()
 
 const actions = computed(() => {
-  return actionMenuStore.getDefaultActions().map(action => ({
-    id: action.labelKey?.replace('action.', '') || action.name || '',
-    name: action.labelKey ? t(action.labelKey) : action.name || ''
-  })).filter(a => a.id)
+  return actionMenuStore
+    .getDefaultActions()
+    .map((action: any) => ({
+      id: action.labelKey?.replace('action.', '') || action.name || '',
+      name: action.labelKey ? t(action.labelKey) : action.name || '',
+    }))
+    .filter((a: any) => a.id)
 })
 
 function selectAction(id: string) {

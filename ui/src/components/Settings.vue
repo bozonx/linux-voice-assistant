@@ -319,10 +319,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch, watchEffect } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch, watchEffect } from 'vue'
 
 import { useI18n } from '../composables/useI18n'
 import useToast from '../composables/useToast'
+import { syncI18nLocale } from '../lib/i18n'
 import {
   AUTO_LANGUAGE_VALUE,
   DEFAULT_LANGUAGE,
@@ -341,7 +342,7 @@ import { DEFAULT_USER_CONFIG } from '@shared'
 const ipcStore = useIpcStore()
 const { toast } = useToast()
 const themeStore = useThemeStore()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const userConfig = ref(
   JSON.parse(JSON.stringify(ipcStore.params.userConfig || DEFAULT_USER_CONFIG))
@@ -453,21 +454,38 @@ const saveSettings = () => {
   toast(t('settings.saved'), 'success')
 }
 
-const appLanguageOptions = computed(() =>
-  buildLanguageOptions(
+const appLanguageOptions = computed(() => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+  locale.value
+  return buildLanguageOptions(
     [effectiveAppLanguage.value, userConfig.value.appLanguage],
     false,
     t,
     SUPPORTED_UI_LANGUAGE_OPTIONS
   )
-)
+})
 
-const userLanguageOptions = computed(() =>
-  buildLanguageOptions([userConfig.value.userLanguage], true, t)
-)
+const userLanguageOptions = computed(() => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+  locale.value
+  return buildLanguageOptions([userConfig.value.userLanguage], true, t)
+})
 
-const translateLanguageOptions = computed(() =>
-  buildLanguageOptions(userConfig.value.toTranslateLanguages || [], false, t)
+const translateLanguageOptions = computed(() => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+  locale.value
+  return buildLanguageOptions(
+    userConfig.value.toTranslateLanguages || [],
+    false,
+    t
+  )
+})
+
+watch(
+  () => [userConfig.value.appLanguage, userConfig.value.userLanguage],
+  ([appLanguage, userLanguage]) => {
+    syncI18nLocale(appLanguage, userLanguage)
+  }
 )
 
 const translateLanguagesItems = computed(() => {
@@ -485,7 +503,9 @@ const updateTranslateLanguages = (items: Record<string, any>[]) => {
 watch(
   () => userConfig.value.userLanguage,
   (userLanguage) => {
-    userConfig.value.userLanguage = normalizeLocale(userLanguage || AUTO_LANGUAGE_VALUE)
+    userConfig.value.userLanguage = normalizeLocale(
+      userLanguage || AUTO_LANGUAGE_VALUE
+    )
   }
 )
 
@@ -532,4 +552,10 @@ const updatePluginConfig = (
 ) => {
   userConfig.value.plugins[pluginName] = values
 }
+onUnmounted(() => {
+  syncI18nLocale(
+    ipcStore.params.userConfig?.appLanguage,
+    ipcStore.params.userConfig?.userLanguage
+  )
+})
 </script>
