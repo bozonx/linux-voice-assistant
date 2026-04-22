@@ -6,25 +6,12 @@ import {
   type InitParams,
   type IpcResult,
 } from '@shared'
-
-type TauriInvoke = <T>(command: string, args?: Record<string, unknown>) => Promise<T>
-type TauriListen = <T>(
-  event: string,
-  handler: (payload: { payload: T }) => void
-) => Promise<() => void>
+import { invoke as tauriInvoke } from '@tauri-apps/api/core'
+import { listen as tauriListen } from '@tauri-apps/api/event'
 
 type AppEventPayloads = {
   [DESKTOP_EVENTS.PARAMS_CHANGED]: InitParams
   [DESKTOP_EVENTS.VOICE_TEXT]: string
-}
-
-interface TauriGlobal {
-  core?: {
-    invoke?: TauriInvoke
-  }
-  event?: {
-    listen?: TauriListen
-  }
 }
 
 const localListeners = new Map<string, Set<(payload: unknown) => void>>()
@@ -34,10 +21,6 @@ let localParams: InitParams = structuredClone({
   appConfig: APP_CONFIG,
   userConfig: DEFAULT_USER_CONFIG,
 })
-
-function getTauriGlobal(): TauriGlobal | undefined {
-  return window.__TAURI__
-}
 
 function emitLocal(event: string, payload: unknown) {
   const listeners = localListeners.get(event)
@@ -53,22 +36,24 @@ async function invoke<T>(
   command: string,
   args?: Record<string, unknown>
 ): Promise<IpcResult<T>> {
-  const tauriInvoke = getTauriGlobal()?.core?.invoke
-
-  if (!tauriInvoke) {
-    return {
-      success: false,
-      error: `Desktop runtime is not available for command: ${command}`,
-    }
-  }
-
   try {
     const result = await tauriInvoke<T>(command, args)
     return { success: true, result }
   } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    if (
+      message.includes('window is not defined')
+      || message.includes('Cannot read properties of undefined')
+    ) {
+      return {
+        success: false,
+        error: `Desktop runtime is not available for command: ${command}`,
+      }
+    }
+
     return {
       success: false,
-      error: error instanceof Error ? error.message : String(error),
+      error: message,
     }
   }
 }
@@ -77,21 +62,19 @@ async function listen<EventName extends keyof AppEventPayloads>(
   event: EventName,
   handler: (payload: AppEventPayloads[EventName]) => void
 ): Promise<() => void> {
-  const tauriListen = getTauriGlobal()?.event?.listen
-
-  if (tauriListen) {
+  try {
     return tauriListen(event, (eventPayload) => {
       handler(eventPayload.payload as AppEventPayloads[EventName])
     })
-  }
+  } catch (_error) {
+    const listeners = localListeners.get(event) || new Set<(payload: unknown) => void>()
+    listeners.add(handler as (payload: unknown) => void)
+    localListeners.set(event, listeners)
 
-  const listeners = localListeners.get(event) || new Set<(payload: unknown) => void>()
-  listeners.add(handler as (payload: unknown) => void)
-  localListeners.set(event, listeners)
-
-  return () => {
-    const currentListeners = localListeners.get(event)
-    currentListeners?.delete(handler as (payload: unknown) => void)
+    return () => {
+      const currentListeners = localListeners.get(event)
+      currentListeners?.delete(handler as (payload: unknown) => void)
+    }
   }
 }
 

@@ -7,6 +7,7 @@ import { DEFAULT_PARAMS, useNavPanelStore } from '../stores/navPanel'
 import { useRouteParams } from '../stores/routeParams'
 import { PluginIndex } from '../types/plugins'
 import useToast from './useToast'
+import type { EditItem } from '../stores/edditMenu'
 
 export default function usePluginContext() {
   const actionMenuStore = useActionMenuStore()
@@ -25,7 +26,7 @@ export default function usePluginContext() {
       actionMenuStore.registerActionsItems(actions)
     }
 
-    registerEditItems(edit) {
+    registerEditItems(edit: EditItem[]) {
       editMenuStore.registerEditItems(edit)
     }
 
@@ -81,7 +82,11 @@ export default function usePluginContext() {
       routeParamsStore.toEditor(text)
     }
 
-    toast(message: string, type = 'info', timeout = 10000) {
+    toast(
+      message: string,
+      type: 'success' | 'error' | 'warn' | 'info' = 'info',
+      timeout = 10000
+    ) {
       toast(message, type, timeout)
     }
 

@@ -26,19 +26,9 @@ import { useIpcStore } from '../../stores/ipc'
 import { useMenuModalsStore } from '../../stores/menuModals'
 import { useRouteParams } from '../../stores/routeParams'
 
-const props = defineProps({
-  oldText: {
-    type: String,
-    required: true,
-  },
-  newText: {
-    type: String,
-    required: true,
-  },
-})
-
-const emit = defineEmits<{
-  (e: 'update:newText', value: string): void
+const props = defineProps<{
+  oldText: string
+  newText: string
 }>()
 
 const ipcStore = useIpcStore()
@@ -55,15 +45,15 @@ const leftLetterKeys = [
   DEFAULT_ACTIONS[1],
   {
     name: 'Вставить в редактор',
-    action: () => {
-      editorInputStore.setValue(props.newText)
-      routeParams.setParams({ text: props.newText })
+    action: async () => {
+      editorInputStore.setValue(editedNewText.value)
+      routeParams.setParams({ text: editedNewText.value })
       editorInputStore.focus()
       menuModalsStore.closeAll()
-      router.push('/')
+      await router.push('/')
     },
   },
-] as ActionItem[]
+].filter(Boolean) as ActionItem[]
 
 const spaceKey = ipcStore.params?.windowId ? DEFAULT_ACTIONS[0] : undefined
 

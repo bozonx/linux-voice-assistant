@@ -1,8 +1,9 @@
-use tauri::AppHandle;
+use tauri::{AppHandle, State};
 
 use crate::errors::AppError;
 use crate::models::ChatHistoryItem;
 use crate::services::storage;
+use crate::state::AppState;
 
 #[tauri::command]
 pub fn get_editor_history(app: AppHandle) -> Result<Vec<String>, AppError> {
@@ -30,21 +31,33 @@ pub fn clear_main_input_tmp(app: AppHandle) -> Result<(), AppError> {
 }
 
 #[tauri::command]
-pub fn save_editor_history(app: AppHandle, value: String) -> Result<(), AppError> {
-    storage::save_editor_history(&app, value)
+pub fn save_editor_history(
+    app: AppHandle,
+    state: State<'_, AppState>,
+    value: String,
+) -> Result<(), AppError> {
+    let params = state.params();
+    storage::save_editor_history(&app, &params.user_config, value)
 }
 
 #[tauri::command]
-pub fn save_transform_history(app: AppHandle, value: String) -> Result<(), AppError> {
-    storage::save_transform_history(&app, value)
+pub fn save_transform_history(
+    app: AppHandle,
+    state: State<'_, AppState>,
+    value: String,
+) -> Result<(), AppError> {
+    let params = state.params();
+    storage::save_transform_history(&app, &params.user_config, value)
 }
 
 #[tauri::command]
 pub fn save_chat_history(
     app: AppHandle,
+    state: State<'_, AppState>,
     chat_history_item: ChatHistoryItem,
 ) -> Result<(), AppError> {
-    storage::save_chat_history(&app, chat_history_item)
+    let params = state.params();
+    storage::save_chat_history(&app, &params.user_config, chat_history_item)
 }
 
 #[tauri::command]

@@ -10,9 +10,10 @@
     "type-check": "vue-tsc --noEmit -p tsconfig.vue.json"
   },
   "dependencies": {
-    "@librnet/shared": "workspace:*",
     "@iconify/vue": "^5.0.0",
+    "@librnet/shared": "workspace:*",
     "@tailwindcss/vite": "^4.1.11",
+    "@tauri-apps/api": "^2.10.1",
     "daisyui": "^5.0.46",
     "diff": "^8.0.2",
     "highlight.js": "^11.11.1",

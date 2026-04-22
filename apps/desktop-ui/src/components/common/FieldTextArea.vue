@@ -2,7 +2,8 @@
   <textarea
     class="textarea"
     :placeholder="placeholder"
-    v-model="value"
+    :value="value"
+    @input="handleInput"
     @select="handleSelect"
     @mouseup="handleSelect"
     @keyup="handleSelect"
@@ -23,17 +24,15 @@ const emit = defineEmits<{
   (e: 'select', value: string, start: number, end: number): void
 }>()
 
-const textareaRef = ref<HTMLTextAreaElement>()
+const textareaRef = ref<HTMLTextAreaElement | null>(null)
 
-const value = computed({
-  get: () => props.value,
-  set: (value: string) => emit('update:value', value),
-})
+const value = computed(() => props.value)
 
-const selected = computed({
-  get: () => props.selected || '',
-  set: (selected: string) => emit('update:selected', selected),
-})
+const selected = ref<string>('')
+
+function handleInput(event: Event) {
+  emit('update:value', (event.target as HTMLTextAreaElement).value)
+}
 
 const handleSelect = () => {
   if (!textareaRef.value) return
@@ -63,7 +62,7 @@ defineExpose({
     if (typeof start === 'undefined' && typeof end === 'undefined') {
       textareaRef.value?.select()
     } else {
-      textareaRef.value?.setSelectionRange(start, end)
+      textareaRef.value?.setSelectionRange(start ?? 0, end ?? start ?? 0)
     }
   },
 })

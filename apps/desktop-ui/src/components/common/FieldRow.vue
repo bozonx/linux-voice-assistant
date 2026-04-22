@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{ label: string; vertical?: boolean }>()
+defineProps<{ label: string; vertical?: boolean }>()
 </script>
 
 <style scoped>

@@ -16,7 +16,14 @@
 import { useMenuModalsStore } from '../../stores/menuModals'
 
 const menuModalsStore = useMenuModalsStore()
-const props = defineProps({ navBarVisible: { type: Boolean, default: true } })
+withDefaults(
+  defineProps<{
+    navBarVisible?: boolean
+  }>(),
+  {
+    navBarVisible: true,
+  }
+)
 </script>
 
 <style scoped>

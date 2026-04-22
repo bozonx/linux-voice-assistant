@@ -1,11 +1,9 @@
 import { useEditorInputStore } from '../stores/editorInput'
 import { useIpcStore } from '../stores/ipc'
-import useToast from './useToast'
 
 export const useCallApi = () => {
   const ipcStore = useIpcStore()
   const editorInputStore = useEditorInputStore()
-  const { toast } = useToast()
 
   // async function closeWindow() {
   //   await ipcStore.callFunction("closeMainWindow", []);

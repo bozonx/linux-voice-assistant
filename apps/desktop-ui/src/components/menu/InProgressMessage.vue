@@ -11,14 +11,14 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps({
-  ai: {
-    type: Boolean,
-    default: false
-  },
-  correction: {
-    type: Boolean,
-    default: false
-  },
-});
+const props = withDefaults(
+  defineProps<{
+    ai?: boolean
+    correction?: boolean
+  }>(),
+  {
+    ai: false,
+    correction: false,
+  }
+)
 </script>

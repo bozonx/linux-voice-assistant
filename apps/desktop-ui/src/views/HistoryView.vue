@@ -16,12 +16,7 @@
 
     <HistoryList
       v-show="currentTab === 0"
-      :items="
-        historyStore.editorHistory.map((item, index) => ({
-          id: index,
-          value: item,
-        }))
-      "
+      :items="editorItems"
       :searchQuery="searchQuery"
       textTitle="Поместить в редактор"
       @remove-item="removeEditorItem"
@@ -31,12 +26,7 @@
 
     <HistoryList
       v-show="currentTab === 1"
-      :items="
-        historyStore.transformHistory.map((item, index) => ({
-          id: index,
-          value: item,
-        }))
-      "
+      :items="transformItems"
       :searchQuery="searchQuery"
       textTitle="Поместить в редактор"
       @remove-item="removeTransformItem"
@@ -46,12 +36,7 @@
 
     <HistoryList
       v-show="currentTab === 2"
-      :items="
-        historyStore.chatHistory.map((item) => ({
-          id: item.id,
-          value: item.description,
-        }))
-      "
+      :items="chatItems"
       :searchQuery="searchQuery"
       textTitle="Посмотреть"
       @remove-item="removeChatItem"
@@ -80,6 +65,24 @@ const tabs = [
 
 const searchQuery = ref<string>('')
 const searchInput = ref<HTMLInputElement | null>(null)
+const editorItems = computed(() =>
+  historyStore.editorHistory.map((item: string, index: number) => ({
+    id: index,
+    value: item,
+  }))
+)
+const transformItems = computed(() =>
+  historyStore.transformHistory.map((item: string, index: number) => ({
+    id: index,
+    value: item,
+  }))
+)
+const chatItems = computed(() =>
+  historyStore.chatHistory.map((item: { id: string; description: string }) => ({
+    id: item.id,
+    value: item.description,
+  }))
+)
 
 onMounted(async () => {
   if (searchInput.value) {
@@ -140,6 +143,7 @@ const toEditor = (item: { id: string | number; value: string }) => {
 }
 
 const toChat = (item: { id: string | number; value: string }) => {
+  void item
   // routeParams.toChat(item)
 }
 </script>

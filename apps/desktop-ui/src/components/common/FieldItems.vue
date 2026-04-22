@@ -46,33 +46,33 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  'update:items': [items: Record<string, any>[]]
+  (e: 'update:items', items: Record<string, any>[]): void
 }>()
 
 const localItems = ref<Record<string, any>[]>([...props.items])
 
-watch(
-  localItems,
-  (newItems: Record<string, any>[]) => {
-    emit('update:items', newItems)
-  },
-  { deep: true }
-)
+const syncItems = () => {
+  emit('update:items', [...localItems.value])
+}
 
 const addItem = () => {
   localItems.value.push({})
+  syncItems()
 }
 
 const removeItem = (index: number) => {
   localItems.value.splice(index, 1)
+  syncItems()
 }
 
 const moveItemUp = (index: number) => {
   localItems.value.splice(index - 1, 0, localItems.value.splice(index, 1)[0])
+  syncItems()
 }
 
 const moveItemDown = (index: number) => {
   localItems.value.splice(index + 1, 0, localItems.value.splice(index, 1)[0])
+  syncItems()
 }
 </script>
 

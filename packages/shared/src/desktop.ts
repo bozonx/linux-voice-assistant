@@ -77,6 +77,7 @@ export const DESKTOP_COMMANDS = {
   CLEAR_TRANSFORM_HISTORY: 'clear_transform_history',
   CLEAR_CHAT_HISTORY: 'clear_chat_history',
   CLOSE_WINDOW: 'close_window',
+  OPEN_IN_BROWSER_AND_CLOSE: 'open_in_browser_and_close',
   START_VOICE_RECOGNITION: 'start_voice_recognition',
   STOP_VOICE_RECOGNITION: 'stop_voice_recognition',
   TYPE_INTO_WINDOW_AND_CLOSE: 'type_into_window_and_close',

@@ -1,10 +1,10 @@
 <template>
-  <select v-model="value" :title="title" class="select">
+  <select :value="props.value" :title="title" class="select" @change="handleChange">
     <option
       v-for="option in options"
       :key="option.id"
       :value="option.id"
-      :selected="option.id === value"
+      :selected="option.id === props.value"
     >
       {{ option.name }}
     </option>
@@ -22,8 +22,7 @@ const emit = defineEmits<{
   (e: 'update:value', value: number | string | undefined): void
 }>()
 
-const value = computed({
-  get: () => props.value,
-  set: (value: number | string | undefined) => emit('update:value', value),
-})
+function handleChange(event: Event) {
+  emit('update:value', (event.target as HTMLSelectElement).value)
+}
 </script>

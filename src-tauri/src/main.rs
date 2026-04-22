@@ -12,15 +12,21 @@ use commands::history::{
     save_editor_history, save_main_input_tmp, save_transform_history,
 };
 use commands::voice::{start_voice_recognition, stop_voice_recognition};
-use commands::window::{close_window, type_into_window_and_close};
+use commands::window::{close_window, open_in_browser_and_close, type_into_window_and_close};
 use models::default_init_params;
 use services::{dbus, runtime, storage};
 use state::AppState;
 use tauri::Manager;
+use tauri_plugin_single_instance::init as single_instance;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(single_instance(|app, _args, _cwd| {
+            if let Some(state) = app.try_state::<AppState>() {
+                let _ = runtime::show_main_window(app, &state, None);
+            }
+        }))
         .setup(|app| {
             let user_config = storage::read_or_create_user_config(app.handle())?;
             app.manage(AppState::new(default_init_params(user_config)));
@@ -51,6 +57,7 @@ pub fn run() {
             clear_chat_history,
             start_voice_recognition,
             stop_voice_recognition,
+            open_in_browser_and_close,
             type_into_window_and_close
         ])
         .run(tauri::generate_context!())

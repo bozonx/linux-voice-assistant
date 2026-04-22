@@ -19,12 +19,13 @@ import { useMenuModalsStore } from '../../stores/menuModals';
 import { useHistoryStore } from '../../stores/history';
 import useToast from '../../composables/useToast';
 
-const props = defineProps({
-  onCorrected: {
-    type: Function,
-    default: undefined,
-  },
-})
+const props = defineProps<{
+  onCorrected?: (
+    resultText: string,
+    recognizedText: string,
+    correctedText?: string
+  ) => void
+}>()
 
 const emit = defineEmits<{
   (
@@ -48,30 +49,24 @@ let listenerIndex = -1;
 
 const spaceKey = {
   name: "Закончить",
-  action: () => finish(),
-};
+  action: async () => {
+    await finish()
+  },
+}
 
 const finish = async () => {
   // TODO: пока ждет  не позволять нажимать еще раз закончить
-  if (!lastRecognizedTextMs.value || Date.now() - lastRecognizedTextMs.value < appConfig.value.recognitionWaitTimeSec * 1000) {
-    const currentText = recognizedText.value;
-    
-    await new Promise<void>((resolve) => {
-      const timeout = setTimeout(() => {
-        console.log("Recognition wait time passed, no changes detected");
-        resolve();
-        unwatch();
-      }, appConfig.value.recognitionWaitTimeSec * 1000);
+  if (!lastRecognizedTextMs.value) {
+    await new Promise((resolve) =>
+      setTimeout(resolve, appConfig.value.recognitionWaitTimeSec * 1000)
+    )
+  } else {
+    const elapsedMs = Date.now() - lastRecognizedTextMs.value
+    const remainingMs = appConfig.value.recognitionWaitTimeSec * 1000 - elapsedMs
 
-      const unwatch = watch(recognizedText, (newText) => {
-        if (newText !== currentText) {
-          console.log("Text changed during wait time");
-          clearTimeout(timeout);
-          unwatch();
-          resolve();
-        }
-      });
-    });
+    if (remainingMs > 0) {
+      await new Promise((resolve) => setTimeout(resolve, remainingMs))
+    }
   }
 
   if (!recognizedText.value.trim().length) {
@@ -121,6 +116,6 @@ onMounted(async () => {
 
 onUnmounted(() => {
   globalEvents.removeListener(listenerIndex);
-  stopVoiceRecognition();
+  void stopVoiceRecognition();
 });
 </script>

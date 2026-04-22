@@ -17,12 +17,9 @@
 import { ActionItem, useActionMenuStore } from '../../stores/actionMenu';
 import { useIpcStore } from '../../stores/ipc';
 
-const props = defineProps({
-  text: {
-    type: String,
-    required: true,
-  },
-});
+const props = defineProps<{
+  text: string
+}>()
 
 const actionMenuStore = useActionMenuStore();
 const DEFAULT_ACTIONS = actionMenuStore.DEFAULT_ACTIONS;
@@ -37,7 +34,7 @@ const leftLetterKeys = [
   //     routeParams.toEditor(props.text);
   //   },
   // }
-] as ActionItem[]
+] .filter(Boolean) as ActionItem[]
 
 const spaceKey = ipcStore.params?.windowId ? DEFAULT_ACTIONS[0] : undefined;
 </script>

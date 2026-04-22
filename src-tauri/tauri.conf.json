@@ -10,7 +10,7 @@
     "devUrl": "http://localhost:3000"
   },
   "app": {
-    "withGlobalTauri": true,
+    "withGlobalTauri": false,
     "windows": [
       {
         "title": "Librnet Assistant",
@@ -22,12 +22,18 @@
       }
     ],
     "security": {
-      "csp": null
+      "csp": {
+        "default-src": "'self' asset: http://asset.localhost",
+        "connect-src": "'self' ipc: http://ipc.localhost http: https: ws: wss:",
+        "img-src": "'self' asset: http://asset.localhost data: blob:",
+        "style-src": "'self' 'unsafe-inline'",
+        "font-src": "'self' data:"
+      }
     }
   },
   "bundle": {
     "active": true,
     "targets": ["appimage", "deb"],
-    "icon": []
+    "icon": ["icons/icon.png"]
   }
 }

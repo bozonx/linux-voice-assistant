@@ -1,16 +1,21 @@
 <template>
-  <input type="text" v-model="value" :placeholder="placeholder" class="input" />
+  <input
+    type="text"
+    :value="String(value ?? '')"
+    :placeholder="placeholder"
+    class="input"
+    @input="handleInput"
+  />
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{ value: string | number; placeholder?: string }>()
+defineProps<{ value: string | number; placeholder?: string }>()
 
 const emit = defineEmits<{ (e: 'update:value', value: string): void }>()
 
-const value = computed({
-  get: () => props.value,
-  set: (value) => emit('update:value', value),
-})
+function handleInput(event: Event) {
+  emit('update:value', (event.target as HTMLInputElement).value)
+}
 </script>
 
 <style scoped>

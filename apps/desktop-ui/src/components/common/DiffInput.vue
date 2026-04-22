@@ -1,6 +1,6 @@
 <template>
   <div>
-    <textarea v-model="inputText" />
+    <textarea :value="inputText" @input="handleInput" />
     <Diff :oldText="props.oldText" :newText="inputText" />
   </div>
 </template>
@@ -10,15 +10,17 @@ const props = defineProps<{
   oldText: string;
   newText: string;
 }>();
-const inputText = ref(props.newText);
+const inputText = ref<string>(props.newText);
 
 const emit = defineEmits<{
   (e: 'update:newText', value: string): void
 }>();
 
-watch(inputText, (newVal) => {
-  emit('update:newText', newVal);
-});
+function handleInput(event: Event) {
+  const nextValue = (event.target as HTMLTextAreaElement).value
+  inputText.value = nextValue
+  emit('update:newText', nextValue)
+}
 </script>
 
 <style scoped>

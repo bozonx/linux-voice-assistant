@@ -48,6 +48,15 @@ fn write_json<T: Serialize>(path: &PathBuf, value: &T) -> Result<(), AppError> {
     Ok(())
 }
 
+fn history_limit(user_config: &Value, key: &str, default: usize) -> usize {
+    user_config
+        .get(key)
+        .and_then(Value::as_u64)
+        .and_then(|value| usize::try_from(value).ok())
+        .filter(|value| *value > 0)
+        .unwrap_or(default)
+}
+
 pub fn read_or_create_user_config(app: &AppHandle) -> Result<Value, AppError> {
     let path = app_config_dir(app)?.join(CONFIG_FILE_NAME);
 
@@ -77,10 +86,16 @@ pub fn get_editor_history(app: &AppHandle) -> Result<Vec<String>, AppError> {
     )
 }
 
-pub fn save_editor_history(app: &AppHandle, value: String) -> Result<(), AppError> {
+pub fn save_editor_history(
+    app: &AppHandle,
+    user_config: &Value,
+    value: String,
+) -> Result<(), AppError> {
     let mut history = get_editor_history(app)?;
+    let limit = history_limit(user_config, "editorHistoryMaxItems", 50);
     history.retain(|item| item != &value);
     history.insert(0, value);
+    history.truncate(limit);
     write_json(&app_data_dir(app)?.join("editor-history.json"), &history)
 }
 
@@ -104,10 +119,16 @@ pub fn get_transform_history(app: &AppHandle) -> Result<Vec<String>, AppError> {
     )
 }
 
-pub fn save_transform_history(app: &AppHandle, value: String) -> Result<(), AppError> {
+pub fn save_transform_history(
+    app: &AppHandle,
+    user_config: &Value,
+    value: String,
+) -> Result<(), AppError> {
     let mut history = get_transform_history(app)?;
+    let limit = history_limit(user_config, "transformHistoryMaxItems", 50);
     history.retain(|item| item != &value);
     history.insert(0, value);
+    history.truncate(limit);
     write_json(&app_data_dir(app)?.join("transform-history.json"), &history)
 }
 
@@ -133,9 +154,11 @@ pub fn get_chat_history(app: &AppHandle) -> Result<Vec<ChatHistoryItem>, AppErro
 
 pub fn save_chat_history(
     app: &AppHandle,
+    user_config: &Value,
     chat_history_item: ChatHistoryItem,
 ) -> Result<(), AppError> {
     let mut history = get_chat_history(app)?;
+    let limit = history_limit(user_config, "chatHistoryMaxItems", 50);
 
     if let Some(existing) = history
         .iter_mut()
@@ -147,6 +170,8 @@ pub fn save_chat_history(
     } else {
         history.insert(0, chat_history_item);
     }
+
+    history.truncate(limit);
 
     write_json(&app_data_dir(app)?.join("chat-history.json"), &history)
 }

@@ -3,12 +3,12 @@
     <div v-if="error" class="error-message">
       {{ error }}
     </div>
-    <div v-else-if="diff.length === 0" class="no-diff">
+    <div v-else-if="diffParts.length === 0" class="no-diff">
       No differences found
     </div>
     <div v-else class="diff-content">
       <span 
-        v-for="(part, index) in diff" 
+        v-for="(part, index) in diffParts" 
         :key="`diff-${index}-${part.added}-${part.removed}`"
         :class="getPartClass(part)"
       >
@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, computed } from 'vue';
 import { diffChars } from 'diff';
 
 // Определяем интерфейс для части diff
@@ -38,7 +38,7 @@ const props = defineProps<{
 const error = ref<string | null>(null);
 
 // Вычисляем diff с обработкой ошибок
-const diff = computed<DiffPart[]>(() => {
+const diffParts = computed<DiffPart[]>(() => {
   try {
     error.value = null;
     
@@ -63,12 +63,6 @@ const getPartClass = (part: DiffPart): string => {
   return 'unchanged';
 };
 
-// Логируем результат для отладки
-watch(diff, (newDiff) => {
-  if (newDiff.length > 0 && !error.value) {
-    console.log('Diff result:', newDiff);
-  }
-}, { immediate: true });
 </script>
 
 <style scoped>

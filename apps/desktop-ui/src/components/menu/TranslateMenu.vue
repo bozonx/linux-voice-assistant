@@ -11,31 +11,39 @@
 </template>
 
 <script setup lang="ts">
-import { useIpcStore } from '../../stores/ipc';
-import { useCallAi } from '../../composables/useCallAi';
-import { MenuModals, useMenuModalsStore } from '../../stores/menuModals';
-import useToast from '../../composables/useToast';
-import { useHistoryStore } from '../../stores/history';
+import { type ActionItem } from '../../stores/actionMenu'
+import { useIpcStore } from '../../stores/ipc'
+import { useCallAi } from '../../composables/useCallAi'
+import { MenuModals, useMenuModalsStore } from '../../stores/menuModals'
+import useToast from '../../composables/useToast'
+import { useHistoryStore } from '../../stores/history'
 
-const props = defineProps({
-  text: {
-    type: String,
-    default: "",
-  },
-});
+const props = withDefaults(
+  defineProps<{
+    text?: string
+  }>(),
+  {
+    text: '',
+  }
+)
 
-const ipcStore = useIpcStore();
-const appConfig = computed(() => ipcStore.params.appConfig);
-const { translateText } = useCallAi();
-const menuModalsStore = useMenuModalsStore();
-const historyStore = useHistoryStore();
-const { toast } = useToast();
-const leftLetterKeys = computed(() => 
-  ipcStore.params.userConfig.toTranslateLanguages.map((lang, index) => 
-    ({name: lang, action: () => translate(index)})));
+const ipcStore = useIpcStore()
+const appConfig = computed(() => ipcStore.params.appConfig)
+const { translateText } = useCallAi()
+const menuModalsStore = useMenuModalsStore()
+const historyStore = useHistoryStore()
+const { toast } = useToast()
+const leftLetterKeys = computed<ActionItem[]>(() =>
+  ipcStore.params.userConfig.toTranslateLanguages.map((lang: string, index: number) => ({
+    name: lang,
+    action: async () => {
+      await translate(index)
+    },
+  }))
+)
 
 const translate = async (toLangNum: number) => {
-  const trimmedText = props.text.trim();
+  const trimmedText = props.text.trim()
   
   if (!trimmedText) {
     toast('Нет текста для перевода', 'warn');
@@ -49,14 +57,14 @@ const translate = async (toLangNum: number) => {
     return;
   }
 
-  menuModalsStore.setPendingModal({ ai: true });
+  menuModalsStore.setPendingModal({ ai: true })
   
-  const newText = await translateText(toLangNum, trimmedText);  
+  const newText = await translateText(toLangNum, trimmedText)
 
-  await historyStore.saveTransformHistory(newText);
+  await historyStore.saveTransformHistory(newText)
 
   menuModalsStore.nextModal(MenuModals.PREVIEW, {
     text: newText,
-  });
-};
+  })
+}
 </script>

@@ -14,7 +14,7 @@ export const useCallAi = () => {
   async function aiRequest(taskName: string, messages: string | ChatMessage[]) {
     const userConfig = currentUserConfig();
     const modelId = (userConfig.aiModelUsage as any)[taskName];
-    const model = userConfig.llmModels.find((model) => model.id === modelId);
+    const model = userConfig.llmModels.find((model: (typeof userConfig.llmModels)[number]) => model.id === modelId);
 
     if (!model) {
       throw new Error("Model not found");

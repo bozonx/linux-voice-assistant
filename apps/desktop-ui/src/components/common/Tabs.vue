@@ -26,17 +26,9 @@ const props = defineProps<{
   value?: string | number
 }>()
 
-const activeTab = ref<string | number>(props.value || props.tabs[0].key)
-
-watch(
-  () => props.value,
-  (newValue: string | number) => {
-    activeTab.value = newValue || props.tabs[0].key
-  }
-)
+const activeTab = computed(() => props.value ?? props.tabs[0]?.key ?? '')
 
 const onTabClick = (key: string | number) => {
-  activeTab.value = key
-  emit('update:value', activeTab.value)
+  emit('update:value', key)
 }
 </script>

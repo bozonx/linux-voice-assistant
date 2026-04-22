@@ -21,16 +21,10 @@ const ipcStore = useIpcStore();
 const actionMenuStore = useActionMenuStore();
 const DEFAULT_ACTIONS = actionMenuStore.DEFAULT_ACTIONS;
 
-const props = defineProps({
-  newText: {
-    type: String,
-    required: true,
-  },
-  oldText: {
-    type: String,
-    required: true,
-  },
-});
+const props = defineProps<{
+  newText: string
+  oldText: string
+}>()
 
 const emit = defineEmits<{
   (e: 'update:text', value: string): void;

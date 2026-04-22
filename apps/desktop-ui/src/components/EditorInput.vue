@@ -17,7 +17,12 @@ import { useRouteParams } from '../stores/routeParams'
 const editorInputStore = useEditorInputStore()
 const routeParamsStore = useRouteParams()
 const menuModalsStore = useMenuModalsStore()
-const textareaRef = ref<HTMLTextAreaElement | null>(null)
+type TextareaExposed = {
+  focus: () => void
+  select: (start?: number, end?: number) => void
+}
+
+const textareaRef = ref<TextareaExposed | null>(null)
 
 // set value from route params and focus
 onMounted(async () => {
@@ -57,15 +62,12 @@ watch(
   }
 )
 
-// Следим за изменениями выделения в store
-watch(
-  () => [editorInputStore.selectionStart, editorInputStore.selectionEnd],
-  ([start, end]) => {
-    if (textareaRef.value) {
-      textareaRef.value.select(start, end)
-    }
-  }
-)
+watchEffect(() => {
+  textareaRef.value?.select(
+    editorInputStore.selectionStart,
+    editorInputStore.selectionEnd
+  )
+})
 
 const handleInput = (value: string): void => {
   editorInputStore.setValue(value)

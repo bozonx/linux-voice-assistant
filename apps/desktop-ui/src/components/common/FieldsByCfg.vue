@@ -38,7 +38,7 @@ config.value.forEach((item: InputConfigItem) => {
   values.value[item.name] = item.value || item.defaultValue
 })
 
-function updateValue(name: string, value: any) {
+function updateValue(_name: string, _value: any) {
   emit('update:values', values.value)
 }
 </script>

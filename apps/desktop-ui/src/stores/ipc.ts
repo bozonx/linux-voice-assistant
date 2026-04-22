@@ -99,12 +99,8 @@ const commandMap: Record<
     },
   },
   openInBrowserAndClose: {
-    invoke: async ([url]) => {
-      window.open(String(url), '_blank', 'noopener,noreferrer')
-      await desktopClient.invoke(DESKTOP_COMMANDS.CLOSE_WINDOW)
-
-      return { success: true }
-    },
+    command: DESKTOP_COMMANDS.OPEN_IN_BROWSER_AND_CLOSE,
+    buildArgs: ([url]) => ({ url: String(url) }),
   },
 }
 

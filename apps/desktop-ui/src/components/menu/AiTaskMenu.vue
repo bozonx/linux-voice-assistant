@@ -15,6 +15,7 @@
 </template>
 
 <script setup lang="ts">
+import { type ActionItem } from '../../stores/actionMenu'
 import { useIpcStore } from "../../stores/ipc";
 import { useCallAi } from "../../composables/useCallAi";
 import { MenuModals, useMenuModalsStore } from "../../stores/menuModals";
@@ -22,16 +23,16 @@ import useToast from '../../composables/useToast';
 import { useRouteParams } from '../../stores/routeParams';
 import { useHistoryStore } from '../../stores/history';
 
-const props = defineProps({
-  text: {
-    type: String,
-    default: "",
-  },
-  stopListening: {
-    type: Boolean,
-    default: false,
-  },
-});
+const props = withDefaults(
+  defineProps<{
+    text?: string
+    stopListening?: boolean
+  }>(),
+  {
+    text: '',
+    stopListening: false,
+  }
+)
 
 const routeParamsStore = useRouteParams();
 const menuModalsStore = useMenuModalsStore();
@@ -40,10 +41,12 @@ const { aiTasks } = useCallAi();
 const appConfig = computed(() => ipcStore.params.appConfig);
 const { toast } = useToast();
 const historyStore = useHistoryStore();
-const leftLetterKeys = computed(() =>
-  ipcStore.params.userConfig.aiTasks.map((item, index) => ({
+const leftLetterKeys = computed<ActionItem[]>(() =>
+  ipcStore.params.userConfig.aiTasks.map((item: (typeof ipcStore.params.userConfig.aiTasks)[number], index: number) => ({
     name: item.name,
-    action: () => makeDiff(index),
+    action: async () => {
+      await makeDiff(index)
+    },
   }))
 );
 

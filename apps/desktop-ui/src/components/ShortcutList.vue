@@ -82,29 +82,22 @@
   } from "../composables/useGlobalEvents";
   import { useRouteParams } from "../stores/routeParams";
 
-  const props = defineProps({
-    text: {
-      type: String,
-      default: "",
-    },
-    spaceKey: { 
-      type: Object as PropType<ActionItem>,
-      default: undefined,
-    },
-    // make visible key "to editor"
-    toEditorVisible: {
-      type: Boolean,
-      default: false,
-    },
-    leftLetterKeys: {
-      type: Array as PropType<ActionItem[]>,
-      default: () => [],
-    },
-    stopListening: {
-      type: Boolean,
-      default: false,
-    },
-  });
+  const props = withDefaults(
+    defineProps<{
+      text?: string
+      spaceKey?: ActionItem
+      toEditorVisible?: boolean
+      leftLetterKeys?: ActionItem[]
+      stopListening?: boolean
+    }>(),
+    {
+      text: "",
+      spaceKey: undefined,
+      toEditorVisible: false,
+      leftLetterKeys: () => [],
+      stopListening: false,
+    }
+  );
 
   const routeParamsStore = useRouteParams();
   const { globalEvents } = useGlobalEvents();

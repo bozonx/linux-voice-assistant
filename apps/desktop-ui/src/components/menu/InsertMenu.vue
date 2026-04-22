@@ -21,54 +21,60 @@
 </template>
 
 <script setup lang="ts">
-import { useIpcStore } from '../../stores/ipc';
-import { useActionMenuStore } from '../../stores/actionMenu';
-import { useRouteParams } from '../../stores/routeParams';
+import { useIpcStore } from '../../stores/ipc'
+import { type ActionItem, useActionMenuStore } from '../../stores/actionMenu'
+import { useRouteParams } from '../../stores/routeParams'
 
-const routeParamsStore = useRouteParams();
+const routeParamsStore = useRouteParams()
 
-const props = defineProps({
-  text: {
-    type: String,
-    default: "",
-  },
-  // if set then diff will be shown
-  oldText: {
-    type: String,
-    default: "",
-  },
-  allowInsertButton: {
-    type: Boolean,
-    default: true
-  },
-  stopListening: {
-    type: Boolean,
-    default: false,
-  },
-});
+const props = withDefaults(
+  defineProps<{
+    text?: string
+    oldText?: string
+    allowInsertButton?: boolean
+    stopListening?: boolean
+  }>(),
+  {
+    text: '',
+    oldText: '',
+    allowInsertButton: true,
+    stopListening: false,
+  }
+)
 
 const emit = defineEmits<{
-  (e: 'update:text', value: string): void;
-}>();
+  (e: 'update:text', value: string): void
+}>()
 
-const ipcStore = useIpcStore();
-const actionMenuStore = useActionMenuStore();
-const actionsMenu = computed(() => actionMenuStore.getActionsMenu());
+const ipcStore = useIpcStore()
+const actionMenuStore = useActionMenuStore()
+const actionsMenu = computed(() => actionMenuStore.getActionsMenu())
 
-const leftLetterKeys = computed(() => 
-  actionsMenu.value.map((item, index) => 
-    ({...item, disabled: index === 0 && !needShowInsertButton()})));
+const leftLetterKeys = computed<ActionItem[]>(() =>
+  actionsMenu.value.map((item: ActionItem, index: number) => ({
+    ...item,
+    disabled: index === 0 && !needShowInsertButton(),
+  }))
+)
 
-const spaceKey = computed(() => ({
-  ...actionsMenu.value[0],
-  disabled: !needShowInsertButton(),
-}));
+const spaceKey = computed<ActionItem | undefined>(() => {
+  const [firstItem] = actionsMenu.value
+
+  if (!firstItem) {
+    return undefined
+  }
+
+  return {
+    ...firstItem,
+    disabled: !needShowInsertButton(),
+  }
+})
 
 function handleNewText(newText: string) {
-  emit('update:text', newText);
+  emit('update:text', newText)
 }
 
 function needShowInsertButton() {
-  return ipcStore.params?.windowId && props.text && props.allowInsertButton;
+  return Boolean(ipcStore.params?.windowId && props.text && props.allowInsertButton)
 }
 </script>

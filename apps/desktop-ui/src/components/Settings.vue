@@ -323,14 +323,10 @@ const pluginConfigs = pluginIndexes
     fields: plugin.defaultConfig!.fields,
   }))
 
-watch(
-  () => ipcStore.params.userConfig,
-  (nextUserConfig) => {
-    userConfig.value = structuredClone(nextUserConfig || DEFAULT_USER_CONFIG)
-    ensurePluginDefaults()
-  },
-  { immediate: true }
-)
+watchEffect(() => {
+  userConfig.value = structuredClone(ipcStore.params.userConfig || DEFAULT_USER_CONFIG)
+  ensurePluginDefaults()
+})
 
 onMounted(() => {
   ensurePluginDefaults()

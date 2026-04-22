@@ -24,7 +24,7 @@ function getRuntimeId(): string {
   return instanceId;
 }
 
-export function makeUniqId(bytes: number = 8): string {
+export function makeUniqId(_bytes: number = 8): string {
   counter++;
   return hashSum(getRuntimeId() + counter.toString());
 }
