@@ -8,6 +8,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AiChat: typeof import('./src/components/AiChat.vue')['default']
     AiTaskMenu: typeof import('./src/components/menu/AiTaskMenu.vue')['default']
     Button: typeof import('./src/components/common/Button.vue')['default']
     Card: typeof import('./src/components/common/Card.vue')['default']

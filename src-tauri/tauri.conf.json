@@ -1,0 +1,33 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Librnet Assistant",
+  "version": "0.0.3",
+  "identifier": "bozonx.desktop-assistant",
+  "build": {
+    "beforeDevCommand": "pnpm dev:ui",
+    "beforeBuildCommand": "pnpm build:ui",
+    "frontendDist": "../apps/desktop-ui/dist",
+    "devUrl": "http://localhost:3000"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "title": "Librnet Assistant",
+        "width": 800,
+        "height": 600,
+        "minWidth": 640,
+        "minHeight": 480,
+        "resizable": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["appimage", "deb"],
+    "icon": []
+  }
+}

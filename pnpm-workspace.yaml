@@ -1,11 +1,7 @@
 packages:
   - '.'
-  - 'vue'
+  - 'apps/*'
+  - 'packages/*'
 
 ignoredBuiltDependencies:
   - electron-winstaller
-  - grpc-tools
-  - protobufjs
-
-onlyBuiltDependencies:
-  - electron

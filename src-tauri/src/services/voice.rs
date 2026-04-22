@@ -1,0 +1,263 @@
+use std::thread;
+use std::time::Duration;
+
+use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
+use cpal::Sample;
+use futures_util::{SinkExt, StreamExt};
+use serde_json::Value;
+use tauri::AppHandle;
+use tokio::runtime::Builder;
+use tokio::sync::{mpsc, watch};
+use tokio::time::timeout_at;
+use tokio_tungstenite::{connect_async, tungstenite::Message};
+
+use crate::errors::AppError;
+use crate::services::runtime;
+use crate::state::{AppState, VoiceSession};
+
+pub async fn start(app: AppHandle, state: &AppState, ws_url: String) -> Result<(), AppError> {
+    stop(state).await?;
+    let (shutdown_tx, shutdown_rx) = watch::channel(false);
+    let thread = thread::spawn(move || {
+        if let Err(error) = run_voice_thread(app, ws_url, shutdown_rx) {
+            eprintln!("Voice recognition error: {error}");
+        }
+    });
+
+    state.replace_voice_session(Some(VoiceSession {
+        shutdown_tx,
+        thread,
+    }));
+
+    Ok(())
+}
+
+pub async fn stop(state: &AppState) -> Result<(), AppError> {
+    if let Some(session) = state.replace_voice_session(None) {
+        let _ = session.shutdown_tx.send(true);
+        let _ = session.thread.join();
+    }
+
+    Ok(())
+}
+
+fn run_voice_thread(
+    app: AppHandle,
+    ws_url: String,
+    shutdown_rx: watch::Receiver<bool>,
+) -> Result<(), AppError> {
+    let runtime = Builder::new_current_thread()
+        .enable_all()
+        .build()
+        .map_err(|error| AppError::Message(error.to_string()))?;
+
+    runtime.block_on(async move {
+        let host = cpal::default_host();
+        let device = host
+            .default_input_device()
+            .ok_or_else(|| AppError::Message(String::from("No default input device found")))?;
+        let supported_config = device
+            .default_input_config()
+            .map_err(|error| AppError::Message(error.to_string()))?;
+        let sample_rate = supported_config.sample_rate().0;
+        let stream_config = supported_config.config();
+        let (audio_tx, audio_rx) = mpsc::unbounded_channel::<Vec<u8>>();
+
+        let stream = match supported_config.sample_format() {
+            cpal::SampleFormat::F32 => {
+                build_input_stream::<f32>(&device, &stream_config, audio_tx)?
+            }
+            cpal::SampleFormat::I16 => {
+                build_input_stream::<i16>(&device, &stream_config, audio_tx)?
+            }
+            cpal::SampleFormat::U16 => {
+                build_input_stream::<u16>(&device, &stream_config, audio_tx)?
+            }
+            sample_format => {
+                return Err(AppError::Message(format!(
+                    "Unsupported sample format: {sample_format:?}"
+                )))
+            }
+        };
+
+        stream
+            .play()
+            .map_err(|error| AppError::Message(error.to_string()))?;
+
+        run_voice_session(app, ws_url, sample_rate, audio_rx, shutdown_rx).await
+    })
+}
+
+async fn run_voice_session(
+    app: AppHandle,
+    ws_url: String,
+    sample_rate: u32,
+    mut audio_rx: mpsc::UnboundedReceiver<Vec<u8>>,
+    mut shutdown_rx: watch::Receiver<bool>,
+) -> Result<(), AppError> {
+    let (mut ws, _) = connect_async(&ws_url)
+        .await
+        .map_err(|error| AppError::Message(error.to_string()))?;
+    let config_message = serde_json::json!({
+        "config": {
+            "sample_rate": sample_rate
+        }
+    });
+
+    ws.send(Message::Text(config_message.to_string()))
+        .await
+        .map_err(|error| AppError::Message(error.to_string()))?;
+
+    let mut parts: Vec<String> = Vec::new();
+
+    loop {
+        tokio::select! {
+            maybe_audio = audio_rx.recv() => {
+                match maybe_audio {
+                    Some(audio) => {
+                        ws.send(Message::Binary(audio))
+                            .await
+                            .map_err(|error| AppError::Message(error.to_string()))?;
+                    }
+                    None => break,
+                }
+            }
+            incoming = ws.next() => {
+                match incoming {
+                    Some(Ok(message)) => {
+                        handle_ws_message(&app, &mut parts, message)?;
+                    }
+                    Some(Err(error)) => {
+                        return Err(AppError::Message(error.to_string()));
+                    }
+                    None => break,
+                }
+            }
+            changed = shutdown_rx.changed() => {
+                if changed.is_ok() && *shutdown_rx.borrow() {
+                    let _ = ws.send(Message::Text(String::from("{\"eof\": 1}"))).await;
+                    drain_final_messages(&app, &mut parts, &mut ws).await?;
+                    break;
+                }
+            }
+        }
+    }
+
+    let _ = ws.close(None).await;
+
+    Ok(())
+}
+
+async fn drain_final_messages(
+    app: &AppHandle,
+    parts: &mut Vec<String>,
+    ws: &mut tokio_tungstenite::WebSocketStream<
+        tokio_tungstenite::MaybeTlsStream<tokio::net::TcpStream>,
+    >,
+) -> Result<(), AppError> {
+    let deadline = tokio::time::Instant::now() + Duration::from_secs(2);
+
+    loop {
+        match timeout_at(deadline, ws.next()).await {
+            Ok(Some(Ok(message))) => {
+                handle_ws_message(app, parts, message)?;
+            }
+            Ok(Some(Err(error))) => {
+                return Err(AppError::Message(error.to_string()));
+            }
+            Ok(None) | Err(_) => break,
+        }
+    }
+
+    Ok(())
+}
+
+fn handle_ws_message(
+    app: &AppHandle,
+    parts: &mut Vec<String>,
+    message: Message,
+) -> Result<(), AppError> {
+    let payload = match message {
+        Message::Text(text) => text,
+        Message::Binary(bytes) => {
+            String::from_utf8(bytes).map_err(|error| AppError::Message(error.to_string()))?
+        }
+        _ => return Ok(()),
+    };
+    let json: Value = serde_json::from_str(&payload)?;
+
+    if let Some(text) = json.get("text").and_then(Value::as_str) {
+        if !text.trim().is_empty() {
+            parts.push(text.to_string());
+            let _ = runtime::emit_voice_text(app, parts.join(" ").trim().to_string());
+        }
+    }
+
+    Ok(())
+}
+
+fn build_input_stream<T>(
+    device: &cpal::Device,
+    config: &cpal::StreamConfig,
+    audio_tx: mpsc::UnboundedSender<Vec<u8>>,
+) -> Result<cpal::Stream, AppError>
+where
+    T: cpal::SizedSample,
+    i16: cpal::FromSample<T>,
+{
+    let channels = usize::from(config.channels);
+    let error_callback = |error| {
+        eprintln!("Audio input stream error: {error}");
+    };
+
+    device
+        .build_input_stream(
+            config,
+            move |data: &[T], _| {
+                let mut bytes = Vec::with_capacity(data.len() * 2);
+
+                for frame in data.chunks(channels) {
+                    if let Some(sample) = frame.first() {
+                        let sample_i16: i16 = i16::from_sample(*sample);
+                        bytes.extend_from_slice(&sample_i16.to_le_bytes());
+                    }
+                }
+
+                let _ = audio_tx.send(bytes);
+            },
+            error_callback,
+            None,
+        )
+        .map_err(|error| AppError::Message(error.to_string()))
+}
+
+pub fn resolve_ws_url(params: &crate::models::InitParams) -> String {
+    let usage_id = params
+        .user_config
+        .get("aiModelUsage")
+        .and_then(|usage| usage.get("stt"))
+        .and_then(Value::as_str)
+        .unwrap_or_default();
+
+    if let Some(url) = params
+        .user_config
+        .get("sttModels")
+        .and_then(Value::as_array)
+        .and_then(|items| {
+            items.iter().find_map(|item| {
+                let id = item.get("id").and_then(Value::as_str)?;
+                let url = item.get("baseUrl").and_then(Value::as_str)?;
+
+                if !usage_id.is_empty() && id == usage_id {
+                    Some(url.to_string())
+                } else {
+                    None
+                }
+            })
+        })
+    {
+        return url;
+    }
+
+    String::from("ws://localhost:2700")
+}

@@ -1,0 +1,176 @@
+// @ts-ignore
+import miniToastr from 'mini-toastr'
+import { defineStore } from 'pinia'
+
+import {
+  DEFAULT_INIT_PARAMS,
+  DESKTOP_COMMANDS,
+  type InitParams,
+  type IpcResult,
+  type UserConfig,
+} from '@shared'
+
+import { desktopClient } from '../lib/desktop/client'
+
+const commandMap: Record<
+  string,
+  {
+    command?: string
+    invoke?: (args: any[]) => Promise<IpcResult>
+    buildArgs?: (args: any[]) => Record<string, unknown>
+  }
+> = {
+  saveUserConfig: {
+    command: DESKTOP_COMMANDS.SAVE_USER_CONFIG,
+    buildArgs: ([userConfigJson]) => ({ userConfigJson }),
+  },
+  getEditorHistory: {
+    command: DESKTOP_COMMANDS.GET_EDITOR_HISTORY,
+  },
+  getTransformHistory: {
+    command: DESKTOP_COMMANDS.GET_TRANSFORM_HISTORY,
+  },
+  getChatHistory: {
+    command: DESKTOP_COMMANDS.GET_CHAT_HISTORY,
+  },
+  saveMainInputTmp: {
+    command: DESKTOP_COMMANDS.SAVE_MAIN_INPUT_TMP,
+    buildArgs: ([value]) => ({ value }),
+  },
+  clearMainInputTmp: {
+    command: DESKTOP_COMMANDS.CLEAR_MAIN_INPUT_TMP,
+  },
+  saveEditorHistory: {
+    command: DESKTOP_COMMANDS.SAVE_EDITOR_HISTORY,
+    buildArgs: ([value]) => ({ value }),
+  },
+  saveTransformHistory: {
+    command: DESKTOP_COMMANDS.SAVE_TRANSFORM_HISTORY,
+    buildArgs: ([value]) => ({ value }),
+  },
+  saveChatHistory: {
+    command: DESKTOP_COMMANDS.SAVE_CHAT_HISTORY,
+    buildArgs: ([chatHistoryItem]) => ({ chatHistoryItem }),
+  },
+  removeFromEditorHistory: {
+    command: DESKTOP_COMMANDS.REMOVE_FROM_EDITOR_HISTORY,
+    buildArgs: ([value]) => ({ value }),
+  },
+  removeFromTransformHistory: {
+    command: DESKTOP_COMMANDS.REMOVE_FROM_TRANSFORM_HISTORY,
+    buildArgs: ([value]) => ({ value }),
+  },
+  removeFromChatHistory: {
+    command: DESKTOP_COMMANDS.REMOVE_FROM_CHAT_HISTORY,
+    buildArgs: ([id]) => ({ id }),
+  },
+  clearEditorHistory: {
+    command: DESKTOP_COMMANDS.CLEAR_EDITOR_HISTORY,
+  },
+  clearTransformHistory: {
+    command: DESKTOP_COMMANDS.CLEAR_TRANSFORM_HISTORY,
+  },
+  clearChatHistory: {
+    command: DESKTOP_COMMANDS.CLEAR_CHAT_HISTORY,
+  },
+  startVoiceRecognition: {
+    command: DESKTOP_COMMANDS.START_VOICE_RECOGNITION,
+  },
+  stopVoiceRecognition: {
+    command: DESKTOP_COMMANDS.STOP_VOICE_RECOGNITION,
+  },
+  typeIntoWindowAndClose: {
+    command: DESKTOP_COMMANDS.TYPE_INTO_WINDOW_AND_CLOSE,
+    buildArgs: ([text]) => ({ text }),
+  },
+  putIntoClipboardAndClose: {
+    invoke: async ([text]) => {
+      try {
+        await navigator.clipboard.writeText(text)
+        await desktopClient.invoke(DESKTOP_COMMANDS.CLOSE_WINDOW)
+
+        return { success: true }
+      } catch (error) {
+        return {
+          success: false,
+          error: error instanceof Error ? error.message : String(error),
+        }
+      }
+    },
+  },
+  openInBrowserAndClose: {
+    invoke: async ([url]) => {
+      window.open(String(url), '_blank', 'noopener,noreferrer')
+      await desktopClient.invoke(DESKTOP_COMMANDS.CLOSE_WINDOW)
+
+      return { success: true }
+    },
+  },
+}
+
+export const useIpcStore = defineStore('ipc', () => {
+  const params = ref<InitParams>(structuredClone(DEFAULT_INIT_PARAMS))
+
+  const callFunction = async (
+    functionName: string,
+    args: any[] = []
+  ): Promise<IpcResult> => {
+    try {
+      const mappedCommand = commandMap[functionName]
+
+      if (!mappedCommand) {
+        return {
+          success: false,
+          error: `Unknown desktop function: ${functionName}`,
+        }
+      }
+
+      if (mappedCommand.invoke) {
+        return await mappedCommand.invoke(args)
+      }
+
+      return await desktopClient.invoke(
+        mappedCommand.command!,
+        mappedCommand.buildArgs?.(args)
+      )
+    } catch (error) {
+      miniToastr.error(String(error), 'Api call error')
+      console.error('Error calling function:', error)
+
+      return { success: false, error: String(error) }
+    }
+  }
+
+  const loadInitialParams = async (): Promise<InitParams> => {
+    const result = await desktopClient.invoke<InitParams>(
+      DESKTOP_COMMANDS.GET_INIT_PARAMS
+    )
+
+    if (result.success && result.result) {
+      params.value = result.result
+      return result.result
+    }
+
+    const fallback = desktopClient.getInitParams()
+    params.value = fallback
+
+    return fallback
+  }
+
+  const setParams = (incomingData: InitParams) => {
+    params.value = { ...params.value, ...incomingData }
+  }
+
+  const saveUserConfig = async (userConfig: UserConfig) => {
+    await callFunction('saveUserConfig', [JSON.stringify(userConfig)])
+    params.value.userConfig = userConfig
+  }
+
+  return {
+    params,
+    callFunction,
+    loadInitialParams,
+    setParams,
+    saveUserConfig,
+  }
+})
