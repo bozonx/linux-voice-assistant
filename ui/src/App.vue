@@ -10,6 +10,7 @@
 
 <script setup lang="ts">
 import { DESKTOP_EVENTS, type InitParams } from '@shared'
+import { onMounted, onUnmounted } from 'vue'
 
 import { useRouter } from 'vue-router';
 

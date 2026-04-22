@@ -15,6 +15,8 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+
 import { useEditorInputStore } from '../stores/editorInput'
 import { useMenuModalsStore } from '../stores/menuModals'
 import { useNavPanelStore } from '../stores/navPanel'

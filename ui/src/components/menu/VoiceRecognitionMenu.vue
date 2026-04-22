@@ -12,6 +12,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+
 import { useCallAi } from '../../composables/useCallAi';
 import { GlobalEvents, useGlobalEvents } from '../../composables/useGlobalEvents';
 import { useIpcStore } from '../../stores/ipc';

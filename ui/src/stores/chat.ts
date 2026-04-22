@@ -1,5 +1,6 @@
 import { APP_CONFIG, type ChatMessage, type ChatParams } from "@shared";
 import { defineStore } from "pinia";
+import { ref } from "vue";
 
 import { useCallAi } from "../composables/useCallAi";
 import { useRouter } from "vue-router";

@@ -35,6 +35,7 @@
 </template>
 
 <script setup lang="ts">
+  import { computed } from "vue";
   import { Icon } from "@iconify/vue";
   import { truncate } from "@/lib/squidlet-lib-local";
 

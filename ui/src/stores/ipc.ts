@@ -1,6 +1,7 @@
 // @ts-ignore
 import miniToastr from 'mini-toastr'
 import { defineStore } from 'pinia'
+import { ref } from 'vue'
 
 import {
   DEFAULT_INIT_PARAMS,

@@ -12,6 +12,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+
 import TabItem from './TabItem.vue'
 
 const emit = defineEmits<{

@@ -13,6 +13,7 @@
 
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
+import { ref } from 'vue'
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void

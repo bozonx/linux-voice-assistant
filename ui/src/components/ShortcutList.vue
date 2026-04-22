@@ -74,6 +74,7 @@
 </template>
 
 <script setup lang="ts">
+  import { computed, onMounted, onUnmounted } from "vue";
   import { PRESETS_KEYS } from "../types";
   import { ActionItem } from "../stores/actionMenu";
   import {

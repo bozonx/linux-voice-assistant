@@ -10,6 +10,8 @@
 </template>
 
 <script setup lang="ts">
+import { nextTick, onMounted, ref, watch, watchEffect } from 'vue'
+
 import { useEditorInputStore } from '../stores/editorInput'
 import { useMenuModalsStore } from '../stores/menuModals'
 import { useRouteParams } from '../stores/routeParams'

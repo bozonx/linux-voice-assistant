@@ -13,6 +13,8 @@
 </template>
 
 <script setup lang="ts">
+import { onUnmounted, ref, watch } from 'vue'
+
 import { useCallAi } from '../composables/useCallAi'
 import useToast from '../composables/useToast'
 import { useHistoryStore } from '../stores/history'

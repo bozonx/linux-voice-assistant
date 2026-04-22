@@ -9,6 +9,8 @@
 </template>
 
 <script setup lang="ts">
+import { nextTick, onMounted, ref, watch } from 'vue'
+
 import { useMenuModalsStore } from '../stores/menuModals'
 import { useWriterInputStore } from '../stores/writerInput'
 

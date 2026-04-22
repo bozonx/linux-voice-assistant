@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { computed, ref } from 'vue'
 
 import { useCallAi } from '../composables/useCallAi'
 import { useCallApi } from '../composables/useCallApi'

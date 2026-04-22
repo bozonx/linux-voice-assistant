@@ -18,7 +18,6 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "components.d.ts",
-    "auto-imports.d.ts",
     "../../packages/shared/**/*.ts"
   ],
   "exclude": ["src/**/__tests__/*"]

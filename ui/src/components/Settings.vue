@@ -294,6 +294,7 @@
 
 <script setup lang="ts">
 import { DEFAULT_USER_CONFIG } from '@shared'
+import { computed, onMounted, ref, watchEffect } from 'vue'
 
 import { pluginIndexes } from '../plugins'
 import useToast from '../composables/useToast'

@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { ref } from 'vue'
 
 // Функция для получения системной темы из настроек браузера
 const getSystemTheme = (): string => {

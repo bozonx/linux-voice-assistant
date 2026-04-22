@@ -9,6 +9,8 @@
 </template>
 
 <script setup lang="ts">
+import { nextTick, onMounted, ref, watch } from 'vue'
+
 import { useChatInputStore } from '../stores/chatInput'
 import { useRouteParams } from '../stores/routeParams'
 

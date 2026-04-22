@@ -7,6 +7,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+
 import { useIpcStore } from '../stores/ipc';
 import { useMenuModalsStore } from '../stores/menuModals';
 import { useNavPanelStore } from '../stores/navPanel';

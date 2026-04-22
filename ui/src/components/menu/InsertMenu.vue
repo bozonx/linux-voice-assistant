@@ -21,6 +21,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+
 import { useIpcStore } from '../../stores/ipc'
 import { type ActionItem, useActionMenuStore } from '../../stores/actionMenu'
 import { useRouteParams } from '../../stores/routeParams'

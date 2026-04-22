@@ -11,6 +11,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+
 import { type ActionItem } from '../../stores/actionMenu'
 import { useIpcStore } from '../../stores/ipc'
 import { useCallAi } from '../../composables/useCallAi'

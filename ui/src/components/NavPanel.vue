@@ -43,6 +43,7 @@
 </template>
 
 <script setup lang="ts">
+  import { computed } from "vue";
   import { Icon } from "@iconify/vue";
   import { useRouter } from "vue-router";
   import { useNavPanelStore } from "../stores/navPanel";

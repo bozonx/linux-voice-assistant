@@ -47,6 +47,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
+
 import useToast from '../composables/useToast'
 import { useHistoryStore } from '../stores/history'
 import { useNavPanelStore } from '../stores/navPanel'

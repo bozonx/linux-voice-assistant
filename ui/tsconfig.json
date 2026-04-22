@@ -27,7 +27,8 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
-    "noImplicitThis": true
+    "noImplicitThis": true,
+    "ignoreDeprecations": "6.0"
   },
   "include": [
     "src/**/*.ts",
@@ -35,7 +36,6 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "components.d.ts",
-    "auto-imports.d.ts",
     "../packages/shared/**/*.ts",
     "src/components/DropdownRow.vue",
     "../_old/keys.ts"
