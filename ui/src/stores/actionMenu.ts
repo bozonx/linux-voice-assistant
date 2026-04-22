@@ -3,7 +3,6 @@ import { computed, ref } from 'vue'
 
 import { useCallAi } from '../composables/useCallAi'
 import { useCallApi } from '../composables/useCallApi'
-import { useI18n } from '../composables/useI18n'
 import useToast from '../composables/useToast'
 import { useChatStore } from './chat'
 import { useHistoryStore } from './history'
@@ -12,7 +11,8 @@ import { MenuModals, useMenuModalsStore } from './menuModals'
 
 // TODO: почему тут?
 export interface ActionItem {
-  name: string
+  name?: string
+  labelKey?: string
   icon?: string
   disabled?: boolean
   action: (text: string) => Promise<void>
@@ -28,14 +28,13 @@ export const useActionMenuStore = defineStore('actionMenu', () => {
   const { toast } = useToast()
   const registeredActionsMenu = ref<ActionItem[]>([])
   const chatStore = useChatStore()
-  const { t } = useI18n()
 
   const getDefaultActions = (): ActionItem[] => [
     {
-      name: t('action.insertIntoWindow'),
+      labelKey: 'action.insertIntoWindow',
       action: async (text: string) => {
         if (!text?.trim()) {
-          toast(t('toast.textNotSelected'), 'error')
+          toast('toast.textNotSelected', 'error')
           return
         }
 
@@ -43,10 +42,10 @@ export const useActionMenuStore = defineStore('actionMenu', () => {
       },
     },
     {
-      name: t('action.copyToClipboard'),
+      labelKey: 'action.copyToClipboard',
       action: async (text: string) => {
         if (!text?.trim()) {
-          toast(t('toast.textNotSelected'), 'error')
+          toast('toast.textNotSelected', 'error')
           return
         }
 
@@ -54,10 +53,10 @@ export const useActionMenuStore = defineStore('actionMenu', () => {
       },
     },
     {
-      name: t('action.aiTask'),
+      labelKey: 'action.aiTask',
       action: async (text: string) => {
         if (!text?.trim()) {
-          toast(t('toast.textNotSelected'), 'error')
+          toast('toast.textNotSelected', 'error')
           return
         }
 
@@ -67,15 +66,15 @@ export const useActionMenuStore = defineStore('actionMenu', () => {
       },
     },
     {
-      name: t('action.correction'),
+      labelKey: 'action.correction',
       action: async (text: string) => {
         if (!text?.trim()) {
-          toast(t('toast.textNotSelected'), 'error')
+          toast('toast.textNotSelected', 'error')
           return
         }
 
         if (text.length < appConfig.value.minCorrectionLength) {
-          toast(t('toast.textTooShortForCorrection'), 'warn')
+          toast('toast.textTooShortForCorrection', 'warn')
           return
         }
 
@@ -94,10 +93,10 @@ export const useActionMenuStore = defineStore('actionMenu', () => {
       },
     },
     {
-      name: t('action.translation'),
+      labelKey: 'action.translation',
       action: async (text: string) => {
         if (!text?.trim()) {
-          toast(t('toast.textNotSelected'), 'error')
+          toast('toast.textNotSelected', 'error')
           return
         }
 
@@ -107,7 +106,7 @@ export const useActionMenuStore = defineStore('actionMenu', () => {
       },
     },
     {
-      name: t('action.askAi'),
+      labelKey: 'action.askAi',
       action: async (text: string) => {
         chatStore.startChat({
           initialMessage: text,
@@ -115,10 +114,10 @@ export const useActionMenuStore = defineStore('actionMenu', () => {
       },
     },
     {
-      name: t('action.askAiAboutText'),
+      labelKey: 'action.askAiAboutText',
       action: async (text: string) => {
         if (!text?.trim()) {
-          toast(t('toast.textNotSelected'), 'error')
+          toast('toast.textNotSelected', 'error')
           return
         }
 

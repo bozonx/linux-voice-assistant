@@ -19,7 +19,6 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-
 import { useRouter } from 'vue-router'
 
 import { useI18n } from '../../composables/useI18n'
@@ -44,21 +43,22 @@ const router = useRouter()
 const { t } = useI18n()
 const defaultActions = computed(() => actionMenuStore.getDefaultActions())
 
-const leftLetterKeys = computed(() =>
-  [
-    ipcStore.params?.windowId ? defaultActions.value[0] : undefined,
-    defaultActions.value[1],
-    {
-      name: t('action.insertIntoEditor'),
-      action: async () => {
-        editorInputStore.setValue(editedNewText.value)
-        routeParams.setParams({ text: editedNewText.value })
-        editorInputStore.focus()
-        menuModalsStore.closeAll()
-        await router.push('/')
+const leftLetterKeys = computed(
+  () =>
+    [
+      ipcStore.params?.windowId ? defaultActions.value[0] : undefined,
+      defaultActions.value[1],
+      {
+        labelKey: 'action.insertIntoEditor',
+        action: async () => {
+          editorInputStore.setValue(editedNewText.value)
+          routeParams.setParams({ text: editedNewText.value })
+          editorInputStore.focus()
+          menuModalsStore.closeAll()
+          await router.push('/')
+        },
       },
-    },
-  ].filter(Boolean) as ActionItem[]
+    ].filter(Boolean) as ActionItem[]
 )
 
 const spaceKey = computed(() =>

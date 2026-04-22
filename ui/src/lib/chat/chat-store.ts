@@ -1,4 +1,3 @@
-import { APP_CONFIG, type ChatMessage, type ChatParams, type ChatHistoryItem } from '@shared'
 import { ref } from 'vue'
 
 import { AI_TASKS } from '../../types'
@@ -7,6 +6,12 @@ import {
   createChatHistoryEntry,
   prepareChatRequest,
 } from './chat-helpers'
+import {
+  APP_CONFIG,
+  type ChatHistoryItem,
+  type ChatMessage,
+  type ChatParams,
+} from '@shared'
 
 export interface ChatStoreDeps {
   sendChatMessage: (
@@ -17,7 +22,7 @@ export interface ChatStoreDeps {
   saveChatHistory: (item: ChatHistoryItem) => void | Promise<void>
   navigateTo: (path: string) => void | Promise<void>
   notifyError: (message: string) => void
-  emptyMessageError: string
+  emptyMessageError: () => string
   createId: () => string
   nowIso: () => string
 }
@@ -32,7 +37,7 @@ export function createChatStoreModel(deps: ChatStoreDeps) {
     role?: string
   ) => {
     if (!message?.trim()) {
-      deps.notifyError(deps.emptyMessageError)
+      deps.notifyError(deps.emptyMessageError())
       return
     }
 

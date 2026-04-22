@@ -1,71 +1,71 @@
-import { defineStore } from "pinia";
-import { ref } from "vue";
-import { useI18n } from "../composables/useI18n";
-import { useTextTransform } from "../composables/useTextTransform";
-import { useCodeFormatter } from "../composables/useCodeFormatter";
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
+
+import { useCodeFormatter } from '../composables/useCodeFormatter'
+import { useTextTransform } from '../composables/useTextTransform'
 
 export interface EditItem {
-  name: string;
-  icon?: string;
-  action: (text: string) => Promise<string>;
+  name?: string
+  labelKey?: string
+  icon?: string
+  action: (text: string) => Promise<string>
 }
 
-export const useEditMenuStore = defineStore("editMenu", () => {
-  const { doCaseTransform } = useTextTransform();
-  const { formatMdAndStyle, formatSomeCode } = useCodeFormatter();
-  const { t } = useI18n()
+export const useEditMenuStore = defineStore('editMenu', () => {
+  const { doCaseTransform } = useTextTransform()
+  const { formatMdAndStyle, formatSomeCode } = useCodeFormatter()
 
-  const registeredEditMenu = ref<EditItem[]>([]);
+  const registeredEditMenu = ref<EditItem[]>([])
 
   const getEditMenu = () => {
     const defaultEditItems: EditItem[] = [
       {
-        name: t("edit.beautifyMd"),
+        labelKey: 'edit.beautifyMd',
         action: async (text: string) => formatMdAndStyle(text),
       },
       {
-        name: t("edit.formatCode"),
+        labelKey: 'edit.formatCode',
         action: async (text: string) => formatSomeCode(text),
       },
       {
-        name: t("edit.normalize"),
-        action: async (text: string) => doCaseTransform(text, "normalize"),
+        labelKey: 'edit.normalize',
+        action: async (text: string) => doCaseTransform(text, 'normalize'),
       },
       {
-        name: t("edit.uppercase"),
-        action: async (text: string) => doCaseTransform(text, "uppercase"),
+        labelKey: 'edit.uppercase',
+        action: async (text: string) => doCaseTransform(text, 'uppercase'),
       },
       {
-        name: t("edit.lowercase"),
-        action: async (text: string) => doCaseTransform(text, "lowercase"),
+        labelKey: 'edit.lowercase',
+        action: async (text: string) => doCaseTransform(text, 'lowercase'),
       },
       {
-        name: t("edit.camelCase"),
-        action: async (text: string) => doCaseTransform(text, "camelCase"),
+        labelKey: 'edit.camelCase',
+        action: async (text: string) => doCaseTransform(text, 'camelCase'),
       },
       {
-        name: t("edit.pascalCase"),
-        action: async (text: string) => doCaseTransform(text, "pascalCase"),
+        labelKey: 'edit.pascalCase',
+        action: async (text: string) => doCaseTransform(text, 'pascalCase'),
       },
       {
-        name: t("edit.snakeCase"),
-        action: async (text: string) => doCaseTransform(text, "snakeCase"),
+        labelKey: 'edit.snakeCase',
+        action: async (text: string) => doCaseTransform(text, 'snakeCase'),
       },
       {
-        name: t("edit.kebabCase"),
-        action: async (text: string) => doCaseTransform(text, "kebabCase"),
+        labelKey: 'edit.kebabCase',
+        action: async (text: string) => doCaseTransform(text, 'kebabCase'),
       },
-    ];
+    ]
 
-    return [...defaultEditItems, ...registeredEditMenu.value];
-  };
+    return [...defaultEditItems, ...registeredEditMenu.value]
+  }
 
   const registerEditItems = (edit: EditItem[]) => {
-    registeredEditMenu.value.push(...edit);
-  };
+    registeredEditMenu.value.push(...edit)
+  }
 
   return {
     getEditMenu,
     registerEditItems,
-  };
-});
+  }
+})

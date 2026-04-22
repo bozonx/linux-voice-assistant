@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import { createChatStoreModel, type ChatStoreDeps } from './chat-store'
+import { type ChatStoreDeps, createChatStoreModel } from './chat-store'
 
 function createDeps(overrides: Partial<ChatStoreDeps> = {}): ChatStoreDeps {
   return {
@@ -8,7 +8,7 @@ function createDeps(overrides: Partial<ChatStoreDeps> = {}): ChatStoreDeps {
     saveChatHistory: vi.fn(),
     navigateTo: vi.fn(),
     notifyError: vi.fn(),
-    emptyMessageError: 'No text selected',
+    emptyMessageError: () => 'No text selected',
     createId: vi.fn(() => 'chat-id-1'),
     nowIso: vi.fn(() => '2026-04-22T00:00:00.000Z'),
     ...overrides,

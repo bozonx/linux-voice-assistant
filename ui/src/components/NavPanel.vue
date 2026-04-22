@@ -9,14 +9,18 @@
         >{{ escBtnText }}</Button
       >
     </div>
-    <div class="flex flex-row gap-1" v-if="navPanelStore.params.rightPanelVisible">
+    <div
+      class="flex flex-row gap-1"
+      v-if="navPanelStore.params.rightPanelVisible"
+    >
       <Button
         :disabled="router.currentRoute.value.path === '/editor'"
-        sm 
+        sm
         neutral
-        @click="routeParamsStore.toEditor()">
-       <Icon icon="mdi:pencil" height="16" />
-       {{ t('nav.editor') }}
+        @click="routeParamsStore.toEditor()"
+      >
+        <Icon icon="mdi:pencil" height="16" />
+        {{ t('nav.editor') }}
       </Button>
       <Button
         :disabled="router.currentRoute.value.path === '/history'"
@@ -43,37 +47,42 @@
 </template>
 
 <script setup lang="ts">
-  import { computed } from "vue";
-  import { Icon } from "@iconify/vue";
-  import { useRouter } from "vue-router";
-  import { useI18n } from '../composables/useI18n'
-  import { useNavPanelStore } from "../stores/navPanel";
-  import { useRouteParams } from "../stores/routeParams";
-  import { useMenuModalsStore } from "../stores/menuModals";
+import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 
-  const router = useRouter();
-  const routeParamsStore = useRouteParams();
-  const navPanelStore = useNavPanelStore(); 
-  const menuModalsStore = useMenuModalsStore();
-  const { t } = useI18n()
+import { useI18n } from '../composables/useI18n'
+import { useMenuModalsStore } from '../stores/menuModals'
+import { useNavPanelStore } from '../stores/navPanel'
+import { useRouteParams } from '../stores/routeParams'
+import { Icon } from '@iconify/vue'
 
-  const escBtnText = computed(() => {
-    return navPanelStore.params.escBtnText + t('nav.escSuffix');
-  });
+const router = useRouter()
+const routeParamsStore = useRouteParams()
+const navPanelStore = useNavPanelStore()
+const menuModalsStore = useMenuModalsStore()
+const { t } = useI18n()
 
-  function openSettings() {
-    menuModalsStore.closeAll();
-    router.push("/config");
-  }
+const escBtnText = computed(() => {
+  const baseText = navPanelStore.params.escBtnLabelKey
+    ? t(navPanelStore.params.escBtnLabelKey)
+    : navPanelStore.params.escBtnText || ''
 
-  function openHistory() {
-    menuModalsStore.closeAll();
-    router.push("/history");
-  }
+  return baseText + t('nav.escSuffix')
+})
+
+function openSettings() {
+  menuModalsStore.closeAll()
+  router.push('/config')
+}
+
+function openHistory() {
+  menuModalsStore.closeAll()
+  router.push('/history')
+}
 </script>
 
 <style scoped>
-  .panel {
-    padding: 0.5rem 1.25rem;
-  }
+.panel {
+  padding: 0.5rem 1.25rem;
+}
 </style>

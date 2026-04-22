@@ -1,20 +1,17 @@
 import type { InputConfigItem } from 'src/types'
 
-import { useI18n } from '../../composables/useI18n'
 import { PluginContext } from '../../types/plugins'
 
 export default function pluginIndex() {
-  const { t } = useI18n()
-
   return {
     name: 'SearchInInternet',
-    label: t('action.searchInInternet'),
+    labelKey: 'plugin.searchInInternet.label',
     defaultConfig: {
       fields: [
         {
           type: 'text',
           name: 'url',
-          label: t('plugin.internetSearchUrl'),
+          labelKey: 'plugin.searchInInternet.url',
           defaultValue: 'https://duckduckgo.com/?q=',
         } as InputConfigItem,
       ],
@@ -22,17 +19,17 @@ export default function pluginIndex() {
     init: (ctx: PluginContext) => {
       ctx.registerActionsItems([
         {
-          name: t('action.searchInInternet'),
+          labelKey: 'action.searchInInternet',
           action: async (text: string) => {
             if (!text?.trim()) {
-              ctx.toast(t('toast.textNotSelected'), 'error')
+              ctx.toast('toast.textNotSelected', 'error')
               return
             }
 
             const baseUrl = ctx.getUserConfig().plugins?.SearchInInternet?.url
 
             if (!baseUrl) {
-              ctx.toast(t('toast.noSearchBaseUrl'), 'warn')
+              ctx.toast('toast.noSearchBaseUrl', 'warn')
               return
             }
 

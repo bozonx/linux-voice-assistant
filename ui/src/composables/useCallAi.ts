@@ -1,59 +1,60 @@
-import { useIpcStore } from "../stores/ipc";
-import { APP_CONFIG, type ChatMessage, useAiRequest } from "@shared";
-import { AI_TASKS } from "../types";
-import { useI18n } from "./useI18n";
-import useToast from "./useToast";
+import { translate } from '../lib/i18n'
+import { useIpcStore } from '../stores/ipc'
+import { AI_TASKS } from '../types'
+import useToast from './useToast'
+import { APP_CONFIG, type ChatMessage, useAiRequest } from '@shared'
 
 export const useCallAi = () => {
   const { chatCompletion, prepareAiMessages, prepareDevInstructions } =
-    useAiRequest();
-  const ipcStore = useIpcStore();
-  const { t } = useI18n();
-  const { toast } = useToast();
+    useAiRequest()
+  const ipcStore = useIpcStore()
+  const { toast } = useToast()
 
-  const currentUserConfig = () => ipcStore.params.userConfig;
+  const currentUserConfig = () => ipcStore.params.userConfig
 
   async function aiRequest(taskName: string, messages: string | ChatMessage[]) {
-    const userConfig = currentUserConfig();
-    const modelId = (userConfig.aiModelUsage as any)[taskName];
-    const model = userConfig.llmModels.find((model: (typeof userConfig.llmModels)[number]) => model.id === modelId);
+    const userConfig = currentUserConfig()
+    const modelId = (userConfig.aiModelUsage as any)[taskName]
+    const model = userConfig.llmModels.find(
+      (model: (typeof userConfig.llmModels)[number]) => model.id === modelId
+    )
 
     if (!model) {
-      throw new Error(t("toast.modelNotFound"));
+      throw new Error(translate('toast.modelNotFound'))
     }
 
-    const result = await chatCompletion(model, messages);
+    const result = await chatCompletion(model, messages)
 
     if (result.error) {
-      toast(result.error, "error");
-      console.error(result.status + " " + result.statusText, result.error);
+      toast(result.error, 'error')
+      console.error(result.status + ' ' + result.statusText, result.error)
 
-      return "";
+      return ''
     }
 
-    return result.content;
+    return result.content
   }
 
   const startVoiceRecognition = async () => {
-    await ipcStore.callFunction("startVoiceRecognition");
-  };
+    await ipcStore.callFunction('startVoiceRecognition')
+  }
 
   const stopVoiceRecognition = async () => {
-    await ipcStore.callFunction("stopVoiceRecognition");
-  };
+    await ipcStore.callFunction('stopVoiceRecognition')
+  }
 
   const voiceCorrection = async (text: string) => {
-    const userConfig = currentUserConfig();
-    const rule = userConfig.aiRules[AI_TASKS.VOICE_CORRECTION];
+    const userConfig = currentUserConfig()
+    const rule = userConfig.aiRules[AI_TASKS.VOICE_CORRECTION]
     const devInstructions = prepareDevInstructions(
       APP_CONFIG.aiInstructions[AI_TASKS.VOICE_CORRECTION]
-    );
+    )
 
     return await aiRequest(
       AI_TASKS.VOICE_CORRECTION,
       prepareAiMessages(text, rule, devInstructions)
-    );
-  };
+    )
+  }
 
   const sendChatMessage = async (
     message: string,
@@ -63,71 +64,71 @@ export const useCallAi = () => {
     const result = await aiRequest(
       AI_TASKS.CHAT,
       prepareAiMessages(
-        [...prevMessages, { role: "user", content: message }],
+        [...prevMessages, { role: 'user', content: message }],
         undefined,
         devInstructions
       )
-    );
+    )
 
-    return result;
-  };
+    return result
+  }
 
   const correctText = async (text: string) => {
     if (!text?.trim()) {
-      toast(t("toast.textNotSelected"), "error");
-      return;
+      toast('toast.textNotSelected', 'error')
+      return
     }
 
-    const userConfig = currentUserConfig();
-    const rule = userConfig.aiRules[AI_TASKS.CORRECTION];
+    const userConfig = currentUserConfig()
+    const rule = userConfig.aiRules[AI_TASKS.CORRECTION]
     const devInstructions = prepareDevInstructions(
       APP_CONFIG.aiInstructions[AI_TASKS.CORRECTION]
-    );
+    )
 
     return await aiRequest(
       AI_TASKS.CORRECTION,
       prepareAiMessages(text, rule, devInstructions)
-    );
-  };
+    )
+  }
 
   const translateText = async (toLangNum: number, text?: string) => {
     if (!text?.trim()) {
-      toast(t("toast.textNotSelected"), "error");
-      return;
+      toast('toast.textNotSelected', 'error')
+      return
     }
 
-    const userConfig = currentUserConfig();
-    const rule = userConfig.aiRules[AI_TASKS.TRANSLATE];
+    const userConfig = currentUserConfig()
+    const rule = userConfig.aiRules[AI_TASKS.TRANSLATE]
     const devInstructions = prepareDevInstructions(
       APP_CONFIG.aiInstructions[AI_TASKS.TRANSLATE],
       {
         TRANSLATION_LANG: userConfig.toTranslateLanguages[toLangNum],
       }
-    );
+    )
 
     return await aiRequest(
       AI_TASKS.TRANSLATE,
       prepareAiMessages(text, rule, devInstructions)
-    );
-  };
+    )
+  }
 
   const aiTasks = async (presetNum: number, text?: string) => {
     if (!text?.trim()) {
-      toast(t("toast.textNotSelected"), "error");
-      return;
+      toast('toast.textNotSelected', 'error')
+      return
     }
 
-    const userConfig = currentUserConfig();
-    const rule = userConfig.aiTasks[presetNum].rule;
+    const userConfig = currentUserConfig()
+    const rule = userConfig.aiTasks[presetNum].rule
     const devInstructions = prepareDevInstructions(
       APP_CONFIG.aiInstructions[AI_TASKS.AI_TASKS]
-    );
+    )
 
     return await aiRequest(
       AI_TASKS.AI_TASKS,
       prepareAiMessages(text, rule, devInstructions)
-    );
-  };
+    )
+  }
 
   return {
     aiRequest,
@@ -138,5 +139,5 @@ export const useCallAi = () => {
     correctText,
     translateText,
     aiTasks,
-  };
-};
+  }
+}

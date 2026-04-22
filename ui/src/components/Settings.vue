@@ -230,9 +230,7 @@
         <FieldRow :label="t('settings.quickTranslation')">
           <FieldTextArea v-model:value="userConfig.aiRules.translate" />
         </FieldRow>
-        <FieldRow
-          :label="t('settings.voiceCorrectionRules')"
-        >
+        <FieldRow :label="t('settings.voiceCorrectionRules')">
           <FieldTextArea v-model:value="userConfig.aiRules.voiceCorrection" />
         </FieldRow>
         <FieldRow :label="t('settings.textCorrection')">
@@ -289,7 +287,7 @@
 
       <div v-show="currentTab === 6">
         <template v-for="plugin of plugins" :key="plugin.pluginName">
-          <h2>{{ plugin.label }}</h2>
+          <h2>{{ plugin.labelKey ? t(plugin.labelKey) : plugin.label }}</h2>
           <FieldsByCfg
             :config="plugin.fields"
             @update:values="updatePluginConfig(plugin.pluginName, $event)"
@@ -305,27 +303,29 @@
 </template>
 
 <script setup lang="ts">
-import { DEFAULT_USER_CONFIG } from '@shared'
 import { computed, onMounted, ref, watchEffect } from 'vue'
 
 import { useI18n } from '../composables/useI18n'
-import { pluginIndexes } from '../plugins'
 import useToast from '../composables/useToast'
 import {
   AUTO_LANGUAGE_VALUE,
-  buildLanguageOptions,
   DEFAULT_LANGUAGE,
+  buildLanguageOptions,
 } from '../lib/locale/language'
-import { useThemeStore } from '../stores/theme'
+import { pluginIndexes } from '../plugins'
 import { useIpcStore } from '../stores/ipc'
+import { useThemeStore } from '../stores/theme'
 import { PRESETS_KEYS } from '../types'
+import { DEFAULT_USER_CONFIG } from '@shared'
 
 const ipcStore = useIpcStore()
 const { toast } = useToast()
 const themeStore = useThemeStore()
 const { t } = useI18n()
 
-const userConfig = ref(JSON.parse(JSON.stringify(ipcStore.params.userConfig || DEFAULT_USER_CONFIG)))
+const userConfig = ref(
+  JSON.parse(JSON.stringify(ipcStore.params.userConfig || DEFAULT_USER_CONFIG))
+)
 const currentTab = ref(0)
 const tabs = computed(() => [
   { text: t('settings.generalTab'), key: 0 },
@@ -342,12 +342,15 @@ const pluginConfigs = pluginIndexes
   .filter((plugin) => plugin.defaultConfig)
   .map((plugin) => ({
     pluginName: plugin.name,
+    labelKey: plugin.labelKey,
     label: plugin.label,
     fields: plugin.defaultConfig!.fields,
   }))
 
 watchEffect(() => {
-  userConfig.value = JSON.parse(JSON.stringify(ipcStore.params.userConfig || DEFAULT_USER_CONFIG))
+  userConfig.value = JSON.parse(
+    JSON.stringify(ipcStore.params.userConfig || DEFAULT_USER_CONFIG)
+  )
   ensurePluginDefaults()
   normalizeLanguageConfig()
 })
@@ -390,7 +393,9 @@ function ensurePluginDefaults() {
     }
 
     for (const field of pluginCfg.fields) {
-      if (userConfig.value.plugins[pluginCfg.pluginName][field.name] === undefined) {
+      if (
+        userConfig.value.plugins[pluginCfg.pluginName][field.name] === undefined
+      ) {
         userConfig.value.plugins[pluginCfg.pluginName][field.name] =
           field.defaultValue
       }
@@ -404,10 +409,9 @@ function normalizeLanguageConfig() {
     userConfig.value.appLanguage || AUTO_LANGUAGE_VALUE
   userConfig.value.userLanguage =
     userConfig.value.userLanguage || AUTO_LANGUAGE_VALUE
-  userConfig.value.toTranslateLanguages =
-    (userConfig.value.toTranslateLanguages || []).map(
-      (lang: string) => lang || DEFAULT_LANGUAGE
-    )
+  userConfig.value.toTranslateLanguages = (
+    userConfig.value.toTranslateLanguages || []
+  ).map((lang: string) => lang || DEFAULT_LANGUAGE)
 }
 
 const saveSettings = () => {

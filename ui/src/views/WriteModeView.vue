@@ -38,7 +38,7 @@ const correctionIsActual = ref(true)
 const { t } = useI18n()
 
 navPanelStore.resetNavParams({
-  escBtnText: t('write.next'),
+  escBtnLabelKey: 'write.next',
   escBtnAction: doCorrection,
 })
 

@@ -1,5 +1,7 @@
 // @ts-ignore
-import miniToastr from "mini-toastr";
+import miniToastr from 'mini-toastr'
+
+import { translate } from '../lib/i18n'
 
 export default function useToast() {
   const toast = (
@@ -7,8 +9,8 @@ export default function useToast() {
     type: 'success' | 'error' | 'warn' | 'info' = 'info',
     timeout = 10000
   ) => {
-    miniToastr[type](message, "", timeout);
-  };
+    miniToastr[type](translate(message), '', timeout)
+  }
 
-  return { toast };
+  return { toast }
 }

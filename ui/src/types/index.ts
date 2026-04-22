@@ -1,4 +1,4 @@
-import type { IpcResult, InitParams } from '@shared'
+import type { InitParams, IpcResult } from '@shared'
 
 export type { InitParams, IpcResult }
 
@@ -38,7 +38,8 @@ export const PRESETS_KEYS = [
 export interface InputConfigItem {
   type: 'text' | 'textarea' | 'select' | 'checkbox'
   name: string
-  label: string
+  label?: string
+  labelKey?: string
   value?: any
   defaultValue?: any
   options?: {

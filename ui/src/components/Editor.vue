@@ -5,10 +5,20 @@
         <EditorInput />
       </div>
       <div class="flex gap-2 flex-col">
-        <Button sm square @click="voiceRecognition" :title="t('editor.voiceInput')">
+        <Button
+          sm
+          square
+          @click="voiceRecognition"
+          :title="t('editor.voiceInput')"
+        >
           <Icon icon="mdi:microphone" height="24" />
         </Button>
-        <Button sm square @click="editorInputStore.clear" :title="t('editor.clear')">
+        <Button
+          sm
+          square
+          @click="editorInputStore.clear"
+          :title="t('editor.clear')"
+        >
           <Icon icon="mdi:clear" height="24" />
         </Button>
         <Button
@@ -23,17 +33,19 @@
     </div>
 
     <div>
-      <p class="text-xs mt-1 mb-2 text-gray-500">{{ t('editor.selectionHint') }}</p>
+      <p class="text-xs mt-1 mb-2 text-gray-500">
+        {{ t('editor.selectionHint') }}
+      </p>
 
       <div class="flex gap-1 w-full flex-wrap">
         <Button
           v-for="item in editMenuStore.getEditMenu()"
-          :key="item.name"
+          :key="item.labelKey || item.name"
           sm
           neutral
           :icon="item.icon"
           @click="doEdit(item.action)"
-          >{{ item.name }}</Button
+          >{{ getLabel(item) }}</Button
         >
       </div>
 
@@ -41,10 +53,10 @@
       <div class="flex gap-1 w-full flex-wrap">
         <Button
           v-for="item in actionMenuStore.getActionsMenu()"
-          :key="item.name"
+          :key="item.labelKey || item.name"
           :icon="item.icon"
           @click="doAction(item.action)"
-          >{{ item.name }}</Button
+          >{{ getLabel(item) }}</Button
         >
       </div>
 
@@ -58,7 +70,9 @@ import { onUnmounted } from 'vue'
 
 import { useI18n } from '../composables/useI18n'
 import useToast from '../composables/useToast'
+import type { ActionItem } from '../stores/actionMenu'
 import { useActionMenuStore } from '../stores/actionMenu'
+import type { EditItem } from '../stores/edditMenu'
 import { useEditMenuStore } from '../stores/edditMenu'
 import { useEditorInputStore } from '../stores/editorInput'
 import { useHistoryStore } from '../stores/history'
@@ -121,5 +135,9 @@ async function doEdit(cb: (text: string) => Promise<string>): Promise<void> {
   editorInputStore.selectedText
     ? editorInputStore.replaceSelection(result)
     : editorInputStore.setValue(result)
+}
+
+function getLabel(item: ActionItem | EditItem) {
+  return item.labelKey ? t(item.labelKey) : item.name || ''
 }
 </script>

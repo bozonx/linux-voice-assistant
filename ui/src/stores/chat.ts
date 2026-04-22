@@ -1,30 +1,29 @@
-import { defineStore } from "pinia";
+import { defineStore } from 'pinia'
 
-import { useI18n } from "../composables/useI18n";
-import { useCallAi } from "../composables/useCallAi";
-import useToast from "../composables/useToast";
-import { appNavigation } from "../lib/navigation/navigation";
-import { useHistoryStore } from "./history";
-import { makeUniqId } from "@/lib/squidlet-lib-local";
-import { createChatStoreModel } from "../lib/chat/chat-store";
+import { useCallAi } from '../composables/useCallAi'
+import useToast from '../composables/useToast'
+import { createChatStoreModel } from '../lib/chat/chat-store'
+import { translate } from '../lib/i18n'
+import { appNavigation } from '../lib/navigation/navigation'
+import { useHistoryStore } from './history'
+import { makeUniqId } from '@/lib/squidlet-lib-local'
 
-export const useChatStore = defineStore("chat", () => {
-  const { toast } = useToast();
-  const { sendChatMessage } = useCallAi();
-  const historyStore = useHistoryStore();
-  const { t } = useI18n();
+export const useChatStore = defineStore('chat', () => {
+  const { toast } = useToast()
+  const { sendChatMessage } = useCallAi()
+  const historyStore = useHistoryStore()
 
   return createChatStoreModel({
     sendChatMessage,
     saveChatHistory: (item) => {
-      void historyStore.saveChatHistory(item);
+      void historyStore.saveChatHistory(item)
     },
     navigateTo: (path) => appNavigation.push(path),
     notifyError: (message) => {
-      toast(message, "error");
+      toast(message, 'error')
     },
-    emptyMessageError: t("toast.textNotSelected"),
+    emptyMessageError: () => translate('toast.textNotSelected'),
     createId: () => makeUniqId(8),
     nowIso: () => new Date().toISOString(),
-  });
-});
+  })
+})

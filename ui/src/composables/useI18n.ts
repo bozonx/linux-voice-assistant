@@ -1,10 +1,5 @@
-import { useI18nStore } from '../stores/i18n'
+import { useI18n as useVueI18n } from 'vue-i18n'
 
 export function useI18n() {
-  const i18nStore = useI18nStore()
-
-  return {
-    locale: i18nStore.locale,
-    t: i18nStore.t,
-  }
+  return useVueI18n({ useScope: 'global' })
 }

@@ -11,24 +11,25 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, watchEffect } from 'vue'
 
+import { useGlobalEvents } from './composables/useGlobalEvents'
 import { useI18n } from './composables/useI18n'
 import { createAppBootstrap } from './lib/app/app-bootstrap'
-import { desktopClient } from './lib/desktop/client';
+import { desktopClient } from './lib/desktop/client'
+import { syncI18nLocale } from './lib/i18n'
 import { syncDocumentLanguageAttributes } from './lib/locale/language'
 import { appNavigation } from './lib/navigation/navigation'
-import { useGlobalEvents } from './composables/useGlobalEvents';
-import { usePlugins } from "./plugins";
-import { useIpcStore } from './stores/ipc';
-import { useMenuModalsStore } from './stores/menuModals';
-import { useNavPanelStore } from './stores/navPanel';
-import { useThemeStore } from './stores/theme';
+import { usePlugins } from './plugins'
+import { useIpcStore } from './stores/ipc'
+import { useMenuModalsStore } from './stores/menuModals'
+import { useNavPanelStore } from './stores/navPanel'
+import { useThemeStore } from './stores/theme'
 
-useThemeStore();
-const ipcStore = useIpcStore();
-const { t } = useI18n()
-const { globalEvents } = useGlobalEvents();
-const menuModalsStore = useMenuModalsStore();
-const navPanelStore = useNavPanelStore();
+useThemeStore()
+const ipcStore = useIpcStore()
+const { locale, t } = useI18n()
+const { globalEvents } = useGlobalEvents()
+const menuModalsStore = useMenuModalsStore()
+const navPanelStore = useNavPanelStore()
 const bootstrap = createAppBootstrap({
   loadInitialParams: () => ipcStore.loadInitialParams(),
   setParams: (params) => ipcStore.setParams(params),
@@ -51,17 +52,19 @@ const bootstrap = createAppBootstrap({
 })
 
 watchEffect(() => {
+  syncI18nLocale(ipcStore.params.userConfig?.appLanguage)
+  void locale.value
   syncDocumentLanguageAttributes(ipcStore.params.userConfig)
   document.title = t('app.title')
 })
 
 onMounted(() => {
   void bootstrap.start()
-});
+})
 
 onUnmounted(() => {
   bootstrap.stop()
-});
+})
 </script>
 
 <style scoped>

@@ -28,6 +28,7 @@ export const messages = {
     nav: {
       editor: 'Редактор',
       history: 'История',
+      menu: 'Меню',
       settings: 'Настройки',
       escSuffix: ' (Esc)',
     },
@@ -150,7 +151,17 @@ export const messages = {
       insertIntoEditor: 'Вставить в редактор',
     },
     plugin: {
-      internetSearchUrl: 'URL поиска в интернете',
+      searchInInternet: {
+        label: 'Поиск в интернете',
+        url: 'URL поиска в интернете',
+      },
+      fastNote: {
+        label: 'Быстрая заметка',
+        pathToNotes: 'Путь к папке с заметками',
+      },
+      russianStress: {
+        label: 'Русское ударение',
+      },
     },
     edit: {
       beautifyMd: 'Beautyfy MD',
@@ -202,6 +213,7 @@ export const messages = {
     nav: {
       editor: 'Editor',
       history: 'History',
+      menu: 'Menu',
       settings: 'Settings',
       escSuffix: ' (Esc)',
     },
@@ -323,7 +335,17 @@ export const messages = {
       insertIntoEditor: 'Insert into editor',
     },
     plugin: {
-      internetSearchUrl: 'Internet search URL',
+      searchInInternet: {
+        label: 'Search the internet',
+        url: 'Internet search URL',
+      },
+      fastNote: {
+        label: 'Quick note',
+        pathToNotes: 'Notes folder path',
+      },
+      russianStress: {
+        label: 'Russian stress',
+      },
     },
     edit: {
       beautifyMd: 'Beautify MD',
@@ -375,6 +397,7 @@ export const messages = {
     nav: {
       editor: 'Editor',
       history: 'Historial',
+      menu: 'Menú',
       settings: 'Configuración',
       escSuffix: ' (Esc)',
     },
@@ -496,7 +519,17 @@ export const messages = {
       insertIntoEditor: 'Insertar en el editor',
     },
     plugin: {
-      internetSearchUrl: 'URL de búsqueda en internet',
+      searchInInternet: {
+        label: 'Buscar en internet',
+        url: 'URL de búsqueda en internet',
+      },
+      fastNote: {
+        label: 'Nota rápida',
+        pathToNotes: 'Ruta a la carpeta de notas',
+      },
+      russianStress: {
+        label: 'Acento ruso',
+      },
     },
     edit: {
       beautifyMd: 'Embellecer MD',
@@ -548,6 +581,7 @@ export const messages = {
     nav: {
       editor: 'Editör',
       history: 'Geçmiş',
+      menu: 'Menü',
       settings: 'Ayarlar',
       escSuffix: ' (Esc)',
     },
@@ -663,13 +697,23 @@ export const messages = {
       aiTask: 'AI görevi',
       correction: 'Düzeltme',
       translation: 'Çeviri',
-      askAi: 'AI\'ya sor',
-      askAiAboutText: 'AI\'ya metin hakkında sor',
+      askAi: "AI'ya sor",
+      askAiAboutText: "AI'ya metin hakkında sor",
       searchInInternet: 'İnternette ara',
       insertIntoEditor: 'Editöre ekle',
     },
     plugin: {
-      internetSearchUrl: 'İnternet arama URL\'si',
+      searchInInternet: {
+        label: 'İnternette ara',
+        url: "İnternet arama URL'si",
+      },
+      fastNote: {
+        label: 'Hızlı not',
+        pathToNotes: 'Notlar klasörü yolu',
+      },
+      russianStress: {
+        label: 'Rusça vurgu',
+      },
     },
     edit: {
       beautifyMd: 'MD düzenle',
@@ -696,4 +740,5 @@ export const messages = {
   },
 } as const
 
+export type MessageSchema = typeof messages.ru_RU
 export type UiLocale = keyof typeof messages

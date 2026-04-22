@@ -1,14 +1,14 @@
-import type { UserConfig } from '@shared'
-
 import { ActionItem } from '../stores/actionMenu'
 import { EditItem } from '../stores/edditMenu'
 import { MenuModals } from '../stores/menuModals'
 import { DEFAULT_PARAMS } from '../stores/navPanel'
 import { InputConfigItem, IpcResult } from './index'
+import type { UserConfig } from '@shared'
 
 export type PluginIndex = () => {
   name: string
-  label: string
+  label?: string
+  labelKey?: string
   defaultConfig?: PluginConfig
   init: (ctx: PluginContext) => void
 }

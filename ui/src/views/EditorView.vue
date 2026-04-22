@@ -30,6 +30,6 @@ navPanelStore.resetNavParams({
       text: editorInputStore.value,
     })
   },
-  escBtnText: t('menu.insert'),
+  escBtnLabelKey: 'menu.insert',
 })
 </script>

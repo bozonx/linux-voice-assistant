@@ -38,11 +38,11 @@ const makeRusStress = (text: string): string => {
 export default function pluginIndex() {
   return {
     name: 'Russian Stress',
-    label: 'Русское ударение',
+    labelKey: 'plugin.russianStress.label',
     init: (ctx: PluginContext) => {
       ctx.registerEditItems([
         {
-          name: 'Русское ударение',
+          labelKey: 'plugin.russianStress.label',
           action: async (text: string) => {
             return makeRusStress(text)
           },
