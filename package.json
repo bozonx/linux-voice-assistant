@@ -8,8 +8,8 @@
     "build:ui": "pnpm --filter librnet-assistant-ui build",
     "type-check": "pnpm --filter librnet-assistant-ui type-check",
     "tauri": "tauri",
-    "tauri:dev": "export $(grep -v '^#' .env | xargs 2>/dev/null); pnpm tauri dev --config \"{\\\"build\\\": {\\\"devUrl\\\": \\\"http://localhost:${PORT:-3000}\\\"}}\"",
-    "tauri:build": "tauri build",
+    "tauri:dev": "dotenv -e .env -- sh -c 'tauri dev --config \"{\\\"build\\\":{\\\"devUrl\\\":\\\"http://localhost:${PORT:-3000}\\\"},\\\"app\\\":{\\\"security\\\":{\\\"csp\\\":\\\"default-src '\\''self'\\'' ipc: http://ipc.localhost; connect-src '\\''self'\\'' ipc: http://ipc.localhost http://localhost:${PORT:-3000} ws://localhost:${PORT:-3000} https://api.iconify.design; img-src '\\''self'\\'' asset: http://asset.localhost blob: data:; style-src '\\''self'\\'' '\\''unsafe-inline'\\''; font-src '\\''self'\\'' asset: http://asset.localhost data:; script-src '\\''self'\\'' '\\''unsafe-inline'\\'' '\\''wasm-unsafe-eval'\\''\\\"}}}\"'",
+    "tauri:build": "cross-env NO_STRIP=true tauri build",
     "dev": "pnpm dev:ui",
     "build": "pnpm build:ui"
   },
@@ -19,6 +19,8 @@
     "@tauri-apps/cli": "^2.10.1",
     "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "@types/node": "^25.6.0",
+    "cross-env": "^10.1.0",
+    "dotenv-cli": "^10.0.0",
     "prettier": "^3.8.3",
     "prettier-plugin-jsdoc": "^1.8.0",
     "typescript": "^6.0.3"

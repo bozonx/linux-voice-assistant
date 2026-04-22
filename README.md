@@ -31,10 +31,20 @@ Deferred for later stages:
 
 ## Setup
 
+Development is supported on Linux and macOS.
+
+Windows is not supported for development.
+
 Install dependencies:
 
 ```bash
 pnpm install
+```
+
+Create a local environment file before running the app:
+
+```bash
+cp .env.example .env
 ```
 
 Run the frontend:
@@ -58,6 +68,8 @@ pnpm type-check
 ## Tauri
 
 The desktop shell now lives in `src-tauri/`.
+
+Tauri development commands use variables from the root `.env` file.
 
 Target workflow after the remaining native integrations are migrated:
 
