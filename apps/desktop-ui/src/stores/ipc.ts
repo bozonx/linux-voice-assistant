@@ -84,19 +84,8 @@ const commandMap: Record<
     buildArgs: ([text]) => ({ text }),
   },
   putIntoClipboardAndClose: {
-    invoke: async ([text]) => {
-      try {
-        await navigator.clipboard.writeText(text)
-        await desktopClient.invoke(DESKTOP_COMMANDS.CLOSE_WINDOW)
-
-        return { success: true }
-      } catch (error) {
-        return {
-          success: false,
-          error: error instanceof Error ? error.message : String(error),
-        }
-      }
-    },
+    command: DESKTOP_COMMANDS.PUT_INTO_CLIPBOARD_AND_CLOSE,
+    buildArgs: ([text]) => ({ text }),
   },
   openInBrowserAndClose: {
     command: DESKTOP_COMMANDS.OPEN_IN_BROWSER_AND_CLOSE,

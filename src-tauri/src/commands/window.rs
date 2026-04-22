@@ -51,6 +51,16 @@ pub fn type_into_window_and_close(
     runtime::hide_main_window(&app, &state)
 }
 
+#[tauri::command]
+pub fn put_into_clipboard_and_close(
+    app: AppHandle,
+    state: State<'_, AppState>,
+    text: String,
+) -> Result<(), AppError> {
+    copy_to_clipboard(&text)?;
+    runtime::hide_main_window(&app, &state)
+}
+
 fn copy_to_clipboard(text: &str) -> Result<(), AppError> {
     let mut child = Command::new("xsel")
         .args(["--clipboard", "--input", "--trim"])

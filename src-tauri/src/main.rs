@@ -12,7 +12,10 @@ use commands::history::{
     save_editor_history, save_main_input_tmp, save_transform_history,
 };
 use commands::voice::{start_voice_recognition, stop_voice_recognition};
-use commands::window::{close_window, open_in_browser_and_close, type_into_window_and_close};
+use commands::window::{
+    close_window, open_in_browser_and_close, put_into_clipboard_and_close,
+    type_into_window_and_close,
+};
 use models::default_init_params;
 use services::{dbus, runtime, storage};
 use state::AppState;
@@ -58,7 +61,8 @@ pub fn run() {
             start_voice_recognition,
             stop_voice_recognition,
             open_in_browser_and_close,
-            type_into_window_and_close
+            type_into_window_and_close,
+            put_into_clipboard_and_close
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

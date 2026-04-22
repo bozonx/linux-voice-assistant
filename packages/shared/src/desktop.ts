@@ -81,6 +81,7 @@ export const DESKTOP_COMMANDS = {
   START_VOICE_RECOGNITION: 'start_voice_recognition',
   STOP_VOICE_RECOGNITION: 'stop_voice_recognition',
   TYPE_INTO_WINDOW_AND_CLOSE: 'type_into_window_and_close',
+  PUT_INTO_CLIPBOARD_AND_CLOSE: 'put_into_clipboard_and_close',
 } as const
 
 export type DesktopCommandName =
