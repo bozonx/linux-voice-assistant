@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col gap-4 w-full h-full">
-    <h1>Перевести</h1>
+    <h1>{{ t('menu.translate') }}</h1>
 
     <div class="flex-1">
       <TextPreview :text="props.text" />
@@ -13,6 +13,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
+import { useI18n } from '../../composables/useI18n'
 import { type ActionItem } from '../../stores/actionMenu'
 import { getLanguageLabel } from '../../lib/locale/language'
 import { useIpcStore } from '../../stores/ipc'
@@ -36,9 +37,10 @@ const { translateText } = useCallAi()
 const menuModalsStore = useMenuModalsStore()
 const historyStore = useHistoryStore()
 const { toast } = useToast()
+const { t } = useI18n()
 const leftLetterKeys = computed<ActionItem[]>(() =>
   ipcStore.params.userConfig.toTranslateLanguages.map((lang: string, index: number) => ({
-    name: getLanguageLabel(lang),
+    name: t(getLanguageLabel(lang)),
     action: async () => {
       await translate(index)
     },
@@ -49,13 +51,13 @@ const translate = async (toLangNum: number) => {
   const trimmedText = props.text.trim()
   
   if (!trimmedText) {
-    toast('Нет текста для перевода', 'warn');
+    toast(t('toast.noTextToTranslate'), 'warn');
 
     return;
   }
 
   if (trimmedText.length < appConfig.value.minCorrectionLength) {
-    toast('Слишком короткий текст для перевода', 'warn');
+    toast(t('toast.textTooShortToTranslate'), 'warn');
 
     return;
   }

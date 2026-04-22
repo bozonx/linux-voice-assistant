@@ -4,7 +4,9 @@
       v-if="navBarVisible"
       class="navbar bg-neutral text-neutral-content shadow-sm overlay-header"
     >
-      <Button neutral @click="menuModalsStore.back"> Назад (Esc) </Button>
+      <Button neutral @click="menuModalsStore.back">
+        {{ t('common.back') }}{{ t('nav.escSuffix') }}
+      </Button>
     </div>
     <ContentPadding class="flex-1">
       <slot />
@@ -13,9 +15,11 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from '../../composables/useI18n'
 import { useMenuModalsStore } from '../../stores/menuModals'
 
 const menuModalsStore = useMenuModalsStore()
+const { t } = useI18n()
 withDefaults(
   defineProps<{
     navBarVisible?: boolean

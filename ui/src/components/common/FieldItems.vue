@@ -33,7 +33,7 @@
       </div>
     </div>
     <div class="flex flex-row justify-end gap-2 mt-1">
-      <Button @click="addItem">Добавить</Button>
+      <Button @click="addItem">{{ t('common.add') }}</Button>
     </div>
   </div>
 </template>
@@ -41,6 +41,8 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import { ref } from 'vue'
+
+import { useI18n } from '../../composables/useI18n'
 
 const props = defineProps<{
   items: Record<string, any>[]
@@ -51,6 +53,7 @@ const emit = defineEmits<{
 }>()
 
 const localItems = ref<Record<string, any>[]>([...props.items])
+const { t } = useI18n()
 
 const syncItems = () => {
   emit('update:items', [...localItems.value])

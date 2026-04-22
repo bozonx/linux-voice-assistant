@@ -27,7 +27,7 @@
           <FieldSelect
             :options="roles"
             v-model:value="selectedRole"
-            title="Роль"
+            :title="t('chat.role')"
           />
         </div>
       </div>
@@ -35,13 +35,13 @@
       <div class="flex flex-row gap-2">
         <ChatInput />
         <div class="flex flex-col gap-2">
-          <Button sm square @click="sendMessage" title="Отправить сообщение">
+          <Button sm square @click="sendMessage" :title="t('chat.sendMessage')">
             <Icon icon="mdi:send" height="24" />
           </Button>
-          <Button sm square @click="clearInput" title="Очистить поле ввода">
+          <Button sm square @click="clearInput" :title="t('chat.clearInput')">
             <Icon icon="mdi:clear" height="24" />
           </Button>
-          <Button sm square @click="voiceInput" title="Голосовой ввод">
+          <Button sm square @click="voiceInput" :title="t('chat.voiceInput')">
             <Icon icon="mdi:microphone" height="24" />
           </Button>
         </div>
@@ -55,6 +55,7 @@ import { computed, ref } from 'vue'
 
 import { truncate } from '@/lib/squidlet-lib-local'
 
+import { useI18n } from '../composables/useI18n'
 import { useChatStore } from '../stores/chat'
 import { useChatInputStore } from '../stores/chatInput'
 import { useIpcStore } from '../stores/ipc'
@@ -67,6 +68,7 @@ const chatStore = useChatStore()
 const menuModalsStore = useMenuModalsStore()
 const userConfig = computed(() => ipcStore.params!.userConfig)
 const attachments = computed(() => chatStore.newChatParams.attachments || [])
+const { t } = useI18n()
 const roles = computed(() =>
   userConfig.value.chatRoles.map((role: any) => ({
     id: role.name,

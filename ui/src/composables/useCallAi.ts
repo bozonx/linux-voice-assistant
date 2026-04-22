@@ -1,12 +1,14 @@
 import { useIpcStore } from "../stores/ipc";
 import { APP_CONFIG, type ChatMessage, useAiRequest } from "@shared";
 import { AI_TASKS } from "../types";
+import { useI18n } from "./useI18n";
 import useToast from "./useToast";
 
 export const useCallAi = () => {
   const { chatCompletion, prepareAiMessages, prepareDevInstructions } =
     useAiRequest();
   const ipcStore = useIpcStore();
+  const { t } = useI18n();
   const { toast } = useToast();
 
   const currentUserConfig = () => ipcStore.params.userConfig;
@@ -17,7 +19,7 @@ export const useCallAi = () => {
     const model = userConfig.llmModels.find((model: (typeof userConfig.llmModels)[number]) => model.id === modelId);
 
     if (!model) {
-      throw new Error("Model not found");
+      throw new Error(t("toast.modelNotFound"));
     }
 
     const result = await chatCompletion(model, messages);
@@ -72,7 +74,7 @@ export const useCallAi = () => {
 
   const correctText = async (text: string) => {
     if (!text?.trim()) {
-      toast("Текст не выбран", "error");
+      toast(t("toast.textNotSelected"), "error");
       return;
     }
 
@@ -90,7 +92,7 @@ export const useCallAi = () => {
 
   const translateText = async (toLangNum: number, text?: string) => {
     if (!text?.trim()) {
-      toast("Текст не выбран", "error");
+      toast(t("toast.textNotSelected"), "error");
       return;
     }
 
@@ -111,7 +113,7 @@ export const useCallAi = () => {
 
   const aiTasks = async (presetNum: number, text?: string) => {
     if (!text?.trim()) {
-      toast("Текст не выбран", "error");
+      toast(t("toast.textNotSelected"), "error");
       return;
     }
 

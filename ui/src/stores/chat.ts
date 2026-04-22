@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 
+import { useI18n } from "../composables/useI18n";
 import { useCallAi } from "../composables/useCallAi";
 import useToast from "../composables/useToast";
 import { appNavigation } from "../lib/navigation/navigation";
@@ -11,6 +12,7 @@ export const useChatStore = defineStore("chat", () => {
   const { toast } = useToast();
   const { sendChatMessage } = useCallAi();
   const historyStore = useHistoryStore();
+  const { t } = useI18n();
 
   return createChatStoreModel({
     sendChatMessage,
@@ -21,6 +23,7 @@ export const useChatStore = defineStore("chat", () => {
     notifyError: (message) => {
       toast(message, "error");
     },
+    emptyMessageError: t("toast.textNotSelected"),
     createId: () => makeUniqId(8),
     nowIso: () => new Date().toISOString(),
   });

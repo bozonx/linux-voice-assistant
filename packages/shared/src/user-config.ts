@@ -53,6 +53,7 @@ export interface LlmModel {
 }
 
 export interface UserConfig {
+  theme: 'auto' | 'light' | 'dark'
   xdotoolBin: string
   appLanguage: string
   userLanguage: string
@@ -96,6 +97,7 @@ export interface UserConfig {
 }
 
 export const DEFAULT_USER_CONFIG: UserConfig = {
+  theme: 'auto',
   xdotoolBin: '/usr/bin/xdotool',
   appLanguage: 'auto',
   userLanguage: 'auto',

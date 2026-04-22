@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col h-full overflow-auto">
     <div v-if="filtered.length === 0" role="alert" class="alert">
-      <span>{{ searchQuery ? "Ничего не найдено" : "История пуста" }}</span>
+      <span>{{ searchQuery ? t('history.nothingFound') : t('history.empty') }}</span>
     </div>
 
     <ul v-else class="list bg-base-100 rounded-box shadow-md">
@@ -11,14 +11,14 @@
           :title="textTitle"
           class="history-text list-col-grow cursor-pointer"
         >
-          {{ truncate(item.value, 250) || "пусто" }}
+          {{ truncate(item.value, 250) || t('common.empty') }}
         </div>
 
         <Button
           ghost
           square
           @click="emit('remove-item', item)"
-          title="Удалить из истории"
+          :title="t('history.removeItem')"
           class="remove-history-btn"
         >
           <Icon icon="mdi:delete" height="24" />
@@ -28,7 +28,7 @@
 
     <div class="mt-4">
       <Button @click="emit('clear-history')">
-        Очистить историю
+        {{ t('history.clear') }}
       </Button>
     </div>
   </div>
@@ -38,6 +38,9 @@
   import { computed } from "vue";
   import { Icon } from "@iconify/vue";
   import { truncate } from "@/lib/squidlet-lib-local";
+  import { useI18n } from '../composables/useI18n'
+
+  const { t } = useI18n()
 
   const emit = defineEmits<{
     (e: "remove-item", item: {id: string | number, value: string}): void;

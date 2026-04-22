@@ -103,27 +103,36 @@ export function toHtmlLang(locale: string): string {
 }
 
 export function getLanguageLabel(locale: string): string {
-  if (locale === AUTO_LANGUAGE_VALUE) {
-    return 'Авто'
-  }
-
   const normalized = normalizeLocale(locale)
-  const matchedOption = LANGUAGE_OPTIONS.find((option) => option.id === normalized)
-
-  if (matchedOption) {
-    return matchedOption.name
-  }
-
-  return toHtmlLang(normalized)
+  const key = locale === AUTO_LANGUAGE_VALUE ? AUTO_LANGUAGE_VALUE : normalized
+  return `language.${key}`
 }
 
 export function buildLanguageOptions(
   values: readonly (string | null | undefined)[] = [],
-  includeAuto = true
+  includeAuto = true,
+  translate?: (key: string) => string
 ): { id: string; name: string }[] {
+  const translateLabel = (value: string, fallbackName: string) => {
+    if (!translate) {
+      return fallbackName
+    }
+
+    const translationKey = getLanguageLabel(value)
+    const translatedValue = translate(translationKey)
+
+    return translatedValue === translationKey ? fallbackName : translatedValue
+  }
+
   const options: { id: string; name: string }[] = includeAuto
-    ? [...LANGUAGE_OPTIONS]
-    : [...SUPPORTED_LANGUAGE_OPTIONS]
+    ? LANGUAGE_OPTIONS.map((option) => ({
+      id: option.id,
+      name: translateLabel(option.id, option.name),
+    }))
+    : SUPPORTED_LANGUAGE_OPTIONS.map((option) => ({
+      id: option.id,
+      name: translateLabel(option.id, option.name),
+    }))
 
   for (const value of values) {
     if (!value || value === AUTO_LANGUAGE_VALUE) {
@@ -138,7 +147,7 @@ export function buildLanguageOptions(
 
     options.push({
       id: normalizedValue,
-      name: toHtmlLang(normalizedValue),
+      name: translateLabel(normalizedValue, toHtmlLang(normalizedValue)),
     })
   }
 

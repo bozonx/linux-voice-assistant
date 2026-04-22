@@ -2,7 +2,7 @@
   <FieldTextArea
     ref="textareaRef"
     class="main-input"
-    placeholder="Введите текст..."
+    :placeholder="t('input.textPlaceholder')"
     :value="editorInputStore.value"
     @update:value="handleInput"
     @select="handleSelect"
@@ -12,6 +12,7 @@
 <script setup lang="ts">
 import { nextTick, onMounted, ref, watch, watchEffect } from 'vue'
 
+import { useI18n } from '../composables/useI18n'
 import { useEditorInputStore } from '../stores/editorInput'
 import { useMenuModalsStore } from '../stores/menuModals'
 import { useRouteParams } from '../stores/routeParams'
@@ -19,6 +20,7 @@ import { useRouteParams } from '../stores/routeParams'
 const editorInputStore = useEditorInputStore()
 const routeParamsStore = useRouteParams()
 const menuModalsStore = useMenuModalsStore()
+const { t } = useI18n()
 type TextareaExposed = {
   focus: () => void
   select: (start?: number, end?: number) => void

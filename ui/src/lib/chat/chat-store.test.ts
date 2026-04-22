@@ -8,6 +8,7 @@ function createDeps(overrides: Partial<ChatStoreDeps> = {}): ChatStoreDeps {
     saveChatHistory: vi.fn(),
     navigateTo: vi.fn(),
     notifyError: vi.fn(),
+    emptyMessageError: 'No text selected',
     createId: vi.fn(() => 'chat-id-1'),
     nowIso: vi.fn(() => '2026-04-22T00:00:00.000Z'),
     ...overrides,
@@ -22,7 +23,7 @@ describe('chat-store', () => {
     const result = await store.sendMessage('   ')
 
     expect(result).toBeUndefined()
-    expect(deps.notifyError).toHaveBeenCalledWith('Текст не выбран')
+    expect(deps.notifyError).toHaveBeenCalledWith('No text selected')
     expect(deps.sendChatMessage).not.toHaveBeenCalled()
   })
 

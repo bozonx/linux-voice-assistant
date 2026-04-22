@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col gap-4 w-full h-full">
-    <h1>Распознавание голоса</h1>
+    <h1>{{ t('menu.voiceRecognition') }}</h1>
 
     <div class="flex-1">
       <TextPreview :text="recognizedText" />
@@ -14,6 +14,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 
+import { useI18n } from '../../composables/useI18n'
 import { useCallAi } from '../../composables/useCallAi';
 import { GlobalEvents, useGlobalEvents } from '../../composables/useGlobalEvents';
 import { useIpcStore } from '../../stores/ipc';
@@ -47,10 +48,11 @@ const appConfig = computed(() => ipcStore.params.appConfig);
 const menuModalsStore = useMenuModalsStore();
 const { toast } = useToast();
 const historyStore = useHistoryStore();
+const { t } = useI18n()
 let listenerIndex = -1;
 
 const spaceKey = {
-  name: "Закончить",
+  name: t('menu.finish'),
   action: async () => {
     await finish()
   },
@@ -72,7 +74,7 @@ const finish = async () => {
   }
 
   if (!recognizedText.value.trim().length) {
-    toast("Ничего не распознано", "warn");
+    toast(t("toast.nothingRecognized"), "warn");
 
     props.onCorrected?.('', '', undefined);
     emit('corrected', '', '');
@@ -100,7 +102,7 @@ const finish = async () => {
     menuModalsStore.clearPendingModal();
   }
   else {
-    toast("Слишком короткий текст для коррекции", "warn");
+    toast(t("toast.textTooShortForCorrection"), "warn");
   }
 
   props.onCorrected?.(resultText, recognizedText.value, correctedText);

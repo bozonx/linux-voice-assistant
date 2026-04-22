@@ -15,7 +15,7 @@
         <span v-if="props.toEditorVisible" class="flex flex-row gap-2"
           > <KeyButton>Tab</KeyButton>
           <Button sm neutral @click="routeParamsStore.toEditor(props.text)"
-            >Вставить в редактор</Button>
+            >{{ t('shortcuts.insertIntoEditor') }}</Button>
         </span>
       </div>
 
@@ -77,6 +77,7 @@
   import { computed, onMounted, onUnmounted } from "vue";
   import { PRESETS_KEYS } from "../types";
   import { ActionItem } from "../stores/actionMenu";
+  import { useI18n } from '../composables/useI18n'
   import {
     useGlobalEvents,
     GlobalEvents,
@@ -102,6 +103,7 @@
 
   const routeParamsStore = useRouteParams();
   const { globalEvents } = useGlobalEvents();
+  const { t } = useI18n()
   let keyUpHanlderIndex: number;
 
   const col1 = computed(() =>

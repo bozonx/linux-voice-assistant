@@ -2,16 +2,17 @@
   <ContentPadding>
     <Editor v-if="ipcStore.params">
       <div class="mt-4 flex flex-row gap-2 text-xs">
-        <RouterLink to="/write">Режим написания</RouterLink>
-        <RouterLink to="/voice">Режим голоса</RouterLink>
-        <RouterLink to="/aiTasks">Режим редактирования</RouterLink>
-        <RouterLink to="/select">Режим выбора</RouterLink>
+        <RouterLink to="/write">{{ t('mode.write') }}</RouterLink>
+        <RouterLink to="/voice">{{ t('mode.voice') }}</RouterLink>
+        <RouterLink to="/aiTasks">{{ t('mode.aiTasks') }}</RouterLink>
+        <RouterLink to="/select">{{ t('mode.select') }}</RouterLink>
       </div>
     </Editor>
   </ContentPadding>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from '../composables/useI18n'
 import { useEditorInputStore } from '../stores/editorInput'
 import { useIpcStore } from '../stores/ipc'
 import { MenuModals, useMenuModalsStore } from '../stores/menuModals'
@@ -21,6 +22,7 @@ const ipcStore = useIpcStore()
 const navPanelStore = useNavPanelStore()
 const menuModalsStore = useMenuModalsStore()
 const editorInputStore = useEditorInputStore()
+const { t } = useI18n()
 
 navPanelStore.resetNavParams({
   escBtnAction: () => {
@@ -28,5 +30,6 @@ navPanelStore.resetNavParams({
       text: editorInputStore.value,
     })
   },
+  escBtnText: t('menu.insert'),
 })
 </script>

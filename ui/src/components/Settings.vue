@@ -4,22 +4,22 @@
 
     <div class="flex-1 overflow-y-auto">
       <div v-show="currentTab === 0" class="fields-col">
-        <FieldRow label="Theme">
-          <ThemeSwitcher />
+        <FieldRow :label="t('settings.theme')">
+          <ThemeSwitcher v-model:value="userConfig.theme" />
         </FieldRow>
-        <FieldRow label="App Language">
+        <FieldRow :label="t('settings.appLanguage')">
           <FieldSelect
             v-model:value="userConfig.appLanguage"
             :options="appLanguageOptions"
           />
         </FieldRow>
-        <FieldRow label="User Language">
+        <FieldRow :label="t('settings.userLanguage')">
           <FieldSelect
             v-model:value="userConfig.userLanguage"
             :options="userLanguageOptions"
           />
         </FieldRow>
-        <FieldRow label="To Translate Languages">
+        <FieldRow :label="t('settings.translateLanguages')">
           <FieldItems
             :items="translateLanguagesItems"
             @update:items="updateTranslateLanguages"
@@ -36,23 +36,23 @@
             </template>
           </FieldItems>
         </FieldRow>
-        <FieldRow label="Xdotool Bin">
+        <FieldRow :label="t('settings.xdotoolBin')">
           <FieldInput v-model:value="userConfig.xdotoolBin" />
         </FieldRow>
 
-        <FieldRow label="Editor History Max Items">
+        <FieldRow :label="t('settings.editorHistoryMaxItems')">
           <FieldInput
             type="number"
             v-model:value="userConfig.editorHistoryMaxItems"
           />
         </FieldRow>
-        <FieldRow label="Transform History Max Items">
+        <FieldRow :label="t('settings.transformHistoryMaxItems')">
           <FieldInput
             type="number"
             v-model:value="userConfig.transformHistoryMaxItems"
           />
         </FieldRow>
-        <FieldRow label="Chat History Max Items">
+        <FieldRow :label="t('settings.chatHistoryMaxItems')">
           <FieldInput
             type="number"
             v-model:value="userConfig.chatHistoryMaxItems"
@@ -61,86 +61,86 @@
       </div>
 
       <div v-show="currentTab === 1">
-        <FieldRow label="LLM Models">
+        <FieldRow :label="t('settings.llmModels')">
           <FieldItems
             :items="userConfig.llmModels"
             @update:items="updateLLMModels"
           >
             <template #item="{ item }">
-              <FieldRow label="Id" vertical>
+              <FieldRow :label="t('settings.id')" vertical>
                 <FieldInput v-model:value="item.id" />
               </FieldRow>
-              <FieldRow label="Model" vertical>
+              <FieldRow :label="t('settings.model')" vertical>
                 <FieldInput v-model:value="item.model" />
               </FieldRow>
-              <FieldRow label="Description" vertical>
+              <FieldRow :label="t('settings.description')" vertical>
                 <FieldInput v-model:value="item.description" />
               </FieldRow>
-              <FieldRow label="Base URL" vertical>
+              <FieldRow :label="t('settings.baseUrl')" vertical>
                 <FieldInput v-model:value="item.baseUrl" />
               </FieldRow>
-              <FieldRow label="API Key" vertical>
+              <FieldRow :label="t('settings.apiKey')" vertical>
                 <FieldInput v-model:value="item.apiKey" />
               </FieldRow>
-              <FieldRow label="Tags" vertical>
+              <FieldRow :label="t('settings.tags')" vertical>
                 <FieldInput v-model:value="item.tags" />
               </FieldRow>
             </template>
           </FieldItems>
         </FieldRow>
 
-        <FieldRow label="STT Models">
+        <FieldRow :label="t('settings.sttModels')">
           <FieldItems
             :items="userConfig.sttModels"
             @update:items="updateSTTModels"
           >
             <template #item="{ item }">
-              <FieldRow label="Id" vertical>
+              <FieldRow :label="t('settings.id')" vertical>
                 <FieldInput v-model:value="item.id" />
               </FieldRow>
-              <FieldRow label="Model" vertical>
+              <FieldRow :label="t('settings.model')" vertical>
                 <FieldInput v-model:value="item.model" />
               </FieldRow>
-              <FieldRow label="Description" vertical>
+              <FieldRow :label="t('settings.description')" vertical>
                 <FieldInput v-model:value="item.description" />
               </FieldRow>
-              <FieldRow label="Base URL" vertical>
+              <FieldRow :label="t('settings.baseUrl')" vertical>
                 <FieldInput v-model:value="item.baseUrl" />
               </FieldRow>
-              <FieldRow label="API Key" vertical>
+              <FieldRow :label="t('settings.apiKey')" vertical>
                 <FieldInput v-model:value="item.apiKey" />
               </FieldRow>
             </template>
           </FieldItems>
         </FieldRow>
 
-        <FieldRow label="TTS Models">
+        <FieldRow :label="t('settings.ttsModels')">
           <FieldItems
             :items="userConfig.ttsModels"
             @update:items="updateTTSModels"
           >
             <template #item="{ item }">
-              <FieldRow label="Id" vertical>
+              <FieldRow :label="t('settings.id')" vertical>
                 <FieldInput v-model:value="item.id" />
               </FieldRow>
-              <FieldRow label="Model" vertical>
+              <FieldRow :label="t('settings.model')" vertical>
                 <FieldInput v-model:value="item.model" />
               </FieldRow>
-              <FieldRow label="Description" vertical>
+              <FieldRow :label="t('settings.description')" vertical>
                 <FieldInput v-model:value="item.description" />
               </FieldRow>
-              <FieldRow label="Base URL" vertical>
+              <FieldRow :label="t('settings.baseUrl')" vertical>
                 <FieldInput v-model:value="item.baseUrl" />
               </FieldRow>
-              <FieldRow label="API Key" vertical>
+              <FieldRow :label="t('settings.apiKey')" vertical>
                 <FieldInput v-model:value="item.apiKey" />
               </FieldRow>
             </template>
           </FieldItems>
         </FieldRow>
 
-        <h2>AI Model Usage</h2>
-        <FieldRow label="Speech to Text">
+        <h2>{{ t('settings.aiModelUsage') }}</h2>
+        <FieldRow :label="t('settings.speechToText')">
           <FieldSelect
             v-model:value="userConfig.aiModelUsage.stt"
             :options="
@@ -151,7 +151,7 @@
             "
           />
         </FieldRow>
-        <FieldRow label="Text to Speech">
+        <FieldRow :label="t('settings.textToSpeech')">
           <FieldSelect
             v-model:value="userConfig.aiModelUsage.tts"
             :options="
@@ -162,7 +162,7 @@
             "
           />
         </FieldRow>
-        <FieldRow label="Translate">
+        <FieldRow :label="t('settings.translate')">
           <FieldSelect
             v-model:value="userConfig.aiModelUsage.translate"
             :options="
@@ -173,7 +173,7 @@
             "
           />
         </FieldRow>
-        <FieldRow label="Voice Correction">
+        <FieldRow :label="t('settings.voiceCorrection')">
           <FieldSelect
             v-model:value="userConfig.aiModelUsage.voiceCorrection"
             :options="
@@ -184,7 +184,7 @@
             "
           />
         </FieldRow>
-        <FieldRow label="Correction">
+        <FieldRow :label="t('settings.correction')">
           <FieldSelect
             v-model:value="userConfig.aiModelUsage.correction"
             :options="
@@ -195,7 +195,7 @@
             "
           />
         </FieldRow>
-        <FieldRow label="AI Tasks">
+        <FieldRow :label="t('settings.aiTasks')">
           <FieldSelect
             v-model:value="userConfig.aiModelUsage.aiTasks"
             :options="
@@ -206,7 +206,7 @@
             "
           />
         </FieldRow>
-        <FieldRow label="Chat">
+        <FieldRow :label="t('settings.chat')">
           <FieldSelect
             v-model:value="userConfig.aiModelUsage.chat"
             :options="
@@ -220,25 +220,25 @@
       </div>
 
       <div v-show="currentTab === 2">
-        <h2>AI rules</h2>
-        <FieldRow label="Общие правила для всех задач">
+        <h2>{{ t('settings.aiRules') }}</h2>
+        <FieldRow :label="t('settings.baseRules')">
           <FieldTextArea v-model:value="userConfig.aiRules.base" />
         </FieldRow>
-        <FieldRow label="Быстрый перевод">
+        <FieldRow :label="t('settings.quickTranslation')">
           <FieldTextArea v-model:value="userConfig.aiRules.translate" />
         </FieldRow>
         <FieldRow
-          label="Исправление пунктуации и коррекция после распознавания голоса"
+          :label="t('settings.voiceCorrectionRules')"
         >
           <FieldTextArea v-model:value="userConfig.aiRules.voiceCorrection" />
         </FieldRow>
-        <FieldRow label="Коррекция текста">
+        <FieldRow :label="t('settings.textCorrection')">
           <FieldTextArea v-model:value="userConfig.aiRules.correction" />
         </FieldRow>
       </div>
 
       <div v-show="currentTab === 3">
-        <FieldRow label="AI Tasks">
+        <FieldRow :label="t('settings.aiTasks')">
           <FieldItems :items="userConfig.aiTasks" @update:items="updateAiTasks">
             <template #item="{ item, index }">
               <div class="flex flex-row gap-2 w-full">
@@ -246,10 +246,10 @@
                   <KeyButton>{{ PRESETS_KEYS[index] }}</KeyButton>
                 </div>
                 <div class="flex-1">
-                  <FieldRow label="Name" vertical>
+                  <FieldRow :label="t('settings.name')" vertical>
                     <FieldInput v-model:value="item.name" />
                   </FieldRow>
-                  <FieldRow label="Rule" vertical>
+                  <FieldRow :label="t('settings.rule')" vertical>
                     <FieldTextArea v-model:value="item.rule" />
                   </FieldRow>
                 </div>
@@ -260,7 +260,7 @@
       </div>
 
       <div v-show="currentTab === 4">
-        <FieldRow label="Роли чата">
+        <FieldRow :label="t('settings.chatRoles')">
           <FieldItems
             :items="userConfig.chatRoles"
             @update:items="updateChatRoles"
@@ -271,10 +271,10 @@
                   <KeyButton>{{ PRESETS_KEYS[index] }}</KeyButton>
                 </div>
                 <div class="flex-1">
-                  <FieldRow label="Name" vertical>
+                  <FieldRow :label="t('settings.name')" vertical>
                     <FieldInput v-model:value="item.name" />
                   </FieldRow>
-                  <FieldRow label="Rule" vertical>
+                  <FieldRow :label="t('settings.rule')" vertical>
                     <FieldTextArea v-model:value="item.rule" />
                   </FieldRow>
                 </div>
@@ -296,7 +296,7 @@
     </div>
 
     <div class="flex flex-row gap-2">
-      <Button @click="saveSettings">Save</Button>
+      <Button @click="saveSettings">{{ t('common.save') }}</Button>
     </div>
   </div>
 </template>
@@ -305,6 +305,7 @@
 import { DEFAULT_USER_CONFIG } from '@shared'
 import { computed, onMounted, ref, watchEffect } from 'vue'
 
+import { useI18n } from '../composables/useI18n'
 import { pluginIndexes } from '../plugins'
 import useToast from '../composables/useToast'
 import {
@@ -312,22 +313,25 @@ import {
   buildLanguageOptions,
   DEFAULT_LANGUAGE,
 } from '../lib/locale/language'
+import { useThemeStore } from '../stores/theme'
 import { useIpcStore } from '../stores/ipc'
 import { PRESETS_KEYS } from '../types'
 
 const ipcStore = useIpcStore()
 const { toast } = useToast()
+const themeStore = useThemeStore()
+const { t } = useI18n()
 
 const userConfig = ref(JSON.parse(JSON.stringify(ipcStore.params.userConfig || DEFAULT_USER_CONFIG)))
 const currentTab = ref(0)
-const tabs = [
-  { text: 'Основные', key: 0 },
-  { text: 'Модели', key: 1 },
-  { text: 'AI rules', key: 2 },
-  { text: 'Задания для AI', key: 3 },
-  { text: 'Роли чата', key: 4 },
-  { text: 'Плагины', key: 5 },
-]
+const tabs = computed(() => [
+  { text: t('settings.generalTab'), key: 0 },
+  { text: t('settings.modelsTab'), key: 1 },
+  { text: t('settings.rulesTab'), key: 2 },
+  { text: t('settings.tasksTab'), key: 3 },
+  { text: t('settings.rolesTab'), key: 4 },
+  { text: t('settings.pluginsTab'), key: 5 },
+])
 
 const pluginConfigs = pluginIndexes
   .map((pluginIndex) => pluginIndex())
@@ -391,6 +395,7 @@ function ensurePluginDefaults() {
 }
 
 function normalizeLanguageConfig() {
+  userConfig.value.theme = userConfig.value.theme || themeStore.themeMode
   userConfig.value.appLanguage =
     userConfig.value.appLanguage || AUTO_LANGUAGE_VALUE
   userConfig.value.userLanguage =
@@ -403,19 +408,19 @@ function normalizeLanguageConfig() {
 
 const saveSettings = () => {
   ipcStore.saveUserConfig(userConfig.value)
-  toast('Settings saved', 'success')
+  toast(t('settings.saved'), 'success')
 }
 
 const appLanguageOptions = computed(() =>
-  buildLanguageOptions([userConfig.value.appLanguage], true)
+  buildLanguageOptions([userConfig.value.appLanguage], true, t)
 )
 
 const userLanguageOptions = computed(() =>
-  buildLanguageOptions([userConfig.value.userLanguage], true)
+  buildLanguageOptions([userConfig.value.userLanguage], true, t)
 )
 
 const translateLanguageOptions = computed(() =>
-  buildLanguageOptions(userConfig.value.toTranslateLanguages || [], false)
+  buildLanguageOptions(userConfig.value.toTranslateLanguages || [], false, t)
 )
 
 const translateLanguagesItems = computed(() => {

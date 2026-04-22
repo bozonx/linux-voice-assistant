@@ -16,7 +16,7 @@
         neutral
         @click="routeParamsStore.toEditor()">
        <Icon icon="mdi:pencil" height="16" />
-       Редактор
+       {{ t('nav.editor') }}
       </Button>
       <Button
         :disabled="router.currentRoute.value.path === '/history'"
@@ -24,7 +24,7 @@
         neutral
         square
         @click="openHistory"
-        title="История"
+        :title="t('nav.history')"
       >
         <Icon icon="mdi:history" height="24" />
       </Button>
@@ -34,7 +34,7 @@
         neutral
         square
         @click="openSettings"
-        title="Настройки"
+        :title="t('nav.settings')"
       >
         <Icon icon="mdi:cog" height="24" />
       </Button>
@@ -46,6 +46,7 @@
   import { computed } from "vue";
   import { Icon } from "@iconify/vue";
   import { useRouter } from "vue-router";
+  import { useI18n } from '../composables/useI18n'
   import { useNavPanelStore } from "../stores/navPanel";
   import { useRouteParams } from "../stores/routeParams";
   import { useMenuModalsStore } from "../stores/menuModals";
@@ -54,9 +55,10 @@
   const routeParamsStore = useRouteParams();
   const navPanelStore = useNavPanelStore(); 
   const menuModalsStore = useMenuModalsStore();
+  const { t } = useI18n()
 
   const escBtnText = computed(() => {
-    return navPanelStore.params.escBtnText + " (Esc)";
+    return navPanelStore.params.escBtnText + t('nav.escSuffix');
   });
 
   function openSettings() {

@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col gap-4 w-full h-full">
-    <h1 class="menu-title">Сравните результат</h1>
+    <h1 class="menu-title">{{ t('menu.compareResult') }}</h1>
     <div class="flex-1 relative">
       <DiffInput
         :oldText="props.oldText"
@@ -18,10 +18,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 import { useRouter } from 'vue-router'
 
+import { useI18n } from '../../composables/useI18n'
 import { ActionItem, useActionMenuStore } from '../../stores/actionMenu'
 import { useEditorInputStore } from '../../stores/editorInput'
 import { useIpcStore } from '../../stores/ipc'
@@ -38,26 +39,31 @@ const editorInputStore = useEditorInputStore()
 const menuModalsStore = useMenuModalsStore()
 const editedNewText = ref(props.newText)
 const actionMenuStore = useActionMenuStore()
-const DEFAULT_ACTIONS = actionMenuStore.DEFAULT_ACTIONS
 const routeParams = useRouteParams()
 const router = useRouter()
+const { t } = useI18n()
+const defaultActions = computed(() => actionMenuStore.getDefaultActions())
 
-const leftLetterKeys = [
-  ipcStore.params?.windowId ? DEFAULT_ACTIONS[0] : undefined,
-  DEFAULT_ACTIONS[1],
-  {
-    name: 'Вставить в редактор',
-    action: async () => {
-      editorInputStore.setValue(editedNewText.value)
-      routeParams.setParams({ text: editedNewText.value })
-      editorInputStore.focus()
-      menuModalsStore.closeAll()
-      await router.push('/')
+const leftLetterKeys = computed(() =>
+  [
+    ipcStore.params?.windowId ? defaultActions.value[0] : undefined,
+    defaultActions.value[1],
+    {
+      name: t('action.insertIntoEditor'),
+      action: async () => {
+        editorInputStore.setValue(editedNewText.value)
+        routeParams.setParams({ text: editedNewText.value })
+        editorInputStore.focus()
+        menuModalsStore.closeAll()
+        await router.push('/')
+      },
     },
-  },
-].filter(Boolean) as ActionItem[]
+  ].filter(Boolean) as ActionItem[]
+)
 
-const spaceKey = ipcStore.params?.windowId ? DEFAULT_ACTIONS[0] : undefined
+const spaceKey = computed(() =>
+  ipcStore.params?.windowId ? defaultActions.value[0] : undefined
+)
 
 function updateNewText(text: string) {
   editedNewText.value = text

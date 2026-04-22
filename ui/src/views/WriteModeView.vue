@@ -3,12 +3,12 @@
     <div class="flex flex-row gap-2">
       <WriteModeInput />
       <div class="flex gap-2 flex-col">
-        <Button sm square @click="clear" title="Очистить">
+        <Button sm square @click="clear" :title="t('editor.clear')">
           <Icon icon="mdi:clear" height="24" />
         </Button>
       </div>
     </div>
-    <p class="text-xs mt-1 text-gray-500">Esc - далее</p>
+    <p class="text-xs mt-1 text-gray-500">{{ t('write.escNext') }}</p>
   </div>
 </template>
 
@@ -16,6 +16,7 @@
 import { onUnmounted, ref, watch } from 'vue'
 
 import { useCallAi } from '../composables/useCallAi'
+import { useI18n } from '../composables/useI18n'
 import useToast from '../composables/useToast'
 import { useHistoryStore } from '../stores/history'
 import { useIpcStore } from '../stores/ipc'
@@ -34,9 +35,10 @@ const { toast } = useToast()
 const appConfig = ipcStore.params!.appConfig
 const correctedText = ref('')
 const correctionIsActual = ref(true)
+const { t } = useI18n()
 
 navPanelStore.resetNavParams({
-  escBtnText: 'Далее',
+  escBtnText: t('write.next'),
   escBtnAction: doCorrection,
 })
 
@@ -63,12 +65,12 @@ const clear = () => {
 
 async function doCorrection() {
   if (!writerInputStore.value?.trim()) {
-    toast('Введите текст для коррекции', 'warn')
+    toast(t('write.enterTextForCorrection'), 'warn')
     return
   } else if (correctionIsActual.value) {
-    toast('Текст уже корректирован', 'warn')
+    toast(t('write.alreadyCorrected'), 'warn')
   } else if (writerInputStore.value.length < appConfig.minCorrectionLength) {
-    toast('Слишком короткий текст для коррекции', 'warn')
+    toast(t('write.textTooShortForCorrection'), 'warn')
 
     correctedText.value = writerInputStore.value
     correctionIsActual.value = true

@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col gap-4 w-full h-full">
-    <h1>Задание для AI</h1>
+    <h1>{{ t('menu.aiTask') }}</h1>
 
     <div class="flex-1">
       <TextPreview :text="props.text" />
@@ -17,6 +17,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
+import { useI18n } from '../../composables/useI18n'
 import { type ActionItem } from '../../stores/actionMenu'
 import { useIpcStore } from "../../stores/ipc";
 import { useCallAi } from "../../composables/useCallAi";
@@ -43,6 +44,7 @@ const { aiTasks } = useCallAi();
 const appConfig = computed(() => ipcStore.params.appConfig);
 const { toast } = useToast();
 const historyStore = useHistoryStore();
+const { t } = useI18n()
 const leftLetterKeys = computed<ActionItem[]>(() =>
   ipcStore.params.userConfig.aiTasks.map((item: (typeof ipcStore.params.userConfig.aiTasks)[number], index: number) => ({
     name: item.name,
@@ -56,13 +58,13 @@ async function makeDiff(index: number) {
   const trimmedText = props.text.trim();
   
   if (!trimmedText) {
-    toast('Нет текста для обработки', 'warn');
+    toast(t('toast.noTextToProcess'), 'warn');
 
     return;
   }
 
   if (trimmedText.length < appConfig.value.minCorrectionLength) {
-    toast("Слишком короткий текст для обработки", "warn");
+    toast(t('toast.textTooShortToProcess'), "warn");
 
     return;
   }

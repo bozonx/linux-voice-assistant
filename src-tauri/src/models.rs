@@ -33,6 +33,7 @@ pub struct ChatHistoryItem {
 
 pub fn default_user_config() -> Value {
     json!({
+      "theme": "auto",
       "xdotoolBin": "/usr/bin/xdotool",
       "appLanguage": "auto",
       "userLanguage": "auto",

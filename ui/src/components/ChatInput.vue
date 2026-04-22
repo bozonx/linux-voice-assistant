@@ -2,7 +2,7 @@
   <FieldTextArea
     ref="textareaRef"
     class="main-input"
-    placeholder="Введите текст..."
+    :placeholder="t('input.textPlaceholder')"
     :value="chatInputStore.value"
     @update:value="handleInput"
   />
@@ -11,12 +11,14 @@
 <script setup lang="ts">
 import { nextTick, onMounted, ref, watch } from 'vue'
 
+import { useI18n } from '../composables/useI18n'
 import { useChatInputStore } from '../stores/chatInput'
 import { useRouteParams } from '../stores/routeParams'
 
 const chatInputStore = useChatInputStore()
 const routeParamsStore = useRouteParams()
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
+const { t } = useI18n()
 
 // set value from route params and focus
 onMounted(async () => {

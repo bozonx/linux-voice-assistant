@@ -2,7 +2,7 @@
   <ContentPadding>
     <SearchInput
       v-model="searchQuery"
-      placeholder="Поиск в истории..."
+      :placeholder="t('input.historySearchPlaceholder')"
       ref="searchInput"
       class="mb-4 w-full"
     />
@@ -18,7 +18,7 @@
       v-show="currentTab === 0"
       :items="editorItems"
       :searchQuery="searchQuery"
-      textTitle="Поместить в редактор"
+      :textTitle="t('history.placeIntoEditor')"
       @remove-item="removeEditorItem"
       @clear-history="clearEditorHistory()"
       @text-click="toEditor"
@@ -28,7 +28,7 @@
       v-show="currentTab === 1"
       :items="transformItems"
       :searchQuery="searchQuery"
-      textTitle="Поместить в редактор"
+      :textTitle="t('history.placeIntoEditor')"
       @remove-item="removeTransformItem"
       @clear-history="clearTransformHistory()"
       @text-click="toEditor"
@@ -38,7 +38,7 @@
       v-show="currentTab === 2"
       :items="chatItems"
       :searchQuery="searchQuery"
-      textTitle="Посмотреть"
+      :textTitle="t('history.view')"
       @remove-item="removeChatItem"
       @clear-history="clearChatHistory()"
       @text-click="toChat"
@@ -49,21 +49,23 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 
+import { useI18n } from '../composables/useI18n'
 import useToast from '../composables/useToast'
 import { useHistoryStore } from '../stores/history'
 import { useNavPanelStore } from '../stores/navPanel'
 import { useRouteParams } from '../stores/routeParams'
 
 const toast = useToast()
+const { t } = useI18n()
 const navPanelStore = useNavPanelStore()
 const historyStore = useHistoryStore()
 const routeParams = useRouteParams()
 const currentTab = ref(0)
-const tabs = [
-  { text: 'История ввода', key: 0 },
-  { text: 'История трансформаций', key: 1 },
-  { text: 'История чатов', key: 2 },
-]
+const tabs = computed(() => [
+  { text: t('history.inputTab'), key: 0 },
+  { text: t('history.transformTab'), key: 1 },
+  { text: t('history.chatTab'), key: 2 },
+])
 
 const searchQuery = ref<string>('')
 const searchInput = ref<HTMLInputElement | null>(null)
@@ -106,12 +108,12 @@ const onTabChange = () => {
 
 const clearEditorHistory = async () => {
   await historyStore.clearEditorHistory()
-  toast.toast('История ввода очищена', 'success')
+  toast.toast(t('history.inputCleared'), 'success')
 }
 
 const clearTransformHistory = async () => {
   await historyStore.clearTransformHistory()
-  toast.toast('История трансформаций очищена', 'success')
+  toast.toast(t('history.transformsCleared'), 'success')
 }
 
 const removeEditorItem = async (item: {
@@ -119,7 +121,7 @@ const removeEditorItem = async (item: {
   value: string
 }) => {
   await historyStore.removeFromEditorHistory(item.value)
-  toast.toast('Удалено из истории ввода', 'success')
+  toast.toast(t('history.inputRemoved'), 'success')
 }
 
 const removeTransformItem = async (item: {
@@ -127,17 +129,17 @@ const removeTransformItem = async (item: {
   value: string
 }) => {
   await historyStore.removeFromTransformHistory(item.value)
-  toast.toast('Удалено из истории трансформаций', 'success')
+  toast.toast(t('history.transformsRemoved'), 'success')
 }
 
 const clearChatHistory = async () => {
   await historyStore.clearChatHistory()
-  toast.toast('История чатов очищена', 'success')
+  toast.toast(t('history.chatsCleared'), 'success')
 }
 
 const removeChatItem = async (item: { id: string | number; value: string }) => {
   await historyStore.removeFromChatHistory(item.id.toString())
-  toast.toast('Удалено из истории чатов', 'success')
+  toast.toast(t('history.chatsRemoved'), 'success')
 }
 
 const toEditor = (item: { id: string | number; value: string }) => {

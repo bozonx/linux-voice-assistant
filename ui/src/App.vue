@@ -11,6 +11,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, watchEffect } from 'vue'
 
+import { useI18n } from './composables/useI18n'
 import { createAppBootstrap } from './lib/app/app-bootstrap'
 import { desktopClient } from './lib/desktop/client';
 import { syncDocumentLanguageAttributes } from './lib/locale/language'
@@ -24,6 +25,7 @@ import { useThemeStore } from './stores/theme';
 
 useThemeStore();
 const ipcStore = useIpcStore();
+const { t } = useI18n()
 const { globalEvents } = useGlobalEvents();
 const menuModalsStore = useMenuModalsStore();
 const navPanelStore = useNavPanelStore();
@@ -50,6 +52,7 @@ const bootstrap = createAppBootstrap({
 
 watchEffect(() => {
   syncDocumentLanguageAttributes(ipcStore.params.userConfig)
+  document.title = t('app.title')
 })
 
 onMounted(() => {

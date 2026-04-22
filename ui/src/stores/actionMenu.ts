@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 
 import { useCallAi } from '../composables/useCallAi'
 import { useCallApi } from '../composables/useCallApi'
+import { useI18n } from '../composables/useI18n'
 import useToast from '../composables/useToast'
 import { useChatStore } from './chat'
 import { useHistoryStore } from './history'
@@ -27,13 +28,14 @@ export const useActionMenuStore = defineStore('actionMenu', () => {
   const { toast } = useToast()
   const registeredActionsMenu = ref<ActionItem[]>([])
   const chatStore = useChatStore()
+  const { t } = useI18n()
 
-  const DEFAULT_ACTIONS: ActionItem[] = [
+  const getDefaultActions = (): ActionItem[] => [
     {
-      name: 'Вставить в окно',
+      name: t('action.insertIntoWindow'),
       action: async (text: string) => {
         if (!text?.trim()) {
-          toast('Текст не выбран', 'error')
+          toast(t('toast.textNotSelected'), 'error')
           return
         }
 
@@ -41,10 +43,10 @@ export const useActionMenuStore = defineStore('actionMenu', () => {
       },
     },
     {
-      name: 'В буфер обмена',
+      name: t('action.copyToClipboard'),
       action: async (text: string) => {
         if (!text?.trim()) {
-          toast('Текст не выбран', 'error')
+          toast(t('toast.textNotSelected'), 'error')
           return
         }
 
@@ -52,10 +54,10 @@ export const useActionMenuStore = defineStore('actionMenu', () => {
       },
     },
     {
-      name: 'Задание для AI',
+      name: t('action.aiTask'),
       action: async (text: string) => {
         if (!text?.trim()) {
-          toast('Текст не выбран', 'error')
+          toast(t('toast.textNotSelected'), 'error')
           return
         }
 
@@ -65,15 +67,15 @@ export const useActionMenuStore = defineStore('actionMenu', () => {
       },
     },
     {
-      name: 'Коррекция',
+      name: t('action.correction'),
       action: async (text: string) => {
         if (!text?.trim()) {
-          toast('Текст не выбран', 'error')
+          toast(t('toast.textNotSelected'), 'error')
           return
         }
 
         if (text.length < appConfig.value.minCorrectionLength) {
-          toast('Слишком короткий текст для коррекции', 'warn')
+          toast(t('toast.textTooShortForCorrection'), 'warn')
           return
         }
 
@@ -92,10 +94,10 @@ export const useActionMenuStore = defineStore('actionMenu', () => {
       },
     },
     {
-      name: 'Перевод',
+      name: t('action.translation'),
       action: async (text: string) => {
         if (!text?.trim()) {
-          toast('Текст не выбран', 'error')
+          toast(t('toast.textNotSelected'), 'error')
           return
         }
 
@@ -105,7 +107,7 @@ export const useActionMenuStore = defineStore('actionMenu', () => {
       },
     },
     {
-      name: 'Спросить у AI',
+      name: t('action.askAi'),
       action: async (text: string) => {
         chatStore.startChat({
           initialMessage: text,
@@ -113,10 +115,10 @@ export const useActionMenuStore = defineStore('actionMenu', () => {
       },
     },
     {
-      name: 'Спросить по тексту у AI',
+      name: t('action.askAiAboutText'),
       action: async (text: string) => {
         if (!text?.trim()) {
-          toast('Текст не выбран', 'error')
+          toast(t('toast.textNotSelected'), 'error')
           return
         }
 
@@ -128,7 +130,7 @@ export const useActionMenuStore = defineStore('actionMenu', () => {
   ]
 
   const getActionsMenu = () => {
-    return [...DEFAULT_ACTIONS, ...registeredActionsMenu.value]
+    return [...getDefaultActions(), ...registeredActionsMenu.value]
   }
 
   const registerActionsItems = (actions: ActionItem[]) => {
@@ -136,7 +138,7 @@ export const useActionMenuStore = defineStore('actionMenu', () => {
   }
 
   return {
-    DEFAULT_ACTIONS,
+    getDefaultActions,
     getActionsMenu,
     registerActionsItems,
   }

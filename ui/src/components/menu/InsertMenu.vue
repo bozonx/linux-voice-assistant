@@ -1,6 +1,6 @@
 <template>
 <div class="flex flex-col gap-4 w-full h-full"> 
-  <h1>Вставить</h1>
+  <h1>{{ t('menu.insert') }}</h1>
 
   <div class="flex-1">
     <DiffInput
@@ -23,6 +23,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
+import { useI18n } from '../../composables/useI18n'
 import { useIpcStore } from '../../stores/ipc'
 import { type ActionItem, useActionMenuStore } from '../../stores/actionMenu'
 import { useRouteParams } from '../../stores/routeParams'
@@ -51,6 +52,7 @@ const emit = defineEmits<{
 const ipcStore = useIpcStore()
 const actionMenuStore = useActionMenuStore()
 const actionsMenu = computed(() => actionMenuStore.getActionsMenu())
+const { t } = useI18n()
 
 const leftLetterKeys = computed<ActionItem[]>(() =>
   actionsMenu.value.map((item: ActionItem, index: number) => ({

@@ -17,6 +17,7 @@ export interface ChatStoreDeps {
   saveChatHistory: (item: ChatHistoryItem) => void | Promise<void>
   navigateTo: (path: string) => void | Promise<void>
   notifyError: (message: string) => void
+  emptyMessageError: string
   createId: () => string
   nowIso: () => string
 }
@@ -31,7 +32,7 @@ export function createChatStoreModel(deps: ChatStoreDeps) {
     role?: string
   ) => {
     if (!message?.trim()) {
-      deps.notifyError('Текст не выбран')
+      deps.notifyError(deps.emptyMessageError)
       return
     }
 
