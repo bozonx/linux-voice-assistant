@@ -9,7 +9,6 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   const port = parseInt(env.PORT || "3000");
-  const hmrPort = parseInt(env.HMR_PORT || env.PORT || "3000");
 
   return {
     plugins: [
@@ -57,9 +56,6 @@ export default defineConfig(({ mode }) => {
     server: {
       port: port,
       strictPort: true,
-      hmr: {
-        port: hmrPort,
-      },
     },
   };
 });
