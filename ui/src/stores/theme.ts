@@ -1,25 +1,31 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { browserThemeRuntime } from '../lib/theme/browser-theme-runtime'
-import { createThemeController } from '../lib/theme/theme-controller'
+import { createThemeController, type ThemeMode } from '../lib/theme/theme-controller'
 
 export const useThemeStore = defineStore('theme', () => {
   const controller = createThemeController(browserThemeRuntime)
-  const theme = ref(controller.resolveInitialTheme())
+  const themeMode = ref(controller.resolveInitialThemeMode())
+  const theme = ref(controller.applyTheme(themeMode.value))
 
-  controller.applyTheme(theme.value)
+  controller.onSystemThemeChange(() => {
+    const nextTheme = controller.handleSystemThemeChange(themeMode.value)
 
-  const toggleTheme = () => {
-    theme.value = controller.toggleTheme(theme.value)
-  }
+    if (!nextTheme) {
+      return
+    }
 
-  const resetToSystemTheme = () => {
-    theme.value = controller.resetToSystemTheme()
+    theme.value = nextTheme
+  })
+
+  const setThemeMode = (mode: ThemeMode) => {
+    themeMode.value = mode
+    theme.value = controller.setThemeMode(mode)
   }
 
   return {
     theme,
-    toggleTheme,
-    resetToSystemTheme,
+    themeMode,
+    setThemeMode,
   }
 })

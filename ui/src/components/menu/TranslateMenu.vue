@@ -14,6 +14,7 @@
 import { computed } from 'vue'
 
 import { type ActionItem } from '../../stores/actionMenu'
+import { getLanguageLabel } from '../../lib/locale/language'
 import { useIpcStore } from '../../stores/ipc'
 import { useCallAi } from '../../composables/useCallAi'
 import { MenuModals, useMenuModalsStore } from '../../stores/menuModals'
@@ -37,7 +38,7 @@ const historyStore = useHistoryStore()
 const { toast } = useToast()
 const leftLetterKeys = computed<ActionItem[]>(() =>
   ipcStore.params.userConfig.toTranslateLanguages.map((lang: string, index: number) => ({
-    name: lang,
+    name: getLanguageLabel(lang),
     action: async () => {
       await translate(index)
     },

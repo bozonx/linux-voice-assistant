@@ -1,45 +1,58 @@
 export type ThemeName = 'light' | 'dark'
+export type ThemeMode = 'auto' | ThemeName
 
 export interface ThemeRuntime {
-  getStoredTheme: () => ThemeName | null
-  setStoredTheme: (theme: ThemeName) => void
+  getStoredTheme: () => ThemeMode | null
+  setStoredTheme: (theme: ThemeMode) => void
   clearStoredTheme: () => void
-  applyTheme: (theme: ThemeName) => void
+  applyTheme: (theme: ThemeName, mode: ThemeMode) => void
   getSystemTheme: () => ThemeName
+  onSystemThemeChange: (handler: (theme: ThemeName) => void) => () => void
 }
 
 export function createThemeController(runtime: ThemeRuntime) {
-  const resolveInitialTheme = (): ThemeName => {
-    return runtime.getStoredTheme() || runtime.getSystemTheme()
+  const resolveTheme = (mode: ThemeMode): ThemeName => {
+    return mode === 'auto' ? runtime.getSystemTheme() : mode
   }
 
-  const applyTheme = (theme: ThemeName): ThemeName => {
-    runtime.applyTheme(theme)
-    return theme
+  const resolveInitialThemeMode = (): ThemeMode => {
+    return runtime.getStoredTheme() || 'auto'
   }
 
-  const toggleTheme = (currentTheme: ThemeName): ThemeName => {
-    const nextTheme = currentTheme === 'light' ? 'dark' : 'light'
-
-    runtime.setStoredTheme(nextTheme)
-    runtime.applyTheme(nextTheme)
-
-    return nextTheme
+  const applyTheme = (mode: ThemeMode): ThemeName => {
+    const resolvedTheme = resolveTheme(mode)
+    runtime.applyTheme(resolvedTheme, mode)
+    return resolvedTheme
   }
 
-  const resetToSystemTheme = (): ThemeName => {
-    const nextTheme = runtime.getSystemTheme()
+  const setThemeMode = (mode: ThemeMode): ThemeName => {
+    if (mode === 'auto') {
+      runtime.clearStoredTheme()
+    } else {
+      runtime.setStoredTheme(mode)
+    }
 
-    runtime.clearStoredTheme()
-    runtime.applyTheme(nextTheme)
+    return applyTheme(mode)
+  }
 
-    return nextTheme
+  const handleSystemThemeChange = (mode: ThemeMode): ThemeName | null => {
+    if (mode !== 'auto') {
+      return null
+    }
+
+    return applyTheme(mode)
+  }
+
+  const onSystemThemeChange = (handler: (theme: ThemeName) => void) => {
+    return runtime.onSystemThemeChange(handler)
   }
 
   return {
-    resolveInitialTheme,
+    resolveInitialThemeMode,
+    resolveTheme,
     applyTheme,
-    toggleTheme,
-    resetToSystemTheme,
+    setThemeMode,
+    handleSystemThemeChange,
+    onSystemThemeChange,
   }
 }

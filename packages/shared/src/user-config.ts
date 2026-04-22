@@ -97,8 +97,8 @@ export interface UserConfig {
 
 export const DEFAULT_USER_CONFIG: UserConfig = {
   xdotoolBin: '/usr/bin/xdotool',
-  appLanguage: 'ru_RU',
-  userLanguage: 'ru_RU',
+  appLanguage: 'auto',
+  userLanguage: 'auto',
   toTranslateLanguages: ['en_US', 'ru_RU', 'es_AR', 'tr_TR'],
   editorHistoryMaxItems: 50,
   transformHistoryMaxItems: 50,

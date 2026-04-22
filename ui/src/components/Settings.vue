@@ -7,6 +7,35 @@
         <FieldRow label="Theme">
           <ThemeSwitcher />
         </FieldRow>
+        <FieldRow label="App Language">
+          <FieldSelect
+            v-model:value="userConfig.appLanguage"
+            :options="appLanguageOptions"
+          />
+        </FieldRow>
+        <FieldRow label="User Language">
+          <FieldSelect
+            v-model:value="userConfig.userLanguage"
+            :options="userLanguageOptions"
+          />
+        </FieldRow>
+        <FieldRow label="To Translate Languages">
+          <FieldItems
+            :items="translateLanguagesItems"
+            @update:items="updateTranslateLanguages"
+          >
+            <template #item="{ item, index }">
+              <div class="flex flex-row gap-2 w-full">
+                <KeyButton>{{ PRESETS_KEYS[index] }}</KeyButton>
+                <FieldSelect
+                  class="flex-1"
+                  v-model:value="item.value"
+                  :options="translateLanguageOptions"
+                />
+              </div>
+            </template>
+          </FieldItems>
+        </FieldRow>
         <FieldRow label="Xdotool Bin">
           <FieldInput v-model:value="userConfig.xdotoolBin" />
         </FieldRow>
@@ -28,26 +57,6 @@
             type="number"
             v-model:value="userConfig.chatHistoryMaxItems"
           />
-        </FieldRow>
-
-        <FieldRow label="App Language">
-          <FieldInput v-model:value="userConfig.appLanguage" />
-        </FieldRow>
-        <FieldRow label="User Language">
-          <FieldInput v-model:value="userConfig.userLanguage" />
-        </FieldRow>
-        <FieldRow label="To Translate Languages">
-          <FieldItems
-            :items="translateLanguagesItems"
-            @update:items="updateTranslateLanguages"
-          >
-            <template #item="{ item, index }">
-              <div class="flex flex-row gap-2 w-full">
-                <KeyButton>{{ PRESETS_KEYS[index] }}</KeyButton>
-                <FieldInput class="flex-1" v-model:value="item.value" />
-              </div>
-            </template>
-          </FieldItems>
         </FieldRow>
       </div>
 
@@ -298,6 +307,11 @@ import { computed, onMounted, ref, watchEffect } from 'vue'
 
 import { pluginIndexes } from '../plugins'
 import useToast from '../composables/useToast'
+import {
+  AUTO_LANGUAGE_VALUE,
+  buildLanguageOptions,
+  DEFAULT_LANGUAGE,
+} from '../lib/locale/language'
 import { useIpcStore } from '../stores/ipc'
 import { PRESETS_KEYS } from '../types'
 
@@ -327,10 +341,12 @@ const pluginConfigs = pluginIndexes
 watchEffect(() => {
   userConfig.value = JSON.parse(JSON.stringify(ipcStore.params.userConfig || DEFAULT_USER_CONFIG))
   ensurePluginDefaults()
+  normalizeLanguageConfig()
 })
 
 onMounted(() => {
   ensurePluginDefaults()
+  normalizeLanguageConfig()
 })
 
 const plugins = computed(() => {
@@ -374,10 +390,33 @@ function ensurePluginDefaults() {
   }
 }
 
+function normalizeLanguageConfig() {
+  userConfig.value.appLanguage =
+    userConfig.value.appLanguage || AUTO_LANGUAGE_VALUE
+  userConfig.value.userLanguage =
+    userConfig.value.userLanguage || AUTO_LANGUAGE_VALUE
+  userConfig.value.toTranslateLanguages =
+    (userConfig.value.toTranslateLanguages || []).map(
+      (lang: string) => lang || DEFAULT_LANGUAGE
+    )
+}
+
 const saveSettings = () => {
   ipcStore.saveUserConfig(userConfig.value)
   toast('Settings saved', 'success')
 }
+
+const appLanguageOptions = computed(() =>
+  buildLanguageOptions([userConfig.value.appLanguage], true)
+)
+
+const userLanguageOptions = computed(() =>
+  buildLanguageOptions([userConfig.value.userLanguage], true)
+)
+
+const translateLanguageOptions = computed(() =>
+  buildLanguageOptions(userConfig.value.toTranslateLanguages || [], false)
+)
 
 const translateLanguagesItems = computed(() => {
   return (userConfig.value.toTranslateLanguages || []).map((lang: string) => ({

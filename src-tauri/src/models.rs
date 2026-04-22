@@ -34,8 +34,8 @@ pub struct ChatHistoryItem {
 pub fn default_user_config() -> Value {
     json!({
       "xdotoolBin": "/usr/bin/xdotool",
-      "appLanguage": "ru_RU",
-      "userLanguage": "ru_RU",
+      "appLanguage": "auto",
+      "userLanguage": "auto",
       "toTranslateLanguages": ["en_US", "ru_RU", "es_AR", "tr_TR"],
       "editorHistoryMaxItems": 50,
       "transformHistoryMaxItems": 50,

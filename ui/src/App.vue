@@ -9,10 +9,11 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, watchEffect } from 'vue'
 
 import { createAppBootstrap } from './lib/app/app-bootstrap'
 import { desktopClient } from './lib/desktop/client';
+import { syncDocumentLanguageAttributes } from './lib/locale/language'
 import { appNavigation } from './lib/navigation/navigation'
 import { useGlobalEvents } from './composables/useGlobalEvents';
 import { usePlugins } from "./plugins";
@@ -45,6 +46,10 @@ const bootstrap = createAppBootstrap({
       window.removeEventListener('keyup', handler)
     }
   },
+})
+
+watchEffect(() => {
+  syncDocumentLanguageAttributes(ipcStore.params.userConfig)
 })
 
 onMounted(() => {

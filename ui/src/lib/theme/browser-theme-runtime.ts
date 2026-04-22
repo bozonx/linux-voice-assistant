@@ -1,9 +1,13 @@
-import type { ThemeName, ThemeRuntime } from './theme-controller'
+import type { ThemeMode, ThemeName, ThemeRuntime } from './theme-controller'
 
-function readStoredTheme(): ThemeName | null {
+function readStoredTheme(): ThemeMode | null {
   const storedTheme = window.localStorage.getItem('theme')
 
-  if (storedTheme === 'light' || storedTheme === 'dark') {
+  if (
+    storedTheme === 'auto'
+    || storedTheme === 'light'
+    || storedTheme === 'dark'
+  ) {
     return storedTheme
   }
 
@@ -29,8 +33,34 @@ export const browserThemeRuntime: ThemeRuntime = {
   clearStoredTheme: () => {
     window.localStorage.removeItem('theme')
   },
-  applyTheme: (theme) => {
+  applyTheme: (theme, mode) => {
     document.documentElement.setAttribute('data-theme', theme)
+    document.documentElement.setAttribute('data-theme-mode', mode)
+    document.documentElement.style.colorScheme = theme
   },
   getSystemTheme,
+  onSystemThemeChange: (handler) => {
+    if (!window.matchMedia) {
+      return () => {}
+    }
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    const listener = (event: MediaQueryListEvent) => {
+      handler(event.matches ? 'dark' : 'light')
+    }
+
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', listener)
+
+      return () => {
+        mediaQuery.removeEventListener('change', listener)
+      }
+    }
+
+    mediaQuery.addListener(listener)
+
+    return () => {
+      mediaQuery.removeListener(listener)
+    }
+  },
 }
