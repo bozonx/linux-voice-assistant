@@ -295,11 +295,9 @@
 <script setup lang="ts">
 import useToast from '../composables/useToast'
 import { useIpcStore } from '../stores/ipc'
-import { usePluginsConfigsStore } from '../stores/pluginsConfigs'
 import { PRESETS_KEYS } from '../types'
 
 const ipcStore = useIpcStore()
-const pluginsConfigsStore = usePluginsConfigsStore()
 const { toast } = useToast()
 
 const userConfig = ref(ipcStore.params!.userConfig)

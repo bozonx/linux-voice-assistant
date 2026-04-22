@@ -4,10 +4,11 @@
   "description": "Librnet assistant built with Electron",
   "main": "dist/electron/main.js",
   "scripts": {
-    "build:electron": "NODE_ENV=production tsc && electron-builder",
+    "build:electron": "pnpm build && pnpm build:vue && NODE_ENV=production electron-builder",
+    "build:vue": "pnpm --filter ./vue build",
     "watch": "NODE_ENV=development tsc -w",
-    "dev": "npm run build && NODE_ENV=development electron ./",
-    "prod": "npm run build && NODE_ENV=production electron ./",
+    "dev": "pnpm build && NODE_ENV=development electron ./",
+    "prod": "pnpm build && NODE_ENV=production electron ./",
     "build": "tsc && cp -r ./electron/assets ./dist/electron/assets"
   },
   "author": "Kozyrin Ivan",
@@ -21,6 +22,7 @@
     "mic": "^2.1.2",
     "node-microphone": "^0.1.6",
     "protoc-gen-ts": "^0.8.7",
+    "squidlet-lib": "link:../../../.local/share/pnpm/global/5/node_modules/squidlet-lib",
     "ws": "^8.18.3",
     "yaml": "^2.8.0"
   },

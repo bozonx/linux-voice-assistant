@@ -1,95 +1,86 @@
-# Writer Assistant
+# Librnet Assistant
 
-Assistant for Linux for writers and programmers.
+Assistant for Linux for writers and programmers. Built with Electron and Vue.
 
-Set bindings
+## Key Bindings
 
-- Win + q - `run-ui.sh select`
-- Win + w - `run-ui.sh voice`
-- Win + e - `run-ui.sh edit`
+Set these bindings in your OS settings:
+
+- **Win + q** - `run-ui.sh select` (Action on selected text)
+- **Win + w** - `run-ui.sh voice` (Voice input)
+- **Win + e** - `run-ui.sh edit` (Open editor)
 
 ## Setup
 
 1. Install dependencies:
 ```bash
-yarn
+pnpm install
 ```
 
-2. Run the application in development mode:
+2. Run in Development Mode:
+
+You need two terminals:
+
+**Terminal 1 (UI):**
 ```bash
-yarn start
+cd vue
+pnpm dev
 ```
 
-4. Build the application:
+**Terminal 2 (Electron):**
 ```bash
-npm run build
+pnpm dev
 ```
 
-## Install external dependencies
+3. Build the application:
+```bash
+pnpm build:electron
+```
 
-- xdotool
-- xsel
-- pyenv
+## External Dependencies
 
-### argostranslate
+- `xdotool`
+- `xclip`
+- `pyenv`
+- `docker` (for Vosk)
 
-! У него нет прямого перевода с испанского на русский, будет использоваться перевод на английский и только потом на русский
+### ArgosTranslate (Optional for Translation)
+
+Recommended installation path: `~/.local/opt/argostranslate`
 
 ```bash
-mkdir /home/ivan/.local/opt/argostranslate
-cd /home/ivan/.local/opt/argostranslate
+mkdir -p ~/.local/opt/argostranslate
+cd ~/.local/opt/argostranslate
 
 pyenv install 3.11.9
 pyenv local 3.11.9
-virtualenv -p ~/.pyenv/versions/3.11.9/bin/python3.11 argos_env
+python -m venv argos_env
 source argos_env/bin/activate
-python3.11 -m venv argos_env
 pip install argostranslate
 
-# update languages
+# Update and install languages
 argospm update
-
 argospm install translate-en_ru
 argospm install translate-ru_en
 argospm install translate-es_en
 argospm install translate-en_es
 
-# test
-/home/ivan/.local/opt/argostranslate/argos_env/bin/argos-translate --from en --to ru "<TEXT>"
-
+# Test translation
+~/.local/opt/argostranslate/argos_env/bin/argos-translate --from en --to ru "Hello World"
 ```
 
-kate /home/ivan/.local/opt/argostranslate/translate_with_auto_detect.py
+### Vosk (Speech Recognition)
 
-```python
-import argostranslate.package
-import argostranslate.translate
-
-from_code = "en"
-to_code = "es"
-
-# Download and install Argos Translate package
-argostranslate.package.update_package_index()
-available_packages = argostranslate.package.get_available_packages()
-package_to_install = next(
-    filter(
-        lambda x: x.from_code == from_code and x.to_code == to_code, available_packages
-    )
-)
-argostranslate.package.install_from_path(package_to_install.download())
-
-# Translate
-translatedText = argostranslate.translate.translate("Hello World", from_code, to_code)
-print(translatedText)
-# '¡Hola Mundo!'
-```
-
-```bash
-python install_model.py
-```
-
-## Vosk
+Run Vosk server using Docker:
 
 ```bash
 docker run --name vosk-ru -p 2700:2700 alphacep/kaldi-ru:latest
 ```
+
+## Scripts
+
+- `pnpm dev` - Run Electron in development mode (requires Vue dev server on port 3000)
+- `pnpm prod` - Run Electron in production mode (loads built Vue files)
+- `pnpm build` - Compile TypeScript for Electron
+- `pnpm build:vue` - Build Vue frontend
+- `pnpm build:electron` - Create production build/installer
