@@ -19,23 +19,6 @@
             :options="userLanguageOptions"
           />
         </FieldRow>
-        <FieldRow :label="t('settings.translateLanguages')">
-          <FieldItems
-            :items="translateLanguagesItems"
-            @update:items="updateTranslateLanguages"
-          >
-            <template #item="{ item, index }">
-              <div class="flex flex-row gap-2 w-full">
-                <KeyButton>{{ PRESETS_KEYS[index] }}</KeyButton>
-                <FieldSelect
-                  class="flex-1"
-                  v-model:value="item.value"
-                  :options="translateLanguageOptions"
-                />
-              </div>
-            </template>
-          </FieldItems>
-        </FieldRow>
         <FieldRow :label="t('settings.xdotoolBin')">
           <FieldInput v-model:value="userConfig.xdotoolBin" />
         </FieldRow>
@@ -60,7 +43,27 @@
         </FieldRow>
       </div>
 
-      <div v-show="currentTab === 1">
+      <div v-show="currentTab === 1" class="fields-col">
+        <FieldRow :label="t('settings.translateLanguages')">
+          <FieldItems
+            :items="translateLanguagesItems"
+            @update:items="updateTranslateLanguages"
+          >
+            <template #item="{ item, index }">
+              <div class="flex flex-row gap-2 w-full">
+                <KeyButton>{{ PRESETS_KEYS[index] }}</KeyButton>
+                <FieldSelect
+                  class="flex-1"
+                  v-model:value="item.value"
+                  :options="translateLanguageOptions"
+                />
+              </div>
+            </template>
+          </FieldItems>
+        </FieldRow>
+      </div>
+
+      <div v-show="currentTab === 2">
         <FieldRow :label="t('settings.llmModels')">
           <FieldItems
             :items="userConfig.llmModels"
@@ -219,7 +222,7 @@
         </FieldRow>
       </div>
 
-      <div v-show="currentTab === 2">
+      <div v-show="currentTab === 3">
         <h2>{{ t('settings.aiRules') }}</h2>
         <FieldRow :label="t('settings.baseRules')">
           <FieldTextArea v-model:value="userConfig.aiRules.base" />
@@ -237,7 +240,7 @@
         </FieldRow>
       </div>
 
-      <div v-show="currentTab === 3">
+      <div v-show="currentTab === 4">
         <FieldRow :label="t('settings.aiTasks')">
           <FieldItems :items="userConfig.aiTasks" @update:items="updateAiTasks">
             <template #item="{ item, index }">
@@ -259,7 +262,7 @@
         </FieldRow>
       </div>
 
-      <div v-show="currentTab === 4">
+      <div v-show="currentTab === 5">
         <FieldRow :label="t('settings.chatRoles')">
           <FieldItems
             :items="userConfig.chatRoles"
@@ -284,7 +287,7 @@
         </FieldRow>
       </div>
 
-      <div v-show="currentTab === 5">
+      <div v-show="currentTab === 6">
         <template v-for="plugin of plugins" :key="plugin.pluginName">
           <h2>{{ plugin.label }}</h2>
           <FieldsByCfg
@@ -326,11 +329,12 @@ const userConfig = ref(JSON.parse(JSON.stringify(ipcStore.params.userConfig || D
 const currentTab = ref(0)
 const tabs = computed(() => [
   { text: t('settings.generalTab'), key: 0 },
-  { text: t('settings.modelsTab'), key: 1 },
-  { text: t('settings.rulesTab'), key: 2 },
-  { text: t('settings.tasksTab'), key: 3 },
-  { text: t('settings.rolesTab'), key: 4 },
-  { text: t('settings.pluginsTab'), key: 5 },
+  { text: t('settings.translationsTab'), key: 1 },
+  { text: t('settings.modelsTab'), key: 2 },
+  { text: t('settings.rulesTab'), key: 3 },
+  { text: t('settings.tasksTab'), key: 4 },
+  { text: t('settings.rolesTab'), key: 5 },
+  { text: t('settings.pluginsTab'), key: 6 },
 ])
 
 const pluginConfigs = pluginIndexes
