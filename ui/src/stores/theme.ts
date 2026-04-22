@@ -1,49 +1,20 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-
-// Функция для получения системной темы из настроек браузера
-const getSystemTheme = (): string => {
-  // Проверяем поддержку prefers-color-scheme
-  if (
-    window.matchMedia &&
-    window.matchMedia('(prefers-color-scheme: dark)').matches
-  ) {
-    return 'dark'
-  }
-  if (
-    window.matchMedia &&
-    window.matchMedia('(prefers-color-scheme: light)').matches
-  ) {
-    return 'light'
-  }
-  // По умолчанию возвращаем светлую тему
-  return 'light'
-}
+import { browserThemeRuntime } from '../lib/theme/browser-theme-runtime'
+import { createThemeController } from '../lib/theme/theme-controller'
 
 export const useThemeStore = defineStore('theme', () => {
-  let initialTheme = localStorage.getItem('theme')
+  const controller = createThemeController(browserThemeRuntime)
+  const theme = ref(controller.resolveInitialTheme())
 
-  if (!initialTheme) {
-    initialTheme = getSystemTheme()
-  }
-
-  const theme = ref(initialTheme)
-
-  // Применяем тему к документу при инициализации
-  document.documentElement.setAttribute('data-theme', theme.value)
+  controller.applyTheme(theme.value)
 
   const toggleTheme = () => {
-    theme.value = theme.value === 'light' ? 'dark' : 'light'
-    document.documentElement.setAttribute('data-theme', theme.value)
-    localStorage.setItem('theme', theme.value)
+    theme.value = controller.toggleTheme(theme.value)
   }
 
-  // Функция для сброса к системной теме
   const resetToSystemTheme = () => {
-    const systemTheme = getSystemTheme()
-    theme.value = systemTheme
-    document.documentElement.setAttribute('data-theme', systemTheme)
-    localStorage.removeItem('theme') // Удаляем сохраненную тему, чтобы использовать системную
+    theme.value = controller.resetToSystemTheme()
   }
 
   return {

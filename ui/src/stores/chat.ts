@@ -8,6 +8,11 @@ import useToast from "../composables/useToast";
 import { AI_TASKS } from "../types";
 import { useHistoryStore } from "./history";
 import { makeUniqId } from "@/lib/squidlet-lib-local";
+import {
+  createAssistantMessage,
+  createChatHistoryEntry,
+  prepareChatRequest,
+} from "../lib/chat/chat-helpers";
 
 export const useChatStore = defineStore("chat", () => {
   const { toast } = useToast();
@@ -37,23 +42,13 @@ export const useChatStore = defineStore("chat", () => {
       devInstructions = APP_CONFIG.aiInstructions[AI_TASKS.CHAT];
     }
 
-    const attachString = (attachments || [])
-      .map((a) => `=== ATTACHMENT START ===\n${a}\n=== ATTACHMENT END ===`)
-      .join("\n\n");
+    const { preparedMessage, userMessage } = prepareChatRequest(
+      message,
+      attachments,
+      role
+    );
 
-    const roleString = role
-      ? `=== ROLE/RULES START ===\n${role}\n=== ROLE/RULES END ===`
-      : "";
-    const preparedMessage = [attachString, roleString, message]
-      .filter(Boolean)
-      .join("\n\n");
-
-    // save to previous messages
-    const newMessage: ChatMessage = {
-      role: "user",
-      content: [attachString, message].filter(Boolean).join("\n\n"),
-    };
-    messages.value.push(newMessage);
+    messages.value.push(userMessage);
 
     const result = await sendChatMessage(
       preparedMessage,
@@ -61,21 +56,20 @@ export const useChatStore = defineStore("chat", () => {
       devInstructions
     );
 
-    const assistantMessage: ChatMessage = {
-      role: "assistant",
-      content: result,
-    };
+    const assistantMessage: ChatMessage = createAssistantMessage(result);
     messages.value.push(assistantMessage);
 
     newChatParams.value.attachments = [];
 
-    historyStore.saveChatHistory({
-      id: newChatParams.value.id!,
-      // TODO: description
-      description: newChatParams.value.initialMessage!,
-      lastMsgDate: new Date().toISOString(),
-      messages: [newMessage, assistantMessage],
-    });
+    historyStore.saveChatHistory(
+      createChatHistoryEntry({
+        id: newChatParams.value.id!,
+        description: newChatParams.value.initialMessage!,
+        lastMsgDate: new Date().toISOString(),
+        userMessage,
+        assistantMessage,
+      })
+    );
 
     return result;
   };
