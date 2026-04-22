@@ -303,7 +303,7 @@ import { PRESETS_KEYS } from '../types'
 const ipcStore = useIpcStore()
 const { toast } = useToast()
 
-const userConfig = ref(structuredClone(ipcStore.params.userConfig || DEFAULT_USER_CONFIG))
+const userConfig = ref(JSON.parse(JSON.stringify(ipcStore.params.userConfig || DEFAULT_USER_CONFIG)))
 const currentTab = ref(0)
 const tabs = [
   { text: 'Основные', key: 0 },
@@ -324,7 +324,7 @@ const pluginConfigs = pluginIndexes
   }))
 
 watchEffect(() => {
-  userConfig.value = structuredClone(ipcStore.params.userConfig || DEFAULT_USER_CONFIG)
+  userConfig.value = JSON.parse(JSON.stringify(ipcStore.params.userConfig || DEFAULT_USER_CONFIG))
   ensurePluginDefaults()
 })
 

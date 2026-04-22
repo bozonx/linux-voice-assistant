@@ -8,7 +8,7 @@
     "build:ui": "pnpm --filter librnet-assistant-ui build",
     "type-check": "pnpm --filter librnet-assistant-ui type-check",
     "tauri": "tauri",
-    "tauri:dev": "pnpm --env-file=.env tauri dev --config \"{\\\"build\\\": {\\\"devUrl\\\": \\\"http://localhost:${PORT:-3000}\\\"}}\"",
+    "tauri:dev": "export $(grep -v '^#' .env | xargs 2>/dev/null); pnpm tauri dev --config \"{\\\"build\\\": {\\\"devUrl\\\": \\\"http://localhost:${PORT:-3000}\\\"}}\"",
     "tauri:build": "tauri build",
     "dev": "pnpm dev:ui",
     "build": "pnpm build:ui"

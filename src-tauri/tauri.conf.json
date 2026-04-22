@@ -13,6 +13,7 @@
     "withGlobalTauri": false,
     "windows": [
       {
+        "label": "main",
         "title": "Librnet Assistant",
         "width": 800,
         "height": 600,
