@@ -4,11 +4,11 @@
   "private": true,
   "description": "Librnet assistant built with Tauri and Vue",
   "scripts": {
-    "dev:ui": "pnpm --filter librnet-assistant-ui dev",
+    "dev:ui": "pnpm --env-file=.env --filter librnet-assistant-ui dev",
     "build:ui": "pnpm --filter librnet-assistant-ui build",
     "type-check": "pnpm --filter librnet-assistant-ui type-check",
     "tauri": "tauri",
-    "tauri:dev": "tauri dev",
+    "tauri:dev": "pnpm --env-file=.env tauri dev",
     "tauri:build": "tauri build",
     "dev": "pnpm dev:ui",
     "build": "pnpm build:ui"
