@@ -9,13 +9,12 @@
 </template>
 
 <script setup lang="ts">
-import { DESKTOP_EVENTS, type InitParams } from '@shared'
 import { onMounted, onUnmounted } from 'vue'
 
-import { useRouter } from 'vue-router';
-
+import { createAppBootstrap } from './lib/app/app-bootstrap'
 import { desktopClient } from './lib/desktop/client';
-import { GlobalEvents, useGlobalEvents } from './composables/useGlobalEvents';
+import { appNavigation } from './lib/navigation/navigation'
+import { useGlobalEvents } from './composables/useGlobalEvents';
 import { usePlugins } from "./plugins";
 import { useIpcStore } from './stores/ipc';
 import { useMenuModalsStore } from './stores/menuModals';
@@ -24,61 +23,37 @@ import { useThemeStore } from './stores/theme';
 
 useThemeStore();
 const ipcStore = useIpcStore();
-const router = useRouter();
 const { globalEvents } = useGlobalEvents();
 const menuModalsStore = useMenuModalsStore();
 const navPanelStore = useNavPanelStore();
-let removeParamsListener: (() => void) | undefined;
-let removeVoiceListener: (() => void) | undefined;
+const bootstrap = createAppBootstrap({
+  loadInitialParams: () => ipcStore.loadInitialParams(),
+  setParams: (params) => ipcStore.setParams(params),
+  closeAllModals: () => menuModalsStore.closeAll(),
+  navigateTo: (path) => appNavigation.push(path),
+  listen: (event, handler) =>
+    desktopClient.listen(event as never, handler as never),
+  emitGlobal: (event, payload) => globalEvents.emit(event, payload),
+  initPlugins: () => {
+    usePlugins()
+  },
+  handleNavKeyUp: (event) => navPanelStore.handleKeyUp(event),
+  addWindowKeyupListener: (handler) => {
+    window.addEventListener('keyup', handler)
 
-const applyParams = async (params: InitParams) => {
-  ipcStore.setParams(params);
-
-  menuModalsStore.closeAll();
-
-  if (ipcStore.params?.mode) {
-    await router.push(`/${ipcStore.params.mode}`);
-  }
-  else {
-    await router.push('/');
-  }
-};
+    return () => {
+      window.removeEventListener('keyup', handler)
+    }
+  },
+})
 
 onMounted(() => {
-  window.addEventListener('keyup', handleKeyUp);
-  usePlugins();
-
-  void (async () => {
-    removeParamsListener = await desktopClient.listen(
-      DESKTOP_EVENTS.PARAMS_CHANGED,
-      async (params) => {
-        await applyParams(params);
-      }
-    );
-
-    removeVoiceListener = await desktopClient.listen(
-      DESKTOP_EVENTS.VOICE_TEXT,
-      (data) => {
-        globalEvents.emit(GlobalEvents.VOICE_RECOGNITION, data);
-      }
-    );
-
-    const initialParams = await ipcStore.loadInitialParams();
-    await applyParams(initialParams);
-    globalEvents.emit(GlobalEvents.INITED);
-  })();
+  void bootstrap.start()
 });
 
 onUnmounted(() => {
-  window.removeEventListener('keyup', handleKeyUp);
-  removeParamsListener?.();
-  removeVoiceListener?.();
+  bootstrap.stop()
 });
-
-const handleKeyUp = (event: KeyboardEvent) => {
-  globalEvents.emit(GlobalEvents.KEY_UP, event);
-  navPanelStore.handleKeyUp(event);
-};
 </script>
 
 <style scoped>

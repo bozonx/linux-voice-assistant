@@ -1,0 +1,75 @@
+import { DESKTOP_EVENTS, type InitParams } from '@shared'
+
+import { GlobalEvents } from '../../composables/useGlobalEvents'
+
+export interface AppBootstrapDeps {
+  loadInitialParams: () => Promise<InitParams>
+  setParams: (params: InitParams) => void
+  closeAllModals: () => void
+  navigateTo: (path: string) => Promise<void>
+  listen: (
+    event: string,
+    handler: (payload: unknown) => void | Promise<void>
+  ) => Promise<() => void>
+  emitGlobal: (event: GlobalEvents, payload?: unknown) => void
+  initPlugins: () => void
+  handleNavKeyUp: (event: KeyboardEvent) => void
+  addWindowKeyupListener: (handler: (event: KeyboardEvent) => void) => () => void
+}
+
+function resolveModePath(params: InitParams): string {
+  return params.mode ? `/${params.mode}` : '/'
+}
+
+export function createAppBootstrap(deps: AppBootstrapDeps) {
+  let removeParamsListener: (() => void) | undefined
+  let removeVoiceListener: (() => void) | undefined
+  let removeWindowKeyupListener: (() => void) | undefined
+
+  const applyParams = async (params: InitParams) => {
+    deps.setParams(params)
+    deps.closeAllModals()
+    await deps.navigateTo(resolveModePath(params))
+  }
+
+  const handleKeyUp = (event: KeyboardEvent) => {
+    deps.emitGlobal(GlobalEvents.KEY_UP, event)
+    deps.handleNavKeyUp(event)
+  }
+
+  const start = async () => {
+    removeWindowKeyupListener = deps.addWindowKeyupListener(handleKeyUp)
+    deps.initPlugins()
+
+    removeParamsListener = await deps.listen(
+      DESKTOP_EVENTS.PARAMS_CHANGED,
+      async (params) => {
+        await applyParams(params as InitParams)
+      }
+    )
+
+    removeVoiceListener = await deps.listen(
+      DESKTOP_EVENTS.VOICE_TEXT,
+      (data) => {
+        deps.emitGlobal(GlobalEvents.VOICE_RECOGNITION, data)
+      }
+    )
+
+    const initialParams = await deps.loadInitialParams()
+    await applyParams(initialParams)
+    deps.emitGlobal(GlobalEvents.INITED)
+  }
+
+  const stop = () => {
+    removeWindowKeyupListener?.()
+    removeParamsListener?.()
+    removeVoiceListener?.()
+  }
+
+  return {
+    applyParams,
+    handleKeyUp,
+    start,
+    stop,
+  }
+}

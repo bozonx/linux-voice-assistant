@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-import router from '../router'
+import { appNavigation } from '../lib/navigation/navigation'
 import { useEditorInputStore } from './editorInput'
 import { useMenuModalsStore } from './menuModals'
 
@@ -20,11 +20,11 @@ export const useRouteParams = defineStore('routeParams', () => {
       editorInputStore.setValue(text)
     }
     menuModalsStore.closeAll()
-    router.push('/editor')
+    void appNavigation.push('/editor')
   }
 
   function isEditorPage() {
-    return router.currentRoute.value.path === '/editor'
+    return appNavigation.currentPath() === '/editor'
   }
 
   return {
