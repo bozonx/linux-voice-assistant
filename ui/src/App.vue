@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, watchEffect } from 'vue'
+import { onMounted, onUnmounted, watch } from 'vue'
 
 import { useGlobalEvents } from './composables/useGlobalEvents'
 import { useI18n } from './composables/useI18n'
@@ -51,12 +51,30 @@ const bootstrap = createAppBootstrap({
   },
 })
 
-watchEffect(() => {
-  syncI18nLocale(ipcStore.params.userConfig?.appLanguage)
-  void locale.value
-  syncDocumentLanguageAttributes(ipcStore.params.userConfig)
-  document.title = t('app.title')
-})
+watch(
+  () => ipcStore.params.userConfig?.appLanguage,
+  (appLanguage) => {
+    syncI18nLocale(appLanguage)
+  },
+  { immediate: true }
+)
+
+watch(
+  () => ipcStore.params.userConfig,
+  (userConfig) => {
+    syncDocumentLanguageAttributes(userConfig)
+  },
+  { immediate: true, deep: true }
+)
+
+watch(
+  () => locale.value,
+  () => {
+    syncDocumentLanguageAttributes(ipcStore.params.userConfig)
+    document.title = t('app.title')
+  },
+  { immediate: true }
+)
 
 onMounted(() => {
   void bootstrap.start()
