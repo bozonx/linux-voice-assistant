@@ -150,6 +150,14 @@
                 <span v-else class="text-success">
                   {{ t('settings.whisperLocalReady') }}
                 </span>
+                <Button
+                  v-if="isWhisperModelDownloaded && !downloadState.loading"
+                  sm
+                  neutral
+                  @click="deleteWhisperModel"
+                >
+                  {{ t('settings.whisperLocalDelete') }}
+                </Button>
               </div>
             </div>
           </FieldRow>
@@ -357,6 +365,7 @@ import { DEFAULT_USER_CONFIG } from '@shared'
 import {
   DEFAULT_WHISPER_LOCAL_MODEL,
   WHISPER_LOCAL_MODELS,
+  deleteModel,
   downloadModel,
   isModelDownloaded,
   type ModelDownloadProgress,
@@ -921,6 +930,29 @@ async function downloadWhisperModel() {
         status: '',
         error: '',
       }
+    }
+  }
+}
+
+async function deleteWhisperModel() {
+  downloadState.value = {
+    loading: false,
+    progress: 0,
+    file: '',
+    status: '',
+    error: '',
+  }
+
+  try {
+    await deleteModel(whisperLocalModel.value)
+    await refreshWhisperModelStatus()
+  } catch (error) {
+    downloadState.value = {
+      loading: false,
+      progress: 0,
+      file: '',
+      status: 'error',
+      error: error instanceof Error ? error.message : String(error),
     }
   }
 }

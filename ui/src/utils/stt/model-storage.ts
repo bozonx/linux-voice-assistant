@@ -68,6 +68,12 @@ async function getModelDir(modelName: string, create = false) {
   })
 }
 
+async function removeModelDir(modelName: string) {
+  const modelsDir = await getSttModelsDir()
+
+  await modelsDir.removeEntry(toModelDirName(modelName), { recursive: true })
+}
+
 function openModelDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(IDB_NAME, 1)
@@ -108,6 +114,25 @@ async function putIndexedDbFile(modelName: string, fileName: string, blob: Blob)
       resolve()
     }
     transaction.onerror = () => reject(transaction.error || new Error(`Failed to save ${fileName}`))
+  })
+}
+
+async function deleteIndexedDbFile(modelName: string, fileName: string) {
+  const db = await openModelDb()
+
+  await new Promise<void>((resolve, reject) => {
+    const transaction = db.transaction(IDB_STORE, 'readwrite')
+    const request = transaction
+      .objectStore(IDB_STORE)
+      .delete(toModelFileKey(modelName, fileName))
+
+    request.onerror = () => reject(request.error || new Error(`Failed to delete ${fileName}`))
+    transaction.oncomplete = () => {
+      db.close()
+      resolve()
+    }
+    transaction.onerror = () =>
+      reject(transaction.error || new Error(`Failed to delete ${fileName}`))
   })
 }
 
@@ -245,5 +270,26 @@ export async function downloadModel(
       total: total || loaded,
       status: 'done',
     })
+  }
+}
+
+export async function deleteModel(modelName: string): Promise<void> {
+  const files = WHISPER_MODEL_FILES[modelName]
+
+  if (!files) {
+    throw new Error(`Unknown Whisper model: ${modelName}`)
+  }
+
+  if (isOpfsAvailable()) {
+    try {
+      await removeModelDir(modelName)
+    } catch {
+      // Missing model directory is already the desired state.
+    }
+    return
+  }
+
+  for (const fileName of files) {
+    await deleteIndexedDbFile(modelName, fileName)
   }
 }

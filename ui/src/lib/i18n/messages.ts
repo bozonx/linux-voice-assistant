@@ -117,6 +117,7 @@ export const messages = {
       whisperLocalStorageHint:
         'Модель сохраняется в браузерное хранилище приложения: OPFS, если доступно, иначе IndexedDB.',
       whisperLocalDownload: 'Скачать модель',
+      whisperLocalDelete: 'Удалить модель',
       whisperLocalReady: 'Готово',
       voskWsUrl: 'Vosk WebSocket URL',
       systemVoskDescription: 'Системный Vosk WebSocket сервер',
@@ -353,6 +354,7 @@ export const messages = {
       whisperLocalStorageHint:
         'The model is stored in the app browser storage: OPFS when available, otherwise IndexedDB.',
       whisperLocalDownload: 'Download model',
+      whisperLocalDelete: 'Delete model',
       whisperLocalReady: 'Ready',
       voskWsUrl: 'Vosk WebSocket URL',
       systemVoskDescription: 'System Vosk WebSocket server',
@@ -588,6 +590,7 @@ export const messages = {
       whisperLocalStorageHint:
         'El modelo se guarda en el almacenamiento del navegador de la app: OPFS si está disponible, si no IndexedDB.',
       whisperLocalDownload: 'Descargar modelo',
+      whisperLocalDelete: 'Eliminar modelo',
       whisperLocalReady: 'Listo',
       voskWsUrl: 'URL WebSocket de Vosk',
       systemVoskDescription: 'Servidor WebSocket Vosk del sistema',
@@ -823,6 +826,7 @@ export const messages = {
       whisperLocalStorageHint:
         'Model uygulamanın tarayıcı depolamasına kaydedilir: varsa OPFS, yoksa IndexedDB.',
       whisperLocalDownload: 'Modeli indir',
+      whisperLocalDelete: 'Modeli sil',
       whisperLocalReady: 'Hazır',
       voskWsUrl: 'Vosk WebSocket URL',
       systemVoskDescription: 'Sistem Vosk WebSocket sunucusu',
