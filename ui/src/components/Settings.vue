@@ -313,7 +313,7 @@
     </div>
 
     <div class="flex flex-row justify-end">
-      <span class="text-sm opacity-70">
+      <span class="text-sm text-muted">
         {{ saveStatusLabel }}
       </span>
     </div>

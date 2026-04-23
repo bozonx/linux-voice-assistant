@@ -8,7 +8,7 @@
         </Button>
       </div>
     </div>
-    <p class="text-xs mt-1 text-gray-500">{{ t('write.escNext') }}</p>
+    <p class="text-xs mt-1 text-muted">{{ t('write.escNext') }}</p>
   </div>
 </template>
 

@@ -179,8 +179,8 @@ function getActionLabel(item?: ActionItem) {
 <style scoped>
 .shortcuts-list {
   text-align: left;
-  font-family: monospace;
-  font-size: 16px;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
   line-height: 1.5;
   white-space: pre-wrap;
   display: flex;

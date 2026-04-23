@@ -83,6 +83,6 @@ function openHistory() {
 
 <style scoped>
 .panel {
-  padding: 0.5rem 1.25rem;
+  padding: var(--space-sm) var(--space-xl);
 }
 </style>

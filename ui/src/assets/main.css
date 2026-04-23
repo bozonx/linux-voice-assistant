@@ -6,14 +6,266 @@
     dark --prefersdark;
 }
 
-.fields-col .field-row {
-  border-bottom: 1px solid #eee;
+/* ────────────────────────────────────────────────
+   Design Tokens (CSS Custom Properties)
+   ──────────────────────────────────────────────── */
+
+:root {
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+
+  /* Spacing scale */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 0.75rem;
+  --space-lg: 1rem;
+  --space-xl: 1.25rem;
+  --space-2xl: 1.5rem;
+  --space-3xl: 2rem;
+
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+
+  /* Transitions */
+  --transition-fast: 120ms ease;
+  --transition-base: 200ms ease;
+
+  /* Z-index layers */
+  --z-overlay: 100;
+  --z-modal: 200;
+  --z-toast: 300;
+
+  /* Field row label width — global token so FieldRow and FieldsByCfg stay in sync */
+  --field-label-width: 180px;
 }
 
-[data-theme='dark'] .fields-col .field-row {
-  border-bottom: 1px solid #333;
+/* ────────────────────────────────────────────────
+   DaisyUI Theme Customizations
+   These override daisyUI default palette values
+   to produce a neutral, professional look.
+   ──────────────────────────────────────────────── */
+
+[data-theme='light'] {
+  --b1: 100% 0 0;             /* base-100: pure white */
+  --b2: 97.5% 0.002 240;      /* base-200: very faint gray */
+  --b3: 94.5% 0.004 240;      /* base-300: light gray (nav bar, panels) */
+  --bc: 22% 0.01 260;         /* base-content: near-black text */
+  --p: 45% 0.18 260;          /* primary: professional indigo */
+  --pc: 98% 0 0;              /* primary-content: white on primary */
+  --n: 30% 0.015 260;         /* neutral: dark slate */
+  --nc: 96% 0 0;              /* neutral-content */
+  --s: 55% 0.12 200;          /* secondary: muted teal */
+  --sc: 98% 0 0;              /* secondary-content */
+  --a: 60% 0.15 80;           /* accent: warm amber */
+  --ac: 20% 0.04 80;          /* accent-content */
+  --in: 60% 0.18 250;         /* info */
+  --su: 60% 0.18 150;         /* success */
+  --wa: 75% 0.15 80;          /* warning */
+  --er: 55% 0.2 25;           /* error */
+
+  /* Surfaces / semantic tokens */
+  --app-surface: #ffffff;
+  --app-surface-raised: #f6f7f9;
+  --app-border: #e2e5ea;
+  --app-border-subtle: #eef0f3;
+  --app-text-muted: #6b7280;
+  --app-text-faint: #9ca3af;
+  --app-overlay-bg: rgba(15, 23, 42, 0.55);
+  --app-diff-added-bg: #dcfce7;
+  --app-diff-added-fg: #166534;
+  --app-diff-removed-bg: #fee2e2;
+  --app-diff-removed-fg: #991b1b;
+}
+
+[data-theme='dark'] {
+  --b1: 16% 0.01 260;         /* base-100: very dark slate */
+  --b2: 13% 0.01 260;         /* base-200: darker */
+  --b3: 20% 0.012 260;        /* base-300: slightly lighter for panels */
+  --bc: 92% 0.005 240;        /* base-content: off-white text */
+  --p: 65% 0.18 260;          /* primary: lighter indigo for dark bg */
+  --pc: 12% 0.01 260;         /* primary-content */
+  --n: 75% 0.01 240;          /* neutral */
+  --nc: 16% 0.01 260;         /* neutral-content */
+  --s: 60% 0.1 200;           /* secondary */
+  --sc: 14% 0.01 200;         /* secondary-content */
+  --a: 70% 0.13 80;           /* accent */
+  --ac: 16% 0.04 80;          /* accent-content */
+  --in: 65% 0.16 250;         /* info */
+  --su: 65% 0.16 150;         /* success */
+  --wa: 78% 0.13 80;          /* warning */
+  --er: 60% 0.18 25;          /* error */
+
+  /* Surfaces / semantic tokens */
+  --app-surface: #1a1d24;
+  --app-surface-raised: #22252d;
+  --app-border: #2e3340;
+  --app-border-subtle: #262a33;
+  --app-text-muted: #9ca3af;
+  --app-text-faint: #6b7280;
+  --app-overlay-bg: rgba(0, 0, 0, 0.65);
+  --app-diff-added-bg: #052e16;
+  --app-diff-added-fg: #86efac;
+  --app-diff-removed-bg: #450a0a;
+  --app-diff-removed-fg: #fca5a5;
+}
+
+/* ────────────────────────────────────────────────
+   Base / Reset
+   ──────────────────────────────────────────────── */
+
+html {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  /* Desktop-only: disable text selection on UI chrome */
+  user-select: none;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Tauri window manages its own scrolling */
+}
+
+/* Allow text selection inside editable areas */
+input, textarea, pre, code, [contenteditable],
+.selectable {
+  user-select: text;
+}
+
+/* ────────────────────────────────────────────────
+   Scrollbar Theming
+   ──────────────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--app-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--app-text-faint);
+}
+
+/* ────────────────────────────────────────────────
+   Typography Utilities
+   ──────────────────────────────────────────────── */
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+h2 {
+  font-size: 0.9375rem;
+  margin: var(--space-lg) 0 var(--space-sm);
+  color: var(--app-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+a {
+  color: oklch(var(--p));
+  text-decoration: none;
+  transition: opacity var(--transition-fast);
+}
+
+a:hover {
+  opacity: 0.8;
+}
+
+/* ────────────────────────────────────────────────
+   Form Controls — tighten daisyUI defaults
+   ──────────────────────────────────────────────── */
+
+.input,
+.select,
+.textarea {
+  font-size: 0.8125rem;
+  border-color: var(--app-border);
+  background-color: var(--app-surface);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  border-color: oklch(var(--p));
+  box-shadow: 0 0 0 2px oklch(var(--p) / 0.15);
+  outline: none;
+}
+
+/* Reduce default btn sizing for desktop */
+.btn {
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+/* ────────────────────────────────────────────────
+   Fields Layout Utilities
+   ──────────────────────────────────────────────── */
+
+.fields-col .field-row {
+  border-bottom: 1px solid var(--app-border-subtle);
 }
 
 .fields-col .field-row:last-child {
   border-bottom: none;
+}
+
+/* ────────────────────────────────────────────────
+   Muted Text Utility
+   Works in both themes via semantic tokens.
+   ──────────────────────────────────────────────── */
+
+.text-muted {
+  color: var(--app-text-muted);
+}
+
+.text-faint {
+  color: var(--app-text-faint);
+}
+
+/* ────────────────────────────────────────────────
+   Focus Visible Ring (keyboard accessibility)
+   ──────────────────────────────────────────────── */
+
+:focus-visible {
+  outline: 2px solid oklch(var(--p));
+  outline-offset: 2px;
+}
+
+/* ────────────────────────────────────────────────
+   DaisyUI Tab Adjustments
+   ──────────────────────────────────────────────── */
+
+.tabs-border .tab {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+/* ────────────────────────────────────────────────
+   Kbd (keyboard key) refinements
+   ──────────────────────────────────────────────── */
+
+.kbd {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
 }

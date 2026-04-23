@@ -108,31 +108,4 @@ const voiceInput = () => {
 }
 </script>
 
-<style scoped>
-/* .message {
-    display: flex;
-    padding: 10px;
-  }
 
-  .message pre {
-    margin: 0;
-    border: 1px solid #ccc;
-    padding: 10px;
-    border-radius: 5px;
-    white-space: break-spaces;
-  }
-
-  .message.user {
-    justify-content: flex-end;
-  }
-
-  .message.user pre {
-    background-color: #007bff;
-    color: white;
-  }
-
-  .message.opponent pre {
-    background-color: #f0f0f0;
-    color: black;
-  } */
-</style>

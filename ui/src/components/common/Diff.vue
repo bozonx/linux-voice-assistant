@@ -67,15 +67,15 @@ const getPartClass = (part: DiffPart): string => {
 
 <style scoped>
 .diff-container {
-  font-family: 'Courier New', monospace;
-  font-size: 14px;
-  line-height: 1.5;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.6;
   white-space: pre-wrap;
   word-break: break-word;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  padding: 12px;
-  background-color: #fafafa;
+  border: 1px solid var(--app-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  background-color: var(--app-surface-raised);
 }
 
 .diff-content {
@@ -83,52 +83,39 @@ const getPartClass = (part: DiffPart): string => {
 }
 
 .error-message {
-  color: #d32f2f;
-  background-color: #ffebee;
-  padding: 8px 12px;
-  border-radius: 4px;
-  border-left: 4px solid #d32f2f;
+  color: oklch(var(--er));
+  background-color: oklch(var(--er) / 0.1);
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid oklch(var(--er));
   font-weight: 500;
 }
 
 .no-diff {
-  color: #666;
+  color: var(--app-text-muted);
   font-style: italic;
   text-align: center;
-  padding: 20px;
+  padding: var(--space-3xl);
 }
 
 .added {
-  background-color: #c8e6c9;
-  color: #2e7d32;
-  padding: 2px 4px;
+  background-color: var(--app-diff-added-bg);
+  color: var(--app-diff-added-fg);
+  padding: 1px 3px;
   border-radius: 2px;
   font-weight: 500;
 }
 
 .removed {
-  background-color: #ffcdd2;
-  color: #c62828;
-  padding: 2px 4px;
+  background-color: var(--app-diff-removed-bg);
+  color: var(--app-diff-removed-fg);
+  padding: 1px 3px;
   border-radius: 2px;
   text-decoration: line-through;
   font-weight: 500;
 }
 
 .unchanged {
-  color: #333;
+  color: oklch(var(--bc));
 }
-
-/* Улучшенные стили для лучшей читаемости */
-/* .added::before {
-  content: '+';
-  margin-right: 2px;
-  font-weight: bold;
-}
-
-.removed::before {
-  content: '-';
-  margin-right: 2px;
-  font-weight: bold;
-} */
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="field-row" :class="{ vertical: vertical }">
-    <div class="text-sm text-gray-600 field-row-label">
+    <div class="field-row-label text-muted">
       {{ label }}
     </div>
     <div class="flex-1">
@@ -18,13 +18,15 @@ defineProps<{ label: string; vertical?: boolean }>()
   display: flex;
   flex-direction: row;
   gap: 14px;
-  padding: 0.75rem 0.5rem;
+  padding: var(--space-md) var(--space-sm);
 }
 
 .field-row-label {
-  width: 160px;
+  width: var(--field-label-width);
   text-align: right;
   line-height: 2rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
 }
 
 .vertical {
@@ -32,9 +34,9 @@ defineProps<{ label: string; vertical?: boolean }>()
   gap: 0px;
 }
 
-.vertical .form-row-label {
+.vertical .field-row-label {
   text-align: left;
-  font-size: 12px;
+  font-size: 0.75rem;
   line-height: 1.125rem;
 }
 </style>

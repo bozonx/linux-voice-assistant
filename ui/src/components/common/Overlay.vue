@@ -1,5 +1,5 @@
 <template>
-  <div class="overlay glass">
+  <div class="overlay">
     <div
       v-if="navBarVisible"
       class="navbar bg-neutral text-neutral-content shadow-sm overlay-header"
@@ -36,13 +36,14 @@ withDefaults(
   height: 100%;
   display: flex;
   flex-direction: column;
-  z-index: 100;
-  height: 100%;
+  z-index: var(--z-overlay);
   position: fixed;
-  background-color: rgb(0 8 2 / 60%);
+  inset: 0;
+  background-color: var(--app-overlay-bg);
+  backdrop-filter: blur(4px);
 }
 
 .overlay-header {
-  padding: 0.5rem 1.25rem;
+  padding: var(--space-sm) var(--space-xl);
 }
 </style>

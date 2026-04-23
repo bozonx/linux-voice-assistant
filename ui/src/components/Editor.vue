@@ -33,7 +33,7 @@
     </div>
 
     <div>
-      <p class="text-xs mt-1 mb-2 text-gray-500">
+      <p class="text-xs mt-1 mb-2 text-muted">
         {{ t('editor.selectionHint') }}
       </p>
 

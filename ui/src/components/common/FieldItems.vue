@@ -88,13 +88,25 @@ const moveItemDown = (index: number) => {
 .line-row {
   display: flex;
   flex-direction: row;
-  padding: 0 0 0.5rem 0;
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--app-border-subtle);
+  transition: background-color var(--transition-fast);
+}
+
+.line-row:last-child {
+  border-bottom: none;
+}
+
+.line-row:hover {
+  background-color: oklch(var(--b2));
 }
 
 .line-controls {
   display: none;
   flex-direction: row;
-  gap: 0.25rem;
+  gap: var(--space-xs);
+  align-items: flex-start;
+  padding-left: var(--space-sm);
 }
 
 .line-row:hover .line-controls {
