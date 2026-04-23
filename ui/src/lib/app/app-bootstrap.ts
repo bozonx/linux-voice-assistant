@@ -25,11 +25,23 @@ export function createAppBootstrap(deps: AppBootstrapDeps) {
   let removeParamsListener: (() => void) | undefined
   let removeVoiceListener: (() => void) | undefined
   let removeWindowKeyupListener: (() => void) | undefined
+  let lastAppliedMode: InitParams['mode'] | undefined
 
-  const applyParams = async (params: InitParams) => {
+  const applyParams = async (
+    params: InitParams,
+    options: { forceNavigate?: boolean } = {}
+  ) => {
     deps.setParams(params)
     deps.closeAllModals()
-    await deps.navigateTo(resolveModePath(params))
+
+    const shouldNavigate =
+      options.forceNavigate || lastAppliedMode === undefined || lastAppliedMode !== params.mode
+
+    lastAppliedMode = params.mode
+
+    if (shouldNavigate) {
+      await deps.navigateTo(resolveModePath(params))
+    }
   }
 
   const handleKeyUp = (event: KeyboardEvent) => {
@@ -56,7 +68,7 @@ export function createAppBootstrap(deps: AppBootstrapDeps) {
     )
 
     const initialParams = await deps.loadInitialParams()
-    await applyParams(initialParams)
+    await applyParams(initialParams, { forceNavigate: true })
     deps.emitGlobal(GlobalEvents.INITED)
   }
 

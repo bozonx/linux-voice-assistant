@@ -64,6 +64,55 @@ describe('app-bootstrap', () => {
     expect(listeners.size).toBe(2)
   })
 
+  it('does not navigate again when params change without mode change', async () => {
+    const { deps, listeners } = createDeps({
+      loadInitialParams: vi.fn(async () => ({
+        ...DEFAULT_INIT_PARAMS,
+        mode: START_MODES.EDITOR,
+      })),
+    })
+    const bootstrap = createAppBootstrap(deps)
+
+    await bootstrap.start()
+    expect(deps.navigateTo).toHaveBeenCalledTimes(1)
+
+    const paramsChangedHandler = listeners.get('app://params-changed')
+    expect(paramsChangedHandler).toBeTypeOf('function')
+
+    await paramsChangedHandler?.({
+      ...DEFAULT_INIT_PARAMS,
+      mode: START_MODES.EDITOR,
+      userConfig: {
+        ...DEFAULT_INIT_PARAMS.userConfig,
+        xdotoolBin: '/custom/xdotool',
+      },
+    })
+
+    expect(deps.navigateTo).toHaveBeenCalledTimes(1)
+  })
+
+  it('navigates when params change with a new mode', async () => {
+    const { deps, listeners } = createDeps({
+      loadInitialParams: vi.fn(async () => ({
+        ...DEFAULT_INIT_PARAMS,
+        mode: START_MODES.EDITOR,
+      })),
+    })
+    const bootstrap = createAppBootstrap(deps)
+
+    await bootstrap.start()
+
+    const paramsChangedHandler = listeners.get('app://params-changed')
+    expect(paramsChangedHandler).toBeTypeOf('function')
+
+    await paramsChangedHandler?.({
+      ...DEFAULT_INIT_PARAMS,
+      mode: START_MODES.WRITE,
+    })
+
+    expect(deps.navigateTo).toHaveBeenNthCalledWith(2, '/write')
+  })
+
   it('forwards keyup events to global events and nav handler', () => {
     const { deps } = createDeps()
     const bootstrap = createAppBootstrap(deps)
