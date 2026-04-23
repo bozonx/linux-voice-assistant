@@ -98,9 +98,29 @@ onUnmounted(async () => {
 function voiceRecognition() {
   menuModalsStore.nextModal(MenuModals.VOICE_RECOGNITION, {
     onCorrected: (resultText: string) => {
-      editorInputStore.setValueAtCursor(resultText)
       menuModalsStore.closeAll()
+      menuModalsStore.nextModal(MenuModals.INSERT, {
+        text: resultText,
+        toEditorVisible: false,
+        allowInsertButton: false,
+        actions: [
+          {
+            labelKey: 'action.insertIntoEditor',
+            action: async (text: string) => {
+              if (!text?.trim()) {
+                toast(t('toast.textNotSelected'), 'error')
+                return
+              }
+
+              editorInputStore.setValueAtCursor(text)
+              menuModalsStore.closeAll()
+            },
+          },
+          ...actionMenuStore.getActionsMenu(),
+        ],
+      })
     },
+    onCancel: () => menuModalsStore.closeAll(),
   })
 }
 

@@ -7,6 +7,7 @@ import { convertFileSrc } from '@tauri-apps/api/core'
 interface BrowserWhisperOptions {
   modelName: string
   language?: string
+  restorePunctuation?: boolean
   onText?: (text: string) => void
   startRecording?: () => Promise<void>
   stopRecording?: () => Promise<{ sampleRate: number; samples: number[] }>
@@ -93,6 +94,17 @@ function extractText(result: unknown) {
   return typeof maybeText === 'string' ? maybeText.trim() : ''
 }
 
+function maybeStripPunctuation(text: string, restorePunctuation = true) {
+  if (restorePunctuation) {
+    return text
+  }
+
+  return text
+    .replace(/\p{P}+/gu, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 async function decodeToMono16k(blob: Blob) {
   const audioContext = new AudioContext()
 
@@ -171,7 +183,10 @@ async function transcribeAudio(
 
       if (event.data.type === 'result') {
         activeWorker.removeEventListener('message', handleMessage)
-        const text = extractText(event.data.data)
+        const text = maybeStripPunctuation(
+          extractText(event.data.data),
+          options.restorePunctuation !== false
+        )
         options.onText?.(text)
         resolve(text)
       } else if (event.data.type === 'error') {

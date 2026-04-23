@@ -2,8 +2,8 @@
   <ContentPadding>
     <VoiceRecognitionMenu
       v-if="!isInsertMenu"
-      :escToCancel="false"
       @corrected="handleCorrected"
+      @cancelled="handleCancelled"
     />
     <InsertMenu
       v-else
@@ -17,12 +17,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-import { useEditorInputStore } from '../stores/editorInput'
+import { appNavigation } from '../lib/navigation/navigation'
 import { useMenuModalsStore } from '../stores/menuModals'
 import { useNavPanelStore } from '../stores/navPanel'
 
 const navPanelStore = useNavPanelStore()
-const editorInputStore = useEditorInputStore()
 const menuModalsStore = useMenuModalsStore()
 const isInsertMenu = ref(false)
 const resText = ref('')
@@ -31,12 +30,12 @@ navPanelStore.resetNavParams({
   panelVisible: false,
 })
 
-function handleCorrected(resultText: string, recognizedText: string) {
-  if (recognizedText) {
-    editorInputStore.setValue(recognizedText)
-  }
-
+function handleCorrected(resultText: string) {
   resText.value = resultText
   isInsertMenu.value = true
+}
+
+function handleCancelled() {
+  void appNavigation.push('/editor')
 }
 </script>

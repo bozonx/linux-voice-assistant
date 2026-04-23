@@ -57,6 +57,8 @@ export interface SttModel {
   model: 'vosk' | 'whisper-local' | string
   provider?: 'vosk' | 'whisper-local' | string
   description?: string
+  formatWithLlm?: boolean
+  restorePunctuation?: boolean
   baseUrl?: string
   apiKey?: string
   localModel?: string
@@ -131,6 +133,8 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
       model: 'whisper-local',
       provider: 'whisper-local',
       description: 'Browser Whisper via Transformers.js',
+      formatWithLlm: false,
+      restorePunctuation: true,
       localModel: 'Xenova/whisper-tiny',
     },
     {
@@ -138,6 +142,7 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
       model: 'vosk',
       provider: 'vosk',
       description: 'Системный Vosk WebSocket сервер',
+      formatWithLlm: true,
       baseUrl: 'ws://localhost:2700',
     },
   ],

@@ -83,10 +83,20 @@ pub fn default_user_config() -> Value {
       "llmModels": [],
       "sttModels": [
         {
+          "id": "browser-whisper-local",
+          "model": "whisper-local",
+          "provider": "whisper-local",
+          "description": "Browser Whisper via Transformers.js",
+          "formatWithLlm": false,
+          "restorePunctuation": true,
+          "localModel": "Xenova/whisper-tiny"
+        },
+        {
           "id": "system-vosk",
           "model": "vosk",
           "provider": "vosk",
           "description": "Системный Vosk WebSocket сервер",
+          "formatWithLlm": true,
           "baseUrl": "ws://localhost:2700"
         }
       ],

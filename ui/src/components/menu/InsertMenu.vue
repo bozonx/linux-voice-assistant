@@ -16,7 +16,7 @@
     :leftLetterKeys="leftLetterKeys"
     :spaceKey="spaceKey"
     :stopListening="props.stopListening"
-    :toEditorVisible="!routeParamsStore.isEditorPage()" />
+    :toEditorVisible="props.toEditorVisible ?? !routeParamsStore.isEditorPage()" />
 </div>
 </template>
 
@@ -34,14 +34,18 @@ const props = withDefaults(
   defineProps<{
     text?: string
     oldText?: string
+    actions?: ActionItem[]
     allowInsertButton?: boolean
     stopListening?: boolean
+    toEditorVisible?: boolean
   }>(),
   {
     text: '',
     oldText: '',
+    actions: undefined,
     allowInsertButton: true,
     stopListening: false,
+    toEditorVisible: undefined,
   }
 )
 
@@ -51,7 +55,7 @@ const emit = defineEmits<{
 
 const ipcStore = useIpcStore()
 const actionMenuStore = useActionMenuStore()
-const actionsMenu = computed(() => actionMenuStore.getActionsMenu())
+const actionsMenu = computed(() => props.actions || actionMenuStore.getActionsMenu())
 const { t } = useI18n()
 
 const leftLetterKeys = computed<ActionItem[]>(() =>

@@ -119,6 +119,16 @@
         <div v-show="currentSttProvider === 'whisper-local'">
           <FieldRow :label="t('settings.whisperLocal')" vertical>
             <div class="flex flex-col gap-3 w-full">
+              <FieldCheckbox
+                :value="whisperLocalConfig.formatWithLlm !== false"
+                :label="t('settings.formatWithLlm')"
+                @update:value="setWhisperFormatWithLlm"
+              />
+              <FieldCheckbox
+                :value="whisperLocalConfig.restorePunctuation !== false"
+                :label="t('settings.whisperRestorePunctuation')"
+                @update:value="setWhisperRestorePunctuation"
+              />
               <FieldRow :label="t('settings.whisperLocalModel')" vertical>
                 <FieldSelect
                   :value="whisperLocalModel"
@@ -200,6 +210,13 @@
               :value="voskWsUrl"
               placeholder="ws://localhost:2700"
               @update:value="setVoskWsUrl"
+            />
+          </FieldRow>
+          <FieldRow>
+            <FieldCheckbox
+              :value="voskConfig.formatWithLlm !== false"
+              :label="t('settings.formatWithLlm')"
+              @update:value="setVoskFormatWithLlm"
             />
           </FieldRow>
         </div>
@@ -685,6 +702,8 @@ function createWhisperLocalModel(existingModel?: Record<string, any>) {
     provider: 'whisper-local',
     description:
       existingModel?.description || t('settings.whisperLocalDescription'),
+    formatWithLlm: existingModel?.formatWithLlm ?? false,
+    restorePunctuation: existingModel?.restorePunctuation ?? true,
     localModel: existingModel?.localModel || DEFAULT_WHISPER_LOCAL_MODEL,
   }
 }
@@ -696,6 +715,7 @@ function createVoskModel(existingModel?: Record<string, any>) {
     provider: 'vosk',
     description:
       existingModel?.description || t('settings.systemVoskDescription'),
+    formatWithLlm: existingModel?.formatWithLlm !== false,
     baseUrl: existingModel?.baseUrl || 'ws://localhost:2700',
   }
 }
@@ -857,6 +877,10 @@ const whisperLocalConfig = computed(() => {
   return ensureWhisperLocalModel(userConfig.value)
 })
 
+const voskConfig = computed(() => {
+  return ensureVoskModel(userConfig.value)
+})
+
 const whisperLocalModel = computed(() => {
   return whisperLocalConfig.value.localModel || DEFAULT_WHISPER_LOCAL_MODEL
 })
@@ -935,6 +959,21 @@ const setWhisperLocalModel = (modelName: string | number | undefined) => {
   const whisperModel = ensureWhisperLocalModel(userConfig.value)
   whisperModel.localModel = modelName
   userConfig.value.aiModelUsage.stt = whisperModel.id
+}
+
+const setWhisperFormatWithLlm = (value: boolean) => {
+  const whisperModel = ensureWhisperLocalModel(userConfig.value)
+  whisperModel.formatWithLlm = value
+}
+
+const setWhisperRestorePunctuation = (value: boolean) => {
+  const whisperModel = ensureWhisperLocalModel(userConfig.value)
+  whisperModel.restorePunctuation = value
+}
+
+const setVoskFormatWithLlm = (value: boolean) => {
+  const voskModel = ensureVoskModel(userConfig.value)
+  voskModel.formatWithLlm = value
 }
 
 async function refreshWhisperModelStatus() {

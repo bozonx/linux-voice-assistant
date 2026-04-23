@@ -36,6 +36,10 @@ export const useCallAi = () => {
     return userConfig.sttModels.find((model: SttModel) => model.id === modelId)
   }
 
+  const shouldFormatRecognizedText = () => {
+    return currentSttModel()?.formatWithLlm !== false
+  }
+
   const getVoiceRecognitionRuntime = () => {
     const sttModel = currentSttModel()
     const provider = sttModel?.provider || sttModel?.model
@@ -96,6 +100,7 @@ export const useCallAi = () => {
       await startBrowserWhisperRecognition({
         modelName: sttModel.localModel || DEFAULT_WHISPER_LOCAL_MODEL,
         language: currentWhisperLanguage(),
+        restorePunctuation: sttModel.restorePunctuation !== false,
         startRecording: async () => {
           const result = await ipcStore.callFunction('startLocalVoiceRecording')
 
@@ -240,6 +245,7 @@ export const useCallAi = () => {
   return {
     aiRequest,
     getVoiceRecognitionRuntime,
+    shouldFormatRecognizedText,
     startVoiceRecognition,
     stopVoiceRecognition,
     cancelVoiceRecognition,
