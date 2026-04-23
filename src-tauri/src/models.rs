@@ -1,3 +1,5 @@
+use std::fs;
+
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 
@@ -32,9 +34,17 @@ pub struct ChatHistoryItem {
 }
 
 pub fn default_user_config() -> Value {
+    let xdotool_bin = default_binary_path("xdotool");
+    let ydotool_bin = default_binary_path("ydotool");
+
     json!({
       "theme": "auto",
-      "xdotoolBin": "/usr/bin/xdotool",
+      "xdotoolBin": xdotool_bin,
+      "windowInsertion": {
+        "method": "xdotool",
+        "xdotoolBin": xdotool_bin,
+        "ydotoolBin": ydotool_bin
+      },
       "appLanguage": "auto",
       "userLanguage": "auto",
       "toTranslateLanguages": ["en_US", "ru_RU", "es_AR", "tr_TR"],
@@ -67,6 +77,30 @@ pub fn default_user_config() -> Value {
       ],
       "chatRoles": [],
       "plugins": {}
+    })
+}
+
+fn default_binary_path(binary_name: &str) -> String {
+    let prefix = match linux_distribution_id().as_deref() {
+        Some("nixos") => "/run/current-system/sw/bin",
+        Some("guix") | Some("guixsd") => "/run/current-system/profile/bin",
+        _ => "/usr/bin",
+    };
+
+    format!("{prefix}/{binary_name}")
+}
+
+fn linux_distribution_id() -> Option<String> {
+    let os_release = fs::read_to_string("/etc/os-release").ok()?;
+
+    os_release.lines().find_map(|line| {
+        let (key, value) = line.split_once('=')?;
+
+        if key != "ID" {
+            return None;
+        }
+
+        Some(value.trim_matches('"').to_lowercase())
     })
 }
 

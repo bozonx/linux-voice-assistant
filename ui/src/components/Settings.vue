@@ -35,10 +35,6 @@
             </button>
           </div>
         </FieldRow>
-        <FieldRow :label="t('settings.xdotoolBin')">
-          <FieldInput v-model:value="userConfig.xdotoolBin" />
-        </FieldRow>
-
         <FieldRow :label="t('settings.editorHistoryMaxItems')">
           <FieldInput
             type="number"
@@ -56,6 +52,24 @@
             type="number"
             v-model:value="userConfig.chatHistoryMaxItems"
           />
+        </FieldRow>
+
+        <FieldRow :label="t('settings.windowInsertion')" vertical>
+          <div class="flex flex-col gap-3 w-full">
+            <Tabs
+              :tabs="windowInsertionTabs"
+              :value="userConfig.windowInsertion.method"
+              @update:value="updateWindowInsertionMethod"
+            />
+            <FieldInput
+              v-show="userConfig.windowInsertion.method === 'xdotool'"
+              v-model:value="userConfig.windowInsertion.xdotoolBin"
+            />
+            <FieldInput
+              v-show="userConfig.windowInsertion.method === 'ydotool'"
+              v-model:value="userConfig.windowInsertion.ydotoolBin"
+            />
+          </div>
         </FieldRow>
       </div>
 
@@ -376,6 +390,11 @@ const tabs = computed(() => [
   { text: t('settings.pluginsTab'), key: 6 },
 ])
 
+const windowInsertionTabs = computed(() => [
+  { text: 'xdotool', key: 'xdotool' },
+  { text: 'ydotool', key: 'ydotool' },
+])
+
 watch(
   () => ipcStore.params.userConfig,
   (incomingConfig) => {
@@ -452,6 +471,7 @@ function createPreparedUserConfig(config: unknown) {
 
   ensurePluginDefaults(nextConfig)
   normalizeLanguageConfig(nextConfig)
+  normalizeWindowInsertionConfig(nextConfig)
 
   return nextConfig
 }
@@ -482,9 +502,29 @@ function normalizeLanguageConfig(config: Record<string, any>) {
   config.theme = config.theme || themeStore.themeMode
   config.appLanguage = config.appLanguage || AUTO_LANGUAGE_VALUE
   config.userLanguage = config.userLanguage || AUTO_LANGUAGE_VALUE
-  config.toTranslateLanguages = (
-    config.toTranslateLanguages || []
-  ).map((lang: string) => lang || DEFAULT_LANGUAGE)
+  config.toTranslateLanguages = (config.toTranslateLanguages || []).map(
+    (lang: string) => lang || DEFAULT_LANGUAGE
+  )
+}
+
+function normalizeWindowInsertionConfig(config: Record<string, any>) {
+  const defaultWindowInsertion = DEFAULT_USER_CONFIG.windowInsertion
+  const windowInsertion = config.windowInsertion || {}
+  const xdotoolBin =
+    windowInsertion.xdotoolBin ||
+    config.xdotoolBin ||
+    defaultWindowInsertion.xdotoolBin
+
+  config.windowInsertion = {
+    method:
+      windowInsertion.method === 'ydotool' ||
+      windowInsertion.method === 'xdotool'
+        ? windowInsertion.method
+        : defaultWindowInsertion.method,
+    xdotoolBin,
+    ydotoolBin: windowInsertion.ydotoolBin || defaultWindowInsertion.ydotoolBin,
+  }
+  config.xdotoolBin = xdotoolBin
 }
 
 const navigatorLanguages = computed(() => getNavigatorLanguages())
@@ -601,6 +641,14 @@ const updateTranslateLanguages = (items: Record<string, any>[]) => {
   userConfig.value.toTranslateLanguages = items.map(
     (item: Record<string, any>) => item.value
   )
+}
+
+const updateWindowInsertionMethod = (value: string | number) => {
+  if (value !== 'xdotool' && value !== 'ydotool') {
+    return
+  }
+
+  userConfig.value.windowInsertion.method = value
 }
 
 watch(

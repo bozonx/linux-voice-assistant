@@ -55,6 +55,11 @@ export interface LlmModel {
 export interface UserConfig {
   theme: 'auto' | 'light' | 'dark'
   xdotoolBin: string
+  windowInsertion: {
+    method: 'xdotool' | 'ydotool'
+    xdotoolBin: string
+    ydotoolBin: string
+  }
   appLanguage: string
   userLanguage: string
   toTranslateLanguages: string[]
@@ -104,6 +109,11 @@ export interface UserConfig {
 export const DEFAULT_USER_CONFIG: UserConfig = {
   theme: 'auto',
   xdotoolBin: '/usr/bin/xdotool',
+  windowInsertion: {
+    method: 'xdotool',
+    xdotoolBin: '/usr/bin/xdotool',
+    ydotoolBin: '/usr/bin/ydotool',
+  },
   appLanguage: 'auto',
   userLanguage: 'auto',
   toTranslateLanguages: ['en_US', 'ru_RU', 'es_AR', 'tr_TR'],
