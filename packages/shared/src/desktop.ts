@@ -84,6 +84,10 @@ export const DESKTOP_COMMANDS = {
   STOP_LOCAL_VOICE_RECORDING: 'stop_local_voice_recording',
   TYPE_INTO_WINDOW_AND_CLOSE: 'type_into_window_and_close',
   PUT_INTO_CLIPBOARD_AND_CLOSE: 'put_into_clipboard_and_close',
+  IS_WHISPER_MODEL_DOWNLOADED: 'is_whisper_model_downloaded',
+  SAVE_WHISPER_MODEL_FILE: 'save_whisper_model_file',
+  DELETE_WHISPER_MODEL: 'delete_whisper_model',
+  GET_WHISPER_MODEL_PATH: 'get_whisper_model_path',
 } as const
 
 export type DesktopCommandName =

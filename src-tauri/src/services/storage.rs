@@ -2,7 +2,7 @@ use std::fs;
 use std::path::PathBuf;
 
 use serde::de::DeserializeOwned;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use tauri::{AppHandle, Manager};
 
@@ -31,6 +31,21 @@ fn app_data_dir(app: &AppHandle) -> Result<PathBuf, AppError> {
     Ok(dir)
 }
 
+fn app_data_sub_dir(app: &AppHandle, sub: &str) -> Result<PathBuf, AppError> {
+    let dir = app_data_dir(app)?.join(sub);
+    fs::create_dir_all(&dir)?;
+    Ok(dir)
+}
+
+pub fn app_cache_dir(app: &AppHandle) -> Result<PathBuf, AppError> {
+    let dir = app
+        .path()
+        .app_cache_dir()
+        .map_err(|error| AppError::Message(error.to_string()))?;
+    fs::create_dir_all(&dir)?;
+    Ok(dir)
+}
+
 fn read_json<T: DeserializeOwned>(path: &PathBuf, fallback: T) -> Result<T, AppError> {
     if !path.exists() {
         return Ok(fallback);
@@ -44,6 +59,34 @@ fn read_json<T: DeserializeOwned>(path: &PathBuf, fallback: T) -> Result<T, AppE
 
 fn write_json<T: Serialize>(path: &PathBuf, value: &T) -> Result<(), AppError> {
     let raw = serde_json::to_string_pretty(value)?;
+    fs::write(path, raw)?;
+    Ok(())
+}
+
+fn read_jsonl<T: DeserializeOwned>(path: &PathBuf) -> Result<Vec<T>, AppError> {
+    if !path.exists() {
+        return Ok(Vec::new());
+    }
+
+    let raw = fs::read_to_string(path)?;
+    let mut items = Vec::new();
+    for line in raw.lines() {
+        if line.trim().is_empty() {
+            continue;
+        }
+        if let Ok(parsed) = serde_json::from_str(line) {
+            items.push(parsed);
+        }
+    }
+    Ok(items)
+}
+
+fn write_jsonl<T: Serialize>(path: &PathBuf, items: &[T]) -> Result<(), AppError> {
+    let mut raw = String::new();
+    for item in items {
+        raw.push_str(&serde_json::to_string(item)?);
+        raw.push('\n');
+    }
     fs::write(path, raw)?;
     Ok(())
 }
@@ -146,10 +189,7 @@ pub fn save_user_config(app: &AppHandle, user_config: &Value) -> Result<(), AppE
 }
 
 pub fn get_editor_history(app: &AppHandle) -> Result<Vec<String>, AppError> {
-    read_json(
-        &app_data_dir(app)?.join("editor-history.json"),
-        Vec::<String>::new(),
-    )
+    read_jsonl(&app_data_sub_dir(app, "history")?.join("editor-history.jsonl"))
 }
 
 pub fn save_editor_history(
@@ -162,27 +202,30 @@ pub fn save_editor_history(
     history.retain(|item| item != &value);
     history.insert(0, value);
     history.truncate(limit);
-    write_json(&app_data_dir(app)?.join("editor-history.json"), &history)
+    write_jsonl(
+        &app_data_sub_dir(app, "history")?.join("editor-history.jsonl"),
+        &history,
+    )
 }
 
 pub fn remove_from_editor_history(app: &AppHandle, value: String) -> Result<(), AppError> {
     let mut history = get_editor_history(app)?;
     history.retain(|item| item != &value);
-    write_json(&app_data_dir(app)?.join("editor-history.json"), &history)
+    write_jsonl(
+        &app_data_sub_dir(app, "history")?.join("editor-history.jsonl"),
+        &history,
+    )
 }
 
 pub fn clear_editor_history(app: &AppHandle) -> Result<(), AppError> {
-    write_json(
-        &app_data_dir(app)?.join("editor-history.json"),
+    write_jsonl(
+        &app_data_sub_dir(app, "history")?.join("editor-history.jsonl"),
         &Vec::<String>::new(),
     )
 }
 
 pub fn get_transform_history(app: &AppHandle) -> Result<Vec<String>, AppError> {
-    read_json(
-        &app_data_dir(app)?.join("transform-history.json"),
-        Vec::<String>::new(),
-    )
+    read_jsonl(&app_data_sub_dir(app, "history")?.join("transform-history.jsonl"))
 }
 
 pub fn save_transform_history(
@@ -195,25 +238,31 @@ pub fn save_transform_history(
     history.retain(|item| item != &value);
     history.insert(0, value);
     history.truncate(limit);
-    write_json(&app_data_dir(app)?.join("transform-history.json"), &history)
+    write_jsonl(
+        &app_data_sub_dir(app, "history")?.join("transform-history.jsonl"),
+        &history,
+    )
 }
 
 pub fn remove_from_transform_history(app: &AppHandle, value: String) -> Result<(), AppError> {
     let mut history = get_transform_history(app)?;
     history.retain(|item| item != &value);
-    write_json(&app_data_dir(app)?.join("transform-history.json"), &history)
+    write_jsonl(
+        &app_data_sub_dir(app, "history")?.join("transform-history.jsonl"),
+        &history,
+    )
 }
 
 pub fn clear_transform_history(app: &AppHandle) -> Result<(), AppError> {
-    write_json(
-        &app_data_dir(app)?.join("transform-history.json"),
+    write_jsonl(
+        &app_data_sub_dir(app, "history")?.join("transform-history.jsonl"),
         &Vec::<String>::new(),
     )
 }
 
 pub fn get_chat_history(app: &AppHandle) -> Result<Vec<ChatHistoryItem>, AppError> {
     read_json(
-        &app_data_dir(app)?.join("chat-history.json"),
+        &app_data_sub_dir(app, "chats")?.join("index.json"),
         Vec::<ChatHistoryItem>::new(),
     )
 }
@@ -223,41 +272,68 @@ pub fn save_chat_history(
     user_config: &Value,
     chat_history_item: ChatHistoryItem,
 ) -> Result<(), AppError> {
+    let chats_dir = app_data_sub_dir(app, "chats")?;
     let mut history = get_chat_history(app)?;
     let limit = history_limit(user_config, "chatHistoryMaxItems", 50);
 
-    if let Some(existing) = history
-        .iter_mut()
-        .find(|item| item.id == chat_history_item.id)
-    {
-        existing.messages.extend(chat_history_item.messages);
-        existing.last_msg_date = chat_history_item.last_msg_date;
-        existing.description = chat_history_item.description;
+    // Save full chat to its own file
+    let chat_file_path = chats_dir.join(format!("{}.json", chat_history_item.id));
+    write_json(&chat_file_path, &chat_history_item)?;
+
+    // Create index item (strip messages to keep index small)
+    let mut index_item = chat_history_item.clone();
+    index_item.messages = Vec::new();
+
+    if let Some(existing) = history.iter_mut().find(|item| item.id == index_item.id) {
+        existing.last_msg_date = index_item.last_msg_date;
+        existing.description = index_item.description;
+        existing.messages = Vec::new(); // ensure messages are empty in index
     } else {
-        history.insert(0, chat_history_item);
+        history.insert(0, index_item);
     }
 
     history.truncate(limit);
 
-    write_json(&app_data_dir(app)?.join("chat-history.json"), &history)
+    write_json(&chats_dir.join("index.json"), &history)
 }
 
 pub fn remove_from_chat_history(app: &AppHandle, id: String) -> Result<(), AppError> {
+    let chats_dir = app_data_sub_dir(app, "chats")?;
     let mut history = get_chat_history(app)?;
     history.retain(|item| item.id != id);
-    write_json(&app_data_dir(app)?.join("chat-history.json"), &history)
+    write_json(&chats_dir.join("index.json"), &history)?;
+
+    let chat_file_path = chats_dir.join(format!("{}.json", id));
+    if chat_file_path.exists() {
+        let _ = fs::remove_file(chat_file_path);
+    }
+
+    Ok(())
 }
 
 pub fn clear_chat_history(app: &AppHandle) -> Result<(), AppError> {
+    let chats_dir = app_data_sub_dir(app, "chats")?;
     write_json(
-        &app_data_dir(app)?.join("chat-history.json"),
+        &chats_dir.join("index.json"),
         &Vec::<ChatHistoryItem>::new(),
-    )
+    )?;
+
+    // Also clear all individual chat files
+    if let Ok(entries) = fs::read_dir(&chats_dir) {
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if path.is_file() && path.file_name() != Some(std::ffi::OsStr::new("index.json")) {
+                let _ = fs::remove_file(path);
+            }
+        }
+    }
+
+    Ok(())
 }
 
 pub fn save_main_input_tmp(app: &AppHandle, value: String) -> Result<(), AppError> {
     write_json(
-        &app_data_dir(app)?.join("main-input-tmp.json"),
+        &app_data_sub_dir(app, "history")?.join("main-input-tmp.json"),
         &serde_json::json!({
             "value": value,
             "lastSaved": chrono_like_now(),
@@ -267,7 +343,7 @@ pub fn save_main_input_tmp(app: &AppHandle, value: String) -> Result<(), AppErro
 
 pub fn clear_main_input_tmp(app: &AppHandle) -> Result<(), AppError> {
     write_json(
-        &app_data_dir(app)?.join("main-input-tmp.json"),
+        &app_data_sub_dir(app, "history")?.join("main-input-tmp.json"),
         &serde_json::json!({
             "value": "",
             "lastSaved": "",

@@ -23,6 +23,10 @@
       }
     ],
     "security": {
+      "assetProtocol": {
+        "enable": true,
+        "scope": ["$CACHE/bozonx.desktop-assistant/models/whisper/**"]
+      },
       "csp": {
         "default-src": "'self' asset: http://asset.localhost",
         "connect-src": "'self' ipc: http://ipc.localhost http: https: ws: wss:",

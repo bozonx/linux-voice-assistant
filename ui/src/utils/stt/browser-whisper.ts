@@ -1,9 +1,8 @@
-import {
-  getSttModelsDir,
-  isModelDownloaded,
-  isOpfsAvailable,
-} from './model-storage'
+import { desktopClient } from '../../lib/desktop/client'
 import WhisperWorker from '../../workers/whisper.worker.ts?worker'
+import { isModelDownloaded } from './model-storage'
+import { DESKTOP_COMMANDS } from '@shared'
+import { convertFileSrc } from '@tauri-apps/api/core'
 
 interface BrowserWhisperOptions {
   modelName: string
@@ -39,7 +38,22 @@ async function ensureWorkerInitialized() {
     return
   }
 
-  const modelDirHandle = isOpfsAvailable() ? await getSttModelsDir() : null
+  const result = await desktopClient.invoke<string>(
+    DESKTOP_COMMANDS.GET_WHISPER_MODEL_PATH,
+    {
+      modelName: '',
+      fileName: '',
+    }
+  )
+
+  let modelPath =
+    result.success && typeof result.result === 'string' ? result.result : ''
+  if (modelPath.endsWith('/')) {
+    modelPath = modelPath.slice(0, -1)
+  }
+
+  const modelUrl = modelPath ? convertFileSrc(modelPath) : ''
+
   const activeWorker = getWorker()
   const id = Math.random()
 
@@ -57,11 +71,15 @@ async function ensureWorkerInitialized() {
         return
       }
 
-      reject(new Error(event.data.type === 'error' ? event.data.error : 'Worker init failed'))
+      reject(
+        new Error(
+          event.data.type === 'error' ? event.data.error : 'Worker init failed'
+        )
+      )
     }
 
     activeWorker.addEventListener('message', handleMessage)
-    activeWorker.postMessage({ type: 'init', id, data: { modelDirHandle } })
+    activeWorker.postMessage({ type: 'init', id, data: { modelUrl } })
   })
 }
 
@@ -79,7 +97,9 @@ async function decodeToMono16k(blob: Blob) {
   const audioContext = new AudioContext()
 
   try {
-    const audioBuffer = await audioContext.decodeAudioData(await blob.arrayBuffer())
+    const audioBuffer = await audioContext.decodeAudioData(
+      await blob.arrayBuffer()
+    )
     const sourceRate = audioBuffer.sampleRate
     const source = audioBuffer.getChannelData(0)
 
@@ -87,7 +107,10 @@ async function decodeToMono16k(blob: Blob) {
       return new Float32Array(source)
     }
 
-    const targetLength = Math.max(1, Math.round((source.length * 16000) / sourceRate))
+    const targetLength = Math.max(
+      1,
+      Math.round((source.length * 16000) / sourceRate)
+    )
     const target = new Float32Array(targetLength)
 
     for (let i = 0; i < targetLength; i += 1) {
@@ -109,7 +132,10 @@ function resampleTo16k(source: Float32Array, sourceRate: number) {
     return source
   }
 
-  const targetLength = Math.max(1, Math.round((source.length * 16000) / sourceRate))
+  const targetLength = Math.max(
+    1,
+    Math.round((source.length * 16000) / sourceRate)
+  )
   const target = new Float32Array(targetLength)
 
   for (let i = 0; i < targetLength; i += 1) {
@@ -123,7 +149,10 @@ function resampleTo16k(source: Float32Array, sourceRate: number) {
   return target
 }
 
-async function transcribeAudio(audio: Float32Array, options: BrowserWhisperOptions) {
+async function transcribeAudio(
+  audio: Float32Array,
+  options: BrowserWhisperOptions
+) {
   const downloaded = await isModelDownloaded(options.modelName)
 
   if (!downloaded) {
@@ -167,7 +196,9 @@ async function transcribeAudio(audio: Float32Array, options: BrowserWhisperOptio
   })
 }
 
-export async function startBrowserWhisperRecognition(options: BrowserWhisperOptions) {
+export async function startBrowserWhisperRecognition(
+  options: BrowserWhisperOptions
+) {
   if (currentOptions) {
     return
   }
@@ -192,10 +223,12 @@ export async function startBrowserWhisperRecognition(options: BrowserWhisperOpti
     return
   }
 
-  const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true }).catch((error) => {
-    currentOptions = null
-    throw error
-  })
+  const mediaStream = await navigator.mediaDevices
+    .getUserMedia({ audio: true })
+    .catch((error) => {
+      currentOptions = null
+      throw error
+    })
   const chunks: BlobPart[] = []
   const mediaRecorder = new MediaRecorder(mediaStream)
 
@@ -207,9 +240,12 @@ export async function startBrowserWhisperRecognition(options: BrowserWhisperOpti
           'stop',
           () => {
             mediaStream.getTracks().forEach((track) => track.stop())
-            const blob = new Blob(chunks, { type: mediaRecorder.mimeType || 'audio/webm' })
+            const blob = new Blob(chunks, {
+              type: mediaRecorder.mimeType || 'audio/webm',
+            })
             void decodeToMono16k(blob).then(
-              (samples) => resolve({ sampleRate: 16000, samples: Array.from(samples) }),
+              (samples) =>
+                resolve({ sampleRate: 16000, samples: Array.from(samples) }),
               reject
             )
           },

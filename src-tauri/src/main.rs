@@ -15,6 +15,10 @@ use commands::voice::{
     start_local_voice_recording, start_voice_recognition, stop_local_voice_recording,
     stop_voice_recognition,
 };
+use commands::whisper::{
+    delete_whisper_model, get_whisper_model_path, is_whisper_model_downloaded,
+    save_whisper_model_file,
+};
 use commands::window::{
     close_window, open_in_browser_and_close, put_into_clipboard_and_close,
     type_into_window_and_close,
@@ -67,7 +71,11 @@ pub fn run() {
             stop_local_voice_recording,
             open_in_browser_and_close,
             type_into_window_and_close,
-            put_into_clipboard_and_close
+            put_into_clipboard_and_close,
+            is_whisper_model_downloaded,
+            save_whisper_model_file,
+            delete_whisper_model,
+            get_whisper_model_path
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
