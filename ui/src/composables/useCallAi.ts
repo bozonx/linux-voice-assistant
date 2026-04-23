@@ -100,7 +100,7 @@ export const useCallAi = () => {
       await startBrowserWhisperRecognition({
         modelName: sttModel.localModel || DEFAULT_WHISPER_LOCAL_MODEL,
         language: currentWhisperLanguage(),
-        restorePunctuation: sttModel.restorePunctuation !== false,
+        restorePunctuation: true,
         startRecording: async () => {
           const result = await ipcStore.callFunction('startLocalVoiceRecording')
 

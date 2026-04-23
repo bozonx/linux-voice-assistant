@@ -124,11 +124,6 @@
                 :label="t('settings.formatWithLlm')"
                 @update:value="setWhisperFormatWithLlm"
               />
-              <FieldCheckbox
-                :value="whisperLocalConfig.restorePunctuation !== false"
-                :label="t('settings.whisperRestorePunctuation')"
-                @update:value="setWhisperRestorePunctuation"
-              />
               <FieldRow :label="t('settings.whisperLocalModel')" vertical>
                 <FieldSelect
                   :value="whisperLocalModel"
@@ -703,7 +698,7 @@ function createWhisperLocalModel(existingModel?: Record<string, any>) {
     description:
       existingModel?.description || t('settings.whisperLocalDescription'),
     formatWithLlm: existingModel?.formatWithLlm ?? false,
-    restorePunctuation: existingModel?.restorePunctuation ?? true,
+    restorePunctuation: true,
     localModel: existingModel?.localModel || DEFAULT_WHISPER_LOCAL_MODEL,
   }
 }
@@ -964,11 +959,6 @@ const setWhisperLocalModel = (modelName: string | number | undefined) => {
 const setWhisperFormatWithLlm = (value: boolean) => {
   const whisperModel = ensureWhisperLocalModel(userConfig.value)
   whisperModel.formatWithLlm = value
-}
-
-const setWhisperRestorePunctuation = (value: boolean) => {
-  const whisperModel = ensureWhisperLocalModel(userConfig.value)
-  whisperModel.restorePunctuation = value
 }
 
 const setVoskFormatWithLlm = (value: boolean) => {

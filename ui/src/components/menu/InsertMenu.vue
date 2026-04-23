@@ -61,7 +61,7 @@ const { t } = useI18n()
 const leftLetterKeys = computed<ActionItem[]>(() =>
   actionsMenu.value.map((item: ActionItem, index: number) => ({
     ...item,
-    disabled: index === 0 && !needShowInsertButton(),
+    disabled: shouldDisablePrimaryAction(index),
   }))
 )
 
@@ -74,7 +74,7 @@ const spaceKey = computed<ActionItem | undefined>(() => {
 
   return {
     ...firstItem,
-    disabled: !needShowInsertButton(),
+    disabled: shouldDisablePrimaryAction(0),
   }
 })
 
@@ -84,5 +84,17 @@ function handleNewText(newText: string) {
 
 function needShowInsertButton() {
   return Boolean(ipcStore.params?.windowId && props.text && props.allowInsertButton)
+}
+
+function shouldDisablePrimaryAction(index: number) {
+  if (index !== 0) {
+    return false
+  }
+
+  if (props.actions) {
+    return false
+  }
+
+  return !needShowInsertButton()
 }
 </script>
