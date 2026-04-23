@@ -107,39 +107,12 @@
         </div>
 
         <div v-show="currentSttProvider === 'vosk'">
-          <FieldRow :label="t('settings.speechToText')">
-            <FieldSelect
-              v-model:value="userConfig.aiModelUsage.stt"
-              :options="sttModelOptions"
+          <FieldRow :label="t('settings.voskWsUrl')">
+            <FieldInput
+              :value="voskWsUrl"
+              placeholder="ws://localhost:2700"
+              @update:value="setVoskWsUrl"
             />
-          </FieldRow>
-
-          <FieldRow :label="t('settings.voskModels')">
-            <FieldItems
-              :items="voskModels"
-              @update:items="updateVoskModels"
-            >
-              <template #item="{ item }">
-                <FieldRow :label="t('settings.id')" vertical>
-                  <FieldInput
-                    v-model:value="item.id"
-                    placeholder="system-vosk"
-                  />
-                </FieldRow>
-                <FieldRow :label="t('settings.description')" vertical>
-                  <FieldInput
-                    v-model:value="item.description"
-                    :placeholder="t('settings.systemVoskDescription')"
-                  />
-                </FieldRow>
-                <FieldRow :label="t('settings.voskWsUrl')" vertical>
-                  <FieldInput
-                    v-model:value="item.baseUrl"
-                    placeholder="ws://localhost:2700"
-                  />
-                </FieldRow>
-              </template>
-            </FieldItems>
           </FieldRow>
         </div>
       </div>
@@ -523,46 +496,33 @@ function normalizeSttConfig(config: Record<string, any>) {
     config.aiModelUsage = {}
   }
 
-  config.sttModels = config.sttModels.map((model: Record<string, any>) => {
-    const provider = model.provider || model.model || 'vosk'
-
-    return {
-      ...model,
-      id: model.id || 'system-vosk',
-      model: provider === 'whisper-local' ? 'whisper-local' : 'vosk',
-      provider: provider === 'whisper-local' ? 'whisper-local' : 'vosk',
-      baseUrl:
-        provider === 'whisper-local'
-          ? model.baseUrl
-          : model.baseUrl || 'ws://localhost:2700',
-    }
-  })
-
-  const hasVoskModel = config.sttModels.some(
-    (model: Record<string, any>) => model.provider === 'vosk'
-  )
-
-  if (!hasVoskModel) {
-    config.sttModels.push({
-      id: 'system-vosk',
-      model: 'vosk',
-      provider: 'vosk',
-      description: t('settings.systemVoskDescription'),
-      baseUrl: 'ws://localhost:2700',
+  const whisperModels = config.sttModels
+    .filter((model: Record<string, any>) => {
+      const provider = model.provider || model.model
+      return provider === 'whisper-local'
     })
-  }
-
-  const hasSelectedModel = config.sttModels.some(
-    (model: Record<string, any>) => model.id === config.aiModelUsage.stt
+    .map((model: Record<string, any>) => ({
+      ...model,
+      model: 'whisper-local',
+      provider: 'whisper-local',
+    }))
+  const existingVoskModel = config.sttModels.find(
+    (model: Record<string, any>) => {
+      const provider = model.provider || model.model || 'vosk'
+      return provider !== 'whisper-local'
+    }
   )
-
-  if (!hasSelectedModel) {
-    const defaultVoskModel = config.sttModels.find(
-      (model: Record<string, any>) => model.provider === 'vosk'
-    )
-
-    config.aiModelUsage.stt = defaultVoskModel?.id || ''
+  const voskModel = {
+    id: 'system-vosk',
+    model: 'vosk',
+    provider: 'vosk',
+    description:
+      existingVoskModel?.description || t('settings.systemVoskDescription'),
+    baseUrl: existingVoskModel?.baseUrl || 'ws://localhost:2700',
   }
+
+  config.sttModels = [...whisperModels, voskModel]
+  config.aiModelUsage.stt = voskModel.id
 }
 
 const navigatorLanguages = computed(() => getNavigatorLanguages())
@@ -675,17 +635,12 @@ const translateLanguagesItems = computed(() => {
   }))
 })
 
-const voskModels = computed(() => {
-  return (userConfig.value.sttModels || []).filter(
-    (model: Record<string, any>) => model.provider !== 'whisper-local'
+const voskWsUrl = computed(() => {
+  const voskModel = (userConfig.value.sttModels || []).find(
+    (model: Record<string, any>) => model.provider === 'vosk'
   )
-})
 
-const sttModelOptions = computed(() => {
-  return voskModels.value.map((model: Record<string, any>) => ({
-    id: model.id,
-    name: model.id,
-  }))
+  return voskModel?.baseUrl || 'ws://localhost:2700'
 })
 
 const updateTranslateLanguages = (items: Record<string, any>[]) => {
@@ -732,26 +687,20 @@ const updateLLMModels = (items: any[]) => {
   userConfig.value.llmModels = items
 }
 
-const updateVoskModels = (items: any[]) => {
+const setVoskWsUrl = (baseUrl: string) => {
   const nonVoskModels = (userConfig.value.sttModels || []).filter(
     (model: Record<string, any>) => model.provider === 'whisper-local'
   )
-  const nextVoskModels = items.map((model) => ({
-    ...model,
+  const nextVoskModel = {
+    id: 'system-vosk',
     model: 'vosk',
     provider: 'vosk',
-    baseUrl: model.baseUrl || 'ws://localhost:2700',
-  }))
-
-  userConfig.value.sttModels = [...nonVoskModels, ...nextVoskModels]
-
-  const hasSelectedModel = nextVoskModels.some(
-    (model) => model.id === userConfig.value.aiModelUsage.stt
-  )
-
-  if (!hasSelectedModel) {
-    userConfig.value.aiModelUsage.stt = nextVoskModels[0]?.id || ''
+    description: t('settings.systemVoskDescription'),
+    baseUrl: baseUrl || 'ws://localhost:2700',
   }
+
+  userConfig.value.sttModels = [...nonVoskModels, nextVoskModel]
+  userConfig.value.aiModelUsage.stt = nextVoskModel.id
 }
 
 const updateAiTasks = (items: any[]) => {
