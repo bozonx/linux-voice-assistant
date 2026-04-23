@@ -25,6 +25,11 @@ export function createHistoryStoreModel(historyApi: HistoryApi) {
     chatHistory.value = (loadedHistory.result as ChatHistoryItem[]) || []
   }
 
+  const loadChat = async (id: string): Promise<ChatHistoryItem | null> => {
+    const loadedChat = await historyApi.callFunction('getChat', [id])
+    return (loadedChat.result as ChatHistoryItem | null) || null
+  }
+
   const saveMainInputTmp = async (value: string) => {
     await historyApi.callFunction('saveMainInputTmp', [value])
   }
@@ -82,6 +87,7 @@ export function createHistoryStoreModel(historyApi: HistoryApi) {
     loadEditorHistory,
     loadTransformHistory,
     loadChatHistory,
+    loadChat,
     saveMainInputTmp,
     saveEditorHistory,
     saveTransformHistory,

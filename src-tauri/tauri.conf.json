@@ -25,7 +25,7 @@
     "security": {
       "assetProtocol": {
         "enable": true,
-        "scope": ["$CACHE/bozonx.desktop-assistant/models/whisper/**"]
+        "scope": ["$APPDATA/models/whisper/**"]
       },
       "csp": {
         "default-src": "'self' asset: http://asset.localhost",

@@ -64,6 +64,33 @@ describe('chat-store', () => {
     )
   })
 
+  it('persists the complete chat state after follow-up messages', async () => {
+    const deps = createDeps()
+    const store = createChatStoreModel(deps)
+    store.newChatParams.value = {
+      id: 'chat-id-1',
+      initialMessage: 'First question',
+    }
+    store.messages.value = [
+      { role: 'user', content: 'First question' },
+      { role: 'assistant', content: 'First answer' },
+    ]
+
+    await store.sendMessage('Second question')
+
+    expect(deps.saveChatHistory).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: 'chat-id-1',
+        messages: [
+          { role: 'user', content: 'First question' },
+          { role: 'assistant', content: 'First answer' },
+          { role: 'user', content: 'Second question' },
+          { role: 'assistant', content: 'Assistant reply' },
+        ],
+      })
+    )
+  })
+
   it('starts a chat with generated id and navigates to chat page', async () => {
     const deps = createDeps()
     const store = createChatStoreModel(deps)

@@ -21,7 +21,7 @@ pub fn open_in_browser_and_close(
     state: State<'_, AppState>,
     url: String,
 ) -> Result<(), AppError> {
-    run_command("xdg-open", &[&url])?;
+    open_url(&url)?;
     runtime::hide_main_window(&app, &state)
 }
 
@@ -82,10 +82,15 @@ pub fn put_into_clipboard_and_close(
 }
 
 fn copy_to_clipboard(text: &str) -> Result<(), AppError> {
-    let mut child = Command::new("xsel")
-        .args(["--clipboard", "--input", "--trim"])
-        .stdin(Stdio::piped())
-        .spawn()?;
+    let (binary, args): (&str, &[&str]) = if cfg!(target_os = "macos") {
+        ("pbcopy", &[])
+    } else if cfg!(target_os = "windows") {
+        ("powershell", &["-NoProfile", "-Command", "Set-Clipboard"])
+    } else {
+        ("xsel", &["--clipboard", "--input", "--trim"])
+    };
+
+    let mut child = Command::new(binary).args(args).stdin(Stdio::piped()).spawn()?;
 
     let mut stdin = child
         .stdin
@@ -97,11 +102,23 @@ fn copy_to_clipboard(text: &str) -> Result<(), AppError> {
     let status = child.wait()?;
     if !status.success() {
         return Err(AppError::Message(String::from(
-            "xsel failed to write text to the clipboard",
+            "Failed to write text to the clipboard",
         )));
     }
 
     Ok(())
+}
+
+fn open_url(url: &str) -> Result<(), AppError> {
+    if cfg!(target_os = "macos") {
+        return run_command("open", &[url]);
+    }
+
+    if cfg!(target_os = "windows") {
+        return run_command("cmd", &["/C", "start", "", url]);
+    }
+
+    run_command("xdg-open", &[url])
 }
 
 fn run_command(binary: &str, args: &[&str]) -> Result<(), AppError> {

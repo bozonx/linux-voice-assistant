@@ -42,7 +42,7 @@ export function createChatStoreModel(deps: ChatStoreDeps) {
     }
 
     let devInstructions: string | undefined
-    const prevMessages = messages.value
+    const prevMessages = [...messages.value]
 
     if (prevMessages.length > 0) {
       devInstructions = APP_CONFIG.aiInstructions[AI_TASKS.CHAT]
@@ -65,15 +65,20 @@ export function createChatStoreModel(deps: ChatStoreDeps) {
     const assistantMessage: ChatMessage = createAssistantMessage(result)
     messages.value.push(assistantMessage)
 
+    if (!newChatParams.value.id) {
+      newChatParams.value.id = deps.createId()
+    }
+    if (!newChatParams.value.initialMessage) {
+      newChatParams.value.initialMessage = message
+    }
     newChatParams.value.attachments = []
 
     await deps.saveChatHistory(
       createChatHistoryEntry({
-        id: newChatParams.value.id || '',
-        description: newChatParams.value.initialMessage || '',
+        id: newChatParams.value.id,
+        description: newChatParams.value.initialMessage,
         lastMsgDate: deps.nowIso(),
-        userMessage,
-        assistantMessage,
+        messages: [...messages.value],
       })
     )
 

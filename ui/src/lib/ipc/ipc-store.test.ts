@@ -32,6 +32,18 @@ describe('ipc-store', () => {
     )
   })
 
+  it('maps storage info command', async () => {
+    const deps = createDeps()
+    const store = createIpcStoreModel(deps)
+
+    await store.callFunction('getStorageInfo')
+
+    expect(deps.desktopClient.invoke).toHaveBeenCalledWith(
+      DESKTOP_COMMANDS.GET_STORAGE_INFO,
+      undefined
+    )
+  })
+
   it('returns an error for unknown function names', async () => {
     const deps = createDeps()
     const store = createIpcStoreModel(deps)

@@ -71,6 +71,24 @@
             />
           </div>
         </FieldRow>
+
+        <FieldRow :label="t('settings.storageLocations')" vertical>
+          <div class="flex flex-col gap-2 text-xs w-full">
+            <div v-if="!storageInfo" class="text-muted">
+              {{ t('settings.storageLocationsUnavailable') }}
+            </div>
+            <template v-else>
+              <div
+                v-for="item in storageInfoItems"
+                :key="item.label"
+                class="grid grid-cols-[140px_1fr] gap-2"
+              >
+                <span class="text-muted">{{ item.label }}</span>
+                <code class="break-all">{{ item.value }}</code>
+              </div>
+            </template>
+          </div>
+        </FieldRow>
       </div>
 
       <div v-show="currentTab === 1" class="fields-col">
@@ -118,6 +136,19 @@
                 </div>
                 <div class="text-xs text-muted">
                   {{ t('settings.whisperLocalStorageHint') }}
+                </div>
+                <div
+                  v-if="whisperModelMetadata"
+                  class="flex flex-col gap-1 text-xs text-muted"
+                >
+                  <div>
+                    {{ t('settings.whisperLocalVersion') }}:
+                    {{ whisperModelMetadata.version }}
+                  </div>
+                  <div>
+                    {{ t('settings.whisperLocalDownloadedAt') }}:
+                    {{ whisperModelDownloadedAt }}
+                  </div>
                 </div>
                 <div
                   v-if="downloadState.error"
@@ -344,7 +375,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onUnmounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 
 import { useI18n } from '../composables/useI18n'
 import { syncI18nLocale } from '../lib/i18n'
@@ -361,12 +392,13 @@ import { pluginIndexes } from '../plugins'
 import { useIpcStore } from '../stores/ipc'
 import { useThemeStore } from '../stores/theme'
 import { PRESETS_KEYS } from '../types'
-import { DEFAULT_USER_CONFIG } from '@shared'
+import { DEFAULT_USER_CONFIG, type StorageInfo, type WhisperModelMetadata } from '@shared'
 import {
   DEFAULT_WHISPER_LOCAL_MODEL,
   WHISPER_LOCAL_MODELS,
   deleteModel,
   downloadModel,
+  getModelMetadata,
   isModelDownloaded,
   type ModelDownloadProgress,
 } from '../utils/stt/model-storage'
@@ -395,6 +427,8 @@ const userConfig = ref(createPreparedUserConfig(ipcStore.params.userConfig))
 const saveState = ref<SaveState>('idle')
 const lastPersistedConfig = ref(serializeUserConfig(userConfig.value))
 const isWhisperModelDownloaded = ref(false)
+const whisperModelMetadata = ref<WhisperModelMetadata | null>(null)
+const storageInfo = ref<StorageInfo | null>(null)
 const downloadState = ref({
   loading: false,
   progress: 0,
@@ -494,6 +528,31 @@ const saveStatusLabel = computed(() => {
   }
 
   return ''
+})
+
+const storageInfoItems = computed(() => {
+  if (!storageInfo.value) {
+    return []
+  }
+
+  return [
+    { label: t('settings.storageUserConfig'), value: storageInfo.value.userConfigFile },
+    { label: t('settings.storageData'), value: storageInfo.value.dataDir },
+    { label: t('settings.storageHistory'), value: storageInfo.value.historyDir },
+    { label: t('settings.storageChats'), value: storageInfo.value.chatsDir },
+    { label: t('settings.storageModels'), value: storageInfo.value.modelsDir },
+    { label: t('settings.storageCache'), value: storageInfo.value.cacheDir },
+  ]
+})
+
+const whisperModelDownloadedAt = computed(() => {
+  const timestamp = Number(whisperModelMetadata.value?.downloadedAt || 0)
+
+  if (!timestamp) {
+    return ''
+  }
+
+  return new Date(timestamp * 1000).toLocaleString()
 })
 
 const plugins = computed(() => {
@@ -879,9 +938,19 @@ const setWhisperLocalModel = (modelName: string | number | undefined) => {
 }
 
 async function refreshWhisperModelStatus() {
-  isWhisperModelDownloaded.value = await isModelDownloaded(
-    whisperLocalModel.value
-  )
+  const [downloaded, metadata] = await Promise.all([
+    isModelDownloaded(whisperLocalModel.value),
+    getModelMetadata(whisperLocalModel.value),
+  ])
+  isWhisperModelDownloaded.value = downloaded
+  whisperModelMetadata.value = downloaded ? metadata : null
+}
+
+async function loadStorageInfo() {
+  const result = await ipcStore.callFunction('getStorageInfo')
+  storageInfo.value = result.success
+    ? (result.result as StorageInfo | null) || null
+    : null
 }
 
 async function downloadWhisperModel() {
@@ -971,6 +1040,9 @@ const updatePluginConfig = (
 ) => {
   userConfig.value.plugins[pluginName] = values
 }
+onMounted(() => {
+  void loadStorageInfo()
+})
 onUnmounted(() => {
   isComponentActive = false
   flushPendingAutosave()

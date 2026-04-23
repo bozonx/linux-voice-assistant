@@ -33,6 +33,35 @@ pub struct ChatHistoryItem {
     pub messages: Vec<ChatMessage>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct StorageInfo {
+    pub config_dir: String,
+    pub data_dir: String,
+    pub history_dir: String,
+    pub chats_dir: String,
+    pub models_dir: String,
+    pub cache_dir: String,
+    pub user_config_file: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WhisperModelFileMetadata {
+    pub path: String,
+    pub size_bytes: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WhisperModelMetadata {
+    pub model_name: String,
+    pub version: String,
+    pub downloaded_at: String,
+    pub complete: bool,
+    pub files: Vec<WhisperModelFileMetadata>,
+}
+
 pub fn default_user_config() -> Value {
     let xdotool_bin = default_binary_path("xdotool");
     let ydotool_bin = default_binary_path("ydotool");

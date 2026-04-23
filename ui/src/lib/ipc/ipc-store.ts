@@ -33,6 +33,9 @@ export function createCommandMap(): Record<string, CommandEntry> {
       command: DESKTOP_COMMANDS.SAVE_USER_CONFIG,
       buildArgs: ([userConfigJson]) => ({ userConfigJson }),
     },
+    getStorageInfo: {
+      command: DESKTOP_COMMANDS.GET_STORAGE_INFO,
+    },
     getEditorHistory: {
       command: DESKTOP_COMMANDS.GET_EDITOR_HISTORY,
     },
@@ -41,6 +44,10 @@ export function createCommandMap(): Record<string, CommandEntry> {
     },
     getChatHistory: {
       command: DESKTOP_COMMANDS.GET_CHAT_HISTORY,
+    },
+    getChat: {
+      command: DESKTOP_COMMANDS.GET_CHAT,
+      buildArgs: ([id]) => ({ id }),
     },
     saveMainInputTmp: {
       command: DESKTOP_COMMANDS.SAVE_MAIN_INPUT_TMP,

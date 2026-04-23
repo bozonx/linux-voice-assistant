@@ -21,6 +21,11 @@ pub fn get_chat_history(app: AppHandle) -> Result<Vec<ChatHistoryItem>, AppError
 }
 
 #[tauri::command]
+pub fn get_chat(app: AppHandle, id: String) -> Result<Option<ChatHistoryItem>, AppError> {
+    storage::get_chat(&app, id)
+}
+
+#[tauri::command]
 pub fn save_main_input_tmp(app: AppHandle, value: String) -> Result<(), AppError> {
     storage::save_main_input_tmp(&app, value)
 }

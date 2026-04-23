@@ -40,8 +40,7 @@ describe('chat-helpers', () => {
         id: 'chat-1',
         description: 'Question',
         lastMsgDate: '2026-04-22T00:00:00.000Z',
-        userMessage,
-        assistantMessage,
+        messages: [userMessage, assistantMessage],
       })
     ).toEqual({
       id: 'chat-1',

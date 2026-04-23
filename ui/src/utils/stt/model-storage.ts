@@ -1,5 +1,5 @@
 import { desktopClient } from '../../lib/desktop/client'
-import { DESKTOP_COMMANDS } from '@shared'
+import { DESKTOP_COMMANDS, type WhisperModelMetadata } from '@shared'
 
 export interface ModelDownloadProgress {
   model: string
@@ -11,6 +11,7 @@ export interface ModelDownloadProgress {
 }
 
 const HF_BASE = 'https://huggingface.co'
+const HF_REVISION = 'main'
 
 const XENOVA_WHISPER_FILES = [
   'config.json',
@@ -60,6 +61,17 @@ export async function isModelDownloaded(modelName: string): Promise<boolean> {
   return result.success && result.result === true
 }
 
+export async function getModelMetadata(
+  modelName: string
+): Promise<WhisperModelMetadata | null> {
+  const result = await desktopClient.invoke<WhisperModelMetadata | null>(
+    DESKTOP_COMMANDS.GET_WHISPER_MODEL_METADATA,
+    { modelName }
+  )
+
+  return result.success ? result.result || null : null
+}
+
 export async function downloadModel(
   modelName: string,
   onProgress?: (progress: ModelDownloadProgress) => void
@@ -71,7 +83,7 @@ export async function downloadModel(
   }
 
   for (const fileName of files) {
-    const url = `${HF_BASE}/${modelName}/resolve/main/${fileName}`
+    const url = `${HF_BASE}/${modelName}/resolve/${HF_REVISION}/${fileName}`
 
     onProgress?.({
       model: modelName,
@@ -150,10 +162,27 @@ export async function downloadModel(
       status: 'done',
     })
   }
+
+  const metadataResult = await desktopClient.invoke<WhisperModelMetadata>(
+    DESKTOP_COMMANDS.COMPLETE_WHISPER_MODEL_DOWNLOAD,
+    {
+      modelName,
+      version: HF_REVISION,
+      files,
+    }
+  )
+
+  if (!metadataResult.success) {
+    throw new Error(`Failed to complete model metadata: ${metadataResult.error}`)
+  }
 }
 
 export async function deleteModel(modelName: string): Promise<void> {
-  await desktopClient.invoke(DESKTOP_COMMANDS.DELETE_WHISPER_MODEL, {
+  const result = await desktopClient.invoke(DESKTOP_COMMANDS.DELETE_WHISPER_MODEL, {
     modelName,
   })
+
+  if (!result.success) {
+    throw new Error(`Failed to delete model: ${result.error}`)
+  }
 }

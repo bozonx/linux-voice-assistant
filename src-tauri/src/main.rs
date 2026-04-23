@@ -4,10 +4,10 @@ mod models;
 mod services;
 mod state;
 
-use commands::app::{get_init_params, save_user_config};
+use commands::app::{get_init_params, get_storage_info, save_user_config};
 use commands::history::{
     clear_chat_history, clear_editor_history, clear_main_input_tmp, clear_transform_history,
-    get_chat_history, get_editor_history, get_transform_history, remove_from_chat_history,
+    get_chat, get_chat_history, get_editor_history, get_transform_history, remove_from_chat_history,
     remove_from_editor_history, remove_from_transform_history, save_chat_history,
     save_editor_history, save_main_input_tmp, save_transform_history,
 };
@@ -16,15 +16,17 @@ use commands::voice::{
     stop_voice_recognition,
 };
 use commands::whisper::{
-    delete_whisper_model, get_whisper_model_path, is_whisper_model_downloaded,
-    save_whisper_model_file,
+    complete_whisper_model_download, delete_whisper_model, get_whisper_model_metadata,
+    get_whisper_model_path, is_whisper_model_downloaded, save_whisper_model_file,
 };
 use commands::window::{
     close_window, open_in_browser_and_close, put_into_clipboard_and_close,
     type_into_window_and_close,
 };
 use models::default_init_params;
-use services::{dbus, runtime, storage};
+#[cfg(target_os = "linux")]
+use services::dbus;
+use services::{runtime, storage};
 use state::AppState;
 use tauri::Manager;
 use tauri_plugin_single_instance::init as single_instance;
@@ -41,6 +43,7 @@ pub fn run() {
             let user_config = storage::read_or_create_user_config(app.handle())?;
             app.manage(AppState::new(default_init_params(user_config)));
             runtime::setup(app)?;
+            #[cfg(target_os = "linux")]
             dbus::spawn_dbus_server(app.handle().clone());
             Ok(())
         })
@@ -49,11 +52,13 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             get_init_params,
+            get_storage_info,
             save_user_config,
             close_window,
             get_editor_history,
             get_transform_history,
             get_chat_history,
+            get_chat,
             save_main_input_tmp,
             clear_main_input_tmp,
             save_editor_history,
@@ -74,6 +79,8 @@ pub fn run() {
             put_into_clipboard_and_close,
             is_whisper_model_downloaded,
             save_whisper_model_file,
+            complete_whisper_model_download,
+            get_whisper_model_metadata,
             delete_whisper_model,
             get_whisper_model_path
         ])

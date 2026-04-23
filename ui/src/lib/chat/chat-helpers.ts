@@ -38,13 +38,12 @@ export function createChatHistoryEntry(params: {
   id: string
   description: string
   lastMsgDate: string
-  userMessage: ChatMessage
-  assistantMessage: ChatMessage
+  messages: ChatMessage[]
 }): ChatHistoryItem {
   return {
     id: params.id,
     description: params.description,
     lastMsgDate: params.lastMsgDate,
-    messages: [params.userMessage, params.assistantMessage],
+    messages: params.messages,
   }
 }

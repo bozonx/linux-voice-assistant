@@ -33,7 +33,7 @@ Deferred for later stages:
 
 Development is supported on Linux and macOS.
 
-Windows is not supported for development.
+Windows development is not supported, but production builds are expected to run on Windows.
 
 Install dependencies:
 

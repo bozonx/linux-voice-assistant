@@ -34,6 +34,29 @@ export interface ChatHistoryItem {
   messages: ChatMessage[]
 }
 
+export interface StorageInfo {
+  configDir: string
+  dataDir: string
+  historyDir: string
+  chatsDir: string
+  modelsDir: string
+  cacheDir: string
+  userConfigFile: string
+}
+
+export interface WhisperModelFileMetadata {
+  path: string
+  sizeBytes: number
+}
+
+export interface WhisperModelMetadata {
+  modelName: string
+  version: string
+  downloadedAt: string
+  complete: boolean
+  files: WhisperModelFileMetadata[]
+}
+
 export interface InitParams {
   windowId: string | null
   selectedText: string | null
@@ -61,10 +84,12 @@ export const DESKTOP_EVENTS = {
 
 export const DESKTOP_COMMANDS = {
   GET_INIT_PARAMS: 'get_init_params',
+  GET_STORAGE_INFO: 'get_storage_info',
   SAVE_USER_CONFIG: 'save_user_config',
   GET_EDITOR_HISTORY: 'get_editor_history',
   GET_TRANSFORM_HISTORY: 'get_transform_history',
   GET_CHAT_HISTORY: 'get_chat_history',
+  GET_CHAT: 'get_chat',
   SAVE_MAIN_INPUT_TMP: 'save_main_input_tmp',
   CLEAR_MAIN_INPUT_TMP: 'clear_main_input_tmp',
   SAVE_EDITOR_HISTORY: 'save_editor_history',
@@ -86,6 +111,8 @@ export const DESKTOP_COMMANDS = {
   PUT_INTO_CLIPBOARD_AND_CLOSE: 'put_into_clipboard_and_close',
   IS_WHISPER_MODEL_DOWNLOADED: 'is_whisper_model_downloaded',
   SAVE_WHISPER_MODEL_FILE: 'save_whisper_model_file',
+  COMPLETE_WHISPER_MODEL_DOWNLOAD: 'complete_whisper_model_download',
+  GET_WHISPER_MODEL_METADATA: 'get_whisper_model_metadata',
   DELETE_WHISPER_MODEL: 'delete_whisper_model',
   GET_WHISPER_MODEL_PATH: 'get_whisper_model_path',
 } as const

@@ -2,12 +2,12 @@ use std::fs;
 use std::path::PathBuf;
 
 use serde::de::DeserializeOwned;
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use serde_json::{json, Value};
 use tauri::{AppHandle, Manager};
 
 use crate::errors::AppError;
-use crate::models::{default_user_config, ChatHistoryItem, CONFIG_FILE_NAME};
+use crate::models::{default_user_config, ChatHistoryItem, StorageInfo, CONFIG_FILE_NAME};
 
 fn app_config_dir(app: &AppHandle) -> Result<PathBuf, AppError> {
     let dir = app
@@ -20,7 +20,7 @@ fn app_config_dir(app: &AppHandle) -> Result<PathBuf, AppError> {
     Ok(dir)
 }
 
-fn app_data_dir(app: &AppHandle) -> Result<PathBuf, AppError> {
+pub fn app_data_dir(app: &AppHandle) -> Result<PathBuf, AppError> {
     let dir = app
         .path()
         .app_data_dir()
@@ -44,6 +44,42 @@ pub fn app_cache_dir(app: &AppHandle) -> Result<PathBuf, AppError> {
         .map_err(|error| AppError::Message(error.to_string()))?;
     fs::create_dir_all(&dir)?;
     Ok(dir)
+}
+
+pub fn app_models_dir(app: &AppHandle) -> Result<PathBuf, AppError> {
+    let dir = app_data_dir(app)?.join("models");
+    fs::create_dir_all(&dir)?;
+    Ok(dir)
+}
+
+pub fn app_whisper_models_dir(app: &AppHandle) -> Result<PathBuf, AppError> {
+    let dir = app_models_dir(app)?.join("whisper");
+    fs::create_dir_all(&dir)?;
+    Ok(dir)
+}
+
+pub fn get_storage_info(app: &AppHandle) -> Result<StorageInfo, AppError> {
+    let config_dir = app_config_dir(app)?;
+    let data_dir = app_data_dir(app)?;
+    let history_dir = app_data_sub_dir(app, "history")?;
+    let chats_dir = app_data_sub_dir(app, "chats")?;
+    let models_dir = app_models_dir(app)?;
+    let cache_dir = app_cache_dir(app)?;
+    let user_config_file = config_dir.join(CONFIG_FILE_NAME);
+
+    Ok(StorageInfo {
+        config_dir: path_to_string(config_dir),
+        data_dir: path_to_string(data_dir),
+        history_dir: path_to_string(history_dir),
+        chats_dir: path_to_string(chats_dir),
+        models_dir: path_to_string(models_dir),
+        cache_dir: path_to_string(cache_dir),
+        user_config_file: path_to_string(user_config_file),
+    })
+}
+
+fn path_to_string(path: PathBuf) -> String {
+    path.to_string_lossy().to_string()
 }
 
 fn read_json<T: DeserializeOwned>(path: &PathBuf, fallback: T) -> Result<T, AppError> {
@@ -277,7 +313,10 @@ pub fn save_chat_history(
     let limit = history_limit(user_config, "chatHistoryMaxItems", 50);
 
     // Save full chat to its own file
-    let chat_file_path = chats_dir.join(format!("{}.json", chat_history_item.id));
+    let chat_file_path = chats_dir.join(format!(
+        "{}.json",
+        sanitize_chat_id(&chat_history_item.id)?
+    ));
     write_json(&chat_file_path, &chat_history_item)?;
 
     // Create index item (strip messages to keep index small)
@@ -293,8 +332,28 @@ pub fn save_chat_history(
     }
 
     history.truncate(limit);
+    remove_orphan_chat_files(&chats_dir, &history)?;
 
     write_json(&chats_dir.join("index.json"), &history)
+}
+
+pub fn get_chat(app: &AppHandle, id: String) -> Result<Option<ChatHistoryItem>, AppError> {
+    let chats_dir = app_data_sub_dir(app, "chats")?;
+    let chat_file_path = chats_dir.join(format!("{}.json", sanitize_chat_id(&id)?));
+
+    if !chat_file_path.exists() {
+        return Ok(None);
+    }
+
+    Ok(Some(read_json(
+        &chat_file_path,
+        ChatHistoryItem {
+            id,
+            description: String::new(),
+            last_msg_date: String::new(),
+            messages: Vec::new(),
+        },
+    )?))
 }
 
 pub fn remove_from_chat_history(app: &AppHandle, id: String) -> Result<(), AppError> {
@@ -303,7 +362,7 @@ pub fn remove_from_chat_history(app: &AppHandle, id: String) -> Result<(), AppEr
     history.retain(|item| item.id != id);
     write_json(&chats_dir.join("index.json"), &history)?;
 
-    let chat_file_path = chats_dir.join(format!("{}.json", id));
+    let chat_file_path = chats_dir.join(format!("{}.json", sanitize_chat_id(&id)?));
     if chat_file_path.exists() {
         let _ = fs::remove_file(chat_file_path);
     }
@@ -360,4 +419,42 @@ fn chrono_like_now() -> String {
         .as_secs();
 
     now.to_string()
+}
+
+fn sanitize_chat_id(id: &str) -> Result<String, AppError> {
+    let is_safe = !id.is_empty()
+        && id
+            .chars()
+            .all(|ch| ch.is_ascii_alphanumeric() || ch == '-' || ch == '_');
+
+    if !is_safe {
+        return Err(AppError::Message(String::from("Invalid chat id")));
+    }
+
+    Ok(id.to_string())
+}
+
+fn remove_orphan_chat_files(
+    chats_dir: &PathBuf,
+    history: &[ChatHistoryItem],
+) -> Result<(), AppError> {
+    let active_ids = history
+        .iter()
+        .map(|item| format!("{}.json", item.id))
+        .collect::<std::collections::HashSet<_>>();
+
+    if let Ok(entries) = fs::read_dir(chats_dir) {
+        for entry in entries.flatten() {
+            let path = entry.path();
+            let Some(file_name) = path.file_name().and_then(|value| value.to_str()) else {
+                continue;
+            };
+
+            if path.is_file() && file_name != "index.json" && !active_ids.contains(file_name) {
+                fs::remove_file(path)?;
+            }
+        }
+    }
+
+    Ok(())
 }
