@@ -93,7 +93,58 @@
         </FieldRow>
       </div>
 
-      <div v-show="currentTab === 2">
+      <div v-show="currentTab === 2" class="fields-col">
+        <FieldRow :label="t('settings.sttProvider')" vertical>
+          <Tabs :tabs="sttProviderTabs" v-model:value="currentSttProvider" />
+        </FieldRow>
+
+        <div v-show="currentSttProvider === 'whisper-local'">
+          <FieldRow :label="t('settings.whisperLocal')" vertical>
+            <p class="text-sm text-muted">
+              {{ t('settings.whisperLocalUnsupported') }}
+            </p>
+          </FieldRow>
+        </div>
+
+        <div v-show="currentSttProvider === 'vosk'">
+          <FieldRow :label="t('settings.speechToText')">
+            <FieldSelect
+              v-model:value="userConfig.aiModelUsage.stt"
+              :options="sttModelOptions"
+            />
+          </FieldRow>
+
+          <FieldRow :label="t('settings.voskModels')">
+            <FieldItems
+              :items="voskModels"
+              @update:items="updateVoskModels"
+            >
+              <template #item="{ item }">
+                <FieldRow :label="t('settings.id')" vertical>
+                  <FieldInput
+                    v-model:value="item.id"
+                    placeholder="system-vosk"
+                  />
+                </FieldRow>
+                <FieldRow :label="t('settings.description')" vertical>
+                  <FieldInput
+                    v-model:value="item.description"
+                    :placeholder="t('settings.systemVoskDescription')"
+                  />
+                </FieldRow>
+                <FieldRow :label="t('settings.voskWsUrl')" vertical>
+                  <FieldInput
+                    v-model:value="item.baseUrl"
+                    placeholder="ws://localhost:2700"
+                  />
+                </FieldRow>
+              </template>
+            </FieldItems>
+          </FieldRow>
+        </div>
+      </div>
+
+      <div v-show="currentTab === 3">
         <FieldRow :label="t('settings.llmModels')">
           <FieldItems
             :items="userConfig.llmModels"
@@ -122,79 +173,7 @@
           </FieldItems>
         </FieldRow>
 
-        <FieldRow :label="t('settings.sttModels')">
-          <FieldItems
-            :items="userConfig.sttModels"
-            @update:items="updateSTTModels"
-          >
-            <template #item="{ item }">
-              <FieldRow :label="t('settings.id')" vertical>
-                <FieldInput v-model:value="item.id" />
-              </FieldRow>
-              <FieldRow :label="t('settings.model')" vertical>
-                <FieldInput v-model:value="item.model" />
-              </FieldRow>
-              <FieldRow :label="t('settings.description')" vertical>
-                <FieldInput v-model:value="item.description" />
-              </FieldRow>
-              <FieldRow :label="t('settings.baseUrl')" vertical>
-                <FieldInput v-model:value="item.baseUrl" />
-              </FieldRow>
-              <FieldRow :label="t('settings.apiKey')" vertical>
-                <FieldInput v-model:value="item.apiKey" />
-              </FieldRow>
-            </template>
-          </FieldItems>
-        </FieldRow>
-
-        <FieldRow :label="t('settings.ttsModels')">
-          <FieldItems
-            :items="userConfig.ttsModels"
-            @update:items="updateTTSModels"
-          >
-            <template #item="{ item }">
-              <FieldRow :label="t('settings.id')" vertical>
-                <FieldInput v-model:value="item.id" />
-              </FieldRow>
-              <FieldRow :label="t('settings.model')" vertical>
-                <FieldInput v-model:value="item.model" />
-              </FieldRow>
-              <FieldRow :label="t('settings.description')" vertical>
-                <FieldInput v-model:value="item.description" />
-              </FieldRow>
-              <FieldRow :label="t('settings.baseUrl')" vertical>
-                <FieldInput v-model:value="item.baseUrl" />
-              </FieldRow>
-              <FieldRow :label="t('settings.apiKey')" vertical>
-                <FieldInput v-model:value="item.apiKey" />
-              </FieldRow>
-            </template>
-          </FieldItems>
-        </FieldRow>
-
         <h2>{{ t('settings.aiModelUsage') }}</h2>
-        <FieldRow :label="t('settings.speechToText')">
-          <FieldSelect
-            v-model:value="userConfig.aiModelUsage.stt"
-            :options="
-              userConfig.sttModels.map((model: any) => ({
-                id: model.id,
-                name: model.id,
-              }))
-            "
-          />
-        </FieldRow>
-        <FieldRow :label="t('settings.textToSpeech')">
-          <FieldSelect
-            v-model:value="userConfig.aiModelUsage.tts"
-            :options="
-              userConfig.ttsModels.map((model: any) => ({
-                id: model.id,
-                name: model.id,
-              }))
-            "
-          />
-        </FieldRow>
         <FieldRow :label="t('settings.translate')">
           <FieldSelect
             v-model:value="userConfig.aiModelUsage.translate"
@@ -252,7 +231,7 @@
         </FieldRow>
       </div>
 
-      <div v-show="currentTab === 3">
+      <div v-show="currentTab === 4">
         <h2>{{ t('settings.aiRules') }}</h2>
         <FieldRow :label="t('settings.baseRules')">
           <FieldTextArea v-model:value="userConfig.aiRules.base" />
@@ -268,7 +247,7 @@
         </FieldRow>
       </div>
 
-      <div v-show="currentTab === 4">
+      <div v-show="currentTab === 5">
         <FieldRow :label="t('settings.aiTasks')">
           <FieldItems :items="userConfig.aiTasks" @update:items="updateAiTasks">
             <template #item="{ item, index }">
@@ -290,7 +269,7 @@
         </FieldRow>
       </div>
 
-      <div v-show="currentTab === 5">
+      <div v-show="currentTab === 6">
         <FieldRow :label="t('settings.chatRoles')">
           <FieldItems
             :items="userConfig.chatRoles"
@@ -315,7 +294,7 @@
         </FieldRow>
       </div>
 
-      <div v-show="currentTab === 6">
+      <div v-show="currentTab === 7">
         <template v-for="plugin of plugins" :key="plugin.pluginName">
           <h2>{{ plugin.labelKey ? t(plugin.labelKey) : plugin.label }}</h2>
           <FieldsByCfg
@@ -373,6 +352,7 @@ const pluginConfigs = pluginIndexes
   }))
 
 const currentTab = ref(0)
+const currentSttProvider = ref('vosk')
 const userConfig = ref(createPreparedUserConfig(ipcStore.params.userConfig))
 const saveState = ref<SaveState>('idle')
 const lastPersistedConfig = ref(serializeUserConfig(userConfig.value))
@@ -383,11 +363,17 @@ let saveTimer: ReturnType<typeof setTimeout> | null = null
 const tabs = computed(() => [
   { text: t('settings.generalTab'), key: 0 },
   { text: t('settings.translationsTab'), key: 1 },
-  { text: t('settings.modelsTab'), key: 2 },
-  { text: t('settings.rulesTab'), key: 3 },
-  { text: t('settings.tasksTab'), key: 4 },
-  { text: t('settings.rolesTab'), key: 5 },
-  { text: t('settings.pluginsTab'), key: 6 },
+  { text: t('settings.sttTab'), key: 2 },
+  { text: t('settings.llmTab'), key: 3 },
+  { text: t('settings.rulesTab'), key: 4 },
+  { text: t('settings.tasksTab'), key: 5 },
+  { text: t('settings.rolesTab'), key: 6 },
+  { text: t('settings.pluginsTab'), key: 7 },
+])
+
+const sttProviderTabs = computed(() => [
+  { text: 'Whisper local', key: 'whisper-local' },
+  { text: 'Vosk', key: 'vosk' },
 ])
 
 const windowInsertionTabs = computed(() => [
@@ -472,6 +458,7 @@ function createPreparedUserConfig(config: unknown) {
   ensurePluginDefaults(nextConfig)
   normalizeLanguageConfig(nextConfig)
   normalizeWindowInsertionConfig(nextConfig)
+  normalizeSttConfig(nextConfig)
 
   return nextConfig
 }
@@ -525,6 +512,57 @@ function normalizeWindowInsertionConfig(config: Record<string, any>) {
     ydotoolBin: windowInsertion.ydotoolBin || defaultWindowInsertion.ydotoolBin,
   }
   config.xdotoolBin = xdotoolBin
+}
+
+function normalizeSttConfig(config: Record<string, any>) {
+  if (!Array.isArray(config.sttModels)) {
+    config.sttModels = []
+  }
+
+  if (!config.aiModelUsage) {
+    config.aiModelUsage = {}
+  }
+
+  config.sttModels = config.sttModels.map((model: Record<string, any>) => {
+    const provider = model.provider || model.model || 'vosk'
+
+    return {
+      ...model,
+      id: model.id || 'system-vosk',
+      model: provider === 'whisper-local' ? 'whisper-local' : 'vosk',
+      provider: provider === 'whisper-local' ? 'whisper-local' : 'vosk',
+      baseUrl:
+        provider === 'whisper-local'
+          ? model.baseUrl
+          : model.baseUrl || 'ws://localhost:2700',
+    }
+  })
+
+  const hasVoskModel = config.sttModels.some(
+    (model: Record<string, any>) => model.provider === 'vosk'
+  )
+
+  if (!hasVoskModel) {
+    config.sttModels.push({
+      id: 'system-vosk',
+      model: 'vosk',
+      provider: 'vosk',
+      description: t('settings.systemVoskDescription'),
+      baseUrl: 'ws://localhost:2700',
+    })
+  }
+
+  const hasSelectedModel = config.sttModels.some(
+    (model: Record<string, any>) => model.id === config.aiModelUsage.stt
+  )
+
+  if (!hasSelectedModel) {
+    const defaultVoskModel = config.sttModels.find(
+      (model: Record<string, any>) => model.provider === 'vosk'
+    )
+
+    config.aiModelUsage.stt = defaultVoskModel?.id || ''
+  }
 }
 
 const navigatorLanguages = computed(() => getNavigatorLanguages())
@@ -637,6 +675,19 @@ const translateLanguagesItems = computed(() => {
   }))
 })
 
+const voskModels = computed(() => {
+  return (userConfig.value.sttModels || []).filter(
+    (model: Record<string, any>) => model.provider !== 'whisper-local'
+  )
+})
+
+const sttModelOptions = computed(() => {
+  return voskModels.value.map((model: Record<string, any>) => ({
+    id: model.id,
+    name: model.id,
+  }))
+})
+
 const updateTranslateLanguages = (items: Record<string, any>[]) => {
   userConfig.value.toTranslateLanguages = items.map(
     (item: Record<string, any>) => item.value
@@ -681,12 +732,26 @@ const updateLLMModels = (items: any[]) => {
   userConfig.value.llmModels = items
 }
 
-const updateSTTModels = (items: any[]) => {
-  userConfig.value.sttModels = items
-}
+const updateVoskModels = (items: any[]) => {
+  const nonVoskModels = (userConfig.value.sttModels || []).filter(
+    (model: Record<string, any>) => model.provider === 'whisper-local'
+  )
+  const nextVoskModels = items.map((model) => ({
+    ...model,
+    model: 'vosk',
+    provider: 'vosk',
+    baseUrl: model.baseUrl || 'ws://localhost:2700',
+  }))
 
-const updateTTSModels = (items: any[]) => {
-  userConfig.value.ttsModels = items
+  userConfig.value.sttModels = [...nonVoskModels, ...nextVoskModels]
+
+  const hasSelectedModel = nextVoskModels.some(
+    (model) => model.id === userConfig.value.aiModelUsage.stt
+  )
+
+  if (!hasSelectedModel) {
+    userConfig.value.aiModelUsage.stt = nextVoskModels[0]?.id || ''
+  }
 }
 
 const updateAiTasks = (items: any[]) => {

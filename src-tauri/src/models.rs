@@ -52,10 +52,18 @@ pub fn default_user_config() -> Value {
       "transformHistoryMaxItems": 50,
       "chatHistoryMaxItems": 50,
       "llmModels": [],
-      "sttModels": [],
+      "sttModels": [
+        {
+          "id": "system-vosk",
+          "model": "vosk",
+          "provider": "vosk",
+          "description": "Системный Vosk WebSocket сервер",
+          "baseUrl": "ws://localhost:2700"
+        }
+      ],
       "ttsModels": [],
       "aiModelUsage": {
-        "stt": "",
+        "stt": "system-vosk",
         "tts": "",
         "translate": "",
         "voiceCorrection": "",

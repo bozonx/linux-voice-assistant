@@ -52,6 +52,15 @@ export interface LlmModel {
   tags?: ModelTag[]
 }
 
+export interface SttModel {
+  id: string
+  model: 'vosk' | 'whisper-local' | string
+  provider?: 'vosk' | 'whisper-local' | string
+  description?: string
+  baseUrl?: string
+  apiKey?: string
+}
+
 export interface UserConfig {
   theme: 'auto' | 'light' | 'dark'
   xdotoolBin: string
@@ -67,13 +76,7 @@ export interface UserConfig {
   transformHistoryMaxItems: number
   chatHistoryMaxItems: number
   llmModels: LlmModel[]
-  sttModels: {
-    id: string
-    model: string
-    description?: string
-    baseUrl?: string
-    apiKey?: string
-  }[]
+  sttModels: SttModel[]
   ttsModels: {
     id: string
     model: string
@@ -121,10 +124,18 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
   transformHistoryMaxItems: 50,
   chatHistoryMaxItems: 50,
   llmModels: [],
-  sttModels: [],
+  sttModels: [
+    {
+      id: 'system-vosk',
+      model: 'vosk',
+      provider: 'vosk',
+      description: 'Системный Vosk WebSocket сервер',
+      baseUrl: 'ws://localhost:2700',
+    },
+  ],
   ttsModels: [],
   aiModelUsage: {
-    stt: '',
+    stt: 'system-vosk',
     tts: '',
     translate: '',
     voiceCorrection: '',
