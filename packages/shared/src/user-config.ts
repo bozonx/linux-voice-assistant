@@ -59,6 +59,7 @@ export interface SttModel {
   description?: string
   baseUrl?: string
   apiKey?: string
+  localModel?: string
 }
 
 export interface UserConfig {
@@ -125,6 +126,13 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
   chatHistoryMaxItems: 50,
   llmModels: [],
   sttModels: [
+    {
+      id: 'browser-whisper-local',
+      model: 'whisper-local',
+      provider: 'whisper-local',
+      description: 'Browser Whisper via Transformers.js',
+      localModel: 'Xenova/whisper-tiny',
+    },
     {
       id: 'system-vosk',
       model: 'vosk',

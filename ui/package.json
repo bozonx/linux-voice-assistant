@@ -12,6 +12,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@huggingface/transformers": "3.0.0-alpha.19",
     "@iconify/vue": "^5.0.0",
     "@librnet/shared": "workspace:*",
     "@tailwindcss/vite": "^4.2.4",

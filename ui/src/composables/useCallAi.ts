@@ -1,16 +1,64 @@
 import { translate } from '../lib/i18n'
+import {
+  AUTO_LANGUAGE_VALUE,
+  resolveLanguagePreference,
+} from '../lib/locale/language'
 import { useIpcStore } from '../stores/ipc'
 import { AI_TASKS } from '../types'
+import {
+  cancelBrowserWhisperRecognition,
+  startBrowserWhisperRecognition,
+  stopBrowserWhisperRecognition,
+} from '../utils/stt/browser-whisper'
+import { DEFAULT_WHISPER_LOCAL_MODEL } from '../utils/stt/model-storage'
+import { GlobalEvents, useGlobalEvents } from './useGlobalEvents'
 import useToast from './useToast'
-import { APP_CONFIG, type ChatMessage, useAiRequest } from '@shared'
+import { APP_CONFIG, type ChatMessage, type SttModel, useAiRequest } from '@shared'
 
 export const useCallAi = () => {
   const { chatCompletion, prepareAiMessages, prepareDevInstructions } =
     useAiRequest()
   const ipcStore = useIpcStore()
   const { toast } = useToast()
+  const { globalEvents } = useGlobalEvents()
 
   const currentUserConfig = () => ipcStore.params.userConfig
+
+  const currentSttModel = () => {
+    const userConfig = currentUserConfig()
+    const modelId = userConfig.aiModelUsage.stt
+
+    return userConfig.sttModels.find((model: SttModel) => model.id === modelId)
+  }
+
+  const getVoiceRecognitionRuntime = () => {
+    const sttModel = currentSttModel()
+    const provider = sttModel?.provider || sttModel?.model
+
+    if (provider === 'whisper-local') {
+      return {
+        provider: 'whisper-local' as const,
+        streaming: false,
+        model: sttModel,
+      }
+    }
+
+    return {
+      provider: 'vosk' as const,
+      streaming: true,
+      model: sttModel,
+    }
+  }
+
+  const currentWhisperLanguage = () => {
+    const userLanguage = currentUserConfig().userLanguage
+
+    if (!userLanguage || userLanguage === AUTO_LANGUAGE_VALUE) {
+      return undefined
+    }
+
+    return resolveLanguagePreference(userLanguage).split('_')[0]
+  }
 
   async function aiRequest(taskName: string, messages: string | ChatMessage[]) {
     const userConfig = currentUserConfig()
@@ -36,10 +84,48 @@ export const useCallAi = () => {
   }
 
   const startVoiceRecognition = async () => {
+    const runtime = getVoiceRecognitionRuntime()
+    const sttModel = runtime.model
+
+    if (runtime.provider === 'whisper-local') {
+      await startBrowserWhisperRecognition({
+        modelName: sttModel.localModel || DEFAULT_WHISPER_LOCAL_MODEL,
+        language: currentWhisperLanguage(),
+        onText: (text) => {
+          globalEvents.emit(GlobalEvents.VOICE_RECOGNITION, text)
+        },
+      })
+      return
+    }
+
     await ipcStore.callFunction('startVoiceRecognition')
   }
 
   const stopVoiceRecognition = async () => {
+    const runtime = getVoiceRecognitionRuntime()
+
+    if (runtime.provider === 'whisper-local') {
+      const text = await stopBrowserWhisperRecognition()
+
+      if (text) {
+        globalEvents.emit(GlobalEvents.VOICE_RECOGNITION, text)
+      }
+
+      return text
+    }
+
+    await ipcStore.callFunction('stopVoiceRecognition')
+    return ''
+  }
+
+  const cancelVoiceRecognition = async () => {
+    const runtime = getVoiceRecognitionRuntime()
+
+    if (runtime.provider === 'whisper-local') {
+      await cancelBrowserWhisperRecognition()
+      return
+    }
+
     await ipcStore.callFunction('stopVoiceRecognition')
   }
 
@@ -132,8 +218,10 @@ export const useCallAi = () => {
 
   return {
     aiRequest,
+    getVoiceRecognitionRuntime,
     startVoiceRecognition,
     stopVoiceRecognition,
+    cancelVoiceRecognition,
     voiceCorrection,
     sendChatMessage,
     correctText,

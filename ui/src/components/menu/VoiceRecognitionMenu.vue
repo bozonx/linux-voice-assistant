@@ -3,11 +3,15 @@
     <h1>{{ t('menu.voiceRecognition') }}</h1>
 
     <div class="flex-1">
+      <p v-if="statusText" class="text-sm text-muted mb-2">
+        {{ statusText }}
+      </p>
       <TextPreview :text="recognizedText" />
     </div>
 
     <ShortcutList
-      :spaceKey="spaceKey" />
+      :spaceKey="spaceKey"
+      :stop-listening="isFinishing" />
   </div>
 </template>
 
@@ -39,10 +43,19 @@ const emit = defineEmits<{
   ): void
 }>()
 
-const { startVoiceRecognition, stopVoiceRecognition, voiceCorrection } = useCallAi();
+const {
+  cancelVoiceRecognition,
+  getVoiceRecognitionRuntime,
+  startVoiceRecognition,
+  stopVoiceRecognition,
+  voiceCorrection,
+} = useCallAi();
 const { globalEvents } = useGlobalEvents();
 const recognizedText = ref<string>("");
 const lastRecognizedTextMs = ref<number>(0);
+const isFinishing = ref(false);
+const isStarted = ref(false);
+const isTranscribing = ref(false);
 const ipcStore = useIpcStore();
 const appConfig = computed(() => ipcStore.params.appConfig);
 const menuModalsStore = useMenuModalsStore();
@@ -51,15 +64,32 @@ const historyStore = useHistoryStore();
 const { t } = useI18n()
 let listenerIndex = -1;
 
-const spaceKey = {
-  name: t('menu.finish'),
+const voiceRuntime = computed(() => getVoiceRecognitionRuntime())
+const statusText = computed(() => {
+  if (isTranscribing.value) {
+    return t('menu.transcribing')
+  }
+
+  if (isStarted.value) {
+    return t('menu.listening')
+  }
+
+  return ''
+})
+
+const spaceKey = computed(() => ({
+  name: isFinishing.value ? t('common.inProgress') : t('menu.finish'),
+  disabled: isFinishing.value,
   action: async () => {
     await finish()
   },
-}
+}))
 
-const finish = async () => {
-  // TODO: пока ждет  не позволять нажимать еще раз закончить
+async function waitForStreamingRecognition() {
+  if (!voiceRuntime.value.streaming) {
+    return
+  }
+
   if (!lastRecognizedTextMs.value) {
     await new Promise((resolve) =>
       setTimeout(resolve, appConfig.value.recognitionWaitTimeSec * 1000)
@@ -72,19 +102,40 @@ const finish = async () => {
       await new Promise((resolve) => setTimeout(resolve, remainingMs))
     }
   }
+}
+
+const finish = async () => {
+  if (isFinishing.value) {
+    return
+  }
+
+  isFinishing.value = true
+
+  await waitForStreamingRecognition()
+
+  isTranscribing.value = !voiceRuntime.value.streaming
+  const finalRecognizedText = await stopVoiceRecognition();
+  isStarted.value = false
+  isTranscribing.value = false
+
+  if (finalRecognizedText) {
+    recognizedText.value = finalRecognizedText;
+    lastRecognizedTextMs.value = Date.now();
+  }
 
   if (!recognizedText.value.trim().length) {
     toast(t("toast.nothingRecognized"), "warn");
 
+    globalEvents.removeListener(listenerIndex);
     props.onCorrected?.('', '', undefined);
     emit('corrected', '', '');
+    isFinishing.value = false
 
     return;
   }
 
-  // stop voice recognition and make correction
+  // Stop event updates before making correction.
   globalEvents.removeListener(listenerIndex);
-  await stopVoiceRecognition();
 
   let resultText = recognizedText.value;
   let correctedText;
@@ -107,6 +158,7 @@ const finish = async () => {
 
   props.onCorrected?.(resultText, recognizedText.value, correctedText);
   emit('corrected', resultText, recognizedText.value, correctedText);
+  isFinishing.value = false
 };
 
 onMounted(async () => {
@@ -115,11 +167,22 @@ onMounted(async () => {
     lastRecognizedTextMs.value = Date.now();
   });
 
-  await startVoiceRecognition();
+  try {
+    await startVoiceRecognition();
+    isStarted.value = true
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    toast(message || t('toast.voiceRecognitionFailed'), "error");
+    globalEvents.removeListener(listenerIndex);
+    props.onCorrected?.('', '', undefined);
+    emit('corrected', '', '');
+  }
 });
 
 onUnmounted(() => {
   globalEvents.removeListener(listenerIndex);
-  void stopVoiceRecognition();
+  if (!isFinishing.value) {
+    void cancelVoiceRecognition();
+  }
 });
 </script>

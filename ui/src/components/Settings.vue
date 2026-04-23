@@ -100,9 +100,58 @@
 
         <div v-show="currentSttProvider === 'whisper-local'">
           <FieldRow :label="t('settings.whisperLocal')" vertical>
-            <p class="text-sm text-muted">
-              {{ t('settings.whisperLocalUnsupported') }}
-            </p>
+            <div class="flex flex-col gap-3 w-full">
+              <FieldRow :label="t('settings.whisperLocalModel')" vertical>
+                <FieldSelect
+                  :value="whisperLocalModel"
+                  :options="WHISPER_LOCAL_MODELS"
+                  @update:value="setWhisperLocalModel"
+                />
+              </FieldRow>
+              <div class="flex flex-col gap-2 text-sm">
+                <div>
+                  {{
+                    isWhisperModelDownloaded
+                      ? t('settings.whisperLocalDownloaded')
+                      : t('settings.whisperLocalNotDownloaded')
+                  }}
+                </div>
+                <div class="text-xs text-muted">
+                  {{ t('settings.whisperLocalStorageHint') }}
+                </div>
+                <div
+                  v-if="downloadState.error"
+                  class="text-error text-xs whitespace-pre-wrap"
+                >
+                  {{ downloadState.error }}
+                </div>
+                <div
+                  v-if="downloadState.loading"
+                  class="flex flex-col gap-1 text-xs text-muted"
+                >
+                  <div class="flex justify-between gap-2">
+                    <span>{{ downloadState.status }}: {{ downloadState.file }}</span>
+                    <span>{{ Math.round(downloadState.progress) }}%</span>
+                  </div>
+                  <progress
+                    class="progress progress-primary w-full"
+                    :value="downloadState.progress"
+                    max="100"
+                  />
+                </div>
+                <Button
+                  v-if="!isWhisperModelDownloaded || downloadState.loading"
+                  sm
+                  :disabled="downloadState.loading"
+                  @click="downloadWhisperModel"
+                >
+                  {{ t('settings.whisperLocalDownload') }}
+                </Button>
+                <span v-else class="text-success">
+                  {{ t('settings.whisperLocalReady') }}
+                </span>
+              </div>
+            </div>
           </FieldRow>
         </div>
 
@@ -305,6 +354,13 @@ import { useIpcStore } from '../stores/ipc'
 import { useThemeStore } from '../stores/theme'
 import { PRESETS_KEYS } from '../types'
 import { DEFAULT_USER_CONFIG } from '@shared'
+import {
+  DEFAULT_WHISPER_LOCAL_MODEL,
+  WHISPER_LOCAL_MODELS,
+  downloadModel,
+  isModelDownloaded,
+  type ModelDownloadProgress,
+} from '../utils/stt/model-storage'
 
 const ipcStore = useIpcStore()
 const themeStore = useThemeStore()
@@ -325,10 +381,18 @@ const pluginConfigs = pluginIndexes
   }))
 
 const currentTab = ref(0)
-const currentSttProvider = ref('vosk')
+const currentSttProvider = ref<'vosk' | 'whisper-local'>('vosk')
 const userConfig = ref(createPreparedUserConfig(ipcStore.params.userConfig))
 const saveState = ref<SaveState>('idle')
 const lastPersistedConfig = ref(serializeUserConfig(userConfig.value))
+const isWhisperModelDownloaded = ref(false)
+const downloadState = ref({
+  loading: false,
+  progress: 0,
+  file: '',
+  status: '',
+  error: '',
+})
 let isComponentActive = true
 let skipNextAutosave = false
 let saveTimer: ReturnType<typeof setTimeout> | null = null
@@ -383,6 +447,32 @@ watch(
     scheduleAutosave()
   },
   { deep: true }
+)
+
+watch(
+  () => userConfig.value.aiModelUsage?.stt,
+  () => {
+    currentSttProvider.value = resolveCurrentSttProvider(userConfig.value)
+  },
+  { immediate: true }
+)
+
+watch(
+  () => currentSttProvider.value,
+  (provider) => {
+    if (provider === resolveCurrentSttProvider(userConfig.value)) {
+      return
+    }
+
+    if (provider === 'whisper-local') {
+      const whisperModel = ensureWhisperLocalModel(userConfig.value)
+      userConfig.value.aiModelUsage.stt = whisperModel.id
+      return
+    }
+
+    const voskModel = ensureVoskModel(userConfig.value)
+    userConfig.value.aiModelUsage.stt = voskModel.id
+  }
 )
 
 const saveStatusLabel = computed(() => {
@@ -496,33 +586,85 @@ function normalizeSttConfig(config: Record<string, any>) {
     config.aiModelUsage = {}
   }
 
-  const whisperModels = config.sttModels
+  const existingWhisperModel = config.sttModels
     .filter((model: Record<string, any>) => {
       const provider = model.provider || model.model
       return provider === 'whisper-local'
-    })
-    .map((model: Record<string, any>) => ({
-      ...model,
-      model: 'whisper-local',
-      provider: 'whisper-local',
-    }))
+    })[0]
   const existingVoskModel = config.sttModels.find(
     (model: Record<string, any>) => {
       const provider = model.provider || model.model || 'vosk'
       return provider !== 'whisper-local'
     }
   )
-  const voskModel = {
+  const whisperModel = createWhisperLocalModel(existingWhisperModel)
+  const voskModel = createVoskModel(existingVoskModel)
+  const activeModel = config.sttModels.find(
+    (model: Record<string, any>) => model.id === config.aiModelUsage.stt
+  )
+  const activeProvider = activeModel?.provider || activeModel?.model
+
+  config.sttModels = [whisperModel, voskModel]
+  config.aiModelUsage.stt = activeProvider === 'whisper-local'
+    ? whisperModel.id
+    : voskModel.id
+}
+
+function createWhisperLocalModel(existingModel?: Record<string, any>) {
+  return {
+    id: existingModel?.id || 'browser-whisper-local',
+    model: 'whisper-local',
+    provider: 'whisper-local',
+    description:
+      existingModel?.description || t('settings.whisperLocalDescription'),
+    localModel: existingModel?.localModel || DEFAULT_WHISPER_LOCAL_MODEL,
+  }
+}
+
+function createVoskModel(existingModel?: Record<string, any>) {
+  return {
     id: 'system-vosk',
     model: 'vosk',
     provider: 'vosk',
     description:
-      existingVoskModel?.description || t('settings.systemVoskDescription'),
-    baseUrl: existingVoskModel?.baseUrl || 'ws://localhost:2700',
+      existingModel?.description || t('settings.systemVoskDescription'),
+    baseUrl: existingModel?.baseUrl || 'ws://localhost:2700',
   }
+}
 
-  config.sttModels = [...whisperModels, voskModel]
-  config.aiModelUsage.stt = voskModel.id
+function ensureWhisperLocalModel(config: Record<string, any>) {
+  const existingModel = (config.sttModels || []).find(
+    (model: Record<string, any>) => model.provider === 'whisper-local'
+  )
+  const nextModel = createWhisperLocalModel(existingModel)
+  const otherModels = (config.sttModels || []).filter(
+    (model: Record<string, any>) => model.provider !== 'whisper-local'
+  )
+
+  config.sttModels = [nextModel, ...otherModels]
+  return nextModel
+}
+
+function ensureVoskModel(config: Record<string, any>) {
+  const existingModel = (config.sttModels || []).find(
+    (model: Record<string, any>) => model.provider === 'vosk'
+  )
+  const nextModel = createVoskModel(existingModel)
+  const otherModels = (config.sttModels || []).filter(
+    (model: Record<string, any>) => model.provider !== 'vosk'
+  )
+
+  config.sttModels = [...otherModels, nextModel]
+  return nextModel
+}
+
+function resolveCurrentSttProvider(config: Record<string, any>) {
+  const usageId = config.aiModelUsage?.stt
+  const model = (config.sttModels || []).find(
+    (item: Record<string, any>) => item.id === usageId
+  )
+
+  return model?.provider === 'whisper-local' ? 'whisper-local' : 'vosk'
 }
 
 const navigatorLanguages = computed(() => getNavigatorLanguages())
@@ -643,6 +785,22 @@ const voskWsUrl = computed(() => {
   return voskModel?.baseUrl || 'ws://localhost:2700'
 })
 
+const whisperLocalConfig = computed(() => {
+  return ensureWhisperLocalModel(userConfig.value)
+})
+
+const whisperLocalModel = computed(() => {
+  return whisperLocalConfig.value.localModel || DEFAULT_WHISPER_LOCAL_MODEL
+})
+
+watch(
+  whisperLocalModel,
+  () => {
+    void refreshWhisperModelStatus()
+  },
+  { immediate: true }
+)
+
 const updateTranslateLanguages = (items: Record<string, any>[]) => {
   userConfig.value.toTranslateLanguages = items.map(
     (item: Record<string, any>) => item.value
@@ -688,9 +846,7 @@ const updateLLMModels = (items: any[]) => {
 }
 
 const setVoskWsUrl = (baseUrl: string) => {
-  const nonVoskModels = (userConfig.value.sttModels || []).filter(
-    (model: Record<string, any>) => model.provider === 'whisper-local'
-  )
+  const whisperModel = ensureWhisperLocalModel(userConfig.value)
   const nextVoskModel = {
     id: 'system-vosk',
     model: 'vosk',
@@ -699,8 +855,74 @@ const setVoskWsUrl = (baseUrl: string) => {
     baseUrl: baseUrl || 'ws://localhost:2700',
   }
 
-  userConfig.value.sttModels = [...nonVoskModels, nextVoskModel]
+  userConfig.value.sttModels = [whisperModel, nextVoskModel]
   userConfig.value.aiModelUsage.stt = nextVoskModel.id
+}
+
+const setWhisperLocalModel = (modelName: string | number | undefined) => {
+  if (typeof modelName !== 'string') {
+    return
+  }
+
+  const whisperModel = ensureWhisperLocalModel(userConfig.value)
+  whisperModel.localModel = modelName
+  userConfig.value.aiModelUsage.stt = whisperModel.id
+}
+
+async function refreshWhisperModelStatus() {
+  isWhisperModelDownloaded.value = await isModelDownloaded(
+    whisperLocalModel.value
+  )
+}
+
+async function downloadWhisperModel() {
+  if (downloadState.value.loading) {
+    return
+  }
+
+  downloadState.value = {
+    loading: true,
+    progress: 0,
+    file: '',
+    status: '',
+    error: '',
+  }
+
+  try {
+    await downloadModel(
+      whisperLocalModel.value,
+      (progress: ModelDownloadProgress) => {
+        downloadState.value = {
+          loading: true,
+          progress:
+            progress.total > 0 ? (progress.loaded / progress.total) * 100 : 0,
+          file: progress.file,
+          status: progress.status,
+          error: '',
+        }
+      }
+    )
+    await refreshWhisperModelStatus()
+  } catch (error) {
+    downloadState.value = {
+      loading: false,
+      progress: 0,
+      file: '',
+      status: 'error',
+      error: error instanceof Error ? error.message : String(error),
+    }
+    return
+  } finally {
+    if (downloadState.value.status !== 'error') {
+      downloadState.value = {
+        loading: false,
+        progress: 0,
+        file: '',
+        status: '',
+        error: '',
+      }
+    }
+  }
 }
 
 const updateAiTasks = (items: any[]) => {
