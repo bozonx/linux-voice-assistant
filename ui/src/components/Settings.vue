@@ -244,6 +244,70 @@
                   @update:value="setBrowserLocalMaxTokens"
                 />
               </FieldRow>
+              <div class="flex flex-col gap-2 text-sm">
+                <div>
+                  {{
+                    isBrowserLlmDownloaded
+                      ? t('settings.browserLocalLlmDownloaded')
+                      : t('settings.browserLocalLlmNotDownloaded')
+                  }}
+                </div>
+                <div class="text-xs text-muted">
+                  {{ t('settings.browserLocalLlmStorageHint') }}
+                </div>
+                <div
+                  v-if="browserLocalModelMetadata"
+                  class="flex flex-col gap-1 text-xs text-muted"
+                >
+                  <div>
+                    {{ t('settings.browserLocalLlmVersion') }}:
+                    {{ browserLocalModelMetadata.version }}
+                  </div>
+                  <div>
+                    {{ t('settings.browserLocalLlmDownloadedAt') }}:
+                    {{ browserLocalModelDownloadedAt }}
+                  </div>
+                </div>
+                <div
+                  v-if="llmDownloadState.error"
+                  class="text-error text-xs whitespace-pre-wrap"
+                >
+                  {{ llmDownloadState.error }}
+                </div>
+                <div
+                  v-if="llmDownloadState.loading"
+                  class="flex flex-col gap-1 text-xs text-muted"
+                >
+                  <div class="flex justify-between gap-2">
+                    <span>{{ llmDownloadState.status }}: {{ llmDownloadState.file }}</span>
+                    <span>{{ Math.round(llmDownloadState.progress) }}%</span>
+                  </div>
+                  <progress
+                    class="progress progress-primary w-full"
+                    :value="llmDownloadState.progress"
+                    max="100"
+                  />
+                </div>
+                <Button
+                  v-if="!isBrowserLlmDownloaded || llmDownloadState.loading"
+                  sm
+                  :disabled="llmDownloadState.loading"
+                  @click="downloadBrowserLlmModel"
+                >
+                  {{ t('settings.browserLocalLlmDownload') }}
+                </Button>
+                <span v-else class="text-success">
+                  {{ t('settings.browserLocalLlmReady') }}
+                </span>
+                <Button
+                  v-if="isBrowserLlmDownloaded && !llmDownloadState.loading"
+                  sm
+                  neutral
+                  @click="deleteBrowserLlmModel"
+                >
+                  {{ t('settings.browserLocalLlmDelete') }}
+                </Button>
+              </div>
               <div class="text-xs text-muted whitespace-pre-wrap">
                 {{ t('settings.browserLocalLlmHint') }}
               </div>
@@ -420,11 +484,21 @@ import { pluginIndexes } from '../plugins'
 import { useIpcStore } from '../stores/ipc'
 import { useThemeStore } from '../stores/theme'
 import { PRESETS_KEYS } from '../types'
-import { DEFAULT_USER_CONFIG, type StorageInfo, type WhisperModelMetadata } from '@shared'
+import {
+  DEFAULT_USER_CONFIG,
+  type LlmModelMetadata,
+  type StorageInfo,
+  type WhisperModelMetadata,
+} from '@shared'
 import {
   BROWSER_LLM_MODELS,
   DEFAULT_BROWSER_LLM_MODEL,
   DEFAULT_OLLAMA_MODEL,
+  deleteLlmModel,
+  downloadLlmModel,
+  getLlmModelMetadata,
+  isLlmModelDownloaded,
+  type LlmModelDownloadProgress,
 } from '../utils/llm/model-storage'
 import {
   DEFAULT_WHISPER_LOCAL_MODEL,
@@ -462,8 +536,17 @@ const saveState = ref<SaveState>('idle')
 const lastPersistedConfig = ref(serializeUserConfig(userConfig.value))
 const isWhisperModelDownloaded = ref(false)
 const whisperModelMetadata = ref<WhisperModelMetadata | null>(null)
+const isBrowserLlmDownloaded = ref(false)
+const browserLocalModelMetadata = ref<LlmModelMetadata | null>(null)
 const storageInfo = ref<StorageInfo | null>(null)
 const downloadState = ref({
+  loading: false,
+  progress: 0,
+  file: '',
+  status: '',
+  error: '',
+})
+const llmDownloadState = ref({
   loading: false,
   progress: 0,
   file: '',
@@ -565,6 +648,25 @@ watch(
   }
 )
 
+watch(
+  () => currentLlmProvider.value,
+  (provider) => {
+    if (provider === resolveCurrentLlmProvider(userConfig.value)) {
+      return
+    }
+
+    const nextModelId = provider === 'ollama'
+      ? ensureOllamaModel(userConfig.value).id
+      : ensureBrowserLocalLlmModel(userConfig.value).id
+
+    userConfig.value.aiModelUsage.translate = nextModelId
+    userConfig.value.aiModelUsage.voiceCorrection = nextModelId
+    userConfig.value.aiModelUsage.correction = nextModelId
+    userConfig.value.aiModelUsage.aiTasks = nextModelId
+    userConfig.value.aiModelUsage.chat = nextModelId
+  }
+)
+
 const saveStatusLabel = computed(() => {
   if (saveState.value === 'saving') {
     return t('settings.saving')
@@ -594,6 +696,16 @@ const storageInfoItems = computed(() => {
 
 const whisperModelDownloadedAt = computed(() => {
   const timestamp = Number(whisperModelMetadata.value?.downloadedAt || 0)
+
+  if (!timestamp) {
+    return ''
+  }
+
+  return new Date(timestamp * 1000).toLocaleString()
+})
+
+const browserLocalModelDownloadedAt = computed(() => {
+  const timestamp = Number(browserLocalModelMetadata.value?.downloadedAt || 0)
 
   if (!timestamp) {
     return ''
@@ -1089,6 +1201,14 @@ watch(
   { immediate: true }
 )
 
+watch(
+  browserLocalModelName,
+  () => {
+    void refreshBrowserLlmModelStatus()
+  },
+  { immediate: true }
+)
+
 const updateTranslateLanguages = (items: Record<string, any>[]) => {
   userConfig.value.toTranslateLanguages = items.map(
     (item: Record<string, any>) => item.value
@@ -1211,6 +1331,15 @@ async function refreshWhisperModelStatus() {
   whisperModelMetadata.value = downloaded ? metadata : null
 }
 
+async function refreshBrowserLlmModelStatus() {
+  const [downloaded, metadata] = await Promise.all([
+    isLlmModelDownloaded(browserLocalModelName.value),
+    getLlmModelMetadata(browserLocalModelName.value),
+  ])
+  isBrowserLlmDownloaded.value = downloaded
+  browserLocalModelMetadata.value = downloaded ? metadata : null
+}
+
 async function loadStorageInfo() {
   const result = await ipcStore.callFunction('getStorageInfo')
   storageInfo.value = result.success
@@ -1282,6 +1411,79 @@ async function deleteWhisperModel() {
     await refreshWhisperModelStatus()
   } catch (error) {
     downloadState.value = {
+      loading: false,
+      progress: 0,
+      file: '',
+      status: 'error',
+      error: error instanceof Error ? error.message : String(error),
+    }
+  }
+}
+
+async function downloadBrowserLlmModel() {
+  if (llmDownloadState.value.loading) {
+    return
+  }
+
+  llmDownloadState.value = {
+    loading: true,
+    progress: 0,
+    file: '',
+    status: '',
+    error: '',
+  }
+
+  try {
+    await downloadLlmModel(
+      browserLocalModelName.value,
+      (progress: LlmModelDownloadProgress) => {
+        llmDownloadState.value = {
+          loading: true,
+          progress:
+            progress.total > 0 ? (progress.loaded / progress.total) * 100 : 0,
+          file: progress.file,
+          status: progress.status,
+          error: '',
+        }
+      }
+    )
+    await refreshBrowserLlmModelStatus()
+  } catch (error) {
+    llmDownloadState.value = {
+      loading: false,
+      progress: 0,
+      file: '',
+      status: 'error',
+      error: error instanceof Error ? error.message : String(error),
+    }
+    return
+  } finally {
+    if (llmDownloadState.value.status !== 'error') {
+      llmDownloadState.value = {
+        loading: false,
+        progress: 0,
+        file: '',
+        status: '',
+        error: '',
+      }
+    }
+  }
+}
+
+async function deleteBrowserLlmModel() {
+  llmDownloadState.value = {
+    loading: false,
+    progress: 0,
+    file: '',
+    status: '',
+    error: '',
+  }
+
+  try {
+    await deleteLlmModel(browserLocalModelName.value)
+    await refreshBrowserLlmModelStatus()
+  } catch (error) {
+    llmDownloadState.value = {
       loading: false,
       progress: 0,
       file: '',

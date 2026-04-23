@@ -58,6 +58,12 @@ pub fn app_whisper_models_dir(app: &AppHandle) -> Result<PathBuf, AppError> {
     Ok(dir)
 }
 
+pub fn app_llm_models_dir(app: &AppHandle) -> Result<PathBuf, AppError> {
+    let dir = app_models_dir(app)?.join("llm");
+    fs::create_dir_all(&dir)?;
+    Ok(dir)
+}
+
 pub fn get_storage_info(app: &AppHandle) -> Result<StorageInfo, AppError> {
     let config_dir = app_config_dir(app)?;
     let data_dir = app_data_dir(app)?;

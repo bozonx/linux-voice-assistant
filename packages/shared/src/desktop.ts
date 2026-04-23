@@ -57,6 +57,19 @@ export interface WhisperModelMetadata {
   files: WhisperModelFileMetadata[]
 }
 
+export interface LlmModelFileMetadata {
+  path: string
+  sizeBytes: number
+}
+
+export interface LlmModelMetadata {
+  modelName: string
+  version: string
+  downloadedAt: string
+  complete: boolean
+  files: LlmModelFileMetadata[]
+}
+
 export interface InitParams {
   windowId: string | null
   selectedText: string | null
@@ -115,6 +128,12 @@ export const DESKTOP_COMMANDS = {
   GET_WHISPER_MODEL_METADATA: 'get_whisper_model_metadata',
   DELETE_WHISPER_MODEL: 'delete_whisper_model',
   GET_WHISPER_MODEL_PATH: 'get_whisper_model_path',
+  IS_LLM_MODEL_DOWNLOADED: 'is_llm_model_downloaded',
+  SAVE_LLM_MODEL_FILE: 'save_llm_model_file',
+  COMPLETE_LLM_MODEL_DOWNLOAD: 'complete_llm_model_download',
+  GET_LLM_MODEL_METADATA: 'get_llm_model_metadata',
+  DELETE_LLM_MODEL: 'delete_llm_model',
+  GET_LLM_MODEL_PATH: 'get_llm_model_path',
 } as const
 
 export type DesktopCommandName =

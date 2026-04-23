@@ -62,6 +62,23 @@ pub struct WhisperModelMetadata {
     pub files: Vec<WhisperModelFileMetadata>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LlmModelFileMetadata {
+    pub path: String,
+    pub size_bytes: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LlmModelMetadata {
+    pub model_name: String,
+    pub version: String,
+    pub downloaded_at: String,
+    pub complete: bool,
+    pub files: Vec<LlmModelFileMetadata>,
+}
+
 pub fn default_user_config() -> Value {
     let xdotool_bin = default_binary_path("xdotool");
     let ydotool_bin = default_binary_path("ydotool");

@@ -5,29 +5,40 @@ type ChatMessage = {
   content: string
 }
 
-type WorkerMessage = {
-  type: 'generate'
-  id: number
-  data: {
-    modelName: string
-    messages: ChatMessage[]
-    temperature?: number
-    maxTokens?: number
-  }
-}
+type WorkerMessage =
+  | {
+      type: 'init'
+      id: number
+      data: { modelUrl: string }
+    }
+  | {
+      type: 'generate'
+      id: number
+      data: {
+        modelName: string
+        messages: ChatMessage[]
+        temperature?: number
+        maxTokens?: number
+      }
+    }
 
 type WorkerResponse =
+  | { type: 'init-ok'; id: number }
   | { type: 'progress'; id: number; data: { status: string; file?: string; progress?: number } }
   | { type: 'result'; id: number; data: { content: string } }
   | { type: 'error'; id: number; error: string }
 
-env.allowRemoteModels = true
-env.allowLocalModels = false
-env.useBrowserCache = true
+env.allowRemoteModels = false
+env.allowLocalModels = true
+env.useBrowserCache = false
 
 let generator: TextGenerationPipeline | null = null
 let currentModelName: string | null = null
 let isWebGpuAvailable: boolean | null = null
+
+function toModelDirName(modelName: string) {
+  return modelName.replace(/\//g, '_')
+}
 
 async function hasWebGpu() {
   if (isWebGpuAvailable !== null) {
@@ -70,7 +81,7 @@ async function getGenerator(modelName: string, requestId: number) {
   if (await hasWebGpu()) {
     try {
       env.backends.onnx.gpu = true
-      generator = (await pipeline('text-generation', modelName, {
+      generator = (await pipeline('text-generation', toModelDirName(modelName), {
         device: 'webgpu',
         dtype: 'q4',
         progress_callback,
@@ -84,7 +95,7 @@ async function getGenerator(modelName: string, requestId: number) {
   }
 
   env.backends.onnx.gpu = false
-  generator = (await pipeline('text-generation', modelName, {
+  generator = (await pipeline('text-generation', toModelDirName(modelName), {
     device: 'wasm',
     dtype: 'q4',
     progress_callback,
@@ -129,7 +140,17 @@ function extractContent(result: unknown) {
 let queue = Promise.resolve()
 
 self.onmessage = (event: MessageEvent<WorkerMessage>) => {
-  const { id, data } = event.data
+  const { type, id, data } = event.data
+
+  if (type === 'init') {
+    let url = data.modelUrl || '/models/'
+    if (!url.endsWith('/')) {
+      url += '/'
+    }
+    env.localModelPath = url
+    self.postMessage({ type: 'init-ok', id } satisfies WorkerResponse)
+    return
+  }
 
   queue = queue
     .then(async () => {

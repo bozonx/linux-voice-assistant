@@ -11,6 +11,10 @@ use commands::history::{
     remove_from_editor_history, remove_from_transform_history, save_chat_history,
     save_editor_history, save_main_input_tmp, save_transform_history,
 };
+use commands::llm::{
+    complete_llm_model_download, delete_llm_model, get_llm_model_metadata, get_llm_model_path,
+    is_llm_model_downloaded, save_llm_model_file,
+};
 use commands::voice::{
     start_local_voice_recording, start_voice_recognition, stop_local_voice_recording,
     stop_voice_recognition,
@@ -82,7 +86,13 @@ pub fn run() {
             complete_whisper_model_download,
             get_whisper_model_metadata,
             delete_whisper_model,
-            get_whisper_model_path
+            get_whisper_model_path,
+            is_llm_model_downloaded,
+            save_llm_model_file,
+            complete_llm_model_download,
+            get_llm_model_metadata,
+            delete_llm_model,
+            get_llm_model_path
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
