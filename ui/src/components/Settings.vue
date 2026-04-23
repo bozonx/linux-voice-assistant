@@ -218,138 +218,182 @@
       </div>
 
       <div v-show="currentTab === 3" class="fields-col">
-        <FieldRow :label="t('settings.llmProvider')" vertical>
-          <Tabs :tabs="llmProviderTabs" v-model:value="currentLlmProvider" />
-        </FieldRow>
+        <FieldRow :label="t('settings.llmModels')" vertical>
+          <div class="flex flex-col gap-3 w-full">
+            <div class="flex flex-wrap gap-2">
+              <Button sm @click="addBrowserLocalLlmModel">
+                {{ t('settings.addBrowserLocalModel') }}
+              </Button>
+              <Button sm neutral @click="addOllamaLlmModel">
+                {{ t('settings.addOllamaModel') }}
+              </Button>
+            </div>
 
-        <div v-show="currentLlmProvider === 'browser-local'">
-          <FieldRow :label="t('settings.browserLocalLlm')" vertical>
-            <div class="flex flex-col gap-3 w-full">
-              <FieldRow :label="t('settings.browserLocalLlmModel')" vertical>
-                <FieldSelect
-                  :value="browserLocalModelName"
-                  :options="BROWSER_LLM_MODELS"
-                  @update:value="setBrowserLocalModel"
-                />
-              </FieldRow>
-              <FieldRow :label="t('settings.temperature')" vertical>
-                <FieldInput
-                  :value="browserLocalTemperature"
-                  @update:value="setBrowserLocalTemperature"
-                />
-              </FieldRow>
-              <FieldRow :label="t('settings.maxTokens')" vertical>
-                <FieldInput
-                  :value="browserLocalMaxTokens"
-                  @update:value="setBrowserLocalMaxTokens"
-                />
-              </FieldRow>
-              <div class="flex flex-col gap-2 text-sm">
-                <div>
-                  {{
-                    isBrowserLlmDownloaded
-                      ? t('settings.browserLocalLlmDownloaded')
-                      : t('settings.browserLocalLlmNotDownloaded')
-                  }}
-                </div>
-                <div class="text-xs text-muted">
-                  {{ t('settings.browserLocalLlmStorageHint') }}
-                </div>
-                <div
-                  v-if="browserLocalModelMetadata"
-                  class="flex flex-col gap-1 text-xs text-muted"
-                >
-                  <div>
-                    {{ t('settings.browserLocalLlmVersion') }}:
-                    {{ browserLocalModelMetadata.version }}
-                  </div>
-                  <div>
-                    {{ t('settings.browserLocalLlmDownloadedAt') }}:
-                    {{ browserLocalModelDownloadedAt }}
-                  </div>
-                </div>
-                <div
-                  v-if="llmDownloadState.error"
-                  class="text-error text-xs whitespace-pre-wrap"
-                >
-                  {{ llmDownloadState.error }}
-                </div>
-                <div
-                  v-if="llmDownloadState.loading"
-                  class="flex flex-col gap-1 text-xs text-muted"
-                >
-                  <div class="flex justify-between gap-2">
-                    <span>{{ llmDownloadState.status }}: {{ llmDownloadState.file }}</span>
-                    <span>{{ Math.round(llmDownloadState.progress) }}%</span>
-                  </div>
-                  <progress
-                    class="progress progress-primary w-full"
-                    :value="llmDownloadState.progress"
-                    max="100"
-                  />
+            <div
+              v-for="(model, index) in userConfig.llmModels"
+              :key="model.id"
+              class="flex flex-col gap-3 p-3 rounded-box border border-base-300"
+            >
+              <div class="flex items-center justify-between gap-3">
+                <div class="font-medium">
+                  {{ modelDisplayName(model, index) }}
                 </div>
                 <Button
-                  v-if="!isBrowserLlmDownloaded || llmDownloadState.loading"
-                  sm
-                  :disabled="llmDownloadState.loading"
-                  @click="downloadBrowserLlmModel"
-                >
-                  {{ t('settings.browserLocalLlmDownload') }}
-                </Button>
-                <span v-else class="text-success">
-                  {{ t('settings.browserLocalLlmReady') }}
-                </span>
-                <Button
-                  v-if="isBrowserLlmDownloaded && !llmDownloadState.loading"
                   sm
                   neutral
-                  @click="deleteBrowserLlmModel"
+                  :disabled="userConfig.llmModels.length <= 1"
+                  @click="removeLlmModel(model.id)"
                 >
-                  {{ t('settings.browserLocalLlmDelete') }}
+                  {{ t('settings.removeModel') }}
                 </Button>
               </div>
-              <div class="text-xs text-muted whitespace-pre-wrap">
-                {{ t('settings.browserLocalLlmHint') }}
-              </div>
-            </div>
-          </FieldRow>
-        </div>
 
-        <div v-show="currentLlmProvider === 'ollama'">
-          <FieldRow :label="t('settings.ollama')" vertical>
-            <div class="flex flex-col gap-3 w-full">
-              <FieldRow :label="t('settings.baseUrl')" vertical>
+              <FieldRow :label="t('settings.name')" vertical>
                 <FieldInput
-                  :value="ollamaBaseUrl"
-                  placeholder="http://localhost:11434"
-                  @update:value="setOllamaBaseUrl"
+                  :value="model.name || ''"
+                  @update:value="setLlmModelName(model.id, $event)"
                 />
               </FieldRow>
-              <FieldRow :label="t('settings.ollamaModel')" vertical>
-                <FieldInput
-                  :value="ollamaModelName"
-                  placeholder="qwen2.5:0.5b"
-                  @update:value="setOllamaModel"
-                />
+
+              <FieldRow :label="t('settings.llmProvider')" vertical>
+                <div class="text-sm text-muted">
+                  {{ model.provider === 'ollama' ? t('settings.ollama') : t('settings.browserLocalLlm') }}
+                </div>
               </FieldRow>
-              <FieldRow :label="t('settings.temperature')" vertical>
-                <FieldInput
-                  :value="ollamaTemperature"
-                  @update:value="setOllamaTemperature"
-                />
-              </FieldRow>
-              <FieldRow :label="t('settings.maxTokens')" vertical>
-                <FieldInput
-                  :value="ollamaMaxTokens"
-                  @update:value="setOllamaMaxTokens"
-                />
-              </FieldRow>
-              <div class="text-xs text-muted whitespace-pre-wrap">
-                {{ t('settings.ollamaHint') }}
-              </div>
+
+              <template v-if="model.provider === 'browser-local'">
+                <FieldRow :label="t('settings.browserLocalLlmModel')" vertical>
+                  <FieldSelect
+                    :value="model.localModel || DEFAULT_BROWSER_LLM_MODEL"
+                    :options="BROWSER_LLM_MODELS"
+                    @update:value="setBrowserLocalModel(model.id, $event)"
+                  />
+                </FieldRow>
+                <FieldRow :label="t('settings.temperature')" vertical>
+                  <FieldInput
+                    :value="String(model.temperature ?? 0.2)"
+                    @update:value="setBrowserLocalTemperature(model.id, $event)"
+                  />
+                </FieldRow>
+                <FieldRow :label="t('settings.maxTokens')" vertical>
+                  <FieldInput
+                    :value="String(model.maxTokens ?? 256)"
+                    @update:value="setBrowserLocalMaxTokens(model.id, $event)"
+                  />
+                </FieldRow>
+                <div class="flex flex-col gap-2 text-sm">
+                  <div>
+                    {{
+                      browserLocalStatusById[model.id]?.downloaded
+                        ? t('settings.browserLocalLlmDownloaded')
+                        : t('settings.browserLocalLlmNotDownloaded')
+                    }}
+                  </div>
+                  <div class="text-xs text-muted">
+                    {{ t('settings.browserLocalLlmStorageHint') }}
+                  </div>
+                  <div
+                    v-if="browserLocalStatusById[model.id]?.metadata"
+                    class="flex flex-col gap-1 text-xs text-muted"
+                  >
+                    <div>
+                      {{ t('settings.browserLocalLlmVersion') }}:
+                      {{ browserLocalStatusById[model.id]?.metadata?.version }}
+                    </div>
+                    <div>
+                      {{ t('settings.browserLocalLlmDownloadedAt') }}:
+                      {{ formatDownloadedAt(browserLocalStatusById[model.id]?.metadata?.downloadedAt) }}
+                    </div>
+                  </div>
+                  <div
+                    v-if="browserLocalDownloadStateById[model.id]?.error"
+                    class="text-error text-xs whitespace-pre-wrap"
+                  >
+                    {{ browserLocalDownloadStateById[model.id]?.error }}
+                  </div>
+                  <div
+                    v-if="browserLocalDownloadStateById[model.id]?.loading"
+                    class="flex flex-col gap-1 text-xs text-muted"
+                  >
+                    <div class="flex justify-between gap-2">
+                      <span>
+                        {{ browserLocalDownloadStateById[model.id]?.status }}:
+                        {{ browserLocalDownloadStateById[model.id]?.file }}
+                      </span>
+                      <span>
+                        {{ Math.round(browserLocalDownloadStateById[model.id]?.progress || 0) }}%
+                      </span>
+                    </div>
+                    <progress
+                      class="progress progress-primary w-full"
+                      :value="browserLocalDownloadStateById[model.id]?.progress || 0"
+                      max="100"
+                    />
+                  </div>
+                  <div class="flex flex-wrap gap-2">
+                    <Button
+                      v-if="!browserLocalStatusById[model.id]?.downloaded || browserLocalDownloadStateById[model.id]?.loading"
+                      sm
+                      :disabled="browserLocalDownloadStateById[model.id]?.loading"
+                      @click="downloadBrowserLlmModel(model.id)"
+                    >
+                      {{ t('settings.browserLocalLlmDownload') }}
+                    </Button>
+                    <span
+                      v-else
+                      class="text-success flex items-center"
+                    >
+                      {{ t('settings.browserLocalLlmReady') }}
+                    </span>
+                    <Button
+                      v-if="browserLocalStatusById[model.id]?.downloaded && !browserLocalDownloadStateById[model.id]?.loading"
+                      sm
+                      neutral
+                      @click="deleteBrowserLlmModel(model.id)"
+                    >
+                      {{ t('settings.browserLocalLlmDelete') }}
+                    </Button>
+                  </div>
+                </div>
+                <div class="text-xs text-muted whitespace-pre-wrap">
+                  {{ t('settings.browserLocalLlmHint') }}
+                </div>
+              </template>
+
+              <template v-else>
+                <FieldRow :label="t('settings.baseUrl')" vertical>
+                  <FieldInput
+                    :value="model.baseUrl || 'http://localhost:11434'"
+                    placeholder="http://localhost:11434"
+                    @update:value="setOllamaBaseUrl(model.id, $event)"
+                  />
+                </FieldRow>
+                <FieldRow :label="t('settings.ollamaModel')" vertical>
+                  <FieldInput
+                    :value="model.model || DEFAULT_OLLAMA_MODEL"
+                    placeholder="qwen2.5:0.5b"
+                    @update:value="setOllamaModel(model.id, $event)"
+                  />
+                </FieldRow>
+                <FieldRow :label="t('settings.temperature')" vertical>
+                  <FieldInput
+                    :value="String(model.temperature ?? 0.2)"
+                    @update:value="setOllamaTemperature(model.id, $event)"
+                  />
+                </FieldRow>
+                <FieldRow :label="t('settings.maxTokens')" vertical>
+                  <FieldInput
+                    :value="String(model.maxTokens ?? 512)"
+                    @update:value="setOllamaMaxTokens(model.id, $event)"
+                  />
+                </FieldRow>
+                <div class="text-xs text-muted whitespace-pre-wrap">
+                  {{ t('settings.ollamaHint') }}
+                </div>
+              </template>
             </div>
-          </FieldRow>
-        </div>
+          </div>
+        </FieldRow>
 
         <h2>{{ t('settings.aiModelUsage') }}</h2>
         <FieldRow :label="t('settings.translate')">
@@ -517,6 +561,13 @@ const { t, locale } = useI18n()
 const SAVE_DEBOUNCE_MS = 500
 
 type SaveState = 'idle' | 'saving' | 'saved'
+type DownloadState = {
+  loading: boolean
+  progress: number
+  file: string
+  status: string
+  error: string
+}
 
 const pluginConfigs = pluginIndexes
   .map((pluginIndex) => pluginIndex())
@@ -530,29 +581,23 @@ const pluginConfigs = pluginIndexes
 
 const currentTab = ref(0)
 const currentSttProvider = ref<'vosk' | 'whisper-local'>('vosk')
-const currentLlmProvider = ref<'browser-local' | 'ollama'>('browser-local')
 const userConfig = ref(createPreparedUserConfig(ipcStore.params.userConfig))
 const saveState = ref<SaveState>('idle')
 const lastPersistedConfig = ref(serializeUserConfig(userConfig.value))
 const isWhisperModelDownloaded = ref(false)
 const whisperModelMetadata = ref<WhisperModelMetadata | null>(null)
-const isBrowserLlmDownloaded = ref(false)
-const browserLocalModelMetadata = ref<LlmModelMetadata | null>(null)
+const browserLocalStatusById = ref<
+  Record<string, { downloaded: boolean; metadata: LlmModelMetadata | null }>
+>({})
 const storageInfo = ref<StorageInfo | null>(null)
-const downloadState = ref({
+const downloadState = ref<DownloadState>({
   loading: false,
   progress: 0,
   file: '',
   status: '',
   error: '',
 })
-const llmDownloadState = ref({
-  loading: false,
-  progress: 0,
-  file: '',
-  status: '',
-  error: '',
-})
+const browserLocalDownloadStateById = ref<Record<string, DownloadState>>({})
 let isComponentActive = true
 let skipNextAutosave = false
 let saveTimer: ReturnType<typeof setTimeout> | null = null
@@ -571,11 +616,6 @@ const tabs = computed(() => [
 const sttProviderTabs = computed(() => [
   { text: 'Whisper local', key: 'whisper-local' },
   { text: 'Vosk', key: 'vosk' },
-])
-
-const llmProviderTabs = computed(() => [
-  { text: 'Browser local', key: 'browser-local' },
-  { text: 'Ollama', key: 'ollama' },
 ])
 
 const windowInsertionTabs = computed(() => [
@@ -623,14 +663,6 @@ watch(
 )
 
 watch(
-  () => userConfig.value.aiModelUsage?.chat,
-  () => {
-    currentLlmProvider.value = resolveCurrentLlmProvider(userConfig.value)
-  },
-  { immediate: true }
-)
-
-watch(
   () => currentSttProvider.value,
   (provider) => {
     if (provider === resolveCurrentSttProvider(userConfig.value)) {
@@ -645,25 +677,6 @@ watch(
 
     const voskModel = ensureVoskModel(userConfig.value)
     userConfig.value.aiModelUsage.stt = voskModel.id
-  }
-)
-
-watch(
-  () => currentLlmProvider.value,
-  (provider) => {
-    if (provider === resolveCurrentLlmProvider(userConfig.value)) {
-      return
-    }
-
-    const nextModelId = provider === 'ollama'
-      ? ensureOllamaModel(userConfig.value).id
-      : ensureBrowserLocalLlmModel(userConfig.value).id
-
-    userConfig.value.aiModelUsage.translate = nextModelId
-    userConfig.value.aiModelUsage.voiceCorrection = nextModelId
-    userConfig.value.aiModelUsage.correction = nextModelId
-    userConfig.value.aiModelUsage.aiTasks = nextModelId
-    userConfig.value.aiModelUsage.chat = nextModelId
   }
 )
 
@@ -696,16 +709,6 @@ const storageInfoItems = computed(() => {
 
 const whisperModelDownloadedAt = computed(() => {
   const timestamp = Number(whisperModelMetadata.value?.downloadedAt || 0)
-
-  if (!timestamp) {
-    return ''
-  }
-
-  return new Date(timestamp * 1000).toLocaleString()
-})
-
-const browserLocalModelDownloadedAt = computed(() => {
-  const timestamp = Number(browserLocalModelMetadata.value?.downloadedAt || 0)
 
   if (!timestamp) {
     return ''
@@ -847,21 +850,17 @@ function normalizeLlmConfig(config: Record<string, any>) {
     config.aiModelUsage = {}
   }
 
-  const previousModels = [...config.llmModels]
-  const existingBrowserLocalModel = previousModels.find(
-    (model: Record<string, any>) => (model.provider || model.model) === 'browser-local'
+  const normalizedModels = config.llmModels
+    .map((model: Record<string, any>) => normalizeSingleLlmModel(model))
+    .filter((model: Record<string, any> | null) => model !== null)
+  const dedupedModels = dedupeLlmModels(
+    normalizedModels as Record<string, any>[]
   )
-  const existingOllamaModel = previousModels.find(
-    (model: Record<string, any>) => (model.provider || model.model) === 'ollama'
-  )
-  const legacyRemoteModel = previousModels.find((model: Record<string, any>) => {
-    const provider = model.provider || model.model
-    return provider !== 'browser-local' && provider !== 'ollama'
-  })
-  const browserLocalModel = createBrowserLocalLlmModel(existingBrowserLocalModel)
-  const ollamaModel = createOllamaModel(existingOllamaModel || legacyRemoteModel)
+  const llmModels = dedupedModels.length > 0
+    ? dedupedModels
+    : [createBrowserLocalLlmModel()]
 
-  config.llmModels = [browserLocalModel, ollamaModel]
+  config.llmModels = llmModels
 
   const usageKeys = [
     'translate',
@@ -871,16 +870,14 @@ function normalizeLlmConfig(config: Record<string, any>) {
     'chat',
   ] as const
 
-  for (const usageKey of usageKeys) {
-    const activeModel = previousModels.find(
-      (model: Record<string, any>) => model.id === config.aiModelUsage[usageKey]
-    )
-    const activeProvider = activeModel?.provider || activeModel?.model
+  const validIds = new Set(llmModels.map((model: Record<string, any>) => model.id))
+  const fallbackModelId = llmModels[0].id
 
-    config.aiModelUsage[usageKey] = activeProvider === 'ollama'
-      || (activeProvider !== 'browser-local' && activeProvider !== undefined)
-      ? ollamaModel.id
-      : browserLocalModel.id
+  for (const usageKey of usageKeys) {
+    const currentId = config.aiModelUsage[usageKey]
+    config.aiModelUsage[usageKey] = validIds.has(currentId)
+      ? currentId
+      : fallbackModelId
   }
 }
 
@@ -911,7 +908,11 @@ function createVoskModel(existingModel?: Record<string, any>) {
 
 function createBrowserLocalLlmModel(existingModel?: Record<string, any>) {
   return {
-    id: 'browser-llm-local',
+    id: existingModel?.id || createLlmModelId('browser-local'),
+    name:
+      existingModel?.name
+      || existingModel?.label
+      || t('settings.browserLocalModelDefaultName'),
     model: 'browser-local',
     provider: 'browser-local',
     description:
@@ -924,14 +925,17 @@ function createBrowserLocalLlmModel(existingModel?: Record<string, any>) {
 
 function createOllamaModel(existingModel?: Record<string, any>) {
   return {
-    id: 'ollama-default',
+    id: existingModel?.id || createLlmModelId('ollama'),
+    name:
+      existingModel?.name
+      || existingModel?.label
+      || t('settings.ollamaModelDefaultName'),
     model: existingModel?.model || DEFAULT_OLLAMA_MODEL,
     provider: 'ollama',
     description: existingModel?.description || t('settings.ollamaDescription'),
     baseUrl: existingModel?.baseUrl || 'http://localhost:11434',
     temperature: toNumberOrDefault(existingModel?.temperature, 0.2),
     maxTokens: toIntegerOrDefault(existingModel?.maxTokens, 512),
-    apiKey: '',
   }
 }
 
@@ -961,32 +965,6 @@ function ensureVoskModel(config: Record<string, any>) {
   return nextModel
 }
 
-function ensureBrowserLocalLlmModel(config: Record<string, any>) {
-  const existingModel = (config.llmModels || []).find(
-    (model: Record<string, any>) => model.provider === 'browser-local'
-  )
-  const nextModel = createBrowserLocalLlmModel(existingModel)
-  const otherModels = (config.llmModels || []).filter(
-    (model: Record<string, any>) => model.provider !== 'browser-local'
-  )
-
-  config.llmModels = [nextModel, ...otherModels]
-  return nextModel
-}
-
-function ensureOllamaModel(config: Record<string, any>) {
-  const existingModel = (config.llmModels || []).find(
-    (model: Record<string, any>) => model.provider === 'ollama'
-  )
-  const nextModel = createOllamaModel(existingModel)
-  const otherModels = (config.llmModels || []).filter(
-    (model: Record<string, any>) => model.provider !== 'ollama'
-  )
-
-  config.llmModels = [...otherModels, nextModel]
-  return nextModel
-}
-
 function resolveCurrentSttProvider(config: Record<string, any>) {
   const usageId = config.aiModelUsage?.stt
   const model = (config.sttModels || []).find(
@@ -996,13 +974,46 @@ function resolveCurrentSttProvider(config: Record<string, any>) {
   return model?.provider === 'whisper-local' ? 'whisper-local' : 'vosk'
 }
 
-function resolveCurrentLlmProvider(config: Record<string, any>) {
-  const usageId = config.aiModelUsage?.chat
-  const model = (config.llmModels || []).find(
-    (item: Record<string, any>) => item.id === usageId
-  )
+function normalizeSingleLlmModel(model: Record<string, any>) {
+  const provider = model.provider || model.model
 
-  return model?.provider === 'ollama' ? 'ollama' : 'browser-local'
+  if (provider === 'browser-local') {
+    return createBrowserLocalLlmModel(model)
+  }
+
+  if (provider === 'ollama') {
+    return createOllamaModel(model)
+  }
+
+  if (provider) {
+    return createOllamaModel(model)
+  }
+
+  return null
+}
+
+function dedupeLlmModels(models: Record<string, any>[]) {
+  const usedIds = new Set<string>()
+
+  return models.map((model) => {
+    let nextId = typeof model.id === 'string' && model.id.trim()
+      ? model.id.trim()
+      : createLlmModelId(model.provider)
+
+    while (usedIds.has(nextId)) {
+      nextId = createLlmModelId(model.provider)
+    }
+
+    usedIds.add(nextId)
+    return {
+      ...model,
+      id: nextId,
+    }
+  })
+}
+
+function createLlmModelId(provider: string) {
+  return `${provider}-${Math.random().toString(36).slice(2, 10)}`
 }
 
 function toNumberOrDefault(value: unknown, fallback: number) {
@@ -1135,14 +1146,6 @@ const voskWsUrl = computed(() => {
   return voskModel?.baseUrl || 'ws://localhost:2700'
 })
 
-const browserLocalLlmConfig = computed(() => {
-  return ensureBrowserLocalLlmModel(userConfig.value)
-})
-
-const ollamaConfig = computed(() => {
-  return ensureOllamaModel(userConfig.value)
-})
-
 const whisperLocalConfig = computed(() => {
   return ensureWhisperLocalModel(userConfig.value)
 })
@@ -1155,41 +1158,10 @@ const whisperLocalModel = computed(() => {
   return whisperLocalConfig.value.localModel || DEFAULT_WHISPER_LOCAL_MODEL
 })
 
-const browserLocalModelName = computed(() => {
-  return browserLocalLlmConfig.value.localModel || DEFAULT_BROWSER_LLM_MODEL
-})
-
-const browserLocalTemperature = computed(() => {
-  return String(browserLocalLlmConfig.value.temperature ?? 0.2)
-})
-
-const browserLocalMaxTokens = computed(() => {
-  return String(browserLocalLlmConfig.value.maxTokens ?? 256)
-})
-
-const ollamaBaseUrl = computed(() => {
-  return ollamaConfig.value.baseUrl || 'http://localhost:11434'
-})
-
-const ollamaModelName = computed(() => {
-  return ollamaConfig.value.model || DEFAULT_OLLAMA_MODEL
-})
-
-const ollamaTemperature = computed(() => {
-  return String(ollamaConfig.value.temperature ?? 0.2)
-})
-
-const ollamaMaxTokens = computed(() => {
-  return String(ollamaConfig.value.maxTokens ?? 512)
-})
-
 const llmUsageOptions = computed(() => {
-  return (userConfig.value.llmModels || []).map((model: Record<string, any>) => ({
+  return (userConfig.value.llmModels || []).map((model: Record<string, any>, index: number) => ({
     id: model.id,
-    name:
-      model.provider === 'ollama'
-        ? `Ollama: ${model.model || DEFAULT_OLLAMA_MODEL}`
-        : `Browser local: ${model.localModel || DEFAULT_BROWSER_LLM_MODEL}`,
+    name: modelDisplayName(model, index),
   }))
 })
 
@@ -1202,11 +1174,13 @@ watch(
 )
 
 watch(
-  browserLocalModelName,
+  () => userConfig.value.llmModels
+    .filter((model: Record<string, any>) => model.provider === 'browser-local')
+    .map((model: Record<string, any>) => `${model.id}:${model.localModel || DEFAULT_BROWSER_LLM_MODEL}`),
   () => {
-    void refreshBrowserLlmModelStatus()
+    void refreshAllBrowserLlmStatuses()
   },
-  { immediate: true }
+  { immediate: true, deep: true }
 )
 
 const updateTranslateLanguages = (items: Record<string, any>[]) => {
@@ -1283,42 +1257,169 @@ const setVoskFormatWithLlm = (value: boolean) => {
   voskModel.formatWithLlm = value
 }
 
-const setBrowserLocalModel = (modelName: string | number | undefined) => {
+function modelDisplayName(model: Record<string, any>, index: number) {
+  const customName = String(model.name || '').trim()
+
+  if (customName) {
+    return customName
+  }
+
+  if (model.provider === 'ollama') {
+    return `${t('settings.ollama')} ${index + 1}`
+  }
+
+  return `${t('settings.browserLocalLlm')} ${index + 1}`
+}
+
+function formatDownloadedAt(value?: string) {
+  const timestamp = Number(value || 0)
+
+  if (!timestamp) {
+    return ''
+  }
+
+  return new Date(timestamp * 1000).toLocaleString()
+}
+
+function getLlmModelById(modelId: string) {
+  return (userConfig.value.llmModels || []).find(
+    (model: Record<string, any>) => model.id === modelId
+  )
+}
+
+function getEmptyDownloadState(): DownloadState {
+  return {
+    loading: false,
+    progress: 0,
+    file: '',
+    status: '',
+    error: '',
+  }
+}
+
+function ensureBrowserLocalDownloadState(modelId: string) {
+  if (!browserLocalDownloadStateById.value[modelId]) {
+    browserLocalDownloadStateById.value[modelId] = getEmptyDownloadState()
+  }
+
+  return browserLocalDownloadStateById.value[modelId]
+}
+
+function setLlmModelName(modelId: string, value: string) {
+  const model = getLlmModelById(modelId)
+
+  if (!model) {
+    return
+  }
+
+  model.name = value
+}
+
+function addBrowserLocalLlmModel() {
+  userConfig.value.llmModels.push(createBrowserLocalLlmModel())
+}
+
+function addOllamaLlmModel() {
+  userConfig.value.llmModels.push(createOllamaModel())
+}
+
+function removeLlmModel(modelId: string) {
+  const nextModels = userConfig.value.llmModels.filter(
+    (model: Record<string, any>) => model.id !== modelId
+  )
+
+  if (nextModels.length === 0) {
+    nextModels.push(createBrowserLocalLlmModel())
+  }
+
+  userConfig.value.llmModels = nextModels
+  delete browserLocalStatusById.value[modelId]
+  delete browserLocalDownloadStateById.value[modelId]
+
+  const fallbackModelId = nextModels[0].id
+  const usageKeys = ['translate', 'voiceCorrection', 'correction', 'aiTasks', 'chat'] as const
+
+  for (const usageKey of usageKeys) {
+    if (userConfig.value.aiModelUsage[usageKey] === modelId) {
+      userConfig.value.aiModelUsage[usageKey] = fallbackModelId
+    }
+  }
+}
+
+const setBrowserLocalModel = (
+  modelId: string,
+  modelName: string | number | undefined
+) => {
   if (typeof modelName !== 'string') {
     return
   }
 
-  const browserLocalModel = ensureBrowserLocalLlmModel(userConfig.value)
+  const browserLocalModel = getLlmModelById(modelId)
+
+  if (!browserLocalModel) {
+    return
+  }
+
   browserLocalModel.localModel = modelName
 }
 
-const setBrowserLocalTemperature = (value: string) => {
-  const browserLocalModel = ensureBrowserLocalLlmModel(userConfig.value)
+const setBrowserLocalTemperature = (modelId: string, value: string) => {
+  const browserLocalModel = getLlmModelById(modelId)
+
+  if (!browserLocalModel) {
+    return
+  }
+
   browserLocalModel.temperature = toNumberOrDefault(value, 0.2)
 }
 
-const setBrowserLocalMaxTokens = (value: string) => {
-  const browserLocalModel = ensureBrowserLocalLlmModel(userConfig.value)
+const setBrowserLocalMaxTokens = (modelId: string, value: string) => {
+  const browserLocalModel = getLlmModelById(modelId)
+
+  if (!browserLocalModel) {
+    return
+  }
+
   browserLocalModel.maxTokens = toIntegerOrDefault(value, 256)
 }
 
-const setOllamaBaseUrl = (baseUrl: string) => {
-  const ollamaModel = ensureOllamaModel(userConfig.value)
+const setOllamaBaseUrl = (modelId: string, baseUrl: string) => {
+  const ollamaModel = getLlmModelById(modelId)
+
+  if (!ollamaModel) {
+    return
+  }
+
   ollamaModel.baseUrl = baseUrl || 'http://localhost:11434'
 }
 
-const setOllamaModel = (value: string) => {
-  const ollamaModel = ensureOllamaModel(userConfig.value)
+const setOllamaModel = (modelId: string, value: string) => {
+  const ollamaModel = getLlmModelById(modelId)
+
+  if (!ollamaModel) {
+    return
+  }
+
   ollamaModel.model = value || DEFAULT_OLLAMA_MODEL
 }
 
-const setOllamaTemperature = (value: string) => {
-  const ollamaModel = ensureOllamaModel(userConfig.value)
+const setOllamaTemperature = (modelId: string, value: string) => {
+  const ollamaModel = getLlmModelById(modelId)
+
+  if (!ollamaModel) {
+    return
+  }
+
   ollamaModel.temperature = toNumberOrDefault(value, 0.2)
 }
 
-const setOllamaMaxTokens = (value: string) => {
-  const ollamaModel = ensureOllamaModel(userConfig.value)
+const setOllamaMaxTokens = (modelId: string, value: string) => {
+  const ollamaModel = getLlmModelById(modelId)
+
+  if (!ollamaModel) {
+    return
+  }
+
   ollamaModel.maxTokens = toIntegerOrDefault(value, 512)
 }
 
@@ -1331,13 +1432,41 @@ async function refreshWhisperModelStatus() {
   whisperModelMetadata.value = downloaded ? metadata : null
 }
 
-async function refreshBrowserLlmModelStatus() {
+async function refreshBrowserLlmModelStatus(modelId: string) {
+  const model = getLlmModelById(modelId)
+
+  if (!model || model.provider !== 'browser-local') {
+    delete browserLocalStatusById.value[modelId]
+    return
+  }
+
+  const modelName = model.localModel || DEFAULT_BROWSER_LLM_MODEL
   const [downloaded, metadata] = await Promise.all([
-    isLlmModelDownloaded(browserLocalModelName.value),
-    getLlmModelMetadata(browserLocalModelName.value),
+    isLlmModelDownloaded(modelName),
+    getLlmModelMetadata(modelName),
   ])
-  isBrowserLlmDownloaded.value = downloaded
-  browserLocalModelMetadata.value = downloaded ? metadata : null
+
+  browserLocalStatusById.value[modelId] = {
+    downloaded,
+    metadata: downloaded ? metadata : null,
+  }
+}
+
+async function refreshAllBrowserLlmStatuses() {
+  const browserLocalIds = new Set(
+    (userConfig.value.llmModels || [])
+      .filter((model: Record<string, any>) => model.provider === 'browser-local')
+      .map((model: Record<string, any>) => model.id)
+  )
+
+  await Promise.all([...browserLocalIds].map((modelId) => refreshBrowserLlmModelStatus(modelId)))
+
+  Object.keys(browserLocalStatusById.value).forEach((modelId) => {
+    if (!browserLocalIds.has(modelId)) {
+      delete browserLocalStatusById.value[modelId]
+      delete browserLocalDownloadStateById.value[modelId]
+    }
+  })
 }
 
 async function loadStorageInfo() {
@@ -1420,12 +1549,21 @@ async function deleteWhisperModel() {
   }
 }
 
-async function downloadBrowserLlmModel() {
-  if (llmDownloadState.value.loading) {
+async function downloadBrowserLlmModel(modelId: string) {
+  const model = getLlmModelById(modelId)
+
+  if (!model || model.provider !== 'browser-local') {
     return
   }
 
-  llmDownloadState.value = {
+  const modelName = model.localModel || DEFAULT_BROWSER_LLM_MODEL
+  const currentState = ensureBrowserLocalDownloadState(modelId)
+
+  if (currentState.loading) {
+    return
+  }
+
+  browserLocalDownloadStateById.value[modelId] = {
     loading: true,
     progress: 0,
     file: '',
@@ -1435,9 +1573,9 @@ async function downloadBrowserLlmModel() {
 
   try {
     await downloadLlmModel(
-      browserLocalModelName.value,
+      modelName,
       (progress: LlmModelDownloadProgress) => {
-        llmDownloadState.value = {
+        browserLocalDownloadStateById.value[modelId] = {
           loading: true,
           progress:
             progress.total > 0 ? (progress.loaded / progress.total) * 100 : 0,
@@ -1447,9 +1585,9 @@ async function downloadBrowserLlmModel() {
         }
       }
     )
-    await refreshBrowserLlmModelStatus()
+    await refreshAllBrowserLlmStatuses()
   } catch (error) {
-    llmDownloadState.value = {
+    browserLocalDownloadStateById.value[modelId] = {
       loading: false,
       progress: 0,
       file: '',
@@ -1458,8 +1596,8 @@ async function downloadBrowserLlmModel() {
     }
     return
   } finally {
-    if (llmDownloadState.value.status !== 'error') {
-      llmDownloadState.value = {
+    if (browserLocalDownloadStateById.value[modelId]?.status !== 'error') {
+      browserLocalDownloadStateById.value[modelId] = {
         loading: false,
         progress: 0,
         file: '',
@@ -1470,20 +1608,21 @@ async function downloadBrowserLlmModel() {
   }
 }
 
-async function deleteBrowserLlmModel() {
-  llmDownloadState.value = {
-    loading: false,
-    progress: 0,
-    file: '',
-    status: '',
-    error: '',
+async function deleteBrowserLlmModel(modelId: string) {
+  const model = getLlmModelById(modelId)
+
+  if (!model || model.provider !== 'browser-local') {
+    return
   }
 
+  const modelName = model.localModel || DEFAULT_BROWSER_LLM_MODEL
+  browserLocalDownloadStateById.value[modelId] = getEmptyDownloadState()
+
   try {
-    await deleteLlmModel(browserLocalModelName.value)
-    await refreshBrowserLlmModelStatus()
+    await deleteLlmModel(modelName)
+    await refreshAllBrowserLlmStatuses()
   } catch (error) {
-    llmDownloadState.value = {
+    browserLocalDownloadStateById.value[modelId] = {
       loading: false,
       progress: 0,
       file: '',
@@ -1509,6 +1648,7 @@ const updatePluginConfig = (
 }
 onMounted(() => {
   void loadStorageInfo()
+  void refreshAllBrowserLlmStatuses()
 })
 onUnmounted(() => {
   isComponentActive = false

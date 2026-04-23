@@ -14,7 +14,7 @@ const HF_BASE = 'https://huggingface.co'
 const HF_REVISION = 'main'
 
 export const DEFAULT_BROWSER_LLM_MODEL =
-  'onnx-community/Qwen2.5-0.5B-Instruct'
+  'HuggingFaceTB/SmolLM2-360M-Instruct'
 
 export const DEFAULT_OLLAMA_MODEL = 'qwen2.5:0.5b'
 

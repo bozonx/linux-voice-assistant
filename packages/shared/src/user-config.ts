@@ -45,6 +45,7 @@ export type ModelTag =
 
 export interface LlmModel {
   id: string
+  name?: string
   model: string
   provider?: 'browser-local' | 'ollama' | string
   description?: string
@@ -132,22 +133,14 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
   chatHistoryMaxItems: 50,
   llmModels: [
     {
-      id: 'browser-llm-local',
+      id: 'browser-llm-local-default',
+      name: 'Local browser model',
       model: 'browser-local',
       provider: 'browser-local',
       description: 'Browser local LLM via Transformers.js',
-      localModel: 'onnx-community/Qwen2.5-0.5B-Instruct',
+      localModel: 'HuggingFaceTB/SmolLM2-360M-Instruct',
       temperature: 0.2,
       maxTokens: 256,
-    },
-    {
-      id: 'ollama-default',
-      model: 'qwen2.5:0.5b',
-      provider: 'ollama',
-      description: 'Локальный Ollama сервер',
-      baseUrl: 'http://localhost:11434',
-      temperature: 0.2,
-      maxTokens: 512,
     },
   ],
   sttModels: [
@@ -173,11 +166,11 @@ export const DEFAULT_USER_CONFIG: UserConfig = {
   aiModelUsage: {
     stt: 'system-vosk',
     tts: '',
-    translate: 'browser-llm-local',
-    voiceCorrection: 'browser-llm-local',
-    correction: 'browser-llm-local',
-    aiTasks: 'browser-llm-local',
-    chat: 'browser-llm-local',
+    translate: 'browser-llm-local-default',
+    voiceCorrection: 'browser-llm-local-default',
+    correction: 'browser-llm-local-default',
+    aiTasks: 'browser-llm-local-default',
+    chat: 'browser-llm-local-default',
   },
   aiRules: {
     base: BASE_TASK,

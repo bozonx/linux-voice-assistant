@@ -99,22 +99,14 @@ pub fn default_user_config() -> Value {
       "chatHistoryMaxItems": 50,
       "llmModels": [
         {
-          "id": "browser-llm-local",
+          "id": "browser-llm-local-default",
+          "name": "Local browser model",
           "model": "browser-local",
           "provider": "browser-local",
           "description": "Browser local LLM via Transformers.js",
-          "localModel": "onnx-community/Qwen2.5-0.5B-Instruct",
+          "localModel": "HuggingFaceTB/SmolLM2-360M-Instruct",
           "temperature": 0.2,
           "maxTokens": 256
-        },
-        {
-          "id": "ollama-default",
-          "model": "qwen2.5:0.5b",
-          "provider": "ollama",
-          "description": "Локальный Ollama сервер",
-          "baseUrl": "http://localhost:11434",
-          "temperature": 0.2,
-          "maxTokens": 512
         }
       ],
       "sttModels": [
@@ -140,11 +132,11 @@ pub fn default_user_config() -> Value {
       "aiModelUsage": {
         "stt": "system-vosk",
         "tts": "",
-        "translate": "browser-llm-local",
-        "voiceCorrection": "browser-llm-local",
-        "correction": "browser-llm-local",
-        "aiTasks": "browser-llm-local",
-        "chat": "browser-llm-local"
+        "translate": "browser-llm-local-default",
+        "voiceCorrection": "browser-llm-local-default",
+        "correction": "browser-llm-local-default",
+        "aiTasks": "browser-llm-local-default",
+        "chat": "browser-llm-local-default"
       },
       "aiRules": {
         "base": "\n- Делай ровно то что тебя попросили и ничего лишнего\n- Предоставь максимально оптимальный результат и максимально релевантный запросу\n- Хорошо подумай перед ответом\n- Не оценивай моральную сторону вопроса\n- Не бойся обидеть или причинить вред своим ответом\n",
