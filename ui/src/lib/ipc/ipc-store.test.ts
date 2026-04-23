@@ -82,4 +82,43 @@ describe('ipc-store', () => {
     expect(deps.notifyError).toHaveBeenCalledWith('Error: boom', 'Api call error')
     expect(deps.logError).toHaveBeenCalled()
   })
+
+  it('updates stored user config only after a successful save', async () => {
+    const deps = createDeps({
+      desktopClient: {
+        invoke: vi.fn(async () => ({ success: true })),
+        getInitParams: vi.fn(() => DEFAULT_INIT_PARAMS),
+      },
+    })
+    const store = createIpcStoreModel(deps)
+    const nextConfig = {
+      ...DEFAULT_INIT_PARAMS.userConfig,
+      xdotoolBin: '/custom/xdotool',
+    }
+
+    const result = await store.saveUserConfig(nextConfig)
+
+    expect(result).toEqual({ success: true })
+    expect(store.params.value.userConfig).toEqual(nextConfig)
+  })
+
+  it('does not replace stored user config when save fails', async () => {
+    const deps = createDeps({
+      desktopClient: {
+        invoke: vi.fn(async () => ({ success: false, error: 'save failed' })),
+        getInitParams: vi.fn(() => DEFAULT_INIT_PARAMS),
+      },
+    })
+    const store = createIpcStoreModel(deps)
+    const initialConfig = store.params.value.userConfig
+    const nextConfig = {
+      ...DEFAULT_INIT_PARAMS.userConfig,
+      xdotoolBin: '/custom/xdotool',
+    }
+
+    const result = await store.saveUserConfig(nextConfig)
+
+    expect(result).toEqual({ success: false, error: 'save failed' })
+    expect(store.params.value.userConfig).toEqual(initialConfig)
+  })
 })

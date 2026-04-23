@@ -132,6 +132,7 @@ export const messages = {
       resetToDefault: 'Сбросить к значению по умолчанию',
       selectAction: 'Выберите действие',
       chatRoles: 'Роли чата',
+      saving: 'Сохранение...',
       saved: 'Настройки сохранены',
     },
     editor: {
@@ -347,6 +348,7 @@ export const messages = {
       resetToDefault: 'Reset to default',
       selectAction: 'Select action',
       chatRoles: 'Chat roles',
+      saving: 'Saving...',
       saved: 'Settings saved',
     },
     editor: {
@@ -556,7 +558,13 @@ export const messages = {
       textCorrection: 'Corrección de texto',
       name: 'Nombre',
       rule: 'Regla',
+      tapAction: 'Acción al tocar',
+      holdAction: 'Acción al mantener',
+      nativeDefault: 'Nativo (predeterminado)',
+      resetToDefault: 'Restablecer al valor predeterminado',
+      selectAction: 'Seleccionar acción',
       chatRoles: 'Roles del chat',
+      saving: 'Guardando...',
       saved: 'Configuración guardada',
     },
     editor: {
@@ -766,7 +774,13 @@ export const messages = {
       textCorrection: 'Metin düzeltme',
       name: 'Ad',
       rule: 'Kural',
+      tapAction: 'Dokunma eylemi',
+      holdAction: 'Basılı tutma eylemi',
+      nativeDefault: 'Yerel (varsayılan)',
+      resetToDefault: 'Varsayılana sıfırla',
+      selectAction: 'Eylem seç',
       chatRoles: 'Sohbet rolleri',
+      saving: 'Kaydediliyor...',
       saved: 'Ayarlar kaydedildi',
     },
     editor: {

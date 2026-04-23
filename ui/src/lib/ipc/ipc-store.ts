@@ -158,8 +158,13 @@ export function createIpcStoreModel(deps: IpcStoreDeps) {
   }
 
   const saveUserConfig = async (userConfig: UserConfig) => {
-    await callFunction('saveUserConfig', [JSON.stringify(userConfig)])
-    params.value.userConfig = userConfig
+    const result = await callFunction('saveUserConfig', [JSON.stringify(userConfig)])
+
+    if (result.success) {
+      params.value.userConfig = userConfig
+    }
+
+    return result
   }
 
   return {

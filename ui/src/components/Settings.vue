@@ -312,17 +312,18 @@
       </div>
     </div>
 
-    <div class="flex flex-row gap-2">
-      <Button @click="saveSettings">{{ t('common.save') }}</Button>
+    <div class="flex flex-row justify-end">
+      <span class="text-sm opacity-70">
+        {{ saveStatusLabel }}
+      </span>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch, watchEffect } from 'vue'
+import { computed, onUnmounted, ref, watch } from 'vue'
 
 import { useI18n } from '../composables/useI18n'
-import useToast from '../composables/useToast'
 import { syncI18nLocale } from '../lib/i18n'
 import {
   AUTO_LANGUAGE_VALUE,
@@ -340,23 +341,12 @@ import { PRESETS_KEYS } from '../types'
 import { DEFAULT_USER_CONFIG } from '@shared'
 
 const ipcStore = useIpcStore()
-const { toast } = useToast()
 const themeStore = useThemeStore()
 const { t, locale } = useI18n()
 
-const userConfig = ref(
-  JSON.parse(JSON.stringify(ipcStore.params.userConfig || DEFAULT_USER_CONFIG))
-)
-const currentTab = ref(0)
-const tabs = computed(() => [
-  { text: t('settings.generalTab'), key: 0 },
-  { text: t('settings.translationsTab'), key: 1 },
-  { text: t('settings.modelsTab'), key: 2 },
-  { text: t('settings.rulesTab'), key: 3 },
-  { text: t('settings.tasksTab'), key: 4 },
-  { text: t('settings.rolesTab'), key: 5 },
-  { text: t('settings.pluginsTab'), key: 6 },
-])
+const SAVE_DEBOUNCE_MS = 500
+
+type SaveState = 'idle' | 'saving' | 'saved'
 
 const pluginConfigs = pluginIndexes
   .map((pluginIndex) => pluginIndex())
@@ -368,17 +358,65 @@ const pluginConfigs = pluginIndexes
     fields: plugin.defaultConfig!.fields,
   }))
 
-watchEffect(() => {
-  userConfig.value = JSON.parse(
-    JSON.stringify(ipcStore.params.userConfig || DEFAULT_USER_CONFIG)
-  )
-  ensurePluginDefaults()
-  normalizeLanguageConfig()
-})
+const currentTab = ref(0)
+const userConfig = ref(createPreparedUserConfig(ipcStore.params.userConfig))
+const saveState = ref<SaveState>('idle')
+const lastPersistedConfig = ref(serializeUserConfig(userConfig.value))
+let isComponentActive = true
+let skipNextAutosave = false
+let saveTimer: ReturnType<typeof setTimeout> | null = null
 
-onMounted(() => {
-  ensurePluginDefaults()
-  normalizeLanguageConfig()
+const tabs = computed(() => [
+  { text: t('settings.generalTab'), key: 0 },
+  { text: t('settings.translationsTab'), key: 1 },
+  { text: t('settings.modelsTab'), key: 2 },
+  { text: t('settings.rulesTab'), key: 3 },
+  { text: t('settings.tasksTab'), key: 4 },
+  { text: t('settings.rolesTab'), key: 5 },
+  { text: t('settings.pluginsTab'), key: 6 },
+])
+
+watch(
+  () => ipcStore.params.userConfig,
+  (incomingConfig) => {
+    const preparedConfig = createPreparedUserConfig(incomingConfig)
+    const serializedConfig = serializeUserConfig(preparedConfig)
+
+    if (serializedConfig === lastPersistedConfig.value) {
+      return
+    }
+
+    skipNextAutosave = true
+    userConfig.value = preparedConfig
+    lastPersistedConfig.value = serializedConfig
+    saveState.value = 'idle'
+  },
+  { immediate: true }
+)
+
+watch(
+  userConfig,
+  () => {
+    if (skipNextAutosave) {
+      skipNextAutosave = false
+      return
+    }
+
+    scheduleAutosave()
+  },
+  { deep: true }
+)
+
+const saveStatusLabel = computed(() => {
+  if (saveState.value === 'saving') {
+    return t('settings.saving')
+  }
+
+  if (saveState.value === 'saved') {
+    return t('settings.saved')
+  }
+
+  return ''
 })
 
 const plugins = computed(() => {
@@ -392,46 +430,60 @@ const plugins = computed(() => {
         return null
       }
 
+      const pluginValues = userConfig.value.plugins?.[pluginName] || {}
+
       return {
         ...pluginCfg,
         fields: pluginCfg.fields.map((field: any) => ({
           ...field,
-          value: userConfig.value.plugins[pluginName][field.name],
+          value: pluginValues[field.name],
         })),
       }
     })
     .filter((plugin) => plugin !== null)
 })
 
-function ensurePluginDefaults() {
-  if (!userConfig.value.plugins) {
-    userConfig.value.plugins = {}
+function cloneUserConfig(config: unknown) {
+  return JSON.parse(JSON.stringify(config || DEFAULT_USER_CONFIG))
+}
+
+function createPreparedUserConfig(config: unknown) {
+  const nextConfig = cloneUserConfig(config)
+
+  ensurePluginDefaults(nextConfig)
+  normalizeLanguageConfig(nextConfig)
+
+  return nextConfig
+}
+
+function serializeUserConfig(config: unknown) {
+  return JSON.stringify(config)
+}
+
+function ensurePluginDefaults(config: Record<string, any>) {
+  if (!config.plugins) {
+    config.plugins = {}
   }
 
   for (const pluginCfg of pluginConfigs) {
-    if (!userConfig.value.plugins[pluginCfg.pluginName]) {
-      userConfig.value.plugins[pluginCfg.pluginName] = {}
+    if (!config.plugins[pluginCfg.pluginName]) {
+      config.plugins[pluginCfg.pluginName] = {}
     }
 
     for (const field of pluginCfg.fields) {
-      if (
-        userConfig.value.plugins[pluginCfg.pluginName][field.name] === undefined
-      ) {
-        userConfig.value.plugins[pluginCfg.pluginName][field.name] =
-          field.defaultValue
+      if (config.plugins[pluginCfg.pluginName][field.name] === undefined) {
+        config.plugins[pluginCfg.pluginName][field.name] = field.defaultValue
       }
     }
   }
 }
 
-function normalizeLanguageConfig() {
-  userConfig.value.theme = userConfig.value.theme || themeStore.themeMode
-  userConfig.value.appLanguage =
-    userConfig.value.appLanguage || AUTO_LANGUAGE_VALUE
-  userConfig.value.userLanguage =
-    userConfig.value.userLanguage || AUTO_LANGUAGE_VALUE
-  userConfig.value.toTranslateLanguages = (
-    userConfig.value.toTranslateLanguages || []
+function normalizeLanguageConfig(config: Record<string, any>) {
+  config.theme = config.theme || themeStore.themeMode
+  config.appLanguage = config.appLanguage || AUTO_LANGUAGE_VALUE
+  config.userLanguage = config.userLanguage || AUTO_LANGUAGE_VALUE
+  config.toTranslateLanguages = (
+    config.toTranslateLanguages || []
   ).map((lang: string) => lang || DEFAULT_LANGUAGE)
 }
 
@@ -449,9 +501,60 @@ const effectiveAppLanguage = computed(() =>
   )
 )
 
-const saveSettings = () => {
-  ipcStore.saveUserConfig(userConfig.value)
-  toast(t('settings.saved'), 'success')
+async function persistUserConfig() {
+  const preparedConfig = createPreparedUserConfig(userConfig.value)
+  const serializedConfig = serializeUserConfig(preparedConfig)
+  const previousPersistedConfig = lastPersistedConfig.value
+
+  if (serializedConfig === lastPersistedConfig.value) {
+    if (isComponentActive) {
+      saveState.value = 'saved'
+    }
+    return
+  }
+
+  if (isComponentActive) {
+    saveState.value = 'saving'
+  }
+
+  // Mark this snapshot as persisted before the store echoes it back into params.
+  lastPersistedConfig.value = serializedConfig
+  const result = await ipcStore.saveUserConfig(preparedConfig)
+
+  if (!result.success) {
+    lastPersistedConfig.value = previousPersistedConfig
+
+    if (isComponentActive) {
+      saveState.value = 'idle'
+    }
+    return
+  }
+
+  if (isComponentActive) {
+    saveState.value = 'saved'
+  }
+}
+
+function scheduleAutosave() {
+  if (saveTimer) {
+    clearTimeout(saveTimer)
+  }
+
+  saveState.value = 'saving'
+  saveTimer = setTimeout(() => {
+    saveTimer = null
+    void persistUserConfig()
+  }, SAVE_DEBOUNCE_MS)
+}
+
+function flushPendingAutosave() {
+  if (!saveTimer) {
+    return
+  }
+
+  clearTimeout(saveTimer)
+  saveTimer = null
+  void persistUserConfig()
 }
 
 const appLanguageOptions = computed(() => {
@@ -553,9 +656,7 @@ const updatePluginConfig = (
   userConfig.value.plugins[pluginName] = values
 }
 onUnmounted(() => {
-  syncI18nLocale(
-    ipcStore.params.userConfig?.appLanguage,
-    ipcStore.params.userConfig?.userLanguage
-  )
+  isComponentActive = false
+  flushPendingAutosave()
 })
 </script>
