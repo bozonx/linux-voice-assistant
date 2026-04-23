@@ -15,6 +15,11 @@ import { GlobalEvents, useGlobalEvents } from './useGlobalEvents'
 import useToast from './useToast'
 import { APP_CONFIG, type ChatMessage, type SttModel, useAiRequest } from '@shared'
 
+interface LocalVoiceRecording {
+  sampleRate: number
+  samples: number[]
+}
+
 export const useCallAi = () => {
   const { chatCompletion, prepareAiMessages, prepareDevInstructions } =
     useAiRequest()
@@ -91,6 +96,22 @@ export const useCallAi = () => {
       await startBrowserWhisperRecognition({
         modelName: sttModel.localModel || DEFAULT_WHISPER_LOCAL_MODEL,
         language: currentWhisperLanguage(),
+        startRecording: async () => {
+          const result = await ipcStore.callFunction('startLocalVoiceRecording')
+
+          if (!result.success) {
+            throw new Error(result.error || 'Failed to start local voice recording')
+          }
+        },
+        stopRecording: async () => {
+          const result = await ipcStore.callFunction('stopLocalVoiceRecording')
+
+          if (!result.success || !result.result) {
+            throw new Error(result.error || 'Failed to stop local voice recording')
+          }
+
+          return result.result as LocalVoiceRecording
+        },
         onText: (text) => {
           globalEvents.emit(GlobalEvents.VOICE_RECOGNITION, text)
         },

@@ -9,6 +9,8 @@ interface BrowserWhisperOptions {
   modelName: string
   language?: string
   onText?: (text: string) => void
+  startRecording?: () => Promise<void>
+  stopRecording?: () => Promise<{ sampleRate: number; samples: number[] }>
 }
 
 type WorkerResponse =
@@ -17,9 +19,6 @@ type WorkerResponse =
   | { type: 'result'; id: number; data: unknown }
   | { type: 'error'; id: number; error: string }
 
-let mediaRecorder: MediaRecorder | null = null
-let mediaStream: MediaStream | null = null
-let chunks: BlobPart[] = []
 let worker: Worker | null = null
 let workerInitialized = false
 let currentOptions: BrowserWhisperOptions | null = null
@@ -105,7 +104,26 @@ async function decodeToMono16k(blob: Blob) {
   }
 }
 
-async function transcribeBlob(blob: Blob, options: BrowserWhisperOptions) {
+function resampleTo16k(source: Float32Array, sourceRate: number) {
+  if (sourceRate === 16000) {
+    return source
+  }
+
+  const targetLength = Math.max(1, Math.round((source.length * 16000) / sourceRate))
+  const target = new Float32Array(targetLength)
+
+  for (let i = 0; i < targetLength; i += 1) {
+    const sourceIndex = (i * sourceRate) / 16000
+    const leftIndex = Math.floor(sourceIndex)
+    const rightIndex = Math.min(source.length - 1, leftIndex + 1)
+    const mix = sourceIndex - leftIndex
+    target[i] = source[leftIndex]! * (1 - mix) + source[rightIndex]! * mix
+  }
+
+  return target
+}
+
+async function transcribeAudio(audio: Float32Array, options: BrowserWhisperOptions) {
   const downloaded = await isModelDownloaded(options.modelName)
 
   if (!downloaded) {
@@ -113,8 +131,6 @@ async function transcribeBlob(blob: Blob, options: BrowserWhisperOptions) {
   }
 
   await ensureWorkerInitialized()
-
-  const audio = await decodeToMono16k(blob)
   const activeWorker = getWorker()
   const id = Math.random()
 
@@ -152,7 +168,7 @@ async function transcribeBlob(blob: Blob, options: BrowserWhisperOptions) {
 }
 
 export async function startBrowserWhisperRecognition(options: BrowserWhisperOptions) {
-  if (mediaRecorder?.state === 'recording') {
+  if (currentOptions) {
     return
   }
 
@@ -163,18 +179,51 @@ export async function startBrowserWhisperRecognition(options: BrowserWhisperOpti
   }
 
   currentOptions = options
-  chunks = []
   stopPromise = null
   shouldTranscribeOnStop = true
-  mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true })
-  mediaRecorder = new MediaRecorder(mediaStream)
+
+  if (options.startRecording) {
+    try {
+      await options.startRecording()
+    } catch (error) {
+      currentOptions = null
+      throw error
+    }
+    return
+  }
+
+  const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true }).catch((error) => {
+    currentOptions = null
+    throw error
+  })
+  const chunks: BlobPart[] = []
+  const mediaRecorder = new MediaRecorder(mediaStream)
+
+  currentOptions = {
+    ...options,
+    stopRecording: async () =>
+      await new Promise((resolve, reject) => {
+        mediaRecorder.addEventListener(
+          'stop',
+          () => {
+            mediaStream.getTracks().forEach((track) => track.stop())
+            const blob = new Blob(chunks, { type: mediaRecorder.mimeType || 'audio/webm' })
+            void decodeToMono16k(blob).then(
+              (samples) => resolve({ sampleRate: 16000, samples: Array.from(samples) }),
+              reject
+            )
+          },
+          { once: true }
+        )
+        mediaRecorder.stop()
+      }),
+  }
 
   mediaRecorder.addEventListener('dataavailable', (event) => {
     if (event.data.size > 0) {
       chunks.push(event.data)
     }
   })
-
   mediaRecorder.start()
 }
 
@@ -183,34 +232,29 @@ export async function stopBrowserWhisperRecognition() {
     return await stopPromise
   }
 
-  if (!mediaRecorder || mediaRecorder.state === 'inactive') {
+  if (!currentOptions) {
     return ''
   }
 
   stopPromise = new Promise<string>((resolve, reject) => {
-    const recorder = mediaRecorder!
     const options = currentOptions
+    if (!options?.stopRecording) {
+      resolve('')
+      return
+    }
 
-    recorder.addEventListener(
-      'stop',
-      () => {
-        mediaStream?.getTracks().forEach((track) => track.stop())
-        mediaStream = null
-        mediaRecorder = null
-
-        if (!options || !shouldTranscribeOnStop) {
+    void options
+      .stopRecording()
+      .then(({ sampleRate, samples }) => {
+        if (!shouldTranscribeOnStop) {
           resolve('')
           return
         }
 
-        const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' })
-        chunks = []
-        void transcribeBlob(blob, options).then(resolve, reject)
-      },
-      { once: true }
-    )
-
-    recorder.stop()
+        const audio = resampleTo16k(Float32Array.from(samples), sampleRate)
+        void transcribeAudio(audio, options).then(resolve, reject)
+      })
+      .catch(reject)
   }).finally(() => {
     stopPromise = null
     currentOptions = null

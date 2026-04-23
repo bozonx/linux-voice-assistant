@@ -1,5 +1,5 @@
 use std::sync::atomic::{AtomicBool, Ordering};
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 
 use tokio::sync::watch;
 
@@ -10,10 +10,18 @@ pub struct VoiceSession {
     pub thread: std::thread::JoinHandle<()>,
 }
 
+pub struct LocalVoiceRecordingSession {
+    pub stop_flag: Arc<AtomicBool>,
+    pub thread: std::thread::JoinHandle<()>,
+    pub samples: Arc<Mutex<Vec<f32>>>,
+    pub sample_rate: u32,
+}
+
 pub struct AppState {
     params: Mutex<InitParams>,
     quitting: AtomicBool,
     voice_session: Mutex<Option<VoiceSession>>,
+    local_voice_recording_session: Mutex<Option<LocalVoiceRecordingSession>>,
 }
 
 impl AppState {
@@ -22,6 +30,7 @@ impl AppState {
             params: Mutex::new(params),
             quitting: AtomicBool::new(false),
             voice_session: Mutex::new(None),
+            local_voice_recording_session: Mutex::new(None),
         }
     }
 
@@ -51,6 +60,17 @@ impl AppState {
             .voice_session
             .lock()
             .expect("voice session lock poisoned");
+        std::mem::replace(&mut *guard, session)
+    }
+
+    pub fn replace_local_voice_recording_session(
+        &self,
+        session: Option<LocalVoiceRecordingSession>,
+    ) -> Option<LocalVoiceRecordingSession> {
+        let mut guard = self
+            .local_voice_recording_session
+            .lock()
+            .expect("local voice recording session lock poisoned");
         std::mem::replace(&mut *guard, session)
     }
 }

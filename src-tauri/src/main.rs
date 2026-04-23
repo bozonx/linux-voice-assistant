@@ -11,7 +11,10 @@ use commands::history::{
     remove_from_editor_history, remove_from_transform_history, save_chat_history,
     save_editor_history, save_main_input_tmp, save_transform_history,
 };
-use commands::voice::{start_voice_recognition, stop_voice_recognition};
+use commands::voice::{
+    start_local_voice_recording, start_voice_recognition, stop_local_voice_recording,
+    stop_voice_recognition,
+};
 use commands::window::{
     close_window, open_in_browser_and_close, put_into_clipboard_and_close,
     type_into_window_and_close,
@@ -60,6 +63,8 @@ pub fn run() {
             clear_chat_history,
             start_voice_recognition,
             stop_voice_recognition,
+            start_local_voice_recording,
+            stop_local_voice_recording,
             open_in_browser_and_close,
             type_into_window_and_close,
             put_into_clipboard_and_close

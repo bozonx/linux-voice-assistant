@@ -88,6 +88,12 @@ export function createCommandMap(): Record<string, CommandEntry> {
     stopVoiceRecognition: {
       command: DESKTOP_COMMANDS.STOP_VOICE_RECOGNITION,
     },
+    startLocalVoiceRecording: {
+      command: DESKTOP_COMMANDS.START_LOCAL_VOICE_RECORDING,
+    },
+    stopLocalVoiceRecording: {
+      command: DESKTOP_COMMANDS.STOP_LOCAL_VOICE_RECORDING,
+    },
     typeIntoWindowAndClose: {
       command: DESKTOP_COMMANDS.TYPE_INTO_WINDOW_AND_CLOSE,
       buildArgs: ([text]) => ({ text }),
