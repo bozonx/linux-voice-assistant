@@ -11,9 +11,16 @@ import {
   stopBrowserWhisperRecognition,
 } from '../utils/stt/browser-whisper'
 import { DEFAULT_WHISPER_LOCAL_MODEL } from '../utils/stt/model-storage'
+import { runBrowserLocalChatCompletion } from '../utils/llm/browser-local'
 import { GlobalEvents, useGlobalEvents } from './useGlobalEvents'
 import useToast from './useToast'
-import { APP_CONFIG, type ChatMessage, type SttModel, useAiRequest } from '@shared'
+import {
+  APP_CONFIG,
+  type ChatMessage,
+  type LlmModel,
+  type SttModel,
+  useAiRequest,
+} from '@shared'
 
 interface LocalVoiceRecording {
   sampleRate: number
@@ -80,7 +87,7 @@ export const useCallAi = () => {
       throw new Error(translate('toast.modelNotFound'))
     }
 
-    const result = await chatCompletion(model, messages)
+    const result = await runLlmRequest(model, messages)
 
     if (result.error) {
       toast(result.error, 'error')
@@ -90,6 +97,30 @@ export const useCallAi = () => {
     }
 
     return result.content
+  }
+
+  async function runLlmRequest(
+    model: LlmModel,
+    messages: string | ChatMessage[]
+  ): Promise<Record<string, any>> {
+    const provider = model.provider || model.model
+    const normalizedMessages = Array.isArray(messages)
+      ? messages
+      : [{ role: 'user', content: messages } satisfies ChatMessage]
+
+    if (provider === 'browser-local') {
+      try {
+        return await runBrowserLocalChatCompletion(model, normalizedMessages)
+      } catch (error) {
+        return {
+          error: error instanceof Error ? error.message : String(error),
+          status: 500,
+          statusText: 'Browser local LLM error',
+        }
+      }
+    }
+
+    return await chatCompletion(model, normalizedMessages)
   }
 
   const startVoiceRecognition = async () => {

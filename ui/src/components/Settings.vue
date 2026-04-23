@@ -217,89 +217,105 @@
         </div>
       </div>
 
-      <div v-show="currentTab === 3">
-        <FieldRow :label="t('settings.llmModels')">
-          <FieldItems
-            :items="userConfig.llmModels"
-            @update:items="updateLLMModels"
-          >
-            <template #item="{ item }">
-              <FieldRow :label="t('settings.id')" vertical>
-                <FieldInput v-model:value="item.id" />
-              </FieldRow>
-              <FieldRow :label="t('settings.model')" vertical>
-                <FieldInput v-model:value="item.model" />
-              </FieldRow>
-              <FieldRow :label="t('settings.description')" vertical>
-                <FieldInput v-model:value="item.description" />
-              </FieldRow>
-              <FieldRow :label="t('settings.baseUrl')" vertical>
-                <FieldInput v-model:value="item.baseUrl" />
-              </FieldRow>
-              <FieldRow :label="t('settings.apiKey')" vertical>
-                <FieldInput v-model:value="item.apiKey" />
-              </FieldRow>
-              <FieldRow :label="t('settings.tags')" vertical>
-                <FieldInput v-model:value="item.tags" />
-              </FieldRow>
-            </template>
-          </FieldItems>
+      <div v-show="currentTab === 3" class="fields-col">
+        <FieldRow :label="t('settings.llmProvider')" vertical>
+          <Tabs :tabs="llmProviderTabs" v-model:value="currentLlmProvider" />
         </FieldRow>
+
+        <div v-show="currentLlmProvider === 'browser-local'">
+          <FieldRow :label="t('settings.browserLocalLlm')" vertical>
+            <div class="flex flex-col gap-3 w-full">
+              <FieldRow :label="t('settings.browserLocalLlmModel')" vertical>
+                <FieldSelect
+                  :value="browserLocalModelName"
+                  :options="BROWSER_LLM_MODELS"
+                  @update:value="setBrowserLocalModel"
+                />
+              </FieldRow>
+              <FieldRow :label="t('settings.temperature')" vertical>
+                <FieldInput
+                  :value="browserLocalTemperature"
+                  @update:value="setBrowserLocalTemperature"
+                />
+              </FieldRow>
+              <FieldRow :label="t('settings.maxTokens')" vertical>
+                <FieldInput
+                  :value="browserLocalMaxTokens"
+                  @update:value="setBrowserLocalMaxTokens"
+                />
+              </FieldRow>
+              <div class="text-xs text-muted whitespace-pre-wrap">
+                {{ t('settings.browserLocalLlmHint') }}
+              </div>
+            </div>
+          </FieldRow>
+        </div>
+
+        <div v-show="currentLlmProvider === 'ollama'">
+          <FieldRow :label="t('settings.ollama')" vertical>
+            <div class="flex flex-col gap-3 w-full">
+              <FieldRow :label="t('settings.baseUrl')" vertical>
+                <FieldInput
+                  :value="ollamaBaseUrl"
+                  placeholder="http://localhost:11434"
+                  @update:value="setOllamaBaseUrl"
+                />
+              </FieldRow>
+              <FieldRow :label="t('settings.ollamaModel')" vertical>
+                <FieldInput
+                  :value="ollamaModelName"
+                  placeholder="qwen2.5:0.5b"
+                  @update:value="setOllamaModel"
+                />
+              </FieldRow>
+              <FieldRow :label="t('settings.temperature')" vertical>
+                <FieldInput
+                  :value="ollamaTemperature"
+                  @update:value="setOllamaTemperature"
+                />
+              </FieldRow>
+              <FieldRow :label="t('settings.maxTokens')" vertical>
+                <FieldInput
+                  :value="ollamaMaxTokens"
+                  @update:value="setOllamaMaxTokens"
+                />
+              </FieldRow>
+              <div class="text-xs text-muted whitespace-pre-wrap">
+                {{ t('settings.ollamaHint') }}
+              </div>
+            </div>
+          </FieldRow>
+        </div>
 
         <h2>{{ t('settings.aiModelUsage') }}</h2>
         <FieldRow :label="t('settings.translate')">
           <FieldSelect
             v-model:value="userConfig.aiModelUsage.translate"
-            :options="
-              userConfig.llmModels.map((model: any) => ({
-                id: model.id,
-                name: model.id,
-              }))
-            "
+            :options="llmUsageOptions"
           />
         </FieldRow>
         <FieldRow :label="t('settings.voiceCorrection')">
           <FieldSelect
             v-model:value="userConfig.aiModelUsage.voiceCorrection"
-            :options="
-              userConfig.llmModels.map((model: any) => ({
-                id: model.id,
-                name: model.id,
-              }))
-            "
+            :options="llmUsageOptions"
           />
         </FieldRow>
         <FieldRow :label="t('settings.correction')">
           <FieldSelect
             v-model:value="userConfig.aiModelUsage.correction"
-            :options="
-              userConfig.llmModels.map((model: any) => ({
-                id: model.id,
-                name: model.id,
-              }))
-            "
+            :options="llmUsageOptions"
           />
         </FieldRow>
         <FieldRow :label="t('settings.aiTasks')">
           <FieldSelect
             v-model:value="userConfig.aiModelUsage.aiTasks"
-            :options="
-              userConfig.llmModels.map((model: any) => ({
-                id: model.id,
-                name: model.id,
-              }))
-            "
+            :options="llmUsageOptions"
           />
         </FieldRow>
         <FieldRow :label="t('settings.chat')">
           <FieldSelect
             v-model:value="userConfig.aiModelUsage.chat"
-            :options="
-              userConfig.llmModels.map((model: any) => ({
-                id: model.id,
-                name: model.id,
-              }))
-            "
+            :options="llmUsageOptions"
           />
         </FieldRow>
       </div>
@@ -406,6 +422,11 @@ import { useThemeStore } from '../stores/theme'
 import { PRESETS_KEYS } from '../types'
 import { DEFAULT_USER_CONFIG, type StorageInfo, type WhisperModelMetadata } from '@shared'
 import {
+  BROWSER_LLM_MODELS,
+  DEFAULT_BROWSER_LLM_MODEL,
+  DEFAULT_OLLAMA_MODEL,
+} from '../utils/llm/model-storage'
+import {
   DEFAULT_WHISPER_LOCAL_MODEL,
   WHISPER_LOCAL_MODELS,
   deleteModel,
@@ -435,6 +456,7 @@ const pluginConfigs = pluginIndexes
 
 const currentTab = ref(0)
 const currentSttProvider = ref<'vosk' | 'whisper-local'>('vosk')
+const currentLlmProvider = ref<'browser-local' | 'ollama'>('browser-local')
 const userConfig = ref(createPreparedUserConfig(ipcStore.params.userConfig))
 const saveState = ref<SaveState>('idle')
 const lastPersistedConfig = ref(serializeUserConfig(userConfig.value))
@@ -466,6 +488,11 @@ const tabs = computed(() => [
 const sttProviderTabs = computed(() => [
   { text: 'Whisper local', key: 'whisper-local' },
   { text: 'Vosk', key: 'vosk' },
+])
+
+const llmProviderTabs = computed(() => [
+  { text: 'Browser local', key: 'browser-local' },
+  { text: 'Ollama', key: 'ollama' },
 ])
 
 const windowInsertionTabs = computed(() => [
@@ -508,6 +535,14 @@ watch(
   () => userConfig.value.aiModelUsage?.stt,
   () => {
     currentSttProvider.value = resolveCurrentSttProvider(userConfig.value)
+  },
+  { immediate: true }
+)
+
+watch(
+  () => userConfig.value.aiModelUsage?.chat,
+  () => {
+    currentLlmProvider.value = resolveCurrentLlmProvider(userConfig.value)
   },
   { immediate: true }
 )
@@ -602,6 +637,7 @@ function createPreparedUserConfig(config: unknown) {
   normalizeLanguageConfig(nextConfig)
   normalizeWindowInsertionConfig(nextConfig)
   normalizeSttConfig(nextConfig)
+  normalizeLlmConfig(nextConfig)
 
   return nextConfig
 }
@@ -690,6 +726,52 @@ function normalizeSttConfig(config: Record<string, any>) {
     : voskModel.id
 }
 
+function normalizeLlmConfig(config: Record<string, any>) {
+  if (!Array.isArray(config.llmModels)) {
+    config.llmModels = []
+  }
+
+  if (!config.aiModelUsage) {
+    config.aiModelUsage = {}
+  }
+
+  const previousModels = [...config.llmModels]
+  const existingBrowserLocalModel = previousModels.find(
+    (model: Record<string, any>) => (model.provider || model.model) === 'browser-local'
+  )
+  const existingOllamaModel = previousModels.find(
+    (model: Record<string, any>) => (model.provider || model.model) === 'ollama'
+  )
+  const legacyRemoteModel = previousModels.find((model: Record<string, any>) => {
+    const provider = model.provider || model.model
+    return provider !== 'browser-local' && provider !== 'ollama'
+  })
+  const browserLocalModel = createBrowserLocalLlmModel(existingBrowserLocalModel)
+  const ollamaModel = createOllamaModel(existingOllamaModel || legacyRemoteModel)
+
+  config.llmModels = [browserLocalModel, ollamaModel]
+
+  const usageKeys = [
+    'translate',
+    'voiceCorrection',
+    'correction',
+    'aiTasks',
+    'chat',
+  ] as const
+
+  for (const usageKey of usageKeys) {
+    const activeModel = previousModels.find(
+      (model: Record<string, any>) => model.id === config.aiModelUsage[usageKey]
+    )
+    const activeProvider = activeModel?.provider || activeModel?.model
+
+    config.aiModelUsage[usageKey] = activeProvider === 'ollama'
+      || (activeProvider !== 'browser-local' && activeProvider !== undefined)
+      ? ollamaModel.id
+      : browserLocalModel.id
+  }
+}
+
 function createWhisperLocalModel(existingModel?: Record<string, any>) {
   return {
     id: existingModel?.id || 'browser-whisper-local',
@@ -712,6 +794,32 @@ function createVoskModel(existingModel?: Record<string, any>) {
       existingModel?.description || t('settings.systemVoskDescription'),
     formatWithLlm: existingModel?.formatWithLlm !== false,
     baseUrl: existingModel?.baseUrl || 'ws://localhost:2700',
+  }
+}
+
+function createBrowserLocalLlmModel(existingModel?: Record<string, any>) {
+  return {
+    id: 'browser-llm-local',
+    model: 'browser-local',
+    provider: 'browser-local',
+    description:
+      existingModel?.description || t('settings.browserLocalLlmDescription'),
+    localModel: existingModel?.localModel || DEFAULT_BROWSER_LLM_MODEL,
+    temperature: toNumberOrDefault(existingModel?.temperature, 0.2),
+    maxTokens: toIntegerOrDefault(existingModel?.maxTokens, 256),
+  }
+}
+
+function createOllamaModel(existingModel?: Record<string, any>) {
+  return {
+    id: 'ollama-default',
+    model: existingModel?.model || DEFAULT_OLLAMA_MODEL,
+    provider: 'ollama',
+    description: existingModel?.description || t('settings.ollamaDescription'),
+    baseUrl: existingModel?.baseUrl || 'http://localhost:11434',
+    temperature: toNumberOrDefault(existingModel?.temperature, 0.2),
+    maxTokens: toIntegerOrDefault(existingModel?.maxTokens, 512),
+    apiKey: '',
   }
 }
 
@@ -741,6 +849,32 @@ function ensureVoskModel(config: Record<string, any>) {
   return nextModel
 }
 
+function ensureBrowserLocalLlmModel(config: Record<string, any>) {
+  const existingModel = (config.llmModels || []).find(
+    (model: Record<string, any>) => model.provider === 'browser-local'
+  )
+  const nextModel = createBrowserLocalLlmModel(existingModel)
+  const otherModels = (config.llmModels || []).filter(
+    (model: Record<string, any>) => model.provider !== 'browser-local'
+  )
+
+  config.llmModels = [nextModel, ...otherModels]
+  return nextModel
+}
+
+function ensureOllamaModel(config: Record<string, any>) {
+  const existingModel = (config.llmModels || []).find(
+    (model: Record<string, any>) => model.provider === 'ollama'
+  )
+  const nextModel = createOllamaModel(existingModel)
+  const otherModels = (config.llmModels || []).filter(
+    (model: Record<string, any>) => model.provider !== 'ollama'
+  )
+
+  config.llmModels = [...otherModels, nextModel]
+  return nextModel
+}
+
 function resolveCurrentSttProvider(config: Record<string, any>) {
   const usageId = config.aiModelUsage?.stt
   const model = (config.sttModels || []).find(
@@ -748,6 +882,27 @@ function resolveCurrentSttProvider(config: Record<string, any>) {
   )
 
   return model?.provider === 'whisper-local' ? 'whisper-local' : 'vosk'
+}
+
+function resolveCurrentLlmProvider(config: Record<string, any>) {
+  const usageId = config.aiModelUsage?.chat
+  const model = (config.llmModels || []).find(
+    (item: Record<string, any>) => item.id === usageId
+  )
+
+  return model?.provider === 'ollama' ? 'ollama' : 'browser-local'
+}
+
+function toNumberOrDefault(value: unknown, fallback: number) {
+  const parsed = Number(value)
+
+  return Number.isFinite(parsed) ? parsed : fallback
+}
+
+function toIntegerOrDefault(value: unknown, fallback: number) {
+  const parsed = Number(value)
+
+  return Number.isFinite(parsed) && parsed > 0 ? Math.round(parsed) : fallback
 }
 
 const navigatorLanguages = computed(() => getNavigatorLanguages())
@@ -868,6 +1023,14 @@ const voskWsUrl = computed(() => {
   return voskModel?.baseUrl || 'ws://localhost:2700'
 })
 
+const browserLocalLlmConfig = computed(() => {
+  return ensureBrowserLocalLlmModel(userConfig.value)
+})
+
+const ollamaConfig = computed(() => {
+  return ensureOllamaModel(userConfig.value)
+})
+
 const whisperLocalConfig = computed(() => {
   return ensureWhisperLocalModel(userConfig.value)
 })
@@ -878,6 +1041,44 @@ const voskConfig = computed(() => {
 
 const whisperLocalModel = computed(() => {
   return whisperLocalConfig.value.localModel || DEFAULT_WHISPER_LOCAL_MODEL
+})
+
+const browserLocalModelName = computed(() => {
+  return browserLocalLlmConfig.value.localModel || DEFAULT_BROWSER_LLM_MODEL
+})
+
+const browserLocalTemperature = computed(() => {
+  return String(browserLocalLlmConfig.value.temperature ?? 0.2)
+})
+
+const browserLocalMaxTokens = computed(() => {
+  return String(browserLocalLlmConfig.value.maxTokens ?? 256)
+})
+
+const ollamaBaseUrl = computed(() => {
+  return ollamaConfig.value.baseUrl || 'http://localhost:11434'
+})
+
+const ollamaModelName = computed(() => {
+  return ollamaConfig.value.model || DEFAULT_OLLAMA_MODEL
+})
+
+const ollamaTemperature = computed(() => {
+  return String(ollamaConfig.value.temperature ?? 0.2)
+})
+
+const ollamaMaxTokens = computed(() => {
+  return String(ollamaConfig.value.maxTokens ?? 512)
+})
+
+const llmUsageOptions = computed(() => {
+  return (userConfig.value.llmModels || []).map((model: Record<string, any>) => ({
+    id: model.id,
+    name:
+      model.provider === 'ollama'
+        ? `Ollama: ${model.model || DEFAULT_OLLAMA_MODEL}`
+        : `Browser local: ${model.localModel || DEFAULT_BROWSER_LLM_MODEL}`,
+  }))
 })
 
 watch(
@@ -928,10 +1129,6 @@ const toggleAppLanguageMode = () => {
   userConfig.value.appLanguage = effectiveAppLanguage.value
 }
 
-const updateLLMModels = (items: any[]) => {
-  userConfig.value.llmModels = items
-}
-
 const setVoskWsUrl = (baseUrl: string) => {
   const whisperModel = ensureWhisperLocalModel(userConfig.value)
   const nextVoskModel = {
@@ -964,6 +1161,45 @@ const setWhisperFormatWithLlm = (value: boolean) => {
 const setVoskFormatWithLlm = (value: boolean) => {
   const voskModel = ensureVoskModel(userConfig.value)
   voskModel.formatWithLlm = value
+}
+
+const setBrowserLocalModel = (modelName: string | number | undefined) => {
+  if (typeof modelName !== 'string') {
+    return
+  }
+
+  const browserLocalModel = ensureBrowserLocalLlmModel(userConfig.value)
+  browserLocalModel.localModel = modelName
+}
+
+const setBrowserLocalTemperature = (value: string) => {
+  const browserLocalModel = ensureBrowserLocalLlmModel(userConfig.value)
+  browserLocalModel.temperature = toNumberOrDefault(value, 0.2)
+}
+
+const setBrowserLocalMaxTokens = (value: string) => {
+  const browserLocalModel = ensureBrowserLocalLlmModel(userConfig.value)
+  browserLocalModel.maxTokens = toIntegerOrDefault(value, 256)
+}
+
+const setOllamaBaseUrl = (baseUrl: string) => {
+  const ollamaModel = ensureOllamaModel(userConfig.value)
+  ollamaModel.baseUrl = baseUrl || 'http://localhost:11434'
+}
+
+const setOllamaModel = (value: string) => {
+  const ollamaModel = ensureOllamaModel(userConfig.value)
+  ollamaModel.model = value || DEFAULT_OLLAMA_MODEL
+}
+
+const setOllamaTemperature = (value: string) => {
+  const ollamaModel = ensureOllamaModel(userConfig.value)
+  ollamaModel.temperature = toNumberOrDefault(value, 0.2)
+}
+
+const setOllamaMaxTokens = (value: string) => {
+  const ollamaModel = ensureOllamaModel(userConfig.value)
+  ollamaModel.maxTokens = toIntegerOrDefault(value, 512)
 }
 
 async function refreshWhisperModelStatus() {
