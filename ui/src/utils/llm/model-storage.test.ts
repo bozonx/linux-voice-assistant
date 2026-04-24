@@ -61,7 +61,13 @@ describe('llm model storage', () => {
         })
       }
     )
-    invokeMock.mockResolvedValue({ success: true, result: null })
+    invokeMock.mockImplementation(async (command: string) => {
+      if (command === 'get_llm_model_file_size') {
+        return { success: true, result: 12 }
+      }
+
+      return { success: true, result: null }
+    })
 
     const updates: Array<{
       fileIndex: number
@@ -86,12 +92,16 @@ describe('llm model storage', () => {
       BROWSER_LLM_MODEL_FILES['onnx-community/Qwen2.5-0.5B-Instruct'].length
 
     expect(downloadBinaryFileMock).toHaveBeenCalledTimes(fileCount)
+    expect(downloadBinaryFileMock.mock.calls[0]?.[0]?.existingSize).toBe(12)
+    const firstSaveChunkCall = invokeMock.mock.calls.find(
+      (call) => call[0] === 'save_llm_model_file_chunk'
+    )
     const lastInvokeCall =
       invokeMock.mock.calls[invokeMock.mock.calls.length - 1]
 
     expect(lastInvokeCall?.[0]).toBe('complete_llm_model_download')
     expect(lastInvokeCall?.[1]?.files).not.toContain('onnx/model_q4f16.onnx')
-    expect(invokeMock.mock.calls[0]?.[1]?.data).toBeInstanceOf(Uint8Array)
+    expect(firstSaveChunkCall?.[1]?.data).toBeInstanceOf(Uint8Array)
     expect(updates[0]).toMatchObject({
       fileIndex: 0,
       fileCount,

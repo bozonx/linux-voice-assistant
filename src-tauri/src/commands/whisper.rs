@@ -98,6 +98,22 @@ pub fn get_whisper_model_path(
 }
 
 #[tauri::command]
+pub fn get_whisper_model_file_size(
+    app: AppHandle,
+    model_name: String,
+    file_name: String,
+) -> Result<Option<u64>, AppError> {
+    let path = model_dir(&app, &model_name)?.join(sanitize_whisper_file_name(&file_name)?);
+
+    match fs::metadata(path) {
+        Ok(metadata) if metadata.is_file() => Ok(Some(metadata.len())),
+        Ok(_) => Ok(None),
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(None),
+        Err(error) => Err(error.into()),
+    }
+}
+
+#[tauri::command]
 pub fn complete_whisper_model_download(
     app: AppHandle,
     model_name: String,

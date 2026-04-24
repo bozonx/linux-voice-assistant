@@ -105,6 +105,18 @@ export async function getLlmModelMetadata(
   return result.success ? result.result || null : null
 }
 
+async function getLlmModelFileSize(
+  modelName: string,
+  fileName: string
+): Promise<number> {
+  const result = await desktopClient.invoke<number | null>(
+    DESKTOP_COMMANDS.GET_LLM_MODEL_FILE_SIZE,
+    { modelName, fileName }
+  )
+
+  return result.success && typeof result.result === 'number' ? result.result : 0
+}
+
 export async function downloadLlmModel(
   modelName: string,
   onProgress?: (progress: LlmModelDownloadProgress) => void
@@ -119,9 +131,12 @@ export async function downloadLlmModel(
 
   for (const [fileIndex, fileName] of files.entries()) {
     const url = `${HF_BASE}/${modelName}/resolve/${HF_REVISION}/${fileName}`
+    const existingSize = await getLlmModelFileSize(modelName, fileName)
+
     await downloadBinaryFile({
       url,
       fileName,
+      existingSize,
       onProgress: (progress) => {
         const currentFileProgress =
           progress.total > 0

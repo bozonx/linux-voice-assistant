@@ -129,6 +129,7 @@ export const DESKTOP_COMMANDS = {
   GET_WHISPER_MODEL_METADATA: 'get_whisper_model_metadata',
   DELETE_WHISPER_MODEL: 'delete_whisper_model',
   GET_WHISPER_MODEL_PATH: 'get_whisper_model_path',
+  GET_WHISPER_MODEL_FILE_SIZE: 'get_whisper_model_file_size',
   IS_LLM_MODEL_DOWNLOADED: 'is_llm_model_downloaded',
   SAVE_LLM_MODEL_FILE: 'save_llm_model_file',
   SAVE_LLM_MODEL_FILE_CHUNK: 'save_llm_model_file_chunk',
@@ -136,6 +137,7 @@ export const DESKTOP_COMMANDS = {
   GET_LLM_MODEL_METADATA: 'get_llm_model_metadata',
   DELETE_LLM_MODEL: 'delete_llm_model',
   GET_LLM_MODEL_PATH: 'get_llm_model_path',
+  GET_LLM_MODEL_FILE_SIZE: 'get_llm_model_file_size',
 } as const
 
 export type DesktopCommandName =

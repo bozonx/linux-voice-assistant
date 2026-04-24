@@ -127,6 +127,22 @@ pub fn get_llm_model_path(
 }
 
 #[tauri::command]
+pub fn get_llm_model_file_size(
+    app: AppHandle,
+    model_name: String,
+    file_name: String,
+) -> Result<Option<u64>, AppError> {
+    let path = model_dir(&app, &model_name)?.join(sanitize_llm_file_name(&model_name, &file_name)?);
+
+    match fs::metadata(path) {
+        Ok(metadata) if metadata.is_file() => Ok(Some(metadata.len())),
+        Ok(_) => Ok(None),
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(None),
+        Err(error) => Err(error.into()),
+    }
+}
+
+#[tauri::command]
 pub fn complete_llm_model_download(
     app: AppHandle,
     model_name: String,
