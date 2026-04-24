@@ -230,6 +230,9 @@
               <Button sm neutral @click="addOllamaLlmModel">
                 {{ t('settings.addOllamaModel') }}
               </Button>
+              <Button sm neutral @click="addOpenAiCompatibleLlmModel">
+                {{ t('settings.addOpenAiCompatibleModel') }}
+              </Button>
             </div>
 
             <div
@@ -263,6 +266,8 @@
                   {{
                     model.provider === 'ollama'
                       ? t('settings.ollama')
+                      : model.provider === 'openai-compatible'
+                        ? t('settings.openAiCompatible')
                       : t('settings.browserLocalLlm')
                   }}
                 </div>
@@ -384,7 +389,7 @@
                 </div>
               </template>
 
-              <template v-else>
+              <template v-else-if="model.provider === 'ollama'">
                 <FieldRow :label="t('settings.baseUrl')" vertical>
                   <FieldInput
                     :value="model.baseUrl || 'http://localhost:11434'"
@@ -413,6 +418,31 @@
                 </FieldRow>
                 <div class="text-xs text-muted whitespace-pre-wrap">
                   {{ t('settings.ollamaHint') }}
+                </div>
+              </template>
+              <template v-else>
+                <FieldRow :label="t('settings.baseUrl')" vertical>
+                  <FieldInput
+                    :value="model.baseUrl || ''"
+                    placeholder="https://openrouter.ai/api/v1"
+                    @update:value="setOpenAiCompatibleBaseUrl(model.id, $event)"
+                  />
+                </FieldRow>
+                <FieldRow :label="t('settings.apiKey')" vertical>
+                  <FieldInput
+                    :value="model.apiKey || ''"
+                    @update:value="setOpenAiCompatibleApiKey(model.id, $event)"
+                  />
+                </FieldRow>
+                <FieldRow :label="t('settings.model')" vertical>
+                  <FieldInput
+                    :value="model.model || ''"
+                    placeholder="openai/gpt-4.1-mini"
+                    @update:value="setOpenAiCompatibleModel(model.id, $event)"
+                  />
+                </FieldRow>
+                <div class="text-xs text-muted whitespace-pre-wrap">
+                  {{ t('settings.openAiCompatibleHint') }}
                 </div>
               </template>
             </div>
@@ -970,6 +1000,22 @@ function createOllamaModel(existingModel?: Record<string, any>) {
   }
 }
 
+function createOpenAiCompatibleModel(existingModel?: Record<string, any>) {
+  return {
+    id: existingModel?.id || createLlmModelId('openai-compatible'),
+    name:
+      existingModel?.name ||
+      existingModel?.label ||
+      t('settings.openAiCompatibleModelDefaultName'),
+    model: existingModel?.model || '',
+    provider: 'openai-compatible',
+    description:
+      existingModel?.description || t('settings.openAiCompatibleDescription'),
+    baseUrl: existingModel?.baseUrl || '',
+    apiKey: existingModel?.apiKey || '',
+  }
+}
+
 function ensureWhisperLocalModel(config: Record<string, any>) {
   const existingModel = (config.sttModels || []).find(
     (model: Record<string, any>) => model.provider === 'whisper-local'
@@ -1016,8 +1062,15 @@ function normalizeSingleLlmModel(model: Record<string, any>) {
     return createOllamaModel(model)
   }
 
+  if (provider === 'openai-compatible') {
+    return createOpenAiCompatibleModel(model)
+  }
+
   if (provider) {
-    return createOllamaModel(model)
+    return createOpenAiCompatibleModel({
+      ...model,
+      provider: 'openai-compatible',
+    })
   }
 
   return null
@@ -1194,7 +1247,11 @@ const llmUsageOptions = computed(() => {
   return (userConfig.value.llmModels || []).map(
     (model: Record<string, any>, index: number) => ({
       id: model.id,
-      name: modelDisplayName(model, index),
+      name:
+        model.provider === 'browser-local' &&
+        !browserLocalStatusById.value[model.id]?.downloaded
+          ? `${modelDisplayName(model, index)} (${t('settings.downloadRequired')})`
+          : modelDisplayName(model, index),
     })
   )
 })
@@ -1308,6 +1365,10 @@ function modelDisplayName(model: Record<string, any>, index: number) {
     return `${t('settings.ollama')} ${index + 1}`
   }
 
+  if (model.provider === 'openai-compatible') {
+    return `${t('settings.openAiCompatible')} ${index + 1}`
+  }
+
   return `${t('settings.browserLocalLlm')} ${index + 1}`
 }
 
@@ -1361,6 +1422,10 @@ function addBrowserLocalLlmModel() {
 
 function addOllamaLlmModel() {
   userConfig.value.llmModels.push(createOllamaModel())
+}
+
+function addOpenAiCompatibleLlmModel() {
+  userConfig.value.llmModels.push(createOpenAiCompatibleModel())
 }
 
 function removeLlmModel(modelId: string) {
@@ -1467,6 +1532,36 @@ const setOllamaMaxTokens = (modelId: string, value: string) => {
   }
 
   ollamaModel.maxTokens = toIntegerOrDefault(value, 512)
+}
+
+const setOpenAiCompatibleBaseUrl = (modelId: string, baseUrl: string) => {
+  const model = getLlmModelById(modelId)
+
+  if (!model || model.provider !== 'openai-compatible') {
+    return
+  }
+
+  model.baseUrl = baseUrl
+}
+
+const setOpenAiCompatibleApiKey = (modelId: string, apiKey: string) => {
+  const model = getLlmModelById(modelId)
+
+  if (!model || model.provider !== 'openai-compatible') {
+    return
+  }
+
+  model.apiKey = apiKey
+}
+
+const setOpenAiCompatibleModel = (modelId: string, value: string) => {
+  const model = getLlmModelById(modelId)
+
+  if (!model || model.provider !== 'openai-compatible') {
+    return
+  }
+
+  model.model = value
 }
 
 async function refreshWhisperModelStatus() {

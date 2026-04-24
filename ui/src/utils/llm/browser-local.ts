@@ -1,18 +1,10 @@
 import { desktopClient } from '../../lib/desktop/client'
 import LlmWorker from '../../workers/llm.worker.ts?worker'
+import { DEFAULT_BROWSER_LLM_MODEL, isLlmModelDownloaded } from './model-storage'
+import type { WorkerResponse } from './worker-protocol'
 import type { ChatMessage, LlmModel } from '@shared'
 import { DESKTOP_COMMANDS } from '@shared'
 import { convertFileSrc } from '@tauri-apps/api/core'
-
-type WorkerResponse =
-  | { type: 'init-ok'; id: number }
-  | {
-      type: 'progress'
-      id: number
-      data: { status: string; file?: string; progress?: number }
-    }
-  | { type: 'result'; id: number; data: { content: string } }
-  | { type: 'error'; id: number; error: string }
 
 export interface BrowserLocalLlmProgress {
   status: string
@@ -22,6 +14,21 @@ export interface BrowserLocalLlmProgress {
 
 let worker: Worker | null = null
 let workerInitialized = false
+
+function createAbortError() {
+  const error = new Error('Aborted')
+  error.name = 'AbortError'
+  return error
+}
+
+function resetWorker() {
+  if (worker) {
+    worker.terminate()
+  }
+
+  worker = null
+  workerInitialized = false
+}
 
 function getWorker() {
   if (!worker) {
@@ -91,13 +98,18 @@ export async function runBrowserLocalChatCompletion(
     onProgress?: (progress: BrowserLocalLlmProgress) => void
   }
 ) {
+  const modelName = model.localModel || model.model || DEFAULT_BROWSER_LLM_MODEL
+  const downloaded = await isLlmModelDownloaded(modelName)
+
+  if (!downloaded) {
+    throw new Error(`Browser LLM model is not downloaded: ${modelName}`)
+  }
+
   await ensureWorkerInitialized()
   const activeWorker = getWorker()
   const id = Math.random()
 
   return await new Promise<{ content: string }>((resolve, reject) => {
-    let currentContent = ''
-
     const handleMessage = (
       event: MessageEvent<
         WorkerResponse | { type: 'chunk'; id: number; data: { chunk: string } }
@@ -113,19 +125,27 @@ export async function runBrowserLocalChatCompletion(
       }
 
       if (event.data.type === 'chunk') {
-        currentContent += event.data.data.chunk
         options?.onChunk?.(event.data.data.chunk)
         return
       }
 
       if (event.data.type === 'result') {
         activeWorker.removeEventListener('message', handleMessage)
+        options?.signal?.removeEventListener('abort', abortHandler)
         resolve(event.data.data)
+        return
+      }
+
+      if (event.data.type === 'aborted') {
+        activeWorker.removeEventListener('message', handleMessage)
+        options?.signal?.removeEventListener('abort', abortHandler)
+        reject(createAbortError())
         return
       }
 
       if (event.data.type === 'error') {
         activeWorker.removeEventListener('message', handleMessage)
+        options?.signal?.removeEventListener('abort', abortHandler)
         reject(new Error(event.data.error))
         return
       }
@@ -134,7 +154,8 @@ export async function runBrowserLocalChatCompletion(
     const abortHandler = () => {
       activeWorker.removeEventListener('message', handleMessage)
       options?.signal?.removeEventListener('abort', abortHandler)
-      reject(new Error('AbortError'))
+      resetWorker()
+      reject(createAbortError())
     }
 
     if (options?.signal) {
@@ -150,7 +171,7 @@ export async function runBrowserLocalChatCompletion(
       type: 'generate',
       id,
       data: {
-        modelName: model.localModel || model.model,
+        modelName,
         messages,
         temperature: model.temperature ?? 0.2,
         maxTokens: model.maxTokens ?? 256,

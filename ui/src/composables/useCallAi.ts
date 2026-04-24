@@ -36,6 +36,13 @@ export const useCallAi = () => {
 
   const currentUserConfig = () => ipcStore.params.userConfig
 
+  const buildTaskRules = (taskRule?: string) => {
+    const baseRule = String(currentUserConfig().aiRules?.base || '').trim()
+    const specificRule = String(taskRule || '').trim()
+
+    return [baseRule, specificRule].filter(Boolean).join('\n\n')
+  }
+
   const currentSttModel = () => {
     const userConfig = currentUserConfig()
     const modelId = userConfig.aiModelUsage.stt
@@ -220,7 +227,7 @@ export const useCallAi = () => {
 
   const voiceCorrection = async (text: string) => {
     const userConfig = currentUserConfig()
-    const rule = userConfig.aiRules[AI_TASKS.VOICE_CORRECTION]
+    const rule = buildTaskRules(userConfig.aiRules[AI_TASKS.VOICE_CORRECTION])
     const devInstructions = prepareDevInstructions(
       APP_CONFIG.aiInstructions[AI_TASKS.VOICE_CORRECTION]
     )
@@ -245,11 +252,12 @@ export const useCallAi = () => {
       }) => void
     }
   ) => {
+    const rule = buildTaskRules()
     const result = await aiRequest(
       AI_TASKS.CHAT,
       prepareAiMessages(
         [...prevMessages, { role: 'user', content: message }],
-        undefined,
+        rule,
         devInstructions
       ),
       options
@@ -265,7 +273,7 @@ export const useCallAi = () => {
     }
 
     const userConfig = currentUserConfig()
-    const rule = userConfig.aiRules[AI_TASKS.CORRECTION]
+    const rule = buildTaskRules(userConfig.aiRules[AI_TASKS.CORRECTION])
     const devInstructions = prepareDevInstructions(
       APP_CONFIG.aiInstructions[AI_TASKS.CORRECTION]
     )
@@ -283,7 +291,7 @@ export const useCallAi = () => {
     }
 
     const userConfig = currentUserConfig()
-    const rule = userConfig.aiRules[AI_TASKS.TRANSLATE]
+    const rule = buildTaskRules(userConfig.aiRules[AI_TASKS.TRANSLATE])
     const devInstructions = prepareDevInstructions(
       APP_CONFIG.aiInstructions[AI_TASKS.TRANSLATE],
       {
@@ -304,7 +312,7 @@ export const useCallAi = () => {
     }
 
     const userConfig = currentUserConfig()
-    const rule = userConfig.aiTasks[presetNum].rule
+    const rule = buildTaskRules(userConfig.aiTasks[presetNum].rule)
     const devInstructions = prepareDevInstructions(
       APP_CONFIG.aiInstructions[AI_TASKS.AI_TASKS]
     )

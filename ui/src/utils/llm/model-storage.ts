@@ -1,4 +1,5 @@
 import { desktopClient } from '../../lib/desktop/client'
+import { downloadBinaryFile } from '../download/file-download'
 import { DESKTOP_COMMANDS, type LlmModelMetadata } from '@shared'
 
 export interface LlmModelDownloadProgress {
@@ -115,82 +116,33 @@ export async function downloadLlmModel(
 
   for (const fileName of files) {
     const url = `${HF_BASE}/${modelName}/resolve/${HF_REVISION}/${fileName}`
+    await downloadBinaryFile({
+      url,
+      fileName,
+      onProgress: (progress) => {
+        onProgress?.({
+          model: modelName,
+          file: progress.file,
+          loaded: progress.loaded,
+          total: progress.total,
+          status: progress.status,
+        })
+      },
+      onChunk: async (chunk, append) => {
+        const saveResult = await desktopClient.invoke(
+          DESKTOP_COMMANDS.SAVE_LLM_MODEL_FILE_CHUNK,
+          {
+            modelName,
+            fileName,
+            data: Array.from(chunk),
+            append,
+          }
+        )
 
-    onProgress?.({
-      model: modelName,
-      file: fileName,
-      loaded: 0,
-      total: 0,
-      status: 'downloading',
-    })
-
-    const response = await fetch(url)
-
-    if (!response.ok) {
-      throw new Error(`Failed to download ${fileName}: ${response.statusText}`)
-    }
-
-    const total = Number(response.headers.get('Content-Length')) || 0
-    const reader = response.body?.getReader()
-
-    if (!reader) {
-      throw new Error(`Failed to read ${fileName}`)
-    }
-
-    const chunks: BlobPart[] = []
-    let loaded = 0
-
-    while (true) {
-      const { done, value } = await reader.read()
-
-      if (done) {
-        break
-      }
-
-      chunks.push(
-        value.buffer.slice(
-          value.byteOffset,
-          value.byteOffset + value.byteLength
-        ) as ArrayBuffer
-      )
-      loaded += value.length
-
-      onProgress?.({
-        model: modelName,
-        file: fileName,
-        loaded,
-        total,
-        status: 'downloading',
-      })
-    }
-
-    onProgress?.({
-      model: modelName,
-      file: fileName,
-      loaded: total || loaded,
-      total: total || loaded,
-      status: 'saving',
-    })
-
-    const blob = new Blob(chunks)
-    const arrayBuffer = await blob.arrayBuffer()
-    const data = Array.from(new Uint8Array(arrayBuffer))
-
-    const saveResult = await desktopClient.invoke(
-      DESKTOP_COMMANDS.SAVE_LLM_MODEL_FILE,
-      { modelName, fileName, data }
-    )
-
-    if (!saveResult.success) {
-      throw new Error(`Failed to save ${fileName}: ${saveResult.error}`)
-    }
-
-    onProgress?.({
-      model: modelName,
-      file: fileName,
-      loaded: total || loaded,
-      total: total || loaded,
-      status: 'done',
+        if (!saveResult.success) {
+          throw new Error(`Failed to save ${fileName}: ${saveResult.error}`)
+        }
+      },
     })
   }
 

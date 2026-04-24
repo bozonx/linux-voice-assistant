@@ -136,6 +136,7 @@ export const messages = {
       llmProvider: 'LLM provider',
       addBrowserLocalModel: 'Добавить browser-local модель',
       addOllamaModel: 'Добавить Ollama модель',
+      addOpenAiCompatibleModel: 'Добавить OpenAI-compatible модель',
       removeModel: 'Удалить модель',
       browserLocalLlm: 'Browser local',
       browserLocalLlmDescription: 'Браузерный LLM через Transformers.js',
@@ -158,6 +159,11 @@ export const messages = {
       ollamaModel: 'Модель Ollama',
       ollamaHint:
         'Используется API Ollama `/api/chat`. Здесь можно указать любую модель, которую пользователь уже скачал в Ollama.',
+      openAiCompatible: 'OpenAI-compatible',
+      openAiCompatibleDescription: 'OpenAI-compatible `/chat/completions` API',
+      openAiCompatibleModelDefaultName: 'OpenAI-compatible модель',
+      openAiCompatibleHint:
+        'Используется совместимый `/chat/completions` endpoint. Подходит для OpenRouter, OpenAI-compatible прокси и локальных серверов с таким API.',
       id: 'Id',
       model: 'Model',
       description: 'Description',
@@ -190,6 +196,7 @@ export const messages = {
       chatRoles: 'Роли чата',
       saving: 'Сохранение...',
       saved: 'Настройки сохранены',
+      downloadRequired: 'нужно скачать',
     },
     editor: {
       voiceInput: 'Голосовой ввод',
@@ -412,6 +419,7 @@ export const messages = {
       llmProvider: 'LLM provider',
       addBrowserLocalModel: 'Add browser-local model',
       addOllamaModel: 'Add Ollama model',
+      addOpenAiCompatibleModel: 'Add OpenAI-compatible model',
       removeModel: 'Remove model',
       browserLocalLlm: 'Browser local',
       browserLocalLlmDescription: 'Browser LLM via Transformers.js',
@@ -434,6 +442,11 @@ export const messages = {
       ollamaModel: 'Ollama model',
       ollamaHint:
         'Uses the Ollama `/api/chat` endpoint. You can point it to any model the user already pulled in Ollama.',
+      openAiCompatible: 'OpenAI-compatible',
+      openAiCompatibleDescription: 'OpenAI-compatible `/chat/completions` API',
+      openAiCompatibleModelDefaultName: 'OpenAI-compatible model',
+      openAiCompatibleHint:
+        'Uses a compatible `/chat/completions` endpoint. Suitable for OpenRouter, OpenAI-compatible proxies, and local servers with the same API.',
       id: 'Id',
       model: 'Model',
       description: 'Description',
@@ -465,6 +478,7 @@ export const messages = {
       chatRoles: 'Chat roles',
       saving: 'Saving...',
       saved: 'Settings saved',
+      downloadRequired: 'download required',
     },
     editor: {
       voiceInput: 'Voice input',
@@ -687,6 +701,7 @@ export const messages = {
       llmProvider: 'Proveedor LLM',
       addBrowserLocalModel: 'Agregar modelo browser-local',
       addOllamaModel: 'Agregar modelo Ollama',
+      addOpenAiCompatibleModel: 'Agregar modelo OpenAI-compatible',
       removeModel: 'Eliminar modelo',
       browserLocalLlm: 'Browser local',
       browserLocalLlmDescription: 'LLM en el navegador con Transformers.js',
@@ -709,6 +724,11 @@ export const messages = {
       ollamaModel: 'Modelo de Ollama',
       ollamaHint:
         'Usa el endpoint `/api/chat` de Ollama. Aquí puedes indicar cualquier modelo que el usuario ya haya descargado en Ollama.',
+      openAiCompatible: 'OpenAI-compatible',
+      openAiCompatibleDescription: 'API `/chat/completions` compatible con OpenAI',
+      openAiCompatibleModelDefaultName: 'Modelo OpenAI-compatible',
+      openAiCompatibleHint:
+        'Usa un endpoint `/chat/completions` compatible. Sirve para OpenRouter, proxys compatibles con OpenAI y servidores locales con la misma API.',
       id: 'Id',
       model: 'Modelo',
       description: 'Descripción',
@@ -740,6 +760,7 @@ export const messages = {
       chatRoles: 'Roles del chat',
       saving: 'Guardando...',
       saved: 'Configuración guardada',
+      downloadRequired: 'requiere descarga',
     },
     editor: {
       voiceInput: 'Entrada por voz',
@@ -962,6 +983,7 @@ export const messages = {
       llmProvider: 'LLM sağlayıcısı',
       addBrowserLocalModel: 'Browser-local model ekle',
       addOllamaModel: 'Ollama model ekle',
+      addOpenAiCompatibleModel: 'OpenAI-compatible model ekle',
       removeModel: 'Modeli sil',
       browserLocalLlm: 'Browser local',
       browserLocalLlmDescription: 'Transformers.js ile tarayıcı LLM',
@@ -984,6 +1006,11 @@ export const messages = {
       ollamaModel: 'Ollama modeli',
       ollamaHint:
         'Ollama `/api/chat` uç noktasını kullanır. Buraya kullanıcının Ollama içinde zaten indirdiği herhangi bir modeli yazabilirsin.',
+      openAiCompatible: 'OpenAI-compatible',
+      openAiCompatibleDescription: 'OpenAI-compatible `/chat/completions` API',
+      openAiCompatibleModelDefaultName: 'OpenAI-compatible model',
+      openAiCompatibleHint:
+        'Uyumlu bir `/chat/completions` endpointi kullanır. OpenRouter, OpenAI-compatible proxyler ve aynı APIyi sunan yerel sunucular için uygundur.',
       id: 'Id',
       model: 'Model',
       description: 'Açıklama',
@@ -1015,6 +1042,7 @@ export const messages = {
       chatRoles: 'Sohbet rolleri',
       saving: 'Kaydediliyor...',
       saved: 'Ayarlar kaydedildi',
+      downloadRequired: 'indirme gerekli',
     },
     editor: {
       voiceInput: 'Ses girişi',

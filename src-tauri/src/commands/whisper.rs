@@ -33,13 +33,39 @@ pub fn save_whisper_model_file(
     file_name: String,
     data: Vec<u8>,
 ) -> Result<(), AppError> {
+    save_whisper_model_file_bytes(&app, &model_name, &file_name, &data, false)
+}
+
+#[tauri::command]
+pub fn save_whisper_model_file_chunk(
+    app: AppHandle,
+    model_name: String,
+    file_name: String,
+    data: Vec<u8>,
+    append: bool,
+) -> Result<(), AppError> {
+    save_whisper_model_file_bytes(&app, &model_name, &file_name, &data, append)
+}
+
+fn save_whisper_model_file_bytes(
+    app: &AppHandle,
+    model_name: &str,
+    file_name: &str,
+    data: &[u8],
+    append: bool,
+) -> Result<(), AppError> {
     let file_path = model_dir(&app, &model_name)?.join(sanitize_whisper_file_name(&file_name)?);
 
     if let Some(parent) = file_path.parent() {
         fs::create_dir_all(parent)?;
     }
 
-    let mut file = fs::File::create(&file_path)?;
+    let mut file = fs::OpenOptions::new()
+        .create(true)
+        .write(true)
+        .truncate(!append)
+        .append(append)
+        .open(&file_path)?;
     file.write_all(&data)?;
 
     Ok(())

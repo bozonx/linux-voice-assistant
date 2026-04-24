@@ -3,6 +3,72 @@ import type { ChatMessage } from './desktop'
 import type { LlmModel } from './user-config'
 
 export const useAiRequest = () => {
+  function parseOpenAiStreamChunk(line: string) {
+    if (!line.startsWith('data: ')) {
+      return ''
+    }
+
+    const payload = line.slice(6).trim()
+
+    if (!payload || payload === '[DONE]') {
+      return ''
+    }
+
+    const data = JSON.parse(payload)
+    return data.choices?.[0]?.delta?.content || ''
+  }
+
+  function parseOllamaStreamChunk(line: string) {
+    if (!line.trim()) {
+      return ''
+    }
+
+    const data = JSON.parse(line)
+    return data.message?.content || ''
+  }
+
+  async function readStreamingLines(
+    stream: ReadableStream<Uint8Array>,
+    onLine: (line: string) => string
+  ) {
+    const reader = stream.getReader()
+    const decoder = new TextDecoder()
+    let content = ''
+    let buffer = ''
+
+    while (true) {
+      const { done, value } = await reader.read()
+
+      if (done) {
+        break
+      }
+
+      buffer += decoder.decode(value, { stream: true })
+      const lines = buffer.split('\n')
+      buffer = lines.pop() || ''
+
+      for (const line of lines) {
+        const text = onLine(line)
+
+        if (text) {
+          content += text
+        }
+      }
+    }
+
+    buffer += decoder.decode()
+
+    if (buffer.trim()) {
+      const text = onLine(buffer)
+
+      if (text) {
+        content += text
+      }
+    }
+
+    return content
+  }
+
   const prepareDevInstructions = (
     devInstructions: string,
     devInstructionsData?: Record<string, string>
@@ -98,32 +164,13 @@ export const useAiRequest = () => {
       }
 
       if (options?.onChunk && result.body) {
-        const reader = result.body.getReader()
-        const decoder = new TextDecoder()
-        let content = ''
-
-        while (true) {
-          const { done, value } = await reader.read()
-          if (done) break
-
-          const chunk = decoder.decode(value, { stream: true })
-          const lines = chunk.split('\n')
-
-          for (const line of lines) {
-            if (line.startsWith('data: ') && line !== 'data: [DONE]') {
-              try {
-                const data = JSON.parse(line.slice(6))
-                const text = data.choices[0]?.delta?.content || ''
-                if (text) {
-                  content += text
-                  options.onChunk(text)
-                }
-              } catch (e) {
-                // Ignore parse errors for incomplete chunks
-              }
-            }
+        const content = await readStreamingLines(result.body, (line) => {
+          const text = parseOpenAiStreamChunk(line)
+          if (text) {
+            options.onChunk?.(text)
           }
-        }
+          return text
+        })
         return { content }
       }
 
@@ -179,32 +226,13 @@ export const useAiRequest = () => {
       }
 
       if (options?.onChunk && result.body) {
-        const reader = result.body.getReader()
-        const decoder = new TextDecoder()
-        let content = ''
-
-        while (true) {
-          const { done, value } = await reader.read()
-          if (done) break
-
-          const chunk = decoder.decode(value, { stream: true })
-          const lines = chunk.split('\n')
-
-          for (const line of lines) {
-            if (line.trim()) {
-              try {
-                const data = JSON.parse(line)
-                const text = data.message?.content || ''
-                if (text) {
-                  content += text
-                  options.onChunk(text)
-                }
-              } catch (e) {
-                // Ignore parse errors
-              }
-            }
+        const content = await readStreamingLines(result.body, (line) => {
+          const text = parseOllamaStreamChunk(line)
+          if (text) {
+            options.onChunk?.(text)
           }
-        }
+          return text
+        })
         return { content }
       }
 

@@ -13,7 +13,7 @@ use commands::history::{
 };
 use commands::llm::{
     complete_llm_model_download, delete_llm_model, get_llm_model_metadata, get_llm_model_path,
-    is_llm_model_downloaded, save_llm_model_file,
+    is_llm_model_downloaded, save_llm_model_file, save_llm_model_file_chunk,
 };
 use commands::voice::{
     start_local_voice_recording, start_voice_recognition, stop_local_voice_recording,
@@ -22,6 +22,7 @@ use commands::voice::{
 use commands::whisper::{
     complete_whisper_model_download, delete_whisper_model, get_whisper_model_metadata,
     get_whisper_model_path, is_whisper_model_downloaded, save_whisper_model_file,
+    save_whisper_model_file_chunk,
 };
 use commands::window::{
     close_window, open_in_browser_and_close, put_into_clipboard_and_close,
@@ -83,12 +84,14 @@ pub fn run() {
             put_into_clipboard_and_close,
             is_whisper_model_downloaded,
             save_whisper_model_file,
+            save_whisper_model_file_chunk,
             complete_whisper_model_download,
             get_whisper_model_metadata,
             delete_whisper_model,
             get_whisper_model_path,
             is_llm_model_downloaded,
             save_llm_model_file,
+            save_llm_model_file_chunk,
             complete_llm_model_download,
             get_llm_model_metadata,
             delete_llm_model,

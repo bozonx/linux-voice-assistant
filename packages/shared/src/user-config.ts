@@ -47,7 +47,7 @@ export interface LlmModel {
   id: string
   name?: string
   model: string
-  provider?: 'browser-local' | 'ollama' | string
+  provider?: 'browser-local' | 'ollama' | 'openai-compatible' | string
   description?: string
   baseUrl?: string
   apiKey?: string

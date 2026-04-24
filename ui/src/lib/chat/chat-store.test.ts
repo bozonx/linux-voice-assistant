@@ -60,7 +60,12 @@ describe('chat-store', () => {
     expect(deps.sendChatMessage).toHaveBeenCalledWith(
       'Next question',
       expect.any(Array),
-      expect.any(String)
+      expect.any(String),
+      expect.objectContaining({
+        signal: expect.any(AbortSignal),
+        onChunk: expect.any(Function),
+        onProgress: expect.any(Function),
+      })
     )
   })
 
