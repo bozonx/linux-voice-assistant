@@ -2,6 +2,7 @@ import { DEFAULT_INIT_PARAMS, START_MODES, type InitParams } from '@shared'
 import { describe, expect, it, vi } from 'vitest'
 
 import { GlobalEvents } from '../../composables/useGlobalEvents'
+import { APP_ROUTES } from '../navigation/routes'
 import { createAppBootstrap, type AppBootstrapDeps } from './app-bootstrap'
 
 function createDeps(overrides: Partial<AppBootstrapDeps> = {}) {
@@ -42,7 +43,7 @@ describe('app-bootstrap', () => {
 
     expect(deps.setParams).toHaveBeenCalledWith(params)
     expect(deps.closeAllModals).toHaveBeenCalledOnce()
-    expect(deps.navigateTo).toHaveBeenCalledWith('/aiTasks')
+    expect(deps.navigateTo).toHaveBeenCalledWith(APP_ROUTES.AI_TASKS.path)
   })
 
   it('starts runtime listeners and emits init event', async () => {
@@ -59,7 +60,7 @@ describe('app-bootstrap', () => {
     expect(deps.initPlugins).toHaveBeenCalledOnce()
     expect(deps.addWindowKeyupListener).toHaveBeenCalledOnce()
     expect(deps.listen).toHaveBeenCalledTimes(2)
-    expect(deps.navigateTo).toHaveBeenCalledWith('/write')
+    expect(deps.navigateTo).toHaveBeenCalledWith(APP_ROUTES.WRITE.path)
     expect(deps.emitGlobal).toHaveBeenCalledWith(GlobalEvents.INITED)
     expect(listeners.size).toBe(2)
   })
@@ -110,7 +111,7 @@ describe('app-bootstrap', () => {
       mode: START_MODES.WRITE,
     })
 
-    expect(deps.navigateTo).toHaveBeenNthCalledWith(2, '/write')
+    expect(deps.navigateTo).toHaveBeenNthCalledWith(2, APP_ROUTES.WRITE.path)
   })
 
   it('forwards keyup events to global events and nav handler', () => {

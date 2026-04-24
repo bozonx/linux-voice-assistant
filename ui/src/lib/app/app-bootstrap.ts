@@ -1,12 +1,13 @@
 import { DESKTOP_EVENTS, type InitParams } from '@shared'
 
 import { GlobalEvents } from '../../composables/useGlobalEvents'
+import { resolveModeRoute, type AppRoutePath } from '../navigation/routes'
 
 export interface AppBootstrapDeps {
   loadInitialParams: () => Promise<InitParams>
   setParams: (params: InitParams) => void
   closeAllModals: () => void
-  navigateTo: (path: string) => Promise<void>
+  navigateTo: (path: AppRoutePath) => Promise<void>
   listen: (
     event: string,
     handler: (payload: unknown) => void | Promise<void>
@@ -15,10 +16,6 @@ export interface AppBootstrapDeps {
   initPlugins: () => void
   handleNavKeyUp: (event: KeyboardEvent) => void
   addWindowKeyupListener: (handler: (event: KeyboardEvent) => void) => () => void
-}
-
-function resolveModePath(params: InitParams): string {
-  return params.mode ? `/${params.mode}` : '/'
 }
 
 export function createAppBootstrap(deps: AppBootstrapDeps) {
@@ -40,7 +37,7 @@ export function createAppBootstrap(deps: AppBootstrapDeps) {
     lastAppliedMode = params.mode
 
     if (shouldNavigate) {
-      await deps.navigateTo(resolveModePath(params))
+      await deps.navigateTo(resolveModeRoute(params.mode))
     }
   }
 

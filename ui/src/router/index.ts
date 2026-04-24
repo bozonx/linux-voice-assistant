@@ -8,57 +8,58 @@ import VoiceView from "../views/VoiceView.vue";
 import SelectModeView from "../views/SelectModeView.vue";
 import AiTaskView from "../views/AiTaskView.vue";
 import EditorView from "../views/EditorView.vue";
+import { APP_ROUTES } from "../lib/navigation/routes";
 
 const router = createRouter({
   history: createMemoryHistory(),
   // history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: "/",
-      name: "home",
+      path: APP_ROUTES.HOME.path,
+      name: APP_ROUTES.HOME.name,
       component: HomeView,
       props: true,
     },
     {
-      path: "/editor",
-      name: "editor",
+      path: APP_ROUTES.EDITOR.path,
+      name: APP_ROUTES.EDITOR.name,
       component: EditorView,
       props: true,
     },
     {
-      path: "/history",
-      name: "history",
+      path: APP_ROUTES.HISTORY.path,
+      name: APP_ROUTES.HISTORY.name,
       component: HistoryView,
     },
     {
-      path: "/config",
-      name: "config",
+      path: APP_ROUTES.CONFIG.path,
+      name: APP_ROUTES.CONFIG.name,
       component: ConfigView,
     },
     {
-      path: "/chat",
-      name: "chat",
+      path: APP_ROUTES.CHAT.path,
+      name: APP_ROUTES.CHAT.name,
       component: ChatView,
       props: true,
     },
     {
-      path: "/write",
-      name: "write",
+      path: APP_ROUTES.WRITE.path,
+      name: APP_ROUTES.WRITE.name,
       component: WriteModeView,
     },
     {
-      path: "/voice",
-      name: "voice",
+      path: APP_ROUTES.VOICE.path,
+      name: APP_ROUTES.VOICE.name,
       component: VoiceView,
     },
     {
-      path: "/aiTasks",
-      name: "aiTasks",
+      path: APP_ROUTES.AI_TASKS.path,
+      name: APP_ROUTES.AI_TASKS.name,
       component: AiTaskView,
     },
     {
-      path: "/select",
-      name: "select",
+      path: APP_ROUTES.SELECT.path,
+      name: APP_ROUTES.SELECT.name,
       component: SelectModeView,
     },
   ],

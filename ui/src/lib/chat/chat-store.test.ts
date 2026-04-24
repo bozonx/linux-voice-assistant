@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 
+import { APP_ROUTES } from '../navigation/routes'
 import { type ChatStoreDeps, createChatStoreModel } from './chat-store'
 
 function createDeps(overrides: Partial<ChatStoreDeps> = {}): ChatStoreDeps {
@@ -110,7 +111,7 @@ describe('chat-store', () => {
       initialMessage: 'Start here',
       id: 'chat-id-1',
     })
-    expect(deps.navigateTo).toHaveBeenCalledWith('/chat')
+    expect(deps.navigateTo).toHaveBeenCalledWith(APP_ROUTES.CHAT.path)
   })
 
   it('rolls back optimistic user message when request returns no content', async () => {
@@ -150,6 +151,6 @@ describe('chat-store', () => {
       { role: 'user', content: 'Saved prompt' },
       { role: 'assistant', content: 'Saved reply' },
     ])
-    expect(deps.navigateTo).toHaveBeenCalledWith('/chat')
+    expect(deps.navigateTo).toHaveBeenCalledWith(APP_ROUTES.CHAT.path)
   })
 })

@@ -14,7 +14,7 @@
       v-if="navPanelStore.params.rightPanelVisible"
     >
       <Button
-        :disabled="router.currentRoute.value.path === '/editor'"
+        :disabled="appNavigation.isCurrent(APP_ROUTES.EDITOR.path)"
         sm
         neutral
         @click="routeParamsStore.toEditor()"
@@ -23,7 +23,7 @@
         {{ t('nav.editor') }}
       </Button>
       <Button
-        :disabled="router.currentRoute.value.path === '/chat'"
+        :disabled="appNavigation.isCurrent(APP_ROUTES.CHAT.path)"
         sm
         neutral
         @click="openChat"
@@ -32,7 +32,7 @@
         {{ t('nav.aiChat') }}
       </Button>
       <Button
-        :disabled="router.currentRoute.value.path === '/history'"
+        :disabled="appNavigation.isCurrent(APP_ROUTES.HISTORY.path)"
         sm
         neutral
         @click="openHistory"
@@ -41,7 +41,7 @@
         {{ t('nav.history') }}
       </Button>
       <Button
-        :disabled="router.currentRoute.value.path === '/config'"
+        :disabled="appNavigation.isCurrent(APP_ROUTES.CONFIG.path)"
         sm
         neutral
         square
@@ -56,16 +56,16 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useRouter } from 'vue-router'
 
 import { useI18n } from '../composables/useI18n'
+import { appNavigation } from '../lib/navigation/navigation'
+import { APP_ROUTES } from '../lib/navigation/routes'
 import { useChatStore } from '../stores/chat'
 import { useMenuModalsStore } from '../stores/menuModals'
 import { useNavPanelStore } from '../stores/navPanel'
 import { useRouteParams } from '../stores/routeParams'
 import { Icon } from '@iconify/vue'
 
-const router = useRouter()
 const routeParamsStore = useRouteParams()
 const chatStore = useChatStore()
 const navPanelStore = useNavPanelStore()
@@ -82,7 +82,7 @@ const escBtnText = computed(() => {
 
 function openSettings() {
   menuModalsStore.closeAll()
-  router.push('/config')
+  void appNavigation.goToConfig()
 }
 
 function openChat() {
@@ -92,7 +92,7 @@ function openChat() {
 
 function openHistory() {
   menuModalsStore.closeAll()
-  router.push('/history')
+  void appNavigation.goToHistory()
 }
 </script>
 

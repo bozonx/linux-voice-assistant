@@ -2,15 +2,20 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 import { appNavigation } from '../lib/navigation/navigation'
+import { APP_ROUTES } from '../lib/navigation/routes'
 import { useEditorInputStore } from './editorInput'
 import { useMenuModalsStore } from './menuModals'
 
+interface RouteParamsState {
+  text?: string
+}
+
 export const useRouteParams = defineStore('routeParams', () => {
-  const params = ref<Record<string, any>>({})
+  const params = ref<RouteParamsState>({})
   const menuModalsStore = useMenuModalsStore()
   const editorInputStore = useEditorInputStore()
 
-  function setParams(value: Record<string, any>) {
+  function setParams(value: RouteParamsState) {
     params.value = value
   }
 
@@ -20,11 +25,11 @@ export const useRouteParams = defineStore('routeParams', () => {
       editorInputStore.setValue(text)
     }
     menuModalsStore.closeAll()
-    void appNavigation.push('/editor')
+    void appNavigation.goToEditor()
   }
 
   function isEditorPage() {
-    return appNavigation.currentPath() === '/editor'
+    return appNavigation.isCurrent(APP_ROUTES.EDITOR.path)
   }
 
   return {

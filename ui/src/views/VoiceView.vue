@@ -18,6 +18,7 @@
 import { ref } from 'vue'
 
 import { appNavigation } from '../lib/navigation/navigation'
+import { APP_ROUTES } from '../lib/navigation/routes'
 import { useMenuModalsStore } from '../stores/menuModals'
 import { useNavPanelStore } from '../stores/navPanel'
 
@@ -36,6 +37,6 @@ function handleCorrected(resultText: string) {
 }
 
 function handleCancelled() {
-  void appNavigation.push('/editor')
+  void appNavigation.push(APP_ROUTES.EDITOR.path)
 }
 </script>

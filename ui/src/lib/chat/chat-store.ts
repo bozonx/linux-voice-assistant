@@ -12,6 +12,7 @@ import {
   type ChatMessage,
   type ChatParams,
 } from '@shared'
+import { APP_ROUTES, type AppRoutePath } from '../navigation/routes'
 
 export interface ChatStoreDeps {
   sendChatMessage: (
@@ -30,7 +31,7 @@ export interface ChatStoreDeps {
   ) => Promise<string>
   saveChatHistory: (item: ChatHistoryItem) => void | Promise<void>
   loadChatHistoryItem: (id: string) => Promise<ChatHistoryItem | null>
-  navigateTo: (path: string) => void | Promise<void>
+  navigateTo: (path: AppRoutePath) => void | Promise<void>
   notifyError: (message: string) => void
   emptyMessageError: () => string
   chatNotFoundError: () => string
@@ -173,7 +174,7 @@ export function createChatStoreModel(deps: ChatStoreDeps) {
   const startChat = async (chatParams: ChatParams) => {
     clearChat()
     newChatParams.value = { ...chatParams, id: deps.createId() }
-    await deps.navigateTo('/chat')
+    await deps.navigateTo(APP_ROUTES.CHAT.path)
   }
 
   const openChat = async (id: string) => {
@@ -190,7 +191,7 @@ export function createChatStoreModel(deps: ChatStoreDeps) {
       initialMessage: chat.description,
       attachments: [],
     }
-    await deps.navigateTo('/chat')
+    await deps.navigateTo(APP_ROUTES.CHAT.path)
   }
 
   return {

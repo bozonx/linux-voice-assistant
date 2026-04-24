@@ -19,9 +19,9 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { useRouter } from 'vue-router'
 
 import { useI18n } from '../../composables/useI18n'
+import { appNavigation } from '../../lib/navigation/navigation'
 import { ActionItem, useActionMenuStore } from '../../stores/actionMenu'
 import { useEditorInputStore } from '../../stores/editorInput'
 import { useIpcStore } from '../../stores/ipc'
@@ -39,7 +39,6 @@ const menuModalsStore = useMenuModalsStore()
 const editedNewText = ref(props.newText)
 const actionMenuStore = useActionMenuStore()
 const routeParams = useRouteParams()
-const router = useRouter()
 const { t } = useI18n()
 const defaultActions = computed(() => actionMenuStore.getDefaultActions())
 
@@ -55,7 +54,7 @@ const leftLetterKeys = computed(
           routeParams.setParams({ text: editedNewText.value })
           editorInputStore.focus()
           menuModalsStore.closeAll()
-          await router.push('/')
+          await appNavigation.goToEditor()
         },
       },
     ].filter(Boolean) as ActionItem[]
