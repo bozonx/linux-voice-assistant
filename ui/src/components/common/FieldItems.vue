@@ -40,7 +40,7 @@
 
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 import { useI18n } from '../../composables/useI18n'
 
@@ -54,6 +54,14 @@ const emit = defineEmits<{
 
 const localItems = ref<Record<string, any>[]>([...props.items])
 const { t } = useI18n()
+
+watch(
+  () => props.items,
+  (newItems) => {
+    localItems.value = [...newItems]
+  },
+  { deep: true }
+)
 
 const syncItems = () => {
   emit('update:items', [...localItems.value])

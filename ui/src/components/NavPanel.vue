@@ -1,6 +1,6 @@
 <template>
   <div class="navbar bg-base-300 text-neutral-content shadow-sm panel">
-    <div class="flex-1 flex flex-row gap-2">
+    <div class="flex-1 flex flex-row gap-2 min-w-0">
       <Button
         v-if="navPanelStore.params.escBtnAction"
         sm
@@ -10,7 +10,7 @@
       >
     </div>
     <div
-      class="flex flex-row gap-1"
+      class="flex flex-row gap-1 items-center"
       v-if="navPanelStore.params.rightPanelVisible"
     >
       <Button
@@ -23,14 +23,22 @@
         {{ t('nav.editor') }}
       </Button>
       <Button
+        :disabled="router.currentRoute.value.path === '/chat'"
+        sm
+        neutral
+        @click="openChat"
+      >
+        <Icon icon="mdi:chat-processing-outline" height="16" />
+        {{ t('nav.aiChat') }}
+      </Button>
+      <Button
         :disabled="router.currentRoute.value.path === '/history'"
         sm
         neutral
-        square
         @click="openHistory"
-        :title="t('nav.history')"
       >
-        <Icon icon="mdi:history" height="24" />
+        <Icon icon="mdi:history" height="16" />
+        {{ t('nav.history') }}
       </Button>
       <Button
         :disabled="router.currentRoute.value.path === '/config'"
@@ -75,6 +83,11 @@ function openSettings() {
   router.push('/config')
 }
 
+function openChat() {
+  menuModalsStore.closeAll()
+  router.push('/chat')
+}
+
 function openHistory() {
   menuModalsStore.closeAll()
   router.push('/history')
@@ -83,6 +96,7 @@ function openHistory() {
 
 <style scoped>
 .panel {
-  padding: var(--space-sm) var(--space-xl);
+  min-height: 44px;
+  padding: 0.375rem var(--space-lg);
 }
 </style>

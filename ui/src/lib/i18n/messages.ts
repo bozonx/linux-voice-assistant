@@ -52,6 +52,7 @@ export const messages = {
     },
     nav: {
       editor: 'Редактор',
+      aiChat: 'Чат с ИИ',
       history: 'История',
       menu: 'Меню',
       settings: 'Настройки',
@@ -272,6 +273,7 @@ export const messages = {
       kebabCase: 'kebab-case',
     },
     toast: {
+      settingsSaveFailed: 'Не удалось сохранить настройки',
       textNotSelected: 'Текст не выбран',
       textTooShortForCorrection: 'Слишком короткий текст для коррекции',
       noTextToTranslate: 'Нет текста для перевода',
@@ -335,6 +337,7 @@ export const messages = {
     },
     nav: {
       editor: 'Editor',
+      aiChat: 'AI Chat',
       history: 'History',
       menu: 'Menu',
       settings: 'Settings',
@@ -554,6 +557,7 @@ export const messages = {
       kebabCase: 'kebab-case',
     },
     toast: {
+      settingsSaveFailed: 'Failed to save settings',
       textNotSelected: 'No text selected',
       textTooShortForCorrection: 'Text is too short for correction',
       noTextToTranslate: 'No text to translate',
@@ -617,6 +621,7 @@ export const messages = {
     },
     nav: {
       editor: 'Editor',
+      aiChat: 'Chat con IA',
       history: 'Historial',
       menu: 'Menú',
       settings: 'Configuración',
@@ -836,6 +841,7 @@ export const messages = {
       kebabCase: 'kebab-case',
     },
     toast: {
+      settingsSaveFailed: 'No se pudo guardar la configuración',
       textNotSelected: 'No hay texto seleccionado',
       textTooShortForCorrection: 'El texto es demasiado corto para corregir',
       noTextToTranslate: 'No hay texto para traducir',
@@ -899,6 +905,7 @@ export const messages = {
     },
     nav: {
       editor: 'Editör',
+      aiChat: 'AI Sohbet',
       history: 'Geçmiş',
       menu: 'Menü',
       settings: 'Ayarlar',
@@ -1118,6 +1125,7 @@ export const messages = {
       kebabCase: 'kebab-case',
     },
     toast: {
+      settingsSaveFailed: 'Ayarlar kaydedilemedi',
       textNotSelected: 'Metin seçilmedi',
       textTooShortForCorrection: 'Metin düzeltme için çok kısa',
       noTextToTranslate: 'Çevrilecek metin yok',

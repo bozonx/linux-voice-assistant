@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{ value: string | number; placeholder?: string }>()
+defineProps<{ value?: string | number; placeholder?: string }>()
 
 const emit = defineEmits<{ (e: 'update:value', value: string): void }>()
 

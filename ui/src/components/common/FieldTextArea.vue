@@ -15,7 +15,7 @@
 import { computed, ref } from 'vue'
 
 const props = defineProps<{
-  value: string
+  value?: string
   placeholder?: string
   selected?: string
 }>()
@@ -28,7 +28,7 @@ const emit = defineEmits<{
 
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
 
-const value = computed(() => props.value)
+const value = computed(() => props.value || '')
 
 const selected = ref<string>('')
 

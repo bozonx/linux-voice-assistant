@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-4 w-full h-full">
+  <div class="settings-panel flex flex-col gap-3 w-full h-full">
     <Tabs :tabs="tabs" v-model:value="currentTab" />
 
     <div class="flex-1 overflow-y-auto">
@@ -210,7 +210,7 @@
               @update:value="setVoskWsUrl"
             />
           </FieldRow>
-          <FieldRow>
+          <FieldRow :label="t('settings.formatWithLlm')">
             <FieldCheckbox
               :value="voskConfig.formatWithLlm !== false"
               :label="t('settings.formatWithLlm')"
@@ -555,18 +555,13 @@
         </template>
       </div>
     </div>
-
-    <div class="flex flex-row justify-end">
-      <span class="text-sm text-muted">
-        {{ saveStatusLabel }}
-      </span>
-    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 
+import useToast from '../composables/useToast'
 import { useI18n } from '../composables/useI18n'
 import { syncI18nLocale } from '../lib/i18n'
 import {
@@ -611,10 +606,10 @@ import {
 const ipcStore = useIpcStore()
 const themeStore = useThemeStore()
 const { t, locale } = useI18n()
+const { toast } = useToast()
 
 const SAVE_DEBOUNCE_MS = 500
 
-type SaveState = 'idle' | 'saving' | 'saved'
 type DownloadState = {
   loading: boolean
   progress: number
@@ -636,7 +631,6 @@ const pluginConfigs = pluginIndexes
 const currentTab = ref(0)
 const currentSttProvider = ref<'vosk' | 'whisper-local'>('vosk')
 const userConfig = ref(createPreparedUserConfig(ipcStore.params.userConfig))
-const saveState = ref<SaveState>('idle')
 const lastPersistedConfig = ref(serializeUserConfig(userConfig.value))
 const isWhisperModelDownloaded = ref(false)
 const whisperModelMetadata = ref<WhisperModelMetadata | null>(null)
@@ -690,7 +684,6 @@ watch(
     skipNextAutosave = true
     userConfig.value = preparedConfig
     lastPersistedConfig.value = serializedConfig
-    saveState.value = 'idle'
   },
   { immediate: true }
 )
@@ -733,18 +726,6 @@ watch(
     userConfig.value.aiModelUsage.stt = voskModel.id
   }
 )
-
-const saveStatusLabel = computed(() => {
-  if (saveState.value === 'saving') {
-    return t('settings.saving')
-  }
-
-  if (saveState.value === 'saved') {
-    return t('settings.saved')
-  }
-
-  return ''
-})
 
 const storageInfoItems = computed(() => {
   if (!storageInfo.value) {
@@ -813,6 +794,8 @@ function createPreparedUserConfig(config: unknown) {
   normalizeWindowInsertionConfig(nextConfig)
   normalizeSttConfig(nextConfig)
   normalizeLlmConfig(nextConfig)
+  normalizeChatRoles(nextConfig)
+  normalizeAiTasks(nextConfig)
 
   return nextConfig
 }
@@ -940,6 +923,28 @@ function normalizeLlmConfig(config: Record<string, any>) {
       ? currentId
       : fallbackModelId
   }
+}
+
+function normalizeChatRoles(config: Record<string, any>) {
+  if (!Array.isArray(config.chatRoles)) {
+    config.chatRoles = []
+  }
+
+  config.chatRoles = config.chatRoles.map((role: Record<string, any>) => ({
+    name: role.name || '',
+    rule: role.rule || '',
+  }))
+}
+
+function normalizeAiTasks(config: Record<string, any>) {
+  if (!Array.isArray(config.aiTasks)) {
+    config.aiTasks = []
+  }
+
+  config.aiTasks = config.aiTasks.map((task: Record<string, any>) => ({
+    name: task.name || '',
+    rule: task.rule || '',
+  }))
 }
 
 function createWhisperLocalModel(existingModel?: Record<string, any>) {
@@ -1133,14 +1138,7 @@ async function persistUserConfig() {
   const previousPersistedConfig = lastPersistedConfig.value
 
   if (serializedConfig === lastPersistedConfig.value) {
-    if (isComponentActive) {
-      saveState.value = 'saved'
-    }
     return
-  }
-
-  if (isComponentActive) {
-    saveState.value = 'saving'
   }
 
   // Mark this snapshot as persisted before the store echoes it back into params.
@@ -1151,13 +1149,9 @@ async function persistUserConfig() {
     lastPersistedConfig.value = previousPersistedConfig
 
     if (isComponentActive) {
-      saveState.value = 'idle'
+      toast(result.error || t('toast.settingsSaveFailed'), 'error')
     }
     return
-  }
-
-  if (isComponentActive) {
-    saveState.value = 'saved'
   }
 }
 
@@ -1166,7 +1160,6 @@ function scheduleAutosave() {
     clearTimeout(saveTimer)
   }
 
-  saveState.value = 'saving'
   saveTimer = setTimeout(() => {
     saveTimer = null
     void persistUserConfig()
@@ -1232,11 +1225,19 @@ const voskWsUrl = computed(() => {
 })
 
 const whisperLocalConfig = computed(() => {
-  return ensureWhisperLocalModel(userConfig.value)
+  return (
+    (userConfig.value.sttModels || []).find(
+      (model: Record<string, any>) => model.provider === 'whisper-local'
+    ) || createWhisperLocalModel()
+  )
 })
 
 const voskConfig = computed(() => {
-  return ensureVoskModel(userConfig.value)
+  return (
+    (userConfig.value.sttModels || []).find(
+      (model: Record<string, any>) => model.provider === 'vosk'
+    ) || createVoskModel()
+  )
 })
 
 const whisperLocalModel = computed(() => {
@@ -1297,9 +1298,10 @@ const updateWindowInsertionMethod = (value: string | number) => {
 watch(
   () => userConfig.value.userLanguage,
   (userLanguage) => {
-    userConfig.value.userLanguage = normalizeLocale(
-      userLanguage || AUTO_LANGUAGE_VALUE
-    )
+    const normalized = normalizeLocale(userLanguage || AUTO_LANGUAGE_VALUE)
+    if (userConfig.value.userLanguage !== normalized) {
+      userConfig.value.userLanguage = normalized
+    }
   }
 )
 
@@ -1799,3 +1801,34 @@ onUnmounted(() => {
   flushPendingAutosave()
 })
 </script>
+
+<style scoped>
+.settings-panel :deep(.field-row) {
+  padding-top: 0.4375rem;
+  padding-bottom: 0.4375rem;
+}
+
+.settings-panel :deep(.field-row-label) {
+  line-height: 1.875rem;
+}
+
+.settings-panel :deep(.input),
+.settings-panel :deep(.select) {
+  min-height: 2rem;
+  height: 2rem;
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+  font-size: 0.8125rem;
+}
+
+.settings-panel :deep(.textarea) {
+  min-height: 5.5rem;
+  padding-top: 0.375rem;
+  padding-bottom: 0.375rem;
+  font-size: 0.8125rem;
+}
+
+.settings-panel :deep(.tabs) {
+  gap: 0.125rem;
+}
+</style>

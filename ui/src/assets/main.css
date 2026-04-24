@@ -199,6 +199,7 @@ a:hover {
   font-size: 0.8125rem;
   border-color: var(--app-border);
   background-color: var(--app-surface);
+  color: oklch(var(--bc));
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
@@ -214,6 +215,24 @@ a:hover {
 .btn {
   font-weight: 500;
   letter-spacing: 0.01em;
+}
+
+.btn-neutral {
+  border-color: var(--app-border);
+  background-color: var(--app-surface);
+  color: oklch(var(--bc));
+}
+
+.btn-neutral:hover,
+.btn-neutral.btn-active {
+  border-color: color-mix(in srgb, var(--app-border) 68%, oklch(var(--p)) 32%);
+  background-color: var(--app-surface-raised);
+  color: oklch(var(--bc));
+}
+
+.btn-neutral:disabled,
+.btn-neutral.btn-disabled {
+  color: var(--app-text-faint);
 }
 
 /* ────────────────────────────────────────────────
