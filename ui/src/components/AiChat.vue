@@ -29,7 +29,7 @@
             {{ truncate(attachment, 24) }}
           </Button>
         </div>
-        <div v-if="roles.length > 0" class="flex flex-col gap-2">
+        <div v-if="roles && roles.length > 0" class="flex flex-col gap-2">
           <FieldSelect
             :options="roles"
             v-model:value="selectedRole"
@@ -85,7 +85,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 import { useI18n } from '../composables/useI18n'
 import { useChatStore } from '../stores/chat'
@@ -99,16 +99,26 @@ const chatInputStore = useChatInputStore()
 const ipcStore = useIpcStore()
 const chatStore = useChatStore()
 const menuModalsStore = useMenuModalsStore()
-const userConfig = computed(() => ipcStore.params!.userConfig)
-const attachments = computed(() => chatStore.newChatParams.attachments || [])
+const userConfig = computed(() => ipcStore.params?.userConfig)
+const attachments = computed(() => chatStore.newChatParams?.attachments || [])
 const { t } = useI18n()
 const roles = computed(() =>
-  userConfig.value.chatRoles.map((role: any) => ({
+  (userConfig.value?.chatRoles || []).map((role: any) => ({
     id: role.name,
     name: truncate(role.name, 16),
   }))
 )
-const selectedRole = ref<string | undefined>(roles.value[0]?.id)
+const selectedRole = ref<string | undefined>()
+
+watch(
+  roles,
+  (newRoles) => {
+    if (!selectedRole.value && newRoles.length > 0) {
+      selectedRole.value = newRoles[0].id
+    }
+  },
+  { immediate: true }
+)
 
 const sendMessage = async () => {
   const msg = chatInputStore.value.trim()
@@ -118,7 +128,7 @@ const sendMessage = async () => {
   await chatStore.sendMessage(
     msg,
     attachments.value,
-    userConfig.value.chatRoles.find(
+    (userConfig.value?.chatRoles || []).find(
       (role: any) => role.name === selectedRole.value
     )?.rule || ''
   )

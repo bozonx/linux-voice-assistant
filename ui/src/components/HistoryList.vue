@@ -60,7 +60,7 @@
     if (!query) return props.items;
     
     return props.items.filter((item) =>
-      item.value.toLowerCase().includes(query)
+      (item.value || '').toLowerCase().includes(query)
     );
   });
 </script>

@@ -29,7 +29,8 @@ export function makeUniqId(_bytes: number = 8): string {
   return hashSum(getRuntimeId() + counter.toString());
 }
 
-export function truncate(src: string, maxLength: number, suffix: string = '...'): string {
+export function truncate(src: string | undefined | null, maxLength: number, suffix: string = '...'): string {
+  if (!src) return '';
   if (src.length <= maxLength) return src;
   return src.slice(0, maxLength) + suffix;
 }
