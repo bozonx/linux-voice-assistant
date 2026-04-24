@@ -1,6 +1,5 @@
 import {
   type TextGenerationPipeline,
-  TextStreamer,
   env,
   pipeline,
 } from '@huggingface/transformers'
@@ -35,25 +34,9 @@ env.useBrowserCache = false
 
 let generator: TextGenerationPipeline | null = null
 let currentModelName: string | null = null
-let isWebGpuAvailable: boolean | null = null
 
 function toModelDirName(modelName: string) {
   return modelName.replace(/\//g, '_')
-}
-
-async function hasWebGpu() {
-  if (isWebGpuAvailable !== null) {
-    return isWebGpuAvailable
-  }
-
-  try {
-    const gpu = (self.navigator as Navigator & { gpu?: GPU }).gpu
-    isWebGpuAvailable = Boolean(gpu && (await gpu.requestAdapter()))
-  } catch {
-    isWebGpuAvailable = false
-  }
-
-  return isWebGpuAvailable
 }
 
 async function getGenerator(modelName: string, requestId: number) {
@@ -79,32 +62,22 @@ async function getGenerator(modelName: string, requestId: number) {
     } satisfies WorkerResponse)
   }
 
-  if (await hasWebGpu()) {
-    try {
-      env.backends.onnx.gpu = true
-      generator = (await pipeline(
-        'text-generation',
-        toModelDirName(modelName),
-        {
-          device: 'webgpu',
-          dtype: 'q4',
-          progress_callback,
-        } as any
-      )) as TextGenerationPipeline
-
-      return generator
-    } catch {
-      isWebGpuAvailable = false
-      generator = null
-    }
-  }
-
   env.backends.onnx.gpu = false
   generator = (await pipeline('text-generation', toModelDirName(modelName), {
     device: 'wasm',
     dtype: 'q4',
     progress_callback,
   } as any)) as TextGenerationPipeline
+
+  // transformers.js alpha expects a scalar kv_cache_dtype, but some model
+  // configs ship a dtype map object (e.g. { q4f16: "float16", fp16: "float16" }).
+  // That object reaches Tensor(...) and crashes generation in addPastKeyValues().
+  const model = (generator as any)?.model
+  const kvCacheDtype = model?.custom_config?.kv_cache_dtype
+  if (kvCacheDtype && typeof kvCacheDtype === 'object') {
+    model.custom_config.kv_cache_dtype = 'float32'
+    console.debug('[llm.worker] normalized kv_cache_dtype to float32')
+  }
 
   return generator
 }
@@ -116,6 +89,42 @@ function normalizeMessages(messages: ChatMessage[]) {
       content: message.content.trim(),
     }))
     .filter((message) => message.content)
+}
+
+function buildPrompt(
+  generatorInstance: TextGenerationPipeline,
+  messages: ChatMessage[]
+) {
+  const normalized = normalizeMessages(messages)
+  const tokenizer = generatorInstance.tokenizer as {
+    apply_chat_template?: (
+      conversation: Array<{ role: string; content: string }>,
+      options?: { tokenize?: boolean; add_generation_prompt?: boolean }
+    ) => string
+  } | null
+
+  if (tokenizer?.apply_chat_template) {
+    const prompt = tokenizer.apply_chat_template(normalized, {
+      tokenize: false,
+      add_generation_prompt: true,
+    })
+    console.debug('[llm.worker] prompt-ready', {
+      template: 'yes',
+      length: prompt.length,
+    })
+
+    return prompt
+  }
+
+  const prompt = normalized
+    .map((message) => `${message.role.toUpperCase()}: ${message.content}`)
+    .join('\n\n')
+  console.debug('[llm.worker] prompt-ready', {
+    template: 'no',
+    length: prompt.length,
+  })
+
+  return prompt
 }
 
 function extractContent(result: unknown) {
@@ -159,39 +168,44 @@ self.onmessage = (event: MessageEvent<WorkerMessage>) => {
 
   queue = queue
     .then(async () => {
+      console.debug('[llm.worker] loading-generator', data.modelName)
+
       const generatorInstance = await getGenerator(data.modelName, id)
+      const prompt = buildPrompt(generatorInstance, data.messages)
+      console.debug('[llm.worker] generating', {
+        modelName: data.modelName,
+        promptLength: prompt.length,
+        maxTokens: data.maxTokens || 256,
+        temperature: data.temperature ?? 0.2,
+      })
 
-      let streamer: TextStreamer | undefined = undefined
-      if (data.stream && generatorInstance.tokenizer) {
-        streamer = new TextStreamer(generatorInstance.tokenizer, {
-          skip_prompt: true,
-          callback_function: (text: string) => {
-            self.postMessage({
-              type: 'chunk',
-              id,
-              data: { chunk: text },
-            } satisfies WorkerResponse)
-          },
-        })
-      }
-
-      const result = await generatorInstance(normalizeMessages(data.messages), {
+      const result = await generatorInstance(prompt, {
         max_new_tokens: data.maxTokens || 256,
         temperature: data.temperature ?? 0.2,
         do_sample: (data.temperature ?? 0.2) > 0,
         return_full_text: false,
-        streamer,
       } as any)
+
+      const content = extractContent(result)
+
+      if (data.stream && content) {
+        self.postMessage({
+          type: 'chunk',
+          id,
+          data: { chunk: content },
+        } satisfies WorkerResponse)
+      }
 
       self.postMessage({
         type: 'result',
         id,
         data: {
-          content: extractContent(result),
+          content,
         },
       } satisfies WorkerResponse)
     })
     .catch((error: unknown) => {
+      console.error('[llm.worker] generate-error', error)
       self.postMessage({
         type: 'error',
         id,
