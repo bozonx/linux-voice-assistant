@@ -82,27 +82,60 @@ pub fn put_into_clipboard_and_close(
 }
 
 fn copy_to_clipboard(text: &str) -> Result<(), AppError> {
-    let (binary, args): (&str, &[&str]) = if cfg!(target_os = "macos") {
-        ("pbcopy", &[])
-    } else if cfg!(target_os = "windows") {
-        ("powershell", &["-NoProfile", "-Command", "Set-Clipboard"])
-    } else {
-        ("xsel", &["--clipboard", "--input", "--trim"])
-    };
+    if cfg!(target_os = "macos") {
+        return write_to_clipboard_command("pbcopy", &[], text);
+    }
 
+    if cfg!(target_os = "windows") {
+        return write_to_clipboard_command(
+            "powershell",
+            &["-NoProfile", "-Command", "Set-Clipboard"],
+            text,
+        );
+    }
+
+    copy_to_clipboard_linux(text)
+}
+
+fn copy_to_clipboard_linux(text: &str) -> Result<(), AppError> {
+    let clipboard_commands: [(&str, &[&str]); 3] = [
+        ("wl-copy", &["--type", "text/plain"]),
+        ("xclip", &["-selection", "clipboard"]),
+        ("xsel", &["--clipboard", "--input", "--trim"]),
+    ];
+
+    let mut last_error: Option<AppError> = None;
+
+    for (binary, args) in clipboard_commands {
+        match write_to_clipboard_command(binary, args, text) {
+            Ok(()) => return Ok(()),
+            Err(AppError::Io(error)) if error.kind() == std::io::ErrorKind::NotFound => continue,
+            Err(error) => last_error = Some(error),
+        }
+    }
+
+    if let Some(error) = last_error {
+        return Err(error);
+    }
+
+    Err(AppError::Message(String::from(
+        "No clipboard utility found. Install wl-clipboard, xclip, or xsel.",
+    )))
+}
+
+fn write_to_clipboard_command(binary: &str, args: &[&str], text: &str) -> Result<(), AppError> {
     let mut child = Command::new(binary).args(args).stdin(Stdio::piped()).spawn()?;
 
-    let mut stdin = child
-        .stdin
-        .take()
-        .ok_or_else(|| AppError::Message(String::from("Failed to open xsel stdin")))?;
+    let mut stdin = child.stdin.take().ok_or_else(|| {
+        AppError::Message(format!("Failed to open stdin for clipboard command `{binary}`"))
+    })?;
     stdin.write_all(text.as_bytes())?;
     drop(stdin);
 
     let status = child.wait()?;
     if !status.success() {
-        return Err(AppError::Message(String::from(
-            "Failed to write text to the clipboard",
+        return Err(AppError::Message(format!(
+            "Clipboard command `{binary}` failed with status {status}",
         )));
     }
 

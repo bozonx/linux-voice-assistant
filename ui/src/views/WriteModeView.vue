@@ -1,15 +1,17 @@
 <template>
-  <div class="write-mode-container">
-    <div class="flex flex-row gap-2">
-      <WriteModeInput />
-      <div class="flex gap-2 flex-col">
-        <Button sm square @click="clear" :title="t('editor.clear')">
-          <Icon icon="mdi:clear" height="24" />
-        </Button>
+  <ContentPadding>
+    <div class="write-mode-container flex-1 flex flex-col min-h-0">
+      <div class="flex flex-row gap-2 flex-1 min-h-0">
+        <WriteModeInput class="flex-1" />
+        <div class="flex gap-2 flex-col">
+          <Button sm square @click="clear" :title="t('editor.clear')">
+            <Icon icon="mdi:clear" height="24" />
+          </Button>
+        </div>
       </div>
+      <p class="text-xs mt-1 text-muted">{{ t('write.escNext') }}</p>
     </div>
-    <p class="text-xs mt-1 text-muted">{{ t('write.escNext') }}</p>
-  </div>
+  </ContentPadding>
 </template>
 
 <script setup lang="ts">
@@ -40,6 +42,7 @@ const { t } = useI18n()
 navPanelStore.resetNavParams({
   escBtnLabelKey: 'write.next',
   escBtnAction: doCorrection,
+  panelVisible: false,
 })
 
 watch(
