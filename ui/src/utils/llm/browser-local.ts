@@ -1,6 +1,6 @@
+import { desktopClient } from '../../lib/desktop/client'
 import LlmWorker from '../../workers/llm.worker.ts?worker'
 import type { ChatMessage, LlmModel } from '@shared'
-import { desktopClient } from '../../lib/desktop/client'
 import { DESKTOP_COMMANDS } from '@shared'
 import { convertFileSrc } from '@tauri-apps/api/core'
 
@@ -85,36 +85,64 @@ async function ensureWorkerInitialized() {
 export async function runBrowserLocalChatCompletion(
   model: LlmModel,
   messages: ChatMessage[],
-  onProgress?: (progress: BrowserLocalLlmProgress) => void
+  options?: {
+    onChunk?: (chunk: string) => void
+    signal?: AbortSignal
+    onProgress?: (progress: BrowserLocalLlmProgress) => void
+  }
 ) {
   await ensureWorkerInitialized()
   const activeWorker = getWorker()
   const id = Math.random()
 
   return await new Promise<{ content: string }>((resolve, reject) => {
-    const handleMessage = (event: MessageEvent<WorkerResponse>) => {
+    let currentContent = ''
+
+    const handleMessage = (
+      event: MessageEvent<
+        WorkerResponse | { type: 'chunk'; id: number; data: { chunk: string } }
+      >
+    ) => {
       if (event.data.id !== id) {
         return
       }
 
       if (event.data.type === 'progress') {
-        onProgress?.(event.data.data)
+        options?.onProgress?.(event.data.data)
         return
       }
 
-      activeWorker.removeEventListener('message', handleMessage)
+      if (event.data.type === 'chunk') {
+        currentContent += event.data.data.chunk
+        options?.onChunk?.(event.data.data.chunk)
+        return
+      }
 
       if (event.data.type === 'result') {
+        activeWorker.removeEventListener('message', handleMessage)
         resolve(event.data.data)
         return
       }
 
       if (event.data.type === 'error') {
+        activeWorker.removeEventListener('message', handleMessage)
         reject(new Error(event.data.error))
         return
       }
+    }
 
-      reject(new Error('Unexpected worker response'))
+    const abortHandler = () => {
+      activeWorker.removeEventListener('message', handleMessage)
+      options?.signal?.removeEventListener('abort', abortHandler)
+      reject(new Error('AbortError'))
+    }
+
+    if (options?.signal) {
+      options.signal.addEventListener('abort', abortHandler)
+      if (options.signal.aborted) {
+        abortHandler()
+        return
+      }
     }
 
     activeWorker.addEventListener('message', handleMessage)
@@ -126,6 +154,7 @@ export async function runBrowserLocalChatCompletion(
         messages,
         temperature: model.temperature ?? 0.2,
         maxTokens: model.maxTokens ?? 256,
+        stream: !!options?.onChunk,
       },
     })
   })

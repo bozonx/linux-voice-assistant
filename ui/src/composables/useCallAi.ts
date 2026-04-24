@@ -5,13 +5,13 @@ import {
 } from '../lib/locale/language'
 import { useIpcStore } from '../stores/ipc'
 import { AI_TASKS } from '../types'
+import { runBrowserLocalChatCompletion } from '../utils/llm/browser-local'
 import {
   cancelBrowserWhisperRecognition,
   startBrowserWhisperRecognition,
   stopBrowserWhisperRecognition,
 } from '../utils/stt/browser-whisper'
 import { DEFAULT_WHISPER_LOCAL_MODEL } from '../utils/stt/model-storage'
-import { runBrowserLocalChatCompletion } from '../utils/llm/browser-local'
 import { GlobalEvents, useGlobalEvents } from './useGlobalEvents'
 import useToast from './useToast'
 import {
@@ -76,7 +76,19 @@ export const useCallAi = () => {
     return resolveLanguagePreference(userLanguage).split('_')[0]
   }
 
-  async function aiRequest(taskName: string, messages: string | ChatMessage[]) {
+  async function aiRequest(
+    taskName: string,
+    messages: string | ChatMessage[],
+    options?: {
+      onChunk?: (chunk: string) => void
+      signal?: AbortSignal
+      onProgress?: (progress: {
+        status: string
+        file?: string
+        progress?: number
+      }) => void
+    }
+  ) {
     const userConfig = currentUserConfig()
     const modelId = (userConfig.aiModelUsage as any)[taskName]
     const model = userConfig.llmModels.find(
@@ -87,7 +99,7 @@ export const useCallAi = () => {
       throw new Error(translate('toast.modelNotFound'))
     }
 
-    const result = await runLlmRequest(model, messages)
+    const result = await runLlmRequest(model, messages, options)
 
     if (result.error) {
       toast(result.error, 'error')
@@ -101,7 +113,16 @@ export const useCallAi = () => {
 
   async function runLlmRequest(
     model: LlmModel,
-    messages: string | ChatMessage[]
+    messages: string | ChatMessage[],
+    options?: {
+      onChunk?: (chunk: string) => void
+      signal?: AbortSignal
+      onProgress?: (progress: {
+        status: string
+        file?: string
+        progress?: number
+      }) => void
+    }
   ): Promise<Record<string, any>> {
     const provider = model.provider || model.model
     const normalizedMessages = Array.isArray(messages)
@@ -110,8 +131,15 @@ export const useCallAi = () => {
 
     if (provider === 'browser-local') {
       try {
-        return await runBrowserLocalChatCompletion(model, normalizedMessages)
+        return await runBrowserLocalChatCompletion(
+          model,
+          normalizedMessages,
+          options
+        )
       } catch (error) {
+        if (error instanceof Error && error.name === 'AbortError') {
+          return { content: '' }
+        }
         return {
           error: error instanceof Error ? error.message : String(error),
           status: 500,
@@ -120,7 +148,7 @@ export const useCallAi = () => {
       }
     }
 
-    return await chatCompletion(model, normalizedMessages)
+    return await chatCompletion(model, normalizedMessages, options)
   }
 
   const startVoiceRecognition = async () => {
@@ -136,14 +164,18 @@ export const useCallAi = () => {
           const result = await ipcStore.callFunction('startLocalVoiceRecording')
 
           if (!result.success) {
-            throw new Error(result.error || 'Failed to start local voice recording')
+            throw new Error(
+              result.error || 'Failed to start local voice recording'
+            )
           }
         },
         stopRecording: async () => {
           const result = await ipcStore.callFunction('stopLocalVoiceRecording')
 
           if (!result.success || !result.result) {
-            throw new Error(result.error || 'Failed to stop local voice recording')
+            throw new Error(
+              result.error || 'Failed to stop local voice recording'
+            )
           }
 
           return result.result as LocalVoiceRecording
@@ -202,7 +234,16 @@ export const useCallAi = () => {
   const sendChatMessage = async (
     message: string,
     prevMessages: ChatMessage[],
-    devInstructions?: string
+    devInstructions?: string,
+    options?: {
+      onChunk?: (chunk: string) => void
+      signal?: AbortSignal
+      onProgress?: (progress: {
+        status: string
+        file?: string
+        progress?: number
+      }) => void
+    }
   ) => {
     const result = await aiRequest(
       AI_TASKS.CHAT,
@@ -210,7 +251,8 @@ export const useCallAi = () => {
         [...prevMessages, { role: 'user', content: message }],
         undefined,
         devInstructions
-      )
+      ),
+      options
     )
 
     return result

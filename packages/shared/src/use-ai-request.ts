@@ -26,10 +26,7 @@ export const useAiRequest = () => {
     const messages: ChatMessage[] = []
 
     if (devInstructions) {
-      messages.push({
-        role: 'developer',
-        content: devInstructions.trim(),
-      })
+      messages.push({ role: 'developer', content: devInstructions.trim() })
     }
 
     if (rules) {
@@ -47,10 +44,7 @@ export const useAiRequest = () => {
         }))
       )
     } else {
-      messages.push({
-        role: 'user',
-        content: rawMessages.trim(),
-      })
+      messages.push({ role: 'user', content: rawMessages.trim() })
     }
 
     return messages
@@ -58,51 +52,95 @@ export const useAiRequest = () => {
 
   async function chatCompletion(
     model: LlmModel,
-    messages: string | ChatMessage[]
+    messages: string | ChatMessage[],
+    options?: { onChunk?: (chunk: string) => void; signal?: AbortSignal }
   ): Promise<Record<string, any>> {
     const provider = model.provider || model.model
 
     if (provider === 'ollama') {
-      return await ollamaChatCompletion(model, messages)
+      return await ollamaChatCompletion(model, messages, options)
     }
 
-    return await openAiCompatibleChatCompletion(model, messages)
+    return await openAiCompatibleChatCompletion(model, messages, options)
   }
 
   async function openAiCompatibleChatCompletion(
     model: LlmModel,
-    messages: string | ChatMessage[]
+    messages: string | ChatMessage[],
+    options?: { onChunk?: (chunk: string) => void; signal?: AbortSignal }
   ): Promise<Record<string, any>> {
-    const result = await fetch((model.baseUrl || '').replace(/\/$/, '') + '/chat/completions', {
-      method: 'POST',
-      headers: {
-        Authorization: 'Bearer ' + (model.apiKey || ''),
-        'X-Title': 'Librnet assistant',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: model.model,
-        messages,
-      }),
-    })
+    try {
+      const result = await fetch(
+        (model.baseUrl || '').replace(/\/$/, '') + '/chat/completions',
+        {
+          method: 'POST',
+          headers: {
+            Authorization: 'Bearer ' + (model.apiKey || ''),
+            'X-Title': 'Librnet assistant',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: model.model,
+            messages,
+            stream: !!options?.onChunk,
+          }),
+          signal: options?.signal,
+        }
+      )
 
-    if (result.ok) {
+      if (!result.ok) {
+        const body = await result.text()
+        return {
+          error: body,
+          status: result.status,
+          statusText: result.statusText,
+        }
+      }
+
+      if (options?.onChunk && result.body) {
+        const reader = result.body.getReader()
+        const decoder = new TextDecoder()
+        let content = ''
+
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done) break
+
+          const chunk = decoder.decode(value, { stream: true })
+          const lines = chunk.split('\n')
+
+          for (const line of lines) {
+            if (line.startsWith('data: ') && line !== 'data: [DONE]') {
+              try {
+                const data = JSON.parse(line.slice(6))
+                const text = data.choices[0]?.delta?.content || ''
+                if (text) {
+                  content += text
+                  options.onChunk(text)
+                }
+              } catch (e) {
+                // Ignore parse errors for incomplete chunks
+              }
+            }
+          }
+        }
+        return { content }
+      }
+
       const data = await result.json()
       return data.choices[0].message
-    }
-
-    const body = await result.text()
-
-    return {
-      error: body,
-      status: result.status,
-      statusText: result.statusText,
+    } catch (e) {
+      if (e instanceof Error && e.name === 'AbortError') {
+        return { content: '' } // Aborted
+      }
+      throw e
     }
   }
 
   async function ollamaChatCompletion(
     model: LlmModel,
-    messages: string | ChatMessage[]
+    messages: string | ChatMessage[],
+    options?: { onChunk?: (chunk: string) => void; signal?: AbortSignal }
   ): Promise<Record<string, any>> {
     const normalizedMessages = Array.isArray(messages)
       ? messages.map((message) => ({
@@ -110,45 +148,75 @@ export const useAiRequest = () => {
           content: message.content,
         }))
       : [{ role: 'user', content: messages }]
-    const result = await fetch(
-      (model.baseUrl || 'http://localhost:11434').replace(/\/$/, '') + '/api/chat',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: model.model,
-          messages: normalizedMessages,
-          stream: false,
-          options: {
-            temperature: model.temperature ?? 0.2,
-            num_predict: model.maxTokens ?? 512,
-          },
-        }),
-      }
-    )
 
-    if (result.ok) {
+    try {
+      const result = await fetch(
+        (model.baseUrl || 'http://localhost:11434').replace(/\/$/, '') +
+          '/api/chat',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: model.model,
+            messages: normalizedMessages,
+            stream: !!options?.onChunk,
+            options: {
+              temperature: model.temperature ?? 0.2,
+              num_predict: model.maxTokens ?? 512,
+            },
+          }),
+          signal: options?.signal,
+        }
+      )
+
+      if (!result.ok) {
+        const body = await result.text()
+        return {
+          error: body,
+          status: result.status,
+          statusText: result.statusText,
+        }
+      }
+
+      if (options?.onChunk && result.body) {
+        const reader = result.body.getReader()
+        const decoder = new TextDecoder()
+        let content = ''
+
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done) break
+
+          const chunk = decoder.decode(value, { stream: true })
+          const lines = chunk.split('\n')
+
+          for (const line of lines) {
+            if (line.trim()) {
+              try {
+                const data = JSON.parse(line)
+                const text = data.message?.content || ''
+                if (text) {
+                  content += text
+                  options.onChunk(text)
+                }
+              } catch (e) {
+                // Ignore parse errors
+              }
+            }
+          }
+        }
+        return { content }
+      }
+
       const data = await result.json()
-
-      return {
-        content: data.message?.content || '',
+      return { content: data.message?.content || '' }
+    } catch (e) {
+      if (e instanceof Error && e.name === 'AbortError') {
+        return { content: '' } // Aborted
       }
-    }
-
-    const body = await result.text()
-
-    return {
-      error: body,
-      status: result.status,
-      statusText: result.statusText,
+      throw e
     }
   }
 
-  return {
-    chatCompletion,
-    prepareAiMessages,
-    prepareDevInstructions,
-  }
+  return { chatCompletion, prepareAiMessages, prepareDevInstructions }
 }

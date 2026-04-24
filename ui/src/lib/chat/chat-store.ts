@@ -17,7 +17,16 @@ export interface ChatStoreDeps {
   sendChatMessage: (
     message: string,
     prevMessages: ChatMessage[],
-    devInstructions?: string
+    devInstructions?: string,
+    options?: {
+      onChunk?: (chunk: string) => void
+      signal?: AbortSignal
+      onProgress?: (progress: {
+        status: string
+        file?: string
+        progress?: number
+      }) => void
+    }
   ) => Promise<string>
   saveChatHistory: (item: ChatHistoryItem) => void | Promise<void>
   navigateTo: (path: string) => void | Promise<void>
@@ -30,6 +39,16 @@ export interface ChatStoreDeps {
 export function createChatStoreModel(deps: ChatStoreDeps) {
   const messages = ref<ChatMessage[]>([])
   const newChatParams = ref<ChatParams>({})
+  const isGenerating = ref(false)
+  const loadingProgress = ref('')
+  const abortController = ref<AbortController | null>(null)
+
+  const stopGeneration = () => {
+    if (abortController.value) {
+      abortController.value.abort()
+      abortController.value = null
+    }
+  }
 
   const sendMessage = async (
     message: string,
@@ -41,8 +60,13 @@ export function createChatStoreModel(deps: ChatStoreDeps) {
       return
     }
 
+    if (isGenerating.value) {
+      return
+    }
+
     let devInstructions: string | undefined
-    const prevMessages = [...messages.value]
+    // Keep only the last 20 messages for context to avoid overflowing context limits
+    const prevMessages = messages.value.slice(-20)
 
     if (prevMessages.length > 0) {
       devInstructions = APP_CONFIG.aiInstructions[AI_TASKS.CHAT]
@@ -56,14 +80,67 @@ export function createChatStoreModel(deps: ChatStoreDeps) {
 
     messages.value.push(userMessage)
 
-    const result = await deps.sendChatMessage(
-      preparedMessage,
-      prevMessages,
-      devInstructions
-    )
-
-    const assistantMessage: ChatMessage = createAssistantMessage(result)
+    const assistantMessage: ChatMessage = createAssistantMessage('')
     messages.value.push(assistantMessage)
+
+    isGenerating.value = true
+    loadingProgress.value = ''
+    abortController.value = new AbortController()
+
+    let result = ''
+
+    try {
+      result = await deps.sendChatMessage(
+        preparedMessage,
+        prevMessages,
+        devInstructions,
+        {
+          signal: abortController.value.signal,
+          onChunk: (chunk) => {
+            assistantMessage.content += chunk
+          },
+          onProgress: (progress) => {
+            if (progress.status === 'ready' || progress.status === 'done') {
+              loadingProgress.value = ''
+            } else {
+              const pct = progress.progress
+                ? ` ${Math.round(progress.progress)}%`
+                : ''
+              const file = progress.file ? ` (${progress.file})` : ''
+              loadingProgress.value = `${progress.status}${file}${pct}`
+            }
+          },
+        }
+      )
+
+      if (!assistantMessage.content && result) {
+        // Fallback if streamer wasn't used but we got a full text result
+        assistantMessage.content = result
+      }
+    } catch (e) {
+      if (e instanceof Error && e.message === 'AbortError') {
+        // User aborted, it's fine
+      } else {
+        deps.notifyError(e instanceof Error ? e.message : String(e))
+        // Remove empty assistant message on error
+        if (!assistantMessage.content) {
+          messages.value.pop()
+          isGenerating.value = false
+          abortController.value = null
+          return ''
+        }
+      }
+    } finally {
+      isGenerating.value = false
+      loadingProgress.value = ''
+      abortController.value = null
+    }
+
+    if (!assistantMessage.content) {
+      // Request failed or was aborted with no content
+      messages.value.pop()
+      return ''
+    }
 
     if (!newChatParams.value.id) {
       newChatParams.value.id = deps.createId()
@@ -82,7 +159,7 @@ export function createChatStoreModel(deps: ChatStoreDeps) {
       })
     )
 
-    return result
+    return assistantMessage.content
   }
 
   const startChat = async (chatParams: ChatParams) => {
@@ -93,7 +170,10 @@ export function createChatStoreModel(deps: ChatStoreDeps) {
   return {
     messages,
     newChatParams,
+    isGenerating,
+    loadingProgress,
     sendMessage,
+    stopGeneration,
     startChat,
   }
 }

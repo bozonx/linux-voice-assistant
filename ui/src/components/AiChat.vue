@@ -7,6 +7,12 @@
           :key="message.content"
           :message="message"
         />
+        <div
+          v-if="chatStore.isGenerating && chatStore.loadingProgress"
+          class="text-sm text-gray-500 italic mt-2 px-4 py-2 opacity-70"
+        >
+          {{ chatStore.loadingProgress }}
+        </div>
       </div>
     </Card>
 
@@ -28,20 +34,48 @@
             :options="roles"
             v-model:value="selectedRole"
             :title="t('chat.role')"
+            :disabled="chatStore.isGenerating"
           />
         </div>
       </div>
 
-      <div class="flex flex-row gap-2">
-        <ChatInput />
+      <div class="flex flex-row gap-2 items-end">
+        <ChatInput :disabled="chatStore.isGenerating" />
         <div class="flex flex-col gap-2">
-          <Button sm square @click="sendMessage" :title="t('chat.sendMessage')">
+          <Button
+            v-if="!chatStore.isGenerating"
+            sm
+            square
+            @click="sendMessage"
+            :title="t('chat.sendMessage')"
+          >
             <Icon icon="mdi:send" height="24" />
           </Button>
-          <Button sm square @click="clearInput" :title="t('chat.clearInput')">
+          <Button
+            v-else
+            sm
+            square
+            @click="chatStore.stopGeneration()"
+            :title="t('chat.stop')"
+          >
+            <Icon icon="mdi:stop" height="24" />
+          </Button>
+          <Button
+            sm
+            square
+            @click="clearInput"
+            :title="t('chat.clearInput')"
+            :disabled="chatStore.isGenerating"
+          >
             <Icon icon="mdi:clear" height="24" />
           </Button>
-          <Button sm square @click="voiceInput" :title="t('chat.voiceInput')">
+          <Button
+            sm
+            square
+            @click="voiceInput"
+            :title="t('chat.voiceInput')"
+            :disabled="chatStore.isGenerating"
+          >
             <Icon icon="mdi:microphone" height="24" />
           </Button>
         </div>
@@ -53,13 +87,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 
-import { truncate } from '@/lib/squidlet-lib-local'
-
 import { useI18n } from '../composables/useI18n'
 import { useChatStore } from '../stores/chat'
 import { useChatInputStore } from '../stores/chatInput'
 import { useIpcStore } from '../stores/ipc'
 import { MenuModals, useMenuModalsStore } from '../stores/menuModals'
+import { truncate } from '@/lib/squidlet-lib-local'
 import { Icon } from '@iconify/vue'
 
 const chatInputStore = useChatInputStore()
@@ -107,5 +140,3 @@ const voiceInput = () => {
   })
 }
 </script>
-
-

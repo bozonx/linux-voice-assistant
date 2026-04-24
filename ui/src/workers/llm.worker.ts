@@ -1,4 +1,9 @@
-import { env, pipeline, type TextGenerationPipeline } from '@huggingface/transformers'
+import {
+  type TextGenerationPipeline,
+  TextStreamer,
+  env,
+  pipeline,
+} from '@huggingface/transformers'
 
 type ChatMessage = {
   role: 'user' | 'assistant' | 'developer'
@@ -19,12 +24,18 @@ type WorkerMessage =
         messages: ChatMessage[]
         temperature?: number
         maxTokens?: number
+        stream?: boolean
       }
     }
 
 type WorkerResponse =
   | { type: 'init-ok'; id: number }
-  | { type: 'progress'; id: number; data: { status: string; file?: string; progress?: number } }
+  | {
+      type: 'progress'
+      id: number
+      data: { status: string; file?: string; progress?: number }
+    }
+  | { type: 'chunk'; id: number; data: { chunk: string } }
   | { type: 'result'; id: number; data: { content: string } }
   | { type: 'error'; id: number; error: string }
 
@@ -81,11 +92,15 @@ async function getGenerator(modelName: string, requestId: number) {
   if (await hasWebGpu()) {
     try {
       env.backends.onnx.gpu = true
-      generator = (await pipeline('text-generation', toModelDirName(modelName), {
-        device: 'webgpu',
-        dtype: 'q4',
-        progress_callback,
-      } as any)) as TextGenerationPipeline
+      generator = (await pipeline(
+        'text-generation',
+        toModelDirName(modelName),
+        {
+          device: 'webgpu',
+          dtype: 'q4',
+          progress_callback,
+        } as any
+      )) as TextGenerationPipeline
 
       return generator
     } catch {
@@ -155,12 +170,28 @@ self.onmessage = (event: MessageEvent<WorkerMessage>) => {
   queue = queue
     .then(async () => {
       const generatorInstance = await getGenerator(data.modelName, id)
+
+      let streamer: TextStreamer | undefined = undefined
+      if (data.stream && generatorInstance.tokenizer) {
+        streamer = new TextStreamer(generatorInstance.tokenizer, {
+          skip_prompt: true,
+          callback_function: (text: string) => {
+            self.postMessage({
+              type: 'chunk',
+              id,
+              data: { chunk: text },
+            } satisfies WorkerResponse)
+          },
+        })
+      }
+
       const result = await generatorInstance(normalizeMessages(data.messages), {
         max_new_tokens: data.maxTokens || 256,
         temperature: data.temperature ?? 0.2,
         do_sample: (data.temperature ?? 0.2) > 0,
         return_full_text: false,
-      })
+        streamer,
+      } as any)
 
       self.postMessage({
         type: 'result',

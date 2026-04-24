@@ -166,7 +166,10 @@
                   class="flex flex-col gap-1 text-xs text-muted"
                 >
                   <div class="flex justify-between gap-2">
-                    <span>{{ downloadState.status }}: {{ downloadState.file }}</span>
+                    <span
+                      >{{ downloadState.status }}:
+                      {{ downloadState.file }}</span
+                    >
                     <span>{{ Math.round(downloadState.progress) }}%</span>
                   </div>
                   <progress
@@ -257,7 +260,11 @@
 
               <FieldRow :label="t('settings.llmProvider')" vertical>
                 <div class="text-sm text-muted">
-                  {{ model.provider === 'ollama' ? t('settings.ollama') : t('settings.browserLocalLlm') }}
+                  {{
+                    model.provider === 'ollama'
+                      ? t('settings.ollama')
+                      : t('settings.browserLocalLlm')
+                  }}
                 </div>
               </FieldRow>
 
@@ -302,7 +309,12 @@
                     </div>
                     <div>
                       {{ t('settings.browserLocalLlmDownloadedAt') }}:
-                      {{ formatDownloadedAt(browserLocalStatusById[model.id]?.metadata?.downloadedAt) }}
+                      {{
+                        formatDownloadedAt(
+                          browserLocalStatusById[model.id]?.metadata
+                            ?.downloadedAt
+                        )
+                      }}
                     </div>
                   </div>
                   <div
@@ -321,32 +333,44 @@
                         {{ browserLocalDownloadStateById[model.id]?.file }}
                       </span>
                       <span>
-                        {{ Math.round(browserLocalDownloadStateById[model.id]?.progress || 0) }}%
+                        {{
+                          Math.round(
+                            browserLocalDownloadStateById[model.id]?.progress ||
+                              0
+                          )
+                        }}%
                       </span>
                     </div>
                     <progress
                       class="progress progress-primary w-full"
-                      :value="browserLocalDownloadStateById[model.id]?.progress || 0"
+                      :value="
+                        browserLocalDownloadStateById[model.id]?.progress || 0
+                      "
                       max="100"
                     />
                   </div>
                   <div class="flex flex-wrap gap-2">
                     <Button
-                      v-if="!browserLocalStatusById[model.id]?.downloaded || browserLocalDownloadStateById[model.id]?.loading"
+                      v-if="
+                        !browserLocalStatusById[model.id]?.downloaded ||
+                        browserLocalDownloadStateById[model.id]?.loading
+                      "
                       sm
-                      :disabled="browserLocalDownloadStateById[model.id]?.loading"
+                      :disabled="
+                        browserLocalDownloadStateById[model.id]?.loading
+                      "
                       @click="downloadBrowserLlmModel(model.id)"
                     >
                       {{ t('settings.browserLocalLlmDownload') }}
                     </Button>
-                    <span
-                      v-else
-                      class="text-success flex items-center"
-                    >
+                    <span v-else class="text-success flex items-center">
                       {{ t('settings.browserLocalLlmReady') }}
                     </span>
                     <Button
-                      v-if="browserLocalStatusById[model.id]?.downloaded && !browserLocalDownloadStateById[model.id]?.loading"
+                      v-if="
+                        browserLocalStatusById[model.id]?.downloaded &&
+                        !browserLocalDownloadStateById[model.id]?.loading
+                      "
                       sm
                       neutral
                       @click="deleteBrowserLlmModel(model.id)"
@@ -529,30 +553,30 @@ import { useIpcStore } from '../stores/ipc'
 import { useThemeStore } from '../stores/theme'
 import { PRESETS_KEYS } from '../types'
 import {
-  DEFAULT_USER_CONFIG,
-  type LlmModelMetadata,
-  type StorageInfo,
-  type WhisperModelMetadata,
-} from '@shared'
-import {
   BROWSER_LLM_MODELS,
   DEFAULT_BROWSER_LLM_MODEL,
   DEFAULT_OLLAMA_MODEL,
+  type LlmModelDownloadProgress,
   deleteLlmModel,
   downloadLlmModel,
   getLlmModelMetadata,
   isLlmModelDownloaded,
-  type LlmModelDownloadProgress,
 } from '../utils/llm/model-storage'
 import {
   DEFAULT_WHISPER_LOCAL_MODEL,
+  type ModelDownloadProgress,
   WHISPER_LOCAL_MODELS,
   deleteModel,
   downloadModel,
   getModelMetadata,
   isModelDownloaded,
-  type ModelDownloadProgress,
 } from '../utils/stt/model-storage'
+import {
+  DEFAULT_USER_CONFIG,
+  type LlmModelMetadata,
+  type StorageInfo,
+  type WhisperModelMetadata,
+} from '@shared'
 
 const ipcStore = useIpcStore()
 const themeStore = useThemeStore()
@@ -698,9 +722,15 @@ const storageInfoItems = computed(() => {
   }
 
   return [
-    { label: t('settings.storageUserConfig'), value: storageInfo.value.userConfigFile },
+    {
+      label: t('settings.storageUserConfig'),
+      value: storageInfo.value.userConfigFile,
+    },
     { label: t('settings.storageData'), value: storageInfo.value.dataDir },
-    { label: t('settings.storageHistory'), value: storageInfo.value.historyDir },
+    {
+      label: t('settings.storageHistory'),
+      value: storageInfo.value.historyDir,
+    },
     { label: t('settings.storageChats'), value: storageInfo.value.chatsDir },
     { label: t('settings.storageModels'), value: storageInfo.value.modelsDir },
     { label: t('settings.storageCache'), value: storageInfo.value.cacheDir },
@@ -817,11 +847,12 @@ function normalizeSttConfig(config: Record<string, any>) {
     config.aiModelUsage = {}
   }
 
-  const existingWhisperModel = config.sttModels
-    .filter((model: Record<string, any>) => {
+  const existingWhisperModel = config.sttModels.filter(
+    (model: Record<string, any>) => {
       const provider = model.provider || model.model
       return provider === 'whisper-local'
-    })[0]
+    }
+  )[0]
   const existingVoskModel = config.sttModels.find(
     (model: Record<string, any>) => {
       const provider = model.provider || model.model || 'vosk'
@@ -836,9 +867,8 @@ function normalizeSttConfig(config: Record<string, any>) {
   const activeProvider = activeModel?.provider || activeModel?.model
 
   config.sttModels = [whisperModel, voskModel]
-  config.aiModelUsage.stt = activeProvider === 'whisper-local'
-    ? whisperModel.id
-    : voskModel.id
+  config.aiModelUsage.stt =
+    activeProvider === 'whisper-local' ? whisperModel.id : voskModel.id
 }
 
 function normalizeLlmConfig(config: Record<string, any>) {
@@ -856,9 +886,8 @@ function normalizeLlmConfig(config: Record<string, any>) {
   const dedupedModels = dedupeLlmModels(
     normalizedModels as Record<string, any>[]
   )
-  const llmModels = dedupedModels.length > 0
-    ? dedupedModels
-    : [createBrowserLocalLlmModel()]
+  const llmModels =
+    dedupedModels.length > 0 ? dedupedModels : [createBrowserLocalLlmModel()]
 
   config.llmModels = llmModels
 
@@ -870,7 +899,9 @@ function normalizeLlmConfig(config: Record<string, any>) {
     'chat',
   ] as const
 
-  const validIds = new Set(llmModels.map((model: Record<string, any>) => model.id))
+  const validIds = new Set(
+    llmModels.map((model: Record<string, any>) => model.id)
+  )
   const fallbackModelId = llmModels[0].id
 
   for (const usageKey of usageKeys) {
@@ -910,9 +941,9 @@ function createBrowserLocalLlmModel(existingModel?: Record<string, any>) {
   return {
     id: existingModel?.id || createLlmModelId('browser-local'),
     name:
-      existingModel?.name
-      || existingModel?.label
-      || t('settings.browserLocalModelDefaultName'),
+      existingModel?.name ||
+      existingModel?.label ||
+      t('settings.browserLocalModelDefaultName'),
     model: 'browser-local',
     provider: 'browser-local',
     description:
@@ -927,9 +958,9 @@ function createOllamaModel(existingModel?: Record<string, any>) {
   return {
     id: existingModel?.id || createLlmModelId('ollama'),
     name:
-      existingModel?.name
-      || existingModel?.label
-      || t('settings.ollamaModelDefaultName'),
+      existingModel?.name ||
+      existingModel?.label ||
+      t('settings.ollamaModelDefaultName'),
     model: existingModel?.model || DEFAULT_OLLAMA_MODEL,
     provider: 'ollama',
     description: existingModel?.description || t('settings.ollamaDescription'),
@@ -996,9 +1027,10 @@ function dedupeLlmModels(models: Record<string, any>[]) {
   const usedIds = new Set<string>()
 
   return models.map((model) => {
-    let nextId = typeof model.id === 'string' && model.id.trim()
-      ? model.id.trim()
-      : createLlmModelId(model.provider)
+    let nextId =
+      typeof model.id === 'string' && model.id.trim()
+        ? model.id.trim()
+        : createLlmModelId(model.provider)
 
     while (usedIds.has(nextId)) {
       nextId = createLlmModelId(model.provider)
@@ -1159,10 +1191,12 @@ const whisperLocalModel = computed(() => {
 })
 
 const llmUsageOptions = computed(() => {
-  return (userConfig.value.llmModels || []).map((model: Record<string, any>, index: number) => ({
-    id: model.id,
-    name: modelDisplayName(model, index),
-  }))
+  return (userConfig.value.llmModels || []).map(
+    (model: Record<string, any>, index: number) => ({
+      id: model.id,
+      name: modelDisplayName(model, index),
+    })
+  )
 })
 
 watch(
@@ -1174,9 +1208,15 @@ watch(
 )
 
 watch(
-  () => userConfig.value.llmModels
-    .filter((model: Record<string, any>) => model.provider === 'browser-local')
-    .map((model: Record<string, any>) => `${model.id}:${model.localModel || DEFAULT_BROWSER_LLM_MODEL}`),
+  () =>
+    userConfig.value.llmModels
+      .filter(
+        (model: Record<string, any>) => model.provider === 'browser-local'
+      )
+      .map(
+        (model: Record<string, any>) =>
+          `${model.id}:${model.localModel || DEFAULT_BROWSER_LLM_MODEL}`
+      ),
   () => {
     void refreshAllBrowserLlmStatuses()
   },
@@ -1337,7 +1377,13 @@ function removeLlmModel(modelId: string) {
   delete browserLocalDownloadStateById.value[modelId]
 
   const fallbackModelId = nextModels[0].id
-  const usageKeys = ['translate', 'voiceCorrection', 'correction', 'aiTasks', 'chat'] as const
+  const usageKeys = [
+    'translate',
+    'voiceCorrection',
+    'correction',
+    'aiTasks',
+    'chat',
+  ] as const
 
   for (const usageKey of usageKeys) {
     if (userConfig.value.aiModelUsage[usageKey] === modelId) {
@@ -1455,11 +1501,17 @@ async function refreshBrowserLlmModelStatus(modelId: string) {
 async function refreshAllBrowserLlmStatuses() {
   const browserLocalIds = new Set(
     (userConfig.value.llmModels || [])
-      .filter((model: Record<string, any>) => model.provider === 'browser-local')
+      .filter(
+        (model: Record<string, any>) => model.provider === 'browser-local'
+      )
       .map((model: Record<string, any>) => model.id)
   )
 
-  await Promise.all([...browserLocalIds].map((modelId) => refreshBrowserLlmModelStatus(modelId)))
+  await Promise.all(
+    [...browserLocalIds].map((modelId) =>
+      refreshBrowserLlmModelStatus(modelId as string)
+    )
+  )
 
   Object.keys(browserLocalStatusById.value).forEach((modelId) => {
     if (!browserLocalIds.has(modelId)) {
@@ -1572,19 +1624,16 @@ async function downloadBrowserLlmModel(modelId: string) {
   }
 
   try {
-    await downloadLlmModel(
-      modelName,
-      (progress: LlmModelDownloadProgress) => {
-        browserLocalDownloadStateById.value[modelId] = {
-          loading: true,
-          progress:
-            progress.total > 0 ? (progress.loaded / progress.total) * 100 : 0,
-          file: progress.file,
-          status: progress.status,
-          error: '',
-        }
+    await downloadLlmModel(modelName, (progress: LlmModelDownloadProgress) => {
+      browserLocalDownloadStateById.value[modelId] = {
+        loading: true,
+        progress:
+          progress.total > 0 ? (progress.loaded / progress.total) * 100 : 0,
+        file: progress.file,
+        status: progress.status,
+        error: '',
       }
-    )
+    })
     await refreshAllBrowserLlmStatuses()
   } catch (error) {
     browserLocalDownloadStateById.value[modelId] = {
