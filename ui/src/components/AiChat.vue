@@ -102,16 +102,31 @@ const menuModalsStore = useMenuModalsStore()
 const userConfig = computed(() => ipcStore.params?.userConfig)
 const attachments = computed(() => chatStore.newChatParams?.attachments || [])
 const { t } = useI18n()
-const roles = computed(() =>
+const roles = computed<Array<{ id: string; name: string }>>(() =>
   (userConfig.value?.chatRoles || []).map((role: any) => ({
     id: role.name,
     name: truncate(role.name, 16),
   }))
 )
-const selectedRole = ref<string | undefined>()
+const selectedRole = ref<string | undefined>(undefined)
 
 watch(
-  roles,
+  () => chatStore.newChatParams?.id,
+  (newId) => {
+    if (newId) {
+      if (chatStore.newChatParams?.initialMessage) {
+        chatInputStore.setValue(chatStore.newChatParams.initialMessage)
+        // Clear it so it doesn't reappear
+        chatStore.newChatParams.initialMessage = ''
+      } else {
+        chatInputStore.clear()
+      }
+    }
+  }
+)
+
+watch(
+  () => roles.value,
   (newRoles) => {
     if (!selectedRole.value && newRoles.length > 0) {
       selectedRole.value = newRoles[0].id

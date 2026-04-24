@@ -15,6 +15,8 @@ export interface ActionItem {
   labelKey?: string
   icon?: string
   disabled?: boolean
+  useFullEditorText?: boolean
+  preserveWhitespace?: boolean
   action: (text: string) => Promise<void>
 }
 
@@ -107,6 +109,8 @@ export const useActionMenuStore = defineStore('actionMenu', () => {
     },
     {
       labelKey: 'action.askAi',
+      useFullEditorText: true,
+      preserveWhitespace: true,
       action: async (text: string) => {
         chatStore.startChat({
           initialMessage: text,

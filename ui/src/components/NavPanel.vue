@@ -59,6 +59,7 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { useI18n } from '../composables/useI18n'
+import { useChatStore } from '../stores/chat'
 import { useMenuModalsStore } from '../stores/menuModals'
 import { useNavPanelStore } from '../stores/navPanel'
 import { useRouteParams } from '../stores/routeParams'
@@ -66,6 +67,7 @@ import { Icon } from '@iconify/vue'
 
 const router = useRouter()
 const routeParamsStore = useRouteParams()
+const chatStore = useChatStore()
 const navPanelStore = useNavPanelStore()
 const menuModalsStore = useMenuModalsStore()
 const { t } = useI18n()
@@ -85,7 +87,7 @@ function openSettings() {
 
 function openChat() {
   menuModalsStore.closeAll()
-  router.push('/chat')
+  void chatStore.startChat({})
 }
 
 function openHistory() {

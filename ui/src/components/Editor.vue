@@ -55,7 +55,7 @@
           v-for="item in actionMenuStore.getActionsMenu()"
           :key="item.labelKey || item.name"
           :icon="item.icon"
-          @click="doAction(item.action)"
+          @click="doAction(item)"
           >{{ getLabel(item) }}</Button
         >
       </div>
@@ -122,16 +122,18 @@ function voiceRecognition() {
   })
 }
 
-const doAction = async (cb: (text: string) => Promise<void>): Promise<void> => {
+const doAction = async (item: ActionItem): Promise<void> => {
   let value = editorInputStore.value
 
-  if (editorInputStore.selectedText) {
+  if (!item.useFullEditorText && editorInputStore.selectedText) {
     value = editorInputStore.selectedText
   }
 
-  value = value.trim()
+  if (!item.preserveWhitespace) {
+    value = value.trim()
+  }
 
-  return cb(value)
+  return item.action(value)
 }
 
 async function doEdit(cb: (text: string) => Promise<string>): Promise<void> {

@@ -162,7 +162,13 @@ export function createChatStoreModel(deps: ChatStoreDeps) {
     return assistantMessage.content
   }
 
+  const clearChat = () => {
+    messages.value = []
+    newChatParams.value = {}
+  }
+
   const startChat = async (chatParams: ChatParams) => {
+    clearChat()
     newChatParams.value = { ...chatParams, id: deps.createId() }
     await deps.navigateTo('/chat')
   }
@@ -175,5 +181,6 @@ export function createChatStoreModel(deps: ChatStoreDeps) {
     sendMessage,
     stopGeneration,
     startChat,
+    clearChat,
   }
 }

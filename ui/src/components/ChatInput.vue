@@ -13,19 +13,13 @@ import { nextTick, onMounted, ref, watch } from 'vue'
 
 import { useI18n } from '../composables/useI18n'
 import { useChatInputStore } from '../stores/chatInput'
-import { useRouteParams } from '../stores/routeParams'
 
 const chatInputStore = useChatInputStore()
-const routeParamsStore = useRouteParams()
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
 const { t } = useI18n()
 
-// set value from route params and focus
+// set focus
 onMounted(async () => {
-  if (routeParamsStore.params.text) {
-    chatInputStore.setValue(routeParamsStore.params.text)
-  }
-
   await nextTick()
   chatInputStore.focus()
 })
