@@ -96,6 +96,10 @@ onUnmounted(async () => {
 })
 
 function voiceRecognition() {
+  const initialValue = editorInputStore.value
+  const selectionStart = editorInputStore.selectionStart
+  const selectionEnd = editorInputStore.selectionEnd
+
   menuModalsStore.nextModal(MenuModals.VOICE_RECOGNITION, {
     onCorrected: (resultText: string) => {
       if (!resultText?.trim()) {
@@ -103,7 +107,14 @@ function voiceRecognition() {
         return
       }
 
-      editorInputStore.setValueAtCursor(resultText)
+      const newValue =
+        initialValue.substring(0, selectionStart) +
+        resultText +
+        initialValue.substring(selectionEnd)
+      const newCursorPosition = selectionStart + resultText.length
+
+      editorInputStore.setValue(newValue)
+      editorInputStore.setSelection('', newCursorPosition, newCursorPosition)
       menuModalsStore.closeAll()
       editorInputStore.focus()
     },
