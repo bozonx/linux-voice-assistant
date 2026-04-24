@@ -124,10 +124,15 @@ fn copy_to_clipboard_linux(text: &str) -> Result<(), AppError> {
 }
 
 fn write_to_clipboard_command(binary: &str, args: &[&str], text: &str) -> Result<(), AppError> {
-    let mut child = Command::new(binary).args(args).stdin(Stdio::piped()).spawn()?;
+    let mut child = Command::new(binary)
+        .args(args)
+        .stdin(Stdio::piped())
+        .spawn()?;
 
     let mut stdin = child.stdin.take().ok_or_else(|| {
-        AppError::Message(format!("Failed to open stdin for clipboard command `{binary}`"))
+        AppError::Message(format!(
+            "Failed to open stdin for clipboard command `{binary}`"
+        ))
     })?;
     stdin.write_all(text.as_bytes())?;
     drop(stdin);

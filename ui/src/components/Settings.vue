@@ -268,7 +268,7 @@
                       ? t('settings.ollama')
                       : model.provider === 'openai-compatible'
                         ? t('settings.openAiCompatible')
-                      : t('settings.browserLocalLlm')
+                        : t('settings.browserLocalLlm')
                   }}
                 </div>
               </FieldRow>
@@ -335,6 +335,11 @@
                     <div class="flex justify-between gap-2">
                       <span>
                         {{ browserLocalDownloadStateById[model.id]?.status }}:
+                        {{
+                          browserLocalDownloadStateById[model.id]?.fileCount
+                            ? `${browserLocalDownloadStateById[model.id]?.fileIndex + 1}/${browserLocalDownloadStateById[model.id]?.fileCount}`
+                            : ''
+                        }}
                         {{ browserLocalDownloadStateById[model.id]?.file }}
                       </span>
                       <span>
@@ -561,8 +566,8 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 
-import useToast from '../composables/useToast'
 import { useI18n } from '../composables/useI18n'
+import useToast from '../composables/useToast'
 import { syncI18nLocale } from '../lib/i18n'
 import {
   AUTO_LANGUAGE_VALUE,
@@ -614,6 +619,8 @@ type DownloadState = {
   loading: boolean
   progress: number
   file: string
+  fileIndex: number
+  fileCount: number
   status: string
   error: string
 }
@@ -642,6 +649,8 @@ const downloadState = ref<DownloadState>({
   loading: false,
   progress: 0,
   file: '',
+  fileIndex: 0,
+  fileCount: 0,
   status: '',
   error: '',
 })
@@ -1395,6 +1404,8 @@ function getEmptyDownloadState(): DownloadState {
     loading: false,
     progress: 0,
     file: '',
+    fileIndex: 0,
+    fileCount: 0,
     status: '',
     error: '',
   }
@@ -1634,6 +1645,8 @@ async function downloadWhisperModel() {
     loading: true,
     progress: 0,
     file: '',
+    fileIndex: 0,
+    fileCount: 0,
     status: '',
     error: '',
   }
@@ -1647,6 +1660,8 @@ async function downloadWhisperModel() {
           progress:
             progress.total > 0 ? (progress.loaded / progress.total) * 100 : 0,
           file: progress.file,
+          fileIndex: 0,
+          fileCount: 0,
           status: progress.status,
           error: '',
         }
@@ -1658,6 +1673,8 @@ async function downloadWhisperModel() {
       loading: false,
       progress: 0,
       file: '',
+      fileIndex: 0,
+      fileCount: 0,
       status: 'error',
       error: error instanceof Error ? error.message : String(error),
     }
@@ -1668,6 +1685,8 @@ async function downloadWhisperModel() {
         loading: false,
         progress: 0,
         file: '',
+        fileIndex: 0,
+        fileCount: 0,
         status: '',
         error: '',
       }
@@ -1680,6 +1699,8 @@ async function deleteWhisperModel() {
     loading: false,
     progress: 0,
     file: '',
+    fileIndex: 0,
+    fileCount: 0,
     status: '',
     error: '',
   }
@@ -1692,6 +1713,8 @@ async function deleteWhisperModel() {
       loading: false,
       progress: 0,
       file: '',
+      fileIndex: 0,
+      fileCount: 0,
       status: 'error',
       error: error instanceof Error ? error.message : String(error),
     }
@@ -1716,6 +1739,8 @@ async function downloadBrowserLlmModel(modelId: string) {
     loading: true,
     progress: 0,
     file: '',
+    fileIndex: 0,
+    fileCount: 0,
     status: '',
     error: '',
   }
@@ -1724,9 +1749,10 @@ async function downloadBrowserLlmModel(modelId: string) {
     await downloadLlmModel(modelName, (progress: LlmModelDownloadProgress) => {
       browserLocalDownloadStateById.value[modelId] = {
         loading: true,
-        progress:
-          progress.total > 0 ? (progress.loaded / progress.total) * 100 : 0,
+        progress: progress.overallProgress,
         file: progress.file,
+        fileIndex: progress.fileIndex,
+        fileCount: progress.fileCount,
         status: progress.status,
         error: '',
       }
@@ -1737,6 +1763,8 @@ async function downloadBrowserLlmModel(modelId: string) {
       loading: false,
       progress: 0,
       file: '',
+      fileIndex: 0,
+      fileCount: 0,
       status: 'error',
       error: error instanceof Error ? error.message : String(error),
     }
@@ -1747,6 +1775,8 @@ async function downloadBrowserLlmModel(modelId: string) {
         loading: false,
         progress: 0,
         file: '',
+        fileIndex: 0,
+        fileCount: 0,
         status: '',
         error: '',
       }
@@ -1772,6 +1802,8 @@ async function deleteBrowserLlmModel(modelId: string) {
       loading: false,
       progress: 0,
       file: '',
+      fileIndex: 0,
+      fileCount: 0,
       status: 'error',
       error: error instanceof Error ? error.message : String(error),
     }

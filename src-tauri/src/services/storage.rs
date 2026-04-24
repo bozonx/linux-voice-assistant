@@ -319,10 +319,8 @@ pub fn save_chat_history(
     let limit = history_limit(user_config, "chatHistoryMaxItems", 50);
 
     // Save full chat to its own file
-    let chat_file_path = chats_dir.join(format!(
-        "{}.json",
-        sanitize_chat_id(&chat_history_item.id)?
-    ));
+    let chat_file_path =
+        chats_dir.join(format!("{}.json", sanitize_chat_id(&chat_history_item.id)?));
     write_json(&chat_file_path, &chat_history_item)?;
 
     // Create index item (strip messages to keep index small)

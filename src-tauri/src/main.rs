@@ -7,9 +7,9 @@ mod state;
 use commands::app::{get_init_params, get_storage_info, save_user_config};
 use commands::history::{
     clear_chat_history, clear_editor_history, clear_main_input_tmp, clear_transform_history,
-    get_chat, get_chat_history, get_editor_history, get_transform_history, remove_from_chat_history,
-    remove_from_editor_history, remove_from_transform_history, save_chat_history,
-    save_editor_history, save_main_input_tmp, save_transform_history,
+    get_chat, get_chat_history, get_editor_history, get_transform_history,
+    remove_from_chat_history, remove_from_editor_history, remove_from_transform_history,
+    save_chat_history, save_editor_history, save_main_input_tmp, save_transform_history,
 };
 use commands::llm::{
     complete_llm_model_download, delete_llm_model, get_llm_model_metadata, get_llm_model_path,

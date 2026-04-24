@@ -19,7 +19,6 @@ const QWEN25_FILES: &[&str] = &[
     "added_tokens.json",
     "quantize_config.json",
     "onnx/model_q4.onnx",
-    "onnx/model_q4f16.onnx",
 ];
 
 const SMOLLM2_360M_FILES: &[&str] = &[
@@ -31,7 +30,6 @@ const SMOLLM2_360M_FILES: &[&str] = &[
     "merges.txt",
     "vocab.json",
     "onnx/model_q4.onnx",
-    "onnx/model_q4f16.onnx",
 ];
 
 const QWEN2_FILES: &[&str] = &[
@@ -45,7 +43,6 @@ const QWEN2_FILES: &[&str] = &[
     "added_tokens.json",
     "quantize_config.json",
     "onnx/model_q4.onnx",
-    "onnx/model_q4f16.onnx",
 ];
 
 #[tauri::command]
@@ -85,7 +82,8 @@ fn save_llm_model_file_bytes(
     data: &[u8],
     append: bool,
 ) -> Result<(), AppError> {
-    let file_path = model_dir(&app, &model_name)?.join(sanitize_llm_file_name(&model_name, &file_name)?);
+    let file_path =
+        model_dir(&app, &model_name)?.join(sanitize_llm_file_name(&model_name, &file_name)?);
 
     if let Some(parent) = file_path.parent() {
         fs::create_dir_all(parent)?;

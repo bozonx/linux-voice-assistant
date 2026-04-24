@@ -5,8 +5,11 @@ import { DESKTOP_COMMANDS, type LlmModelMetadata } from '@shared'
 export interface LlmModelDownloadProgress {
   model: string
   file: string
+  fileIndex: number
+  fileCount: number
   loaded: number
   total: number
+  overallProgress: number
   status: 'downloading' | 'saving' | 'done' | 'error'
   error?: string
 }
@@ -14,8 +17,7 @@ export interface LlmModelDownloadProgress {
 const HF_BASE = 'https://huggingface.co'
 const HF_REVISION = 'main'
 
-export const DEFAULT_BROWSER_LLM_MODEL =
-  'HuggingFaceTB/SmolLM2-360M-Instruct'
+export const DEFAULT_BROWSER_LLM_MODEL = 'HuggingFaceTB/SmolLM2-360M-Instruct'
 
 export const DEFAULT_OLLAMA_MODEL = 'qwen2.5:0.5b'
 
@@ -30,7 +32,6 @@ const QWEN25_FILES = [
   'added_tokens.json',
   'quantize_config.json',
   'onnx/model_q4.onnx',
-  'onnx/model_q4f16.onnx',
 ]
 
 const SMOLLM2_360M_FILES = [
@@ -42,7 +43,6 @@ const SMOLLM2_360M_FILES = [
   'merges.txt',
   'vocab.json',
   'onnx/model_q4.onnx',
-  'onnx/model_q4f16.onnx',
 ]
 
 const QWEN2_FILES = [
@@ -56,7 +56,6 @@ const QWEN2_FILES = [
   'added_tokens.json',
   'quantize_config.json',
   'onnx/model_q4.onnx',
-  'onnx/model_q4f16.onnx',
 ]
 
 export const BROWSER_LLM_MODELS = [
@@ -84,7 +83,9 @@ export function toModelDirName(modelName: string) {
   return modelName.replace(/\//g, '_')
 }
 
-export async function isLlmModelDownloaded(modelName: string): Promise<boolean> {
+export async function isLlmModelDownloaded(
+  modelName: string
+): Promise<boolean> {
   const result = await desktopClient.invoke<boolean>(
     DESKTOP_COMMANDS.IS_LLM_MODEL_DOWNLOADED,
     { modelName }
@@ -114,17 +115,32 @@ export async function downloadLlmModel(
     throw new Error(`Unknown browser LLM model: ${modelName}`)
   }
 
-  for (const fileName of files) {
+  const fileCount = files.length
+
+  for (const [fileIndex, fileName] of files.entries()) {
     const url = `${HF_BASE}/${modelName}/resolve/${HF_REVISION}/${fileName}`
     await downloadBinaryFile({
       url,
       fileName,
       onProgress: (progress) => {
+        const currentFileProgress =
+          progress.total > 0
+            ? Math.min(progress.loaded / progress.total, 1)
+            : progress.status === 'done'
+              ? 1
+              : 0
+
         onProgress?.({
           model: modelName,
           file: progress.file,
+          fileIndex,
+          fileCount,
           loaded: progress.loaded,
           total: progress.total,
+          overallProgress:
+            fileCount > 0
+              ? ((fileIndex + currentFileProgress) / fileCount) * 100
+              : 0,
           status: progress.status,
         })
       },
@@ -156,7 +172,9 @@ export async function downloadLlmModel(
   )
 
   if (!metadataResult.success) {
-    throw new Error(`Failed to complete model metadata: ${metadataResult.error}`)
+    throw new Error(
+      `Failed to complete model metadata: ${metadataResult.error}`
+    )
   }
 }
 

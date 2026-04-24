@@ -162,7 +162,9 @@ fn model_dir(app: &AppHandle, model_name: &str) -> Result<std::path::PathBuf, Ap
 
 fn sanitize_model_dir_name(model_name: &str) -> Result<String, AppError> {
     if model_name.is_empty() {
-        return Err(AppError::Message(String::from("Invalid Whisper model name")));
+        return Err(AppError::Message(String::from(
+            "Invalid Whisper model name",
+        )));
     }
 
     let dir_name = model_name.replace('/', "_");
@@ -171,7 +173,9 @@ fn sanitize_model_dir_name(model_name: &str) -> Result<String, AppError> {
         .all(|ch| ch.is_ascii_alphanumeric() || ch == '-' || ch == '_' || ch == '.');
 
     if !is_safe || dir_name.contains("..") {
-        return Err(AppError::Message(String::from("Invalid Whisper model name")));
+        return Err(AppError::Message(String::from(
+            "Invalid Whisper model name",
+        )));
     }
 
     Ok(dir_name)
@@ -182,7 +186,9 @@ fn sanitize_whisper_file_name(file_name: &str) -> Result<&str, AppError> {
         return Ok(file_name);
     }
 
-    Err(AppError::Message(String::from("Invalid Whisper model file")))
+    Err(AppError::Message(String::from(
+        "Invalid Whisper model file",
+    )))
 }
 
 fn read_whisper_model_metadata(
