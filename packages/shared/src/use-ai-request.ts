@@ -135,6 +135,13 @@ export const useAiRequest = () => {
     messages: string | ChatMessage[],
     options?: { onChunk?: (chunk: string) => void; signal?: AbortSignal }
   ): Promise<Record<string, any>> {
+    const normalizedMessages = Array.isArray(messages)
+      ? messages.map((message) => ({
+          role: message.role === 'developer' ? 'system' : message.role,
+          content: message.content,
+        }))
+      : [{ role: 'user', content: messages }]
+
     try {
       const result = await fetch(
         (model.baseUrl || '').replace(/\/$/, '') + '/chat/completions',
@@ -147,8 +154,10 @@ export const useAiRequest = () => {
           },
           body: JSON.stringify({
             model: model.model,
-            messages,
+            messages: normalizedMessages,
             stream: !!options?.onChunk,
+            temperature: model.temperature ?? 0.2,
+            max_tokens: model.maxTokens ?? 512,
           }),
           signal: options?.signal,
         }

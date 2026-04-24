@@ -3,8 +3,8 @@
     <Card class="flex-1">
       <div class="overflow-y-auto">
         <ChatItem
-          v-for="message in chatStore.messages"
-          :key="message.content"
+          v-for="(message, index) in chatStore.messages"
+          :key="`${message.role}-${index}`"
           :message="message"
         />
         <div
@@ -140,7 +140,7 @@ const sendMessage = async () => {
 
   if (!msg) return
 
-  await chatStore.sendMessage(
+  const result = await chatStore.sendMessage(
     msg,
     attachments.value,
     (userConfig.value?.chatRoles || []).find(
@@ -148,7 +148,9 @@ const sendMessage = async () => {
     )?.rule || ''
   )
 
-  chatInputStore.clear()
+  if (result) {
+    chatInputStore.clear()
+  }
 }
 
 const clearInput = () => {

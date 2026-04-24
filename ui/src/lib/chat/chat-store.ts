@@ -29,9 +29,11 @@ export interface ChatStoreDeps {
     }
   ) => Promise<string>
   saveChatHistory: (item: ChatHistoryItem) => void | Promise<void>
+  loadChatHistoryItem: (id: string) => Promise<ChatHistoryItem | null>
   navigateTo: (path: string) => void | Promise<void>
   notifyError: (message: string) => void
   emptyMessageError: () => string
+  chatNotFoundError: () => string
   createId: () => string
   nowIso: () => string
 }
@@ -78,6 +80,7 @@ export function createChatStoreModel(deps: ChatStoreDeps) {
       role
     )
 
+    const userMessageIndex = messages.value.length
     messages.value.push(userMessage)
 
     const assistantMessage: ChatMessage = createAssistantMessage('')
@@ -122,9 +125,9 @@ export function createChatStoreModel(deps: ChatStoreDeps) {
         // User aborted, it's fine
       } else {
         deps.notifyError(e instanceof Error ? e.message : String(e))
-        // Remove empty assistant message on error
+        // Roll back the optimistic user/assistant pair when nothing was produced.
         if (!assistantMessage.content) {
-          messages.value.pop()
+          messages.value.splice(userMessageIndex, 2)
           isGenerating.value = false
           abortController.value = null
           return ''
@@ -138,7 +141,7 @@ export function createChatStoreModel(deps: ChatStoreDeps) {
 
     if (!assistantMessage.content) {
       // Request failed or was aborted with no content
-      messages.value.pop()
+      messages.value.splice(userMessageIndex, 2)
       return ''
     }
 
@@ -173,6 +176,23 @@ export function createChatStoreModel(deps: ChatStoreDeps) {
     await deps.navigateTo('/chat')
   }
 
+  const openChat = async (id: string) => {
+    const chat = await deps.loadChatHistoryItem(id)
+
+    if (!chat) {
+      deps.notifyError(deps.chatNotFoundError())
+      return
+    }
+
+    messages.value = [...chat.messages]
+    newChatParams.value = {
+      id: chat.id,
+      initialMessage: chat.description,
+      attachments: [],
+    }
+    await deps.navigateTo('/chat')
+  }
+
   return {
     messages,
     newChatParams,
@@ -181,6 +201,7 @@ export function createChatStoreModel(deps: ChatStoreDeps) {
     sendMessage,
     stopGeneration,
     startChat,
+    openChat,
     clearChat,
   }
 }

@@ -18,11 +18,13 @@ export const useChatStore = defineStore('chat', () => {
     saveChatHistory: (item) => {
       void historyStore.saveChatHistory(item)
     },
+    loadChatHistoryItem: (id) => historyStore.loadChat(id),
     navigateTo: (path) => appNavigation.push(path),
     notifyError: (message) => {
       toast(message, 'error')
     },
     emptyMessageError: () => translate('toast.textNotSelected'),
+    chatNotFoundError: () => translate('history.empty'),
     createId: () => makeUniqId(8),
     nowIso: () => new Date().toISOString(),
   })

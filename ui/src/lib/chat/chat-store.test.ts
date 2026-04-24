@@ -6,9 +6,11 @@ function createDeps(overrides: Partial<ChatStoreDeps> = {}): ChatStoreDeps {
   return {
     sendChatMessage: vi.fn(async () => 'Assistant reply'),
     saveChatHistory: vi.fn(),
+    loadChatHistoryItem: vi.fn(async () => null),
     navigateTo: vi.fn(),
     notifyError: vi.fn(),
     emptyMessageError: () => 'No text selected',
+    chatNotFoundError: () => 'Chat not found',
     createId: vi.fn(() => 'chat-id-1'),
     nowIso: vi.fn(() => '2026-04-22T00:00:00.000Z'),
     ...overrides,
@@ -108,6 +110,46 @@ describe('chat-store', () => {
       initialMessage: 'Start here',
       id: 'chat-id-1',
     })
+    expect(deps.navigateTo).toHaveBeenCalledWith('/chat')
+  })
+
+  it('rolls back optimistic user message when request returns no content', async () => {
+    const deps = createDeps({
+      sendChatMessage: vi.fn(async () => ''),
+    })
+    const store = createChatStoreModel(deps)
+
+    const result = await store.sendMessage('Hello')
+
+    expect(result).toBe('')
+    expect(store.messages.value).toEqual([])
+  })
+
+  it('opens a stored chat and navigates to chat page', async () => {
+    const deps = createDeps({
+      loadChatHistoryItem: vi.fn(async () => ({
+        id: 'chat-7',
+        description: 'Saved prompt',
+        lastMsgDate: '2026-04-22T00:00:00.000Z',
+        messages: [
+          { role: 'user' as const, content: 'Saved prompt' },
+          { role: 'assistant' as const, content: 'Saved reply' },
+        ],
+      })),
+    })
+    const store = createChatStoreModel(deps)
+
+    await store.openChat('chat-7')
+
+    expect(store.newChatParams.value).toEqual({
+      id: 'chat-7',
+      initialMessage: 'Saved prompt',
+      attachments: [],
+    })
+    expect(store.messages.value).toEqual([
+      { role: 'user', content: 'Saved prompt' },
+      { role: 'assistant', content: 'Saved reply' },
+    ])
     expect(deps.navigateTo).toHaveBeenCalledWith('/chat')
   })
 })

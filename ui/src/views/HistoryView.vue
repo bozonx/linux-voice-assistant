@@ -51,6 +51,7 @@ import { computed, onMounted, ref } from 'vue'
 
 import { useI18n } from '../composables/useI18n'
 import useToast from '../composables/useToast'
+import { useChatStore } from '../stores/chat'
 import { useHistoryStore } from '../stores/history'
 import { useNavPanelStore } from '../stores/navPanel'
 import { useRouteParams } from '../stores/routeParams'
@@ -58,6 +59,7 @@ import { useRouteParams } from '../stores/routeParams'
 const toast = useToast()
 const { t } = useI18n()
 const navPanelStore = useNavPanelStore()
+const chatStore = useChatStore()
 const historyStore = useHistoryStore()
 const routeParams = useRouteParams()
 const currentTab = ref(0)
@@ -146,8 +148,7 @@ const toEditor = (item: { id: string | number; value: string }) => {
   routeParams.toEditor(item.value)
 }
 
-const toChat = (item: { id: string | number; value: string }) => {
-  void item
-  // routeParams.toChat(item)
+const toChat = async (item: { id: string | number; value: string }) => {
+  await chatStore.openChat(item.id.toString())
 }
 </script>
