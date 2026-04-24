@@ -41,6 +41,18 @@ export const useEditorInputStore = defineStore('editorInput', () => {
     historyStore.saveMainInputTmp(newText)
   }
 
+  const setValueAtCursor = (newText: string): void => {
+    const beforeSelection = value.value.substring(0, selectionStart.value)
+    const afterSelection = value.value.substring(selectionEnd.value)
+    const newValue = beforeSelection + newText + afterSelection
+    const newCursorPosition = selectionStart.value + newText.length
+
+    value.value = newValue
+    setSelection('', newCursorPosition, newCursorPosition)
+
+    historyStore.saveMainInputTmp(newValue)
+  }
+
   const clear = (): void => {
     value.value = ''
 
@@ -73,6 +85,7 @@ export const useEditorInputStore = defineStore('editorInput', () => {
     selectAll,
     setSelection,
     replaceSelection,
+    setValueAtCursor,
     clear,
   }
 })
