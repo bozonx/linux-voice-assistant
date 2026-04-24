@@ -35,6 +35,7 @@ describe('llm model storage', () => {
       async ({
         fileName,
         onProgress,
+        onChunk,
       }: {
         fileName: string
         onProgress?: (progress: {
@@ -43,6 +44,7 @@ describe('llm model storage', () => {
           total: number
           status: 'downloading' | 'saving' | 'done' | 'error'
         }) => void
+        onChunk: (chunk: Uint8Array, append: boolean) => Promise<void>
       }) => {
         onProgress?.({
           file: fileName,
@@ -50,6 +52,7 @@ describe('llm model storage', () => {
           total: 100,
           status: 'saving',
         })
+        await onChunk(new Uint8Array([1, 2, 3]), false)
         onProgress?.({
           file: fileName,
           loaded: 100,
@@ -88,6 +91,7 @@ describe('llm model storage', () => {
 
     expect(lastInvokeCall?.[0]).toBe('complete_llm_model_download')
     expect(lastInvokeCall?.[1]?.files).not.toContain('onnx/model_q4f16.onnx')
+    expect(invokeMock.mock.calls[0]?.[1]?.data).toBeInstanceOf(Uint8Array)
     expect(updates[0]).toMatchObject({
       fileIndex: 0,
       fileCount,

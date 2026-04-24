@@ -103,7 +103,8 @@ export async function downloadModel(
           {
             modelName,
             fileName,
-            data: Array.from(chunk),
+            // Avoid duplicating every chunk into a plain JS array before IPC.
+            data: chunk,
             append,
           }
         )
@@ -125,14 +126,19 @@ export async function downloadModel(
   )
 
   if (!metadataResult.success) {
-    throw new Error(`Failed to complete model metadata: ${metadataResult.error}`)
+    throw new Error(
+      `Failed to complete model metadata: ${metadataResult.error}`
+    )
   }
 }
 
 export async function deleteModel(modelName: string): Promise<void> {
-  const result = await desktopClient.invoke(DESKTOP_COMMANDS.DELETE_WHISPER_MODEL, {
-    modelName,
-  })
+  const result = await desktopClient.invoke(
+    DESKTOP_COMMANDS.DELETE_WHISPER_MODEL,
+    {
+      modelName,
+    }
+  )
 
   if (!result.success) {
     throw new Error(`Failed to delete model: ${result.error}`)

@@ -150,7 +150,8 @@ export async function downloadLlmModel(
           {
             modelName,
             fileName,
-            data: Array.from(chunk),
+            // Avoid duplicating every chunk into a plain JS array before IPC.
+            data: chunk,
             append,
           }
         )
