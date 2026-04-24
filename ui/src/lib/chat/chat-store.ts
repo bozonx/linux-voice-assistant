@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 
 import { AI_TASKS } from '../../types'
 import {
@@ -84,7 +84,7 @@ export function createChatStoreModel(deps: ChatStoreDeps) {
     const userMessageIndex = messages.value.length
     messages.value.push(userMessage)
 
-    const assistantMessage: ChatMessage = createAssistantMessage('')
+    const assistantMessage = reactive<ChatMessage>(createAssistantMessage(''))
     messages.value.push(assistantMessage)
 
     isGenerating.value = true

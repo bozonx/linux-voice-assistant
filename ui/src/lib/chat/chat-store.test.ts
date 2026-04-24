@@ -99,6 +99,23 @@ describe('chat-store', () => {
     )
   })
 
+  it('updates assistant content from streamed chunks', async () => {
+    const deps = createDeps({
+      sendChatMessage: vi.fn(async (_message, _prevMessages, _devInstructions, options) => {
+        options?.onChunk?.('Hello')
+        options?.onChunk?.('!')
+        return 'Hello!'
+      }),
+    })
+    const store = createChatStoreModel(deps)
+
+    const result = await store.sendMessage('Hi')
+
+    expect(result).toBe('Hello!')
+    expect(store.messages.value).toHaveLength(2)
+    expect(store.messages.value[1]?.content).toBe('Hello!')
+  })
+
   it('starts a chat with generated id and navigates to chat page', async () => {
     const deps = createDeps()
     const store = createChatStoreModel(deps)
