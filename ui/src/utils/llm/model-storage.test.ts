@@ -1,6 +1,10 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import { BROWSER_LLM_MODEL_FILES, downloadLlmModel } from './model-storage'
+import {
+  BROWSER_LLM_MODEL_FILES,
+  downloadLlmModel,
+  hasPartialLlmModelDownload,
+} from './model-storage'
 
 const { downloadBinaryFileMock, invokeMock } = vi.hoisted(() => ({
   downloadBinaryFileMock: vi.fn(),
@@ -28,6 +32,25 @@ describe('llm model storage', () => {
     expect(
       BROWSER_LLM_MODEL_FILES['onnx-community/Qwen2-0.5B-Instruct-ONNX']
     ).not.toContain('onnx/model_q4f16.onnx')
+  })
+
+  it('detects a partially downloaded model by existing file sizes', async () => {
+    invokeMock.mockImplementation(
+      async (command: string, args?: { fileName?: string }) => {
+        if (
+          command === 'get_llm_model_file_size' &&
+          args?.fileName === 'tokenizer.json'
+        ) {
+          return { success: true, result: 128 }
+        }
+
+        return { success: true, result: 0 }
+      }
+    )
+
+    await expect(
+      hasPartialLlmModelDownload('onnx-community/Qwen2.5-0.5B-Instruct')
+    ).resolves.toBe(true)
   })
 
   it('reports monotonic overall progress across model files', async () => {

@@ -104,7 +104,8 @@ export const messages = {
       xdotoolBin: 'Xdotool Bin',
       windowInsertion: 'Вставка в окно',
       storageLocations: 'Где хранятся данные',
-      storageLocationsUnavailable: 'Информация о файловой системе доступна только в desktop-режиме.',
+      storageLocationsUnavailable:
+        'Информация о файловой системе доступна только в desktop-режиме.',
       storageUserConfig: 'Конфиг',
       storageData: 'Данные',
       storageHistory: 'История',
@@ -124,12 +125,15 @@ export const messages = {
       whisperLocalModel: 'Модель Whisper',
       whisperLocalLanguage: 'Язык распознавания',
       whisperLocalDownloaded: 'Модель загружена и готова к использованию.',
+      whisperLocalPartial:
+        'Модель скачана частично. Можно докачать или удалить.',
       whisperLocalNotDownloaded: 'Модель нужно скачать перед использованием.',
       whisperLocalStorageHint:
         'Модель сохраняется в постоянную директорию данных приложения.',
       whisperLocalVersion: 'Версия',
       whisperLocalDownloadedAt: 'Дата загрузки',
       whisperLocalDownload: 'Скачать модель',
+      whisperLocalResume: 'Докачать',
       whisperLocalDelete: 'Удалить модель',
       whisperLocalReady: 'Готово',
       voskWsUrl: 'Vosk WebSocket URL',
@@ -144,12 +148,16 @@ export const messages = {
       browserLocalModelDefaultName: 'Локальная браузерная модель',
       browserLocalLlmModel: 'Локальная модель',
       browserLocalLlmDownloaded: 'Модель загружена и готова к использованию.',
-      browserLocalLlmNotDownloaded: 'Модель нужно скачать перед использованием.',
+      browserLocalLlmPartial:
+        'Модель скачана частично. Можно докачать или удалить.',
+      browserLocalLlmNotDownloaded:
+        'Модель нужно скачать перед использованием.',
       browserLocalLlmStorageHint:
         'Модель сохраняется в постоянную директорию данных приложения.',
       browserLocalLlmVersion: 'Версия',
       browserLocalLlmDownloadedAt: 'Дата загрузки',
       browserLocalLlmDownload: 'Скачать модель',
+      browserLocalLlmResume: 'Докачать',
       browserLocalLlmDelete: 'Удалить модель',
       browserLocalLlmReady: 'Готово',
       browserLocalLlmHint:
@@ -389,7 +397,8 @@ export const messages = {
       xdotoolBin: 'Xdotool Bin',
       windowInsertion: 'Window insertion',
       storageLocations: 'Storage locations',
-      storageLocationsUnavailable: 'Filesystem storage information is available only in desktop mode.',
+      storageLocationsUnavailable:
+        'Filesystem storage information is available only in desktop mode.',
       storageUserConfig: 'Config',
       storageData: 'Data',
       storageHistory: 'History',
@@ -409,12 +418,15 @@ export const messages = {
       whisperLocalModel: 'Whisper model',
       whisperLocalLanguage: 'Recognition language',
       whisperLocalDownloaded: 'Model is downloaded and ready to use.',
+      whisperLocalPartial:
+        'Model is partially downloaded. You can resume or delete it.',
       whisperLocalNotDownloaded: 'Download the model before using it.',
       whisperLocalStorageHint:
         'The model is stored in the app permanent data directory.',
       whisperLocalVersion: 'Version',
       whisperLocalDownloadedAt: 'Downloaded at',
       whisperLocalDownload: 'Download model',
+      whisperLocalResume: 'Resume',
       whisperLocalDelete: 'Delete model',
       whisperLocalReady: 'Ready',
       voskWsUrl: 'Vosk WebSocket URL',
@@ -429,12 +441,15 @@ export const messages = {
       browserLocalModelDefaultName: 'Local browser model',
       browserLocalLlmModel: 'Local model',
       browserLocalLlmDownloaded: 'Model is downloaded and ready to use.',
+      browserLocalLlmPartial:
+        'Model is partially downloaded. You can resume or delete it.',
       browserLocalLlmNotDownloaded: 'Download the model before using it.',
       browserLocalLlmStorageHint:
         'The model is stored in the app permanent data directory.',
       browserLocalLlmVersion: 'Version',
       browserLocalLlmDownloadedAt: 'Downloaded at',
       browserLocalLlmDownload: 'Download model',
+      browserLocalLlmResume: 'Resume',
       browserLocalLlmDelete: 'Delete model',
       browserLocalLlmReady: 'Ready',
       browserLocalLlmHint:
@@ -673,7 +688,8 @@ export const messages = {
       xdotoolBin: 'Xdotool Bin',
       windowInsertion: 'Inserción en ventana',
       storageLocations: 'Ubicaciones de almacenamiento',
-      storageLocationsUnavailable: 'La información del sistema de archivos solo está disponible en modo desktop.',
+      storageLocationsUnavailable:
+        'La información del sistema de archivos solo está disponible en modo desktop.',
       storageUserConfig: 'Configuración',
       storageData: 'Datos',
       storageHistory: 'Historial',
@@ -693,12 +709,15 @@ export const messages = {
       whisperLocalModel: 'Modelo Whisper',
       whisperLocalLanguage: 'Idioma de reconocimiento',
       whisperLocalDownloaded: 'El modelo está descargado y listo.',
+      whisperLocalPartial:
+        'El modelo está descargado parcialmente. Puedes reanudarlo o eliminarlo.',
       whisperLocalNotDownloaded: 'Descarga el modelo antes de usarlo.',
       whisperLocalStorageHint:
         'El modelo se guarda en el directorio permanente de datos de la app.',
       whisperLocalVersion: 'Versión',
       whisperLocalDownloadedAt: 'Fecha de descarga',
       whisperLocalDownload: 'Descargar modelo',
+      whisperLocalResume: 'Reanudar',
       whisperLocalDelete: 'Eliminar modelo',
       whisperLocalReady: 'Listo',
       voskWsUrl: 'URL WebSocket de Vosk',
@@ -713,12 +732,15 @@ export const messages = {
       browserLocalModelDefaultName: 'Modelo local del navegador',
       browserLocalLlmModel: 'Modelo local',
       browserLocalLlmDownloaded: 'El modelo está descargado y listo.',
+      browserLocalLlmPartial:
+        'El modelo está descargado parcialmente. Puedes reanudarlo o eliminarlo.',
       browserLocalLlmNotDownloaded: 'Descarga el modelo antes de usarlo.',
       browserLocalLlmStorageHint:
         'El modelo se guarda en el directorio permanente de datos de la app.',
       browserLocalLlmVersion: 'Versión',
       browserLocalLlmDownloadedAt: 'Fecha de descarga',
       browserLocalLlmDownload: 'Descargar modelo',
+      browserLocalLlmResume: 'Reanudar',
       browserLocalLlmDelete: 'Eliminar modelo',
       browserLocalLlmReady: 'Listo',
       browserLocalLlmHint:
@@ -730,7 +752,8 @@ export const messages = {
       ollamaHint:
         'Usa el endpoint `/api/chat` de Ollama. Aquí puedes indicar cualquier modelo que el usuario ya haya descargado en Ollama.',
       openAiCompatible: 'OpenAI-compatible',
-      openAiCompatibleDescription: 'API `/chat/completions` compatible con OpenAI',
+      openAiCompatibleDescription:
+        'API `/chat/completions` compatible con OpenAI',
       openAiCompatibleModelDefaultName: 'Modelo OpenAI-compatible',
       openAiCompatibleHint:
         'Usa un endpoint `/chat/completions` compatible. Sirve para OpenRouter, proxys compatibles con OpenAI y servidores locales con la misma API.',
@@ -957,7 +980,8 @@ export const messages = {
       xdotoolBin: 'Xdotool Bin',
       windowInsertion: 'Pencereye ekleme',
       storageLocations: 'Depolama konumları',
-      storageLocationsUnavailable: 'Dosya sistemi depolama bilgisi sadece desktop modunda kullanılabilir.',
+      storageLocationsUnavailable:
+        'Dosya sistemi depolama bilgisi sadece desktop modunda kullanılabilir.',
       storageUserConfig: 'Yapılandırma',
       storageData: 'Veri',
       storageHistory: 'Geçmiş',
@@ -977,12 +1001,15 @@ export const messages = {
       whisperLocalModel: 'Whisper modeli',
       whisperLocalLanguage: 'Tanıma dili',
       whisperLocalDownloaded: 'Model indirildi ve kullanıma hazır.',
+      whisperLocalPartial:
+        'Model kısmen indirildi. Devam edebilir veya silebilirsiniz.',
       whisperLocalNotDownloaded: 'Kullanmadan önce modeli indirin.',
       whisperLocalStorageHint:
         'Model uygulamanın kalıcı veri dizinine kaydedilir.',
       whisperLocalVersion: 'Sürüm',
       whisperLocalDownloadedAt: 'İndirilme tarihi',
       whisperLocalDownload: 'Modeli indir',
+      whisperLocalResume: 'Devam et',
       whisperLocalDelete: 'Modeli sil',
       whisperLocalReady: 'Hazır',
       voskWsUrl: 'Vosk WebSocket URL',
@@ -997,12 +1024,15 @@ export const messages = {
       browserLocalModelDefaultName: 'Yerel tarayıcı modeli',
       browserLocalLlmModel: 'Yerel model',
       browserLocalLlmDownloaded: 'Model indirildi ve kullanıma hazır.',
+      browserLocalLlmPartial:
+        'Model kısmen indirildi. Devam edebilir veya silebilirsiniz.',
       browserLocalLlmNotDownloaded: 'Kullanmadan önce modeli indirin.',
       browserLocalLlmStorageHint:
         'Model uygulamanın kalıcı veri dizinine kaydedilir.',
       browserLocalLlmVersion: 'Sürüm',
       browserLocalLlmDownloadedAt: 'İndirilme tarihi',
       browserLocalLlmDownload: 'Modeli indir',
+      browserLocalLlmResume: 'Devam et',
       browserLocalLlmDelete: 'Modeli sil',
       browserLocalLlmReady: 'Hazır',
       browserLocalLlmHint:

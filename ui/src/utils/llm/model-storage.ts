@@ -117,6 +117,24 @@ async function getLlmModelFileSize(
   return result.success && typeof result.result === 'number' ? result.result : 0
 }
 
+export async function hasPartialLlmModelDownload(
+  modelName: string
+): Promise<boolean> {
+  const files = BROWSER_LLM_MODEL_FILES[modelName]
+
+  if (!files) {
+    return false
+  }
+
+  for (const fileName of files) {
+    if ((await getLlmModelFileSize(modelName, fileName)) > 0) {
+      return true
+    }
+  }
+
+  return false
+}
+
 export async function downloadLlmModel(
   modelName: string,
   onProgress?: (progress: LlmModelDownloadProgress) => void

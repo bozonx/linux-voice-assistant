@@ -85,6 +85,24 @@ async function getWhisperModelFileSize(
   return result.success && typeof result.result === 'number' ? result.result : 0
 }
 
+export async function hasPartialWhisperModelDownload(
+  modelName: string
+): Promise<boolean> {
+  const files = WHISPER_MODEL_FILES[modelName]
+
+  if (!files) {
+    return false
+  }
+
+  for (const fileName of files) {
+    if ((await getWhisperModelFileSize(modelName, fileName)) > 0) {
+      return true
+    }
+  }
+
+  return false
+}
+
 export async function downloadModel(
   modelName: string,
   onProgress?: (progress: ModelDownloadProgress) => void

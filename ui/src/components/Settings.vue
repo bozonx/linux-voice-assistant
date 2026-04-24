@@ -136,7 +136,9 @@
                   {{
                     isWhisperModelDownloaded
                       ? t('settings.whisperLocalDownloaded')
-                      : t('settings.whisperLocalNotDownloaded')
+                      : isWhisperModelPartiallyDownloaded
+                        ? t('settings.whisperLocalPartial')
+                        : t('settings.whisperLocalNotDownloaded')
                   }}
                 </div>
                 <div class="text-xs text-muted">
@@ -178,25 +180,38 @@
                     max="100"
                   />
                 </div>
-                <Button
-                  v-if="!isWhisperModelDownloaded || downloadState.loading"
-                  sm
-                  :disabled="downloadState.loading"
-                  @click="downloadWhisperModel"
-                >
-                  {{ t('settings.whisperLocalDownload') }}
-                </Button>
-                <span v-else class="text-success">
-                  {{ t('settings.whisperLocalReady') }}
-                </span>
-                <Button
-                  v-if="isWhisperModelDownloaded && !downloadState.loading"
-                  sm
-                  neutral
-                  @click="deleteWhisperModel"
-                >
-                  {{ t('settings.whisperLocalDelete') }}
-                </Button>
+                <div class="flex flex-wrap gap-2">
+                  <Button
+                    v-if="
+                      !isWhisperModelDownloaded ||
+                      isWhisperModelPartiallyDownloaded
+                    "
+                    sm
+                    :disabled="downloadState.loading"
+                    @click="downloadWhisperModel"
+                  >
+                    {{
+                      isWhisperModelPartiallyDownloaded
+                        ? t('settings.whisperLocalResume')
+                        : t('settings.whisperLocalDownload')
+                    }}
+                  </Button>
+                  <span v-if="isWhisperModelDownloaded" class="text-success">
+                    {{ t('settings.whisperLocalReady') }}
+                  </span>
+                  <Button
+                    v-if="
+                      (isWhisperModelDownloaded ||
+                        isWhisperModelPartiallyDownloaded) &&
+                      !downloadState.loading
+                    "
+                    sm
+                    neutral
+                    @click="deleteWhisperModel"
+                  >
+                    {{ t('settings.whisperLocalDelete') }}
+                  </Button>
+                </div>
               </div>
             </div>
           </FieldRow>
@@ -298,7 +313,9 @@
                     {{
                       browserLocalStatusById[model.id]?.downloaded
                         ? t('settings.browserLocalLlmDownloaded')
-                        : t('settings.browserLocalLlmNotDownloaded')
+                        : browserLocalStatusById[model.id]?.partial
+                          ? t('settings.browserLocalLlmPartial')
+                          : t('settings.browserLocalLlmNotDownloaded')
                     }}
                   </div>
                   <div class="text-xs text-muted">
@@ -363,6 +380,7 @@
                     <Button
                       v-if="
                         !browserLocalStatusById[model.id]?.downloaded ||
+                        browserLocalStatusById[model.id]?.partial ||
                         browserLocalDownloadStateById[model.id]?.loading
                       "
                       sm
@@ -371,14 +389,19 @@
                       "
                       @click="downloadBrowserLlmModel(model.id)"
                     >
-                      {{ t('settings.browserLocalLlmDownload') }}
+                      {{
+                        browserLocalStatusById[model.id]?.partial
+                          ? t('settings.browserLocalLlmResume')
+                          : t('settings.browserLocalLlmDownload')
+                      }}
                     </Button>
                     <span v-else class="text-success flex items-center">
                       {{ t('settings.browserLocalLlmReady') }}
                     </span>
                     <Button
                       v-if="
-                        browserLocalStatusById[model.id]?.downloaded &&
+                        (browserLocalStatusById[model.id]?.downloaded ||
+                          browserLocalStatusById[model.id]?.partial) &&
                         !browserLocalDownloadStateById[model.id]?.loading
                       "
                       sm
@@ -590,6 +613,7 @@ import {
   deleteLlmModel,
   downloadLlmModel,
   getLlmModelMetadata,
+  hasPartialLlmModelDownload,
   isLlmModelDownloaded,
 } from '../utils/llm/model-storage'
 import {
@@ -599,6 +623,7 @@ import {
   deleteModel,
   downloadModel,
   getModelMetadata,
+  hasPartialWhisperModelDownload,
   isModelDownloaded,
 } from '../utils/stt/model-storage'
 import {
@@ -640,9 +665,17 @@ const currentSttProvider = ref<'vosk' | 'whisper-local'>('vosk')
 const userConfig = ref(createPreparedUserConfig(ipcStore.params.userConfig))
 const lastPersistedConfig = ref(serializeUserConfig(userConfig.value))
 const isWhisperModelDownloaded = ref(false)
+const isWhisperModelPartiallyDownloaded = ref(false)
 const whisperModelMetadata = ref<WhisperModelMetadata | null>(null)
 const browserLocalStatusById = ref<
-  Record<string, { downloaded: boolean; metadata: LlmModelMetadata | null }>
+  Record<
+    string,
+    {
+      downloaded: boolean
+      partial: boolean
+      metadata: LlmModelMetadata | null
+    }
+  >
 >({})
 const storageInfo = ref<StorageInfo | null>(null)
 const downloadState = ref<DownloadState>({
@@ -1578,11 +1611,13 @@ const setOpenAiCompatibleModel = (modelId: string, value: string) => {
 }
 
 async function refreshWhisperModelStatus() {
-  const [downloaded, metadata] = await Promise.all([
+  const [downloaded, partial, metadata] = await Promise.all([
     isModelDownloaded(whisperLocalModel.value),
+    hasPartialWhisperModelDownload(whisperLocalModel.value),
     getModelMetadata(whisperLocalModel.value),
   ])
   isWhisperModelDownloaded.value = downloaded
+  isWhisperModelPartiallyDownloaded.value = !downloaded && partial
   whisperModelMetadata.value = downloaded ? metadata : null
 }
 
@@ -1595,13 +1630,15 @@ async function refreshBrowserLlmModelStatus(modelId: string) {
   }
 
   const modelName = model.localModel || DEFAULT_BROWSER_LLM_MODEL
-  const [downloaded, metadata] = await Promise.all([
+  const [downloaded, partial, metadata] = await Promise.all([
     isLlmModelDownloaded(modelName),
+    hasPartialLlmModelDownload(modelName),
     getLlmModelMetadata(modelName),
   ])
 
   browserLocalStatusById.value[modelId] = {
     downloaded,
+    partial: !downloaded && partial,
     metadata: downloaded ? metadata : null,
   }
 }
