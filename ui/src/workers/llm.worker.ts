@@ -178,6 +178,11 @@ self.onmessage = (event: MessageEvent<WorkerMessage>) => {
         maxTokens: data.maxTokens || 256,
         temperature: data.temperature ?? 0.2,
       })
+      self.postMessage({
+        type: 'progress',
+        id,
+        data: { status: 'generating' },
+      } satisfies WorkerResponse)
 
       const result = await generatorInstance(prompt, {
         max_new_tokens: data.maxTokens || 256,
@@ -187,6 +192,10 @@ self.onmessage = (event: MessageEvent<WorkerMessage>) => {
       } as any)
 
       const content = extractContent(result)
+      console.debug('[llm.worker] result-ready', {
+        contentLength: content.length,
+        preview: content.slice(0, 120),
+      })
 
       if (data.stream && content) {
         self.postMessage({

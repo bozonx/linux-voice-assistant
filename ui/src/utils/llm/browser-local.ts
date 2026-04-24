@@ -99,6 +99,7 @@ export async function runBrowserLocalChatCompletion(
   }
 ) {
   const modelName = model.localModel || model.model || DEFAULT_BROWSER_LLM_MODEL
+  const maxTokens = Math.min(model.maxTokens ?? 256, 64)
   const downloaded = await isLlmModelDownloaded(modelName)
 
   if (!downloaded) {
@@ -174,7 +175,7 @@ export async function runBrowserLocalChatCompletion(
         modelName,
         messages,
         temperature: model.temperature ?? 0.2,
-        maxTokens: model.maxTokens ?? 256,
+        maxTokens,
         stream: !!options?.onChunk,
       },
     })
