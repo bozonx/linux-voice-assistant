@@ -25,7 +25,10 @@
     "security": {
       "assetProtocol": {
         "enable": true,
-        "scope": ["$APPDATA/models/whisper/**"]
+        "scope": [
+          "$APPDATA/models/whisper/**",
+          "$APPDATA/models/llm/**"
+        ]
       },
       "csp": {
         "default-src": "'self' asset: http://asset.localhost",
