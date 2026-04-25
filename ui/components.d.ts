@@ -18,6 +18,7 @@ declare module 'vue' {
     Card: typeof import('./src/components/common/Card.vue')['default']
     ChatInput: typeof import('./src/components/ChatInput.vue')['default']
     ChatItem: typeof import('./src/components/common/ChatItem.vue')['default']
+    ChatSidebar: typeof import('./src/components/chat/ChatSidebar.vue')['default']
     ContentPadding: typeof import('./src/components/common/ContentPadding.vue')['default']
     CorrectionMenu: typeof import('./src/components/menu/CorrectionMenu.vue')['default']
     Diff: typeof import('./src/components/common/Diff.vue')['default']

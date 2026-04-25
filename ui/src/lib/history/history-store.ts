@@ -44,6 +44,7 @@ export function createHistoryStoreModel(historyApi: HistoryApi) {
 
   const saveChatHistory = async (chatHistoryItem: ChatHistoryItem) => {
     await historyApi.callFunction('saveChatHistory', [chatHistoryItem])
+    await loadChatHistory()
   }
 
   const removeFromEditorHistory = async (value: string): Promise<void> => {
