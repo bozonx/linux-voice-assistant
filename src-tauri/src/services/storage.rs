@@ -7,7 +7,10 @@ use serde_json::{json, Value};
 use tauri::{AppHandle, Manager};
 
 use crate::errors::AppError;
-use crate::models::{default_user_config, ChatHistoryItem, StorageInfo, CONFIG_FILE_NAME};
+use crate::models::{
+    default_user_config, ChatHistoryItem, LocalState, StorageInfo, CONFIG_FILE_NAME,
+    STATE_FILE_NAME,
+};
 
 fn app_config_dir(app: &AppHandle) -> Result<PathBuf, AppError> {
     let dir = app
@@ -227,6 +230,25 @@ pub fn save_user_config(app: &AppHandle, user_config: &Value) -> Result<(), AppE
     let path = app_config_dir(app)?.join(CONFIG_FILE_NAME);
     let raw = serde_yaml::to_string(user_config)?;
     fs::write(path, raw)?;
+    Ok(())
+}
+
+pub fn read_or_create_local_state(app: &AppHandle) -> Result<LocalState, AppError> {
+    let path = app_config_dir(app)?.join(STATE_FILE_NAME);
+
+    if path.exists() {
+        return read_json(&path, LocalState::default());
+    }
+
+    let default_state = LocalState::default();
+    save_local_state(app, &default_state)?;
+
+    Ok(default_state)
+}
+
+pub fn save_local_state(app: &AppHandle, local_state: &LocalState) -> Result<(), AppError> {
+    let path = app_config_dir(app)?.join(STATE_FILE_NAME);
+    write_json(&path, local_state)?;
     Ok(())
 }
 

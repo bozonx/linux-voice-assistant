@@ -11,6 +11,7 @@ import {
   type ChatHistoryItem,
   type ChatMessage,
   type ChatParams,
+  type LocalState,
 } from '@shared'
 import { APP_ROUTES, type AppRoutePath } from '../navigation/routes'
 
@@ -37,6 +38,8 @@ export interface ChatStoreDeps {
   chatNotFoundError: () => string
   createId: () => string
   nowIso: () => string
+  saveLocalState: (state: Partial<LocalState>) => void | Promise<void>
+  getLastChatId: () => string | null | undefined
 }
 
 export function createChatStoreModel(deps: ChatStoreDeps) {
@@ -163,6 +166,10 @@ export function createChatStoreModel(deps: ChatStoreDeps) {
       })
     )
 
+    if (newChatParams.value.id) {
+      await deps.saveLocalState({ lastChatId: newChatParams.value.id })
+    }
+
     return assistantMessage.content
   }
 
@@ -191,6 +198,7 @@ export function createChatStoreModel(deps: ChatStoreDeps) {
       initialMessage: chat.description,
       attachments: [],
     }
+    await deps.saveLocalState({ lastChatId: chat.id })
     await deps.navigateTo(APP_ROUTES.CHAT.path)
   }
 
@@ -204,5 +212,18 @@ export function createChatStoreModel(deps: ChatStoreDeps) {
     startChat,
     openChat,
     clearChat,
+    openLastOrNewChat: async () => {
+      if (newChatParams.value.id) {
+        await deps.navigateTo(APP_ROUTES.CHAT.path)
+        return
+      }
+
+      const lastId = deps.getLastChatId()
+      if (lastId) {
+        await openChat(lastId)
+      } else {
+        await startChat({})
+      }
+    },
   }
 }

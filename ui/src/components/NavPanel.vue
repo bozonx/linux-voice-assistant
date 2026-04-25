@@ -87,7 +87,7 @@ function openSettings() {
 
 function openChat() {
   menuModalsStore.closeAll()
-  void chatStore.startChat({})
+  void chatStore.openLastOrNewChat()
 }
 
 function openHistory() {

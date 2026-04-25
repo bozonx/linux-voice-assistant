@@ -10,6 +10,7 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
 
 import { useGlobalEvents } from './composables/useGlobalEvents'
 import { useI18n } from './composables/useI18n'
@@ -23,6 +24,8 @@ import { useIpcStore } from './stores/ipc'
 import { useMenuModalsStore } from './stores/menuModals'
 import { useNavPanelStore } from './stores/navPanel'
 import { useThemeStore } from './stores/theme'
+import { START_MODES } from '@shared'
+import { MODE_ROUTE_MAP } from './lib/navigation/routes'
 
 useThemeStore()
 const ipcStore = useIpcStore()
@@ -30,6 +33,7 @@ const { locale, t } = useI18n()
 const { globalEvents } = useGlobalEvents()
 const menuModalsStore = useMenuModalsStore()
 const navPanelStore = useNavPanelStore()
+const route = useRoute()
 const bootstrap = createAppBootstrap({
   loadInitialParams: () => ipcStore.loadInitialParams(),
   setParams: (params) => ipcStore.setParams(params),
@@ -77,6 +81,17 @@ watch(
     document.title = t('app.title')
   },
   { immediate: true }
+)
+watch(
+  () => route.path,
+  (path) => {
+    const mode = Object.entries(MODE_ROUTE_MAP).find(
+      ([_, p]) => p === path
+    )?.[0] as START_MODES | undefined
+    if (mode) {
+      void ipcStore.patchLocalState({ lastMode: mode })
+    }
+  }
 )
 
 onMounted(() => {

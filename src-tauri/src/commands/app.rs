@@ -2,7 +2,7 @@ use serde_json::Value;
 use tauri::{AppHandle, State};
 
 use crate::errors::AppError;
-use crate::models::{InitParams, StorageInfo};
+use crate::models::{InitParams, LocalState, StorageInfo};
 use crate::services::{runtime, storage};
 use crate::state::AppState;
 
@@ -30,4 +30,18 @@ pub fn save_user_config(
 #[tauri::command]
 pub fn get_storage_info(app: AppHandle) -> Result<StorageInfo, AppError> {
     storage::get_storage_info(&app)
+}
+#[tauri::command]
+pub fn save_local_state(
+    app: AppHandle,
+    state: State<'_, AppState>,
+    local_state: LocalState,
+) -> Result<(), AppError> {
+    storage::save_local_state(&app, &local_state)?;
+    state.update_params(|params| {
+        params.local_state = local_state;
+    });
+    runtime::emit_params(&app, &state)?;
+
+    Ok(())
 }

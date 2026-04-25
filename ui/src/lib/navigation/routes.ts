@@ -60,6 +60,7 @@ export const MODE_ROUTE_MAP: Record<START_MODES, AppRoutePath> = {
   [START_MODES.AI_TASKS]: APP_ROUTES.AI_TASKS.path,
   [START_MODES.EDITOR]: APP_ROUTES.EDITOR.path,
   [START_MODES.WRITE]: APP_ROUTES.WRITE.path,
+  [START_MODES.CHAT]: APP_ROUTES.CHAT.path,
 }
 
 export function resolveModeRoute(mode: START_MODES | null): AppRoutePath {

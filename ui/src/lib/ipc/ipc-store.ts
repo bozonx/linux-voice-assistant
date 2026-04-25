@@ -4,6 +4,7 @@ import {
   type InitParams,
   type IpcResult,
   type UserConfig,
+  type LocalState,
 } from '@shared'
 import { ref } from 'vue'
 
@@ -32,6 +33,10 @@ export function createCommandMap(): Record<string, CommandEntry> {
     saveUserConfig: {
       command: DESKTOP_COMMANDS.SAVE_USER_CONFIG,
       buildArgs: ([userConfigJson]) => ({ userConfigJson }),
+    },
+    saveLocalState: {
+      command: DESKTOP_COMMANDS.SAVE_LOCAL_STATE,
+      buildArgs: ([localState]) => ({ localState }),
     },
     getStorageInfo: {
       command: DESKTOP_COMMANDS.GET_STORAGE_INFO,
@@ -180,11 +185,27 @@ export function createIpcStoreModel(deps: IpcStoreDeps) {
     return result
   }
 
+  const saveLocalState = async (localState: LocalState) => {
+    const result = await callFunction('saveLocalState', [localState])
+
+    if (result.success) {
+      params.value.localState = localState
+    }
+
+    return result
+  }
+
+  const patchLocalState = async (patch: Partial<LocalState>) => {
+    return await saveLocalState({ ...params.value.localState, ...patch })
+  }
+
   return {
     params,
     callFunction,
     loadInitialParams,
     setParams,
     saveUserConfig,
+    saveLocalState,
+    patchLocalState,
   }
 }

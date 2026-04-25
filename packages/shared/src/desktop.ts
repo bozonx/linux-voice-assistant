@@ -18,6 +18,7 @@ export enum START_MODES {
   AI_TASKS = 'aiTasks',
   EDITOR = 'editor',
   WRITE = 'write',
+  CHAT = 'chat',
 }
 
 export interface ChatParams {
@@ -70,11 +71,21 @@ export interface LlmModelMetadata {
   files: LlmModelFileMetadata[]
 }
 
+export interface LocalState {
+  lastChatId?: string | null
+  lastMode?: START_MODES | null
+}
+
+export const DEFAULT_LOCAL_STATE: LocalState = {
+  lastChatId: null,
+}
+
 export interface InitParams {
   windowId: string | null
   selectedText: string | null
   mode: START_MODES | null
   userConfig: UserConfig
+  localState: LocalState
   appConfig: AppConfig
   NODE_ENV: string
   isWindowShown: boolean
@@ -85,6 +96,7 @@ export const DEFAULT_INIT_PARAMS: InitParams = {
   selectedText: null,
   mode: START_MODES.EDITOR,
   userConfig: DEFAULT_USER_CONFIG,
+  localState: DEFAULT_LOCAL_STATE,
   appConfig: APP_CONFIG,
   NODE_ENV: 'development',
   isWindowShown: true,
@@ -99,6 +111,7 @@ export const DESKTOP_COMMANDS = {
   GET_INIT_PARAMS: 'get_init_params',
   GET_STORAGE_INFO: 'get_storage_info',
   SAVE_USER_CONFIG: 'save_user_config',
+  SAVE_LOCAL_STATE: 'save_local_state',
   GET_EDITOR_HISTORY: 'get_editor_history',
   GET_TRANSFORM_HISTORY: 'get_transform_history',
   GET_CHAT_HISTORY: 'get_chat_history',

@@ -4,6 +4,23 @@ use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 
 pub const CONFIG_FILE_NAME: &str = "userConfig.yaml";
+pub const STATE_FILE_NAME: &str = "localState.json";
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LocalState {
+    pub last_chat_id: Option<String>,
+    pub last_mode: Option<String>,
+}
+
+impl Default for LocalState {
+    fn default() -> Self {
+        Self {
+            last_chat_id: None,
+            last_mode: None,
+        }
+    }
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -12,6 +29,7 @@ pub struct InitParams {
     pub selected_text: Option<String>,
     pub mode: Option<String>,
     pub user_config: Value,
+    pub local_state: LocalState,
     pub app_config: Value,
     #[serde(rename = "NODE_ENV")]
     pub node_env: String,
@@ -198,12 +216,13 @@ pub fn app_config() -> Value {
     })
 }
 
-pub fn default_init_params(user_config: Value) -> InitParams {
+pub fn default_init_params(user_config: Value, local_state: LocalState) -> InitParams {
     InitParams {
         window_id: None,
         selected_text: None,
-        mode: Some(String::from("editor")),
+        mode: local_state.last_mode.clone().or(Some(String::from("editor"))),
         user_config,
+        local_state,
         app_config: app_config(),
         node_env: if cfg!(debug_assertions) {
             String::from("development")

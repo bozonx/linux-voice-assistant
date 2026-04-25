@@ -18,6 +18,7 @@ import {
   APP_CONFIG,
   type ChatMessage,
   type LlmModel,
+  type LocalState,
   type SttModel,
   useAiRequest,
 } from '@shared'
@@ -323,6 +324,10 @@ export const useCallAi = () => {
     )
   }
 
+  const saveLocalState = (patch: Partial<LocalState>) => {
+    return ipcStore.patchLocalState(patch)
+  }
+
   return {
     aiRequest,
     getVoiceRecognitionRuntime,
@@ -335,5 +340,6 @@ export const useCallAi = () => {
     correctText,
     translateText,
     aiTasks,
+    saveLocalState,
   }
 }
