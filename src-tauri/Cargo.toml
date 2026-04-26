@@ -1,7 +1,7 @@
 [package]
-name = "librnet-assistant"
+name = "tyco"
 version = "0.0.3"
-description = "Librnet Assistant"
+description = "TyCo - typing AI companion for writers and professionals who work with texts a lot"
 authors = ["Kozyrin Ivan"]
 edition = "2021"
 

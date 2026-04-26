@@ -94,7 +94,7 @@ fn setup_tray(app: &mut App) -> Result<(), AppError> {
 
     builder
         .menu(&menu)
-        .tooltip("Librnet Assistant")
+        .tooltip("TyCo - typing companion")
         .on_menu_event(move |app, event| {
             if let Some(state) = app.try_state::<AppState>() {
                 match event.id.as_ref() {

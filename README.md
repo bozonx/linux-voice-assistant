@@ -1,6 +1,6 @@
-# Librnet Assistant
+# TyCo - typing companion
 
-Assistant for Linux for writers and programmers.
+TyCo - typing AI companion for writers and professionals who work with texts a lot.
 
 The project is being migrated to a Tauri-first architecture.
 

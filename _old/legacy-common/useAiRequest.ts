@@ -67,7 +67,7 @@ export const useAiRequest = () => {
       headers: {
         Authorization: "Bearer " + model.apiKey,
         // "HTTP-Referer": "<YOUR_SITE_URL>", // Optional. Site URL for rankings on openrouter.ai.
-        "X-Title": "Librnet assistant", // Optional. Site title for rankings on openrouter.ai.
+        "X-Title": "TyCo", // Optional. Site title for rankings on openrouter.ai.
         "Content-Type": "application/json",
       },
       body: JSON.stringify({

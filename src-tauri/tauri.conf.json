@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Librnet Assistant",
+  "productName": "TyCo - typing companion",
   "version": "0.0.3",
-  "identifier": "bozonx.desktop-assistant",
+  "identifier": "com.tyco.app",
   "build": {
     "beforeDevCommand": "pnpm dev:ui",
     "beforeBuildCommand": "pnpm build:ui",
@@ -14,7 +14,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "Librnet Assistant",
+        "title": "TyCo - typing companion",
         "width": 800,
         "height": 600,
         "minWidth": 640,

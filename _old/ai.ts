@@ -19,7 +19,7 @@ export class AI {
       apiKey: this.userConfig.llmModels[0].apiKey,
       defaultHeaders: {
         //"HTTP-Referer": "<YOUR_SITE_URL>", // Optional. Site URL for rankings on openrouter.ai.
-        "X-Title": "Librnet assistant", // Optional. Site title for rankings on openrouter.ai.
+        "X-Title": "TyCo", // Optional. Site title for rankings on openrouter.ai.
       },
     });
   }

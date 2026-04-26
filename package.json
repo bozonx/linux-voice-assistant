@@ -1,13 +1,13 @@
 {
-  "name": "librnet-assistant",
+  "name": "tyco",
   "version": "0.1.0",
   "private": true,
-  "description": "Librnet assistant built with Tauri and Vue",
+  "description": "TyCo - AI typing companion for writers and professionals who work with texts a lot",
   "scripts": {
-    "dev:ui": "pnpm --env-file=.env --filter librnet-assistant-ui dev",
-    "build:ui": "pnpm --filter librnet-assistant-ui build",
-    "type-check": "pnpm --filter librnet-assistant-ui type-check",
-    "test:ui": "pnpm --filter librnet-assistant-ui test",
+    "dev:ui": "pnpm --env-file=.env --filter tyco-ui dev",
+    "build:ui": "pnpm --filter tyco-ui build",
+    "type-check": "pnpm --filter tyco-ui type-check",
+    "test:ui": "pnpm --filter tyco-ui test",
     "test": "pnpm test:ui",
     "tauri": "tauri",
     "tauri:dev": "dotenv -e .env -- sh -c 'tauri dev --config \"{\\\"build\\\":{\\\"devUrl\\\":\\\"http://localhost:${PORT:-3000}\\\"},\\\"app\\\":{\\\"security\\\":{\\\"csp\\\":\\\"default-src '\\''self'\\'' ipc: http://ipc.localhost; connect-src '\\''self'\\'' ipc: http://ipc.localhost http://localhost:${PORT:-3000} ws://localhost:${PORT:-3000} https:; img-src '\\''self'\\'' asset: http://asset.localhost blob: data:; style-src '\\''self'\\'' '\\''unsafe-inline'\\''; font-src '\\''self'\\'' asset: http://asset.localhost data:; script-src '\\''self'\\'' '\\''unsafe-inline'\\'' '\\''wasm-unsafe-eval'\\''\\\"}}}\"'",
@@ -15,7 +15,7 @@
     "dev": "pnpm dev:ui",
     "build": "pnpm build:ui"
   },
-  "author": "Kozyrin Ivan",
+  "author": "Ivan K",
   "license": "MIT",
   "devDependencies": {
     "@tauri-apps/cli": "^2.10.1",

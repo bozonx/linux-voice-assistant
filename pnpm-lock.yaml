@@ -43,15 +43,15 @@ importers:
       '@iconify/vue':
         specifier: ^5.0.0
         version: 5.0.0(vue@3.5.33(typescript@6.0.3))
-      '@librnet/shared':
-        specifier: workspace:*
-        version: link:../packages/shared
       '@tailwindcss/vite':
         specifier: ^4.2.4
         version: 4.2.4(vite@8.0.9(@types/node@25.6.0)(jiti@2.6.1)(yaml@2.8.3))
       '@tauri-apps/api':
         specifier: ^2.10.1
         version: 2.10.1
+      '@tyco/shared':
+        specifier: workspace:*
+        version: link:../packages/shared
       daisyui:
         specifier: ^5.5.19
         version: 5.5.19

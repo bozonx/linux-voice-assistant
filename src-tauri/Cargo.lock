@@ -2134,24 +2134,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "librnet-assistant"
-version = "0.0.3"
-dependencies = [
- "cpal",
- "futures-util",
- "serde",
- "serde_json",
- "serde_yaml",
- "tauri",
- "tauri-build",
- "tauri-plugin-single-instance",
- "thiserror 1.0.69",
- "tokio",
- "tokio-tungstenite",
- "zbus 4.4.0",
-]
-
-[[package]]
 name = "linux-raw-sys"
 version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4514,6 +4496,24 @@ dependencies = [
  "sha1",
  "thiserror 1.0.69",
  "utf-8",
+]
+
+[[package]]
+name = "tyco"
+version = "0.0.3"
+dependencies = [
+ "cpal",
+ "futures-util",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-single-instance",
+ "thiserror 1.0.69",
+ "tokio",
+ "tokio-tungstenite",
+ "zbus 4.4.0",
 ]
 
 [[package]]

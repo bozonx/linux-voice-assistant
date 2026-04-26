@@ -48,7 +48,7 @@ export const messages = {
       ms_MY: 'Bahasa Melayu',
     },
     app: {
-      title: 'Your Assistant',
+      title: 'TyCo',
     },
     nav: {
       editor: 'Редактор',
@@ -341,7 +341,7 @@ export const messages = {
       ms_MY: 'Malay',
     },
     app: {
-      title: 'Your Assistant',
+      title: 'TyCo',
     },
     nav: {
       editor: 'Editor',
@@ -632,7 +632,7 @@ export const messages = {
       ms_MY: 'Malayo',
     },
     app: {
-      title: 'Your Assistant',
+      title: 'TyCo',
     },
     nav: {
       editor: 'Editor',
@@ -924,7 +924,7 @@ export const messages = {
       ms_MY: 'Malayca',
     },
     app: {
-      title: 'Your Assistant',
+      title: 'TyCo',
     },
     nav: {
       editor: 'Editör',

@@ -7,7 +7,7 @@ import { APP_CONFIG } from "../electron/appConfig";
 
 (async () => {
   const args = getCommandLineArgs();
-  const appDir = process.env.HOME + "/.config/librnet-assistant";
+  const appDir = process.env.HOME + "/.config/tyco";
   const userConfig = await createOrReadConfig(appDir);
   const { chatCompletion, prepareAiMessages } = useAiRequest();
 

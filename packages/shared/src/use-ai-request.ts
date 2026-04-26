@@ -149,7 +149,7 @@ export const useAiRequest = () => {
           method: 'POST',
           headers: {
             Authorization: 'Bearer ' + (model.apiKey || ''),
-            'X-Title': 'Librnet assistant',
+            'X-Title': 'TyCo',
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
